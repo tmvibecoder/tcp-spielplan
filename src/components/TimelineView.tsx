@@ -1,0 +1,241 @@
+import { useMemo, useState } from "react";
+import type { Match, Team } from "../types";
+import { MONTHS, MONTH_COLORS } from "../data/constants";
+import {
+  getMonthKey,
+  getWeekKey,
+  weekendLabel,
+  getDayFromDate,
+} from "../utils/date-helpers";
+import MatchRow from "./MatchRow";
+import MatchDetail from "./MatchDetail";
+
+interface TimelineViewProps {
+  matches: Match[];
+  teamMap: Map<string, Team>;
+}
+
+interface GroupedData {
+  months: {
+    key: string;
+    weeks: {
+      key: string;
+      dates: string[];
+      days: {
+        date: string;
+        day: string;
+        matches: Match[];
+      }[];
+      matchCount: number;
+    }[];
+    matchCount: number;
+  }[];
+}
+
+export default function TimelineView({ matches, teamMap }: TimelineViewProps) {
+  const [openMatch, setOpenMatch] = useState<string | null>(null);
+
+  const grouped = useMemo<GroupedData>(() => {
+    // Sort matches
+    const sorted = [...matches].sort(
+      (a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)
+    );
+
+    // Group: month → week → date
+    const monthMap = new Map<
+      string,
+      Map<string, Map<string, { day: string; matches: Match[] }>>
+    >();
+
+    for (const m of sorted) {
+      const mk = getMonthKey(m.date);
+      const wk = getWeekKey(m.date);
+
+      if (!monthMap.has(mk)) monthMap.set(mk, new Map());
+      const weeks = monthMap.get(mk)!;
+      if (!weeks.has(wk)) weeks.set(wk, new Map());
+      const dates = weeks.get(wk)!;
+      if (!dates.has(m.date)) dates.set(m.date, { day: m.day, matches: [] });
+      dates.get(m.date)!.matches.push(m);
+    }
+
+    const months = [...monthMap.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([mk, weeks]) => {
+        const weekArr = [...weeks.entries()]
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([wk, dates]) => {
+            const dayArr = [...dates.entries()]
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([date, data]) => ({
+                date,
+                day: data.day,
+                matches: data.matches,
+              }));
+            return {
+              key: wk,
+              dates: dayArr.map((d) => d.date),
+              days: dayArr,
+              matchCount: dayArr.reduce((s, d) => s + d.matches.length, 0),
+            };
+          });
+        return {
+          key: mk,
+          weeks: weekArr,
+          matchCount: weekArr.reduce((s, w) => s + w.matchCount, 0),
+        };
+      });
+
+    return { months };
+  }, [matches]);
+
+  const toggleMatch = (key: string) => {
+    setOpenMatch((prev) => (prev === key ? null : key));
+  };
+
+  const matchKey = (m: Match) => `${m.teamId}-${m.date}-${m.time}`;
+
+  return (
+    <div className="space-y-10">
+      {grouped.months.map((month) => {
+        const colors = MONTH_COLORS[month.key];
+        const monthName = MONTHS[month.key] || month.key;
+
+        return (
+          <div key={month.key}>
+            {/* Month header */}
+            <div
+              className="flex items-center justify-between px-4 py-3 rounded-xl mb-5"
+              style={{
+                backgroundColor: colors?.headerBg,
+                borderLeft: `4px solid ${colors?.accent}`,
+              }}
+            >
+              <h2
+                className="text-lg font-extrabold"
+                style={{ color: colors?.label }}
+              >
+                {monthName} 2026
+              </h2>
+              <span
+                className="text-xs font-semibold"
+                style={{ color: colors?.label }}
+              >
+                {month.matchCount} Spiele
+              </span>
+            </div>
+
+            {/* Weeks */}
+            <div className="space-y-5 relative">
+              {/* Vertical timeline line */}
+              <div
+                className="absolute left-[23px] top-0 bottom-0 w-px"
+                style={{ backgroundColor: colors?.accent + "30" }}
+              />
+
+              {month.weeks.map((week, weekIdx) => (
+                <div
+                  key={week.key}
+                  className="rounded-xl border overflow-hidden ml-6"
+                  style={{
+                    backgroundColor: colors?.weekBgs?.[weekIdx % colors.weekBgs.length] || colors?.bg,
+                    borderColor: colors?.border,
+                  }}
+                >
+                  {/* Weekend header */}
+                  <div className="flex items-center justify-between px-4 py-2 border-b"
+                    style={{ borderColor: colors?.border }}
+                  >
+                    <span className="text-xs font-semibold text-slate-300">
+                      📅 {weekendLabel(week.dates)}
+                    </span>
+                    <span
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: colors?.accent + "20",
+                        color: colors?.accent,
+                      }}
+                    >
+                      {week.matchCount}
+                    </span>
+                  </div>
+
+                  {/* Days */}
+                  <div className="divide-y" style={{ borderColor: colors?.border + "60" }}>
+                    {week.days.map((dayData) => {
+                      const dayStyle = dayData.day === "Fr"
+                        ? { sidebarBg: colors?.accent + "10", rowBg: "transparent", labelColor: "#a5b4fc", numColor: "#818cf8" }
+                        : dayData.day === "Sa"
+                        ? { sidebarBg: colors?.accent + "18", rowBg: colors?.accent + "06", labelColor: "#94a3b8", numColor: "#cbd5e1" }
+                        : { sidebarBg: colors?.accent + "22", rowBg: colors?.accent + "0c", labelColor: "#93c5fd", numColor: "#60a5fa" };
+
+                      return (
+                      <div key={dayData.date} className="flex" style={{ backgroundColor: dayStyle.rowBg }}>
+                        {/* Date sidebar */}
+                        <div
+                          className="shrink-0 w-16 flex flex-col items-center justify-center py-3 border-r"
+                          style={{ borderColor: colors?.border, backgroundColor: dayStyle.sidebarBg }}
+                        >
+                          <span
+                            className="text-[10px] font-bold uppercase tracking-wider"
+                            style={{ color: dayStyle.labelColor }}
+                          >
+                            {dayData.day}
+                          </span>
+                          <span
+                            className="text-xl font-extrabold leading-tight"
+                            style={{ color: dayStyle.numColor }}
+                          >
+                            {getDayFromDate(dayData.date)}
+                          </span>
+                          {dayData.matches.length >= 2 && (
+                            <span className="text-[9px] font-bold bg-yellow-500/20 text-yellow-300 px-1.5 rounded-full mt-0.5">
+                              {dayData.matches.length}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Matches */}
+                        <div className="flex-1 py-1 min-w-0">
+                          {dayData.matches.map((m) => {
+                            const key = matchKey(m);
+                            const team = teamMap.get(m.teamId);
+                            if (!team) return null;
+                            return (
+                              <div key={key}>
+                                <MatchRow
+                                  match={m}
+                                  team={team}
+                                  isOpen={openMatch === key}
+                                  onClick={() => toggleMatch(key)}
+                                />
+                                {openMatch === key && (
+                                  <MatchDetail
+                                    match={m}
+                                    team={team}
+                                    onClose={() => setOpenMatch(null)}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      {grouped.months.length === 0 && (
+        <p className="text-center text-slate-500 py-12">
+          Keine Spiele für die ausgewählten Mannschaften.
+        </p>
+      )}
+    </div>
+  );
+}
