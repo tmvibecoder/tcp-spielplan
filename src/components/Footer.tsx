@@ -3,6 +3,12 @@ import { BTV_VEREIN_URL } from "../data/constants";
 export default function Footer() {
   return (
     <footer className="mt-12 border-t border-slate-700/50 pt-6 pb-8 text-center space-y-2">
+      <p className="text-xs text-slate-600">
+        Impressum: Thomas Miler ·{" "}
+        <a href="mailto:thomas.miler1234@gmail.com" className="hover:text-slate-500 transition-colors">
+          thomas.miler1234@gmail.com
+        </a>
+      </p>
       <p className="text-xs text-slate-500">
         Quelle: BTV Südbayern · Alle Angaben ohne Gewähr
       </p>
