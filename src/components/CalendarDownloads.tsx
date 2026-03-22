@@ -22,7 +22,7 @@ export default function CalendarDownloads() {
   };
 
   return (
-    <div className="mt-12 border-t border-slate-700/50 pt-8">
+    <div id="kalender-downloads" className="mt-12 border-t border-slate-700/50 pt-8">
       <h2 className="text-lg font-extrabold text-slate-100 mb-1">
         📅 Kalender-Downloads
       </h2>

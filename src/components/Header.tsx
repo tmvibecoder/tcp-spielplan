@@ -100,6 +100,13 @@ export default function Header({
             {allActive ? "Alle aus" : "Alle an"}
           </button>
 
+          <a
+            href="#kalender-downloads"
+            className="px-2 py-1.5 text-[11px] text-slate-400 hover:text-sky-400 transition-colors"
+          >
+            📅 Kalender-Downloads
+          </a>
+
           <span className="ml-auto text-xs text-slate-400">
             {totalMatches} Spiele · {homeMatches} H · {awayMatches} A
           </span>
