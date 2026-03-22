@@ -1,6 +1,6 @@
 import type { Match, Team } from "../types";
 import { TEAMS } from "../data/teams";
-import { MONTHS, MONTH_COLORS } from "../data/constants";
+import { MONTHS } from "../data/constants";
 import { formatDate, getMonthKey, getWeekKey, weekendLabel } from "./date-helpers";
 
 interface DayGroup {
