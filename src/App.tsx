@@ -9,8 +9,10 @@ import TimelineView from "./components/TimelineView";
 import ListView from "./components/ListView";
 import CalendarDownloads from "./components/CalendarDownloads";
 import Footer from "./components/Footer";
+import { Impressum, Datenschutz } from "./components/LegalPages";
 
 type View = "timeline" | "list";
+type Page = "spielplan" | "impressum" | "datenschutz";
 
 function App() {
   const allTeamIds = useMemo(() => new Set(TEAMS.map((t) => t.id)), []);
@@ -19,6 +21,17 @@ function App() {
   );
   const [view, setView] = useState<View>("timeline");
   const [homeOnly, setHomeOnly] = useState(false);
+  const [page, setPage] = useState<Page>("spielplan");
+
+  const navigateToLegal = useCallback((p: "impressum" | "datenschutz") => {
+    setPage(p);
+    window.scrollTo(0, 0);
+  }, []);
+
+  const backToSpielplan = useCallback(() => {
+    setPage("spielplan");
+    window.scrollTo(0, 0);
+  }, []);
 
   const teamMap = useMemo(
     () => new Map<string, Team>(TEAMS.map((t) => [t.id, t])),
@@ -67,6 +80,9 @@ function App() {
     generatePrintHTML(MATCHES, activeTeams);
   }, [activeTeams]);
 
+  if (page === "impressum") return <Impressum onBack={backToSpielplan} />;
+  if (page === "datenschutz") return <Datenschutz onBack={backToSpielplan} />;
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <Header
@@ -103,7 +119,7 @@ function App() {
         <CalendarDownloads />
 
         {/* Footer */}
-        <Footer />
+        <Footer onNavigate={navigateToLegal} />
       </main>
     </div>
   );

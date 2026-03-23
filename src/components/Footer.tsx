@@ -1,6 +1,10 @@
 import { BTV_VEREIN_URL } from "../data/constants";
 
-export default function Footer() {
+interface FooterProps {
+  onNavigate?: (page: "impressum" | "datenschutz") => void;
+}
+
+export default function Footer({ onNavigate }: FooterProps) {
   return (
     <footer className="mt-12 border-t border-slate-700/50 pt-6 pb-8 text-center space-y-2">
       <p className="text-xs text-slate-500">
@@ -17,6 +21,21 @@ export default function Footer() {
       >
         TC Pliening auf btv.de →
       </a>
+      <div className="flex items-center justify-center gap-3 pt-2">
+        <button
+          onClick={() => onNavigate?.("impressum")}
+          className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+        >
+          Impressum
+        </button>
+        <span className="text-xs text-slate-600">·</span>
+        <button
+          onClick={() => onNavigate?.("datenschutz")}
+          className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+        >
+          Datenschutz
+        </button>
+      </div>
     </footer>
   );
 }
