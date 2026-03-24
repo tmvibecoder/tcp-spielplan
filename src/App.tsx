@@ -10,6 +10,7 @@ import ListView from "./components/ListView";
 import CalendarDownloads from "./components/CalendarDownloads";
 import Footer from "./components/Footer";
 import { Impressum, Datenschutz } from "./components/LegalPages";
+import { useLiveScores } from "./hooks/useLiveScores";
 
 type View = "timeline" | "list";
 type Page = "spielplan" | "impressum" | "datenschutz";
@@ -76,6 +77,8 @@ function App() {
     });
   }, []);
 
+  const { scores, saveScores } = useLiveScores();
+
   const handlePdf = useCallback(() => {
     generatePrintHTML(MATCHES, activeTeams);
   }, [activeTeams]);
@@ -110,9 +113,9 @@ function App() {
 
         {/* Main View */}
         {view === "timeline" ? (
-          <TimelineView matches={filteredMatches} teamMap={teamMap} />
+          <TimelineView matches={filteredMatches} teamMap={teamMap} scores={scores} onSaveScore={saveScores} />
         ) : (
-          <ListView matches={filteredMatches} teamMap={teamMap} />
+          <ListView matches={filteredMatches} teamMap={teamMap} scores={scores} onSaveScore={saveScores} />
         )}
 
         {/* Calendar Downloads */}

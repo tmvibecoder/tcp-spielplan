@@ -1,19 +1,27 @@
-import type { Match, Team } from "../types";
+import type { Match, Team, MatchScore, IndividualMatch } from "../types";
 import { CLUBS } from "../data/clubs";
 import { PLIENING_ADDRESS } from "../data/constants";
 import { formatDateFull } from "../utils/date-helpers";
+import LiveScorePanel from "./LiveScorePanel";
 
 interface MatchDetailProps {
   match: Match;
   team: Team;
   onClose: () => void;
+  score?: MatchScore;
+  onSaveScore?: (
+    teamId: string,
+    matchDate: string,
+    matchTime: string,
+    individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 function mapsUrl(address: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
 
-export default function MatchDetail({ match, team, onClose }: MatchDetailProps) {
+export default function MatchDetail({ match, team, onClose, score, onSaveScore }: MatchDetailProps) {
   const opponent = match.isHome ? match.away : match.home;
   const address = match.isHome
     ? PLIENING_ADDRESS
@@ -79,8 +87,18 @@ export default function MatchDetail({ match, team, onClose }: MatchDetailProps) 
         </a>
       </div>
 
+      {/* Live Score Panel */}
+      {onSaveScore && (
+        <LiveScorePanel
+          match={match}
+          team={team}
+          score={score}
+          onSave={onSaveScore}
+        />
+      )}
+
       {/* Disclaimer */}
-      <p className="text-[11px] text-slate-500">
+      <p className="text-[11px] text-slate-500 mt-3">
         ⚠️ Beginnzeiten können sich noch ändern (finale Zeiten ab 01.04.)
       </p>
     </div>

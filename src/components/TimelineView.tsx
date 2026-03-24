@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { Match, Team } from "../types";
+import type { Match, Team, MatchScore, IndividualMatch } from "../types";
 import { MONTHS, MONTH_COLORS } from "../data/constants";
 import {
   getMonthKey,
@@ -13,6 +13,13 @@ import MatchDetail from "./MatchDetail";
 interface TimelineViewProps {
   matches: Match[];
   teamMap: Map<string, Team>;
+  scores: Map<string, MatchScore>;
+  onSaveScore: (
+    teamId: string,
+    matchDate: string,
+    matchTime: string,
+    individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 interface GroupedData {
@@ -32,7 +39,7 @@ interface GroupedData {
   }[];
 }
 
-export default function TimelineView({ matches, teamMap }: TimelineViewProps) {
+export default function TimelineView({ matches, teamMap, scores, onSaveScore }: TimelineViewProps) {
   const [openMatch, setOpenMatch] = useState<string | null>(null);
 
   const grouped = useMemo<GroupedData>(() => {
@@ -208,12 +215,15 @@ export default function TimelineView({ matches, teamMap }: TimelineViewProps) {
                                   team={team}
                                   isOpen={openMatch === key}
                                   onClick={() => toggleMatch(key)}
+                                  score={scores.get(key)}
                                 />
                                 {openMatch === key && (
                                   <MatchDetail
                                     match={m}
                                     team={team}
                                     onClose={() => setOpenMatch(null)}
+                                    score={scores.get(key)}
+                                    onSaveScore={onSaveScore}
                                   />
                                 )}
                               </div>

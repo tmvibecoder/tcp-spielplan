@@ -1,13 +1,15 @@
-import type { Match, Team } from "../types";
+import type { Match, Team, MatchScore } from "../types";
+import ScoreBadge from "./ScoreBadge";
 
 interface MatchRowProps {
   match: Match;
   team: Team;
   isOpen: boolean;
   onClick: () => void;
+  score?: MatchScore;
 }
 
-export default function MatchRow({ match, team, isOpen, onClick }: MatchRowProps) {
+export default function MatchRow({ match, team, isOpen, onClick, score }: MatchRowProps) {
   const opponent = match.isHome ? match.away : match.home;
 
   return (
@@ -43,6 +45,8 @@ export default function MatchRow({ match, team, isOpen, onClick }: MatchRowProps
       <span className="text-sm text-slate-200 truncate">
         {opponent}
       </span>
+
+      {score && <ScoreBadge score={score} isHome={match.isHome} />}
 
       <span className="ml-auto text-slate-500 text-xs group-hover:text-slate-300 transition-colors shrink-0">
         {isOpen ? "▲" : "▼"}

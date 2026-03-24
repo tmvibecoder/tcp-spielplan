@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import type { Match, Team } from "../types";
+import type { Match, Team, MatchScore, IndividualMatch } from "../types";
+import ScoreBadge from "./ScoreBadge";
 import { MONTHS, MONTH_COLORS } from "../data/constants";
 import { getMonthKey, getWeekKey, weekendLabel, formatDate } from "../utils/date-helpers";
 import MatchDetail from "./MatchDetail";
@@ -7,6 +8,13 @@ import MatchDetail from "./MatchDetail";
 interface ListViewProps {
   matches: Match[];
   teamMap: Map<string, Team>;
+  scores: Map<string, MatchScore>;
+  onSaveScore: (
+    teamId: string,
+    matchDate: string,
+    matchTime: string,
+    individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 interface ListGroup {
@@ -19,7 +27,7 @@ interface ListGroup {
   match?: Match;
 }
 
-export default function ListView({ matches, teamMap }: ListViewProps) {
+export default function ListView({ matches, teamMap, scores, onSaveScore }: ListViewProps) {
   const [openMatch, setOpenMatch] = useState<string | null>(null);
 
   const rows = useMemo<ListGroup[]>(() => {
@@ -207,6 +215,11 @@ export default function ListView({ matches, teamMap }: ListViewProps) {
                     <span className="px-3 py-2 text-sm text-slate-200 truncate flex-1 min-w-0">
                       {opponent}
                     </span>
+                    {scores.get(key) && (
+                      <span className="px-1 py-2 shrink-0">
+                        <ScoreBadge score={scores.get(key)!} isHome={m.isHome} />
+                      </span>
+                    )}
                     <span className="px-3 py-2 text-xs text-slate-500 shrink-0">
                       {openMatch === key ? "▲" : "▼"}
                     </span>
@@ -216,6 +229,8 @@ export default function ListView({ matches, teamMap }: ListViewProps) {
                       match={m}
                       team={team}
                       onClose={() => setOpenMatch(null)}
+                      score={scores.get(key)}
+                      onSaveScore={onSaveScore}
                     />
                   )}
                 </td>
