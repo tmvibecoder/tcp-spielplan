@@ -78,11 +78,12 @@ function parseNum(s: string): number | null {
 
 export default function ScoreEntry({
   match,
-  team,
+  team: _team,
   existingMatches,
   onSave,
   onCancel,
 }: ScoreEntryProps) {
+  void _team;
   const [positions, setPositions] = useState<PositionData[]>(() =>
     initPositions(match.teamId, existingMatches)
   );
@@ -130,7 +131,6 @@ export default function ScoreEntry({
   }, [positions, onSave]);
 
   const opponent = match.isHome ? match.away : match.home;
-  const singlesCount = getSinglesCount(match.teamId);
 
   return (
     <div className="space-y-4">
