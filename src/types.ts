@@ -32,6 +32,33 @@ export interface MonthColor {
 
 export type TeamFormat = "6er" | "4er";
 
+export type SeasonId = "winter-2526" | "sommer-26";
+
+export interface Season {
+  id: SeasonId;
+  label: string;
+  shortLabel: string;
+  icon: string;
+}
+
+export interface StandingsEntry {
+  rank: number;
+  club: string;
+  isOwnClub: boolean;
+  points: string;
+  matchPoints: string;
+  sets: string;
+  crossResults: string[];
+}
+
+export interface LeagueStandings {
+  teamLabel: string;
+  teamColor: string;
+  leagueName: string;
+  ownRank: number;
+  entries: StandingsEntry[];
+}
+
 export interface IndividualMatch {
   id: string;
   match_score_id: string;
@@ -57,3 +84,13 @@ export interface MatchScore {
   away_wins: number;
   individual_matches: IndividualMatch[];
 }
+
+export interface WinterMatch extends Match {
+  mp: string;       // e.g. "2:4"
+  sets: string;     // e.g. "5:9"
+  games: string;    // e.g. "48:61"
+  venue: string;
+  status: "played" | "open";
+}
+
+export type SubTab = "spielplan" | "tabelle";

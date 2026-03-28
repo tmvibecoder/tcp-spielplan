@@ -6,18 +6,24 @@ interface TeamFilterProps {
   activeTeams: Set<string>;
   toggleTeam: (id: string) => void;
   toggleCategory: (ids: string[]) => void;
+  categories?: { label: string; ids: string[] }[];
+  teams?: Team[];
 }
 
 export default function TeamFilter({
   activeTeams,
   toggleTeam,
   toggleCategory,
+  categories,
+  teams,
 }: TeamFilterProps) {
-  const teamMap = new Map<string, Team>(TEAMS.map((t) => [t.id, t]));
+  const cats = categories || CATEGORIES;
+  const teamList = teams || TEAMS;
+  const teamMap = new Map<string, Team>(teamList.map((t) => [t.id, t]));
 
   return (
     <div className="space-y-3">
-      {CATEGORIES.map((cat) => {
+      {cats.map((cat) => {
         const allActive = cat.ids.every((id) => activeTeams.has(id));
         return (
           <div key={cat.label}>
