@@ -8,8 +8,11 @@ interface ScoreBadgeProps {
 export default function ScoreBadge({ score, isHome }: ScoreBadgeProps) {
   const { home_wins, away_wins } = score;
 
-  // No scores yet
-  if (home_wins === 0 && away_wins === 0 && score.individual_matches.length === 0) {
+  // No scores yet — check if any individual match has actual data
+  const hasAnyData = score.individual_matches.some(
+    (im) => im.set1_home != null || im.set1_away != null || im.home_player || im.away_player
+  );
+  if (home_wins === 0 && away_wins === 0 && !hasAnyData) {
     return null;
   }
 
