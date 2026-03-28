@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import type { Match, Team, IndividualMatch } from "../types";
 import { getSinglesCount, getDoublesCount } from "../data/team-format";
-import { computeWinner, needsThirdSet } from "../utils/score-helpers";
+import { computeWinner, needsThirdSet, isRegularSetComplete, isChampionsTiebreakComplete } from "../utils/score-helpers";
 
 interface ScoreEntryProps {
   match: Match;
@@ -103,11 +103,15 @@ function parseNum(s: string): number | null {
   return isNaN(n) ? null : n;
 }
 
-/** Color for a set pair based on TCP perspective */
-function setColor(tcpScore: string, oppScore: string): string {
+/** Color for a set pair — only colored when set is actually complete */
+function setColor(tcpScore: string, oppScore: string, isTiebreak: boolean): string {
   const tcp = parseInt(tcpScore, 10);
   const opp = parseInt(oppScore, 10);
   if (isNaN(tcp) || isNaN(opp)) return "bg-slate-800/50 border-slate-700/30";
+  const complete = isTiebreak
+    ? isChampionsTiebreakComplete(tcp, opp)
+    : isRegularSetComplete(tcp, opp);
+  if (!complete) return "bg-slate-800/50 border-slate-700/30";
   if (tcp > opp) return "bg-emerald-900/25 border-emerald-700/30";
   if (opp > tcp) return "bg-red-900/20 border-red-700/25";
   return "bg-slate-800/50 border-slate-700/30";
@@ -408,7 +412,7 @@ function ScoreRow({
         oppVal={p.set1_opp}
         onTcp={(v) => updateField(posIdx, "set1_tcp", v)}
         onOpp={(v) => updateField(posIdx, "set1_opp", v)}
-        colorClass={setColor(p.set1_tcp, p.set1_opp)}
+        colorClass={setColor(p.set1_tcp, p.set1_opp, false)}
       />
 
       {/* Set 2 */}
@@ -417,17 +421,17 @@ function ScoreRow({
         oppVal={p.set2_opp}
         onTcp={(v) => updateField(posIdx, "set2_tcp", v)}
         onOpp={(v) => updateField(posIdx, "set2_opp", v)}
-        colorClass={setColor(p.set2_tcp, p.set2_opp)}
+        colorClass={setColor(p.set2_tcp, p.set2_opp, false)}
       />
 
-      {/* Set 3 (only if 1:1 in sets) */}
+      {/* Set 3 (only if 1:1 in sets) — Champions Tie-Break */}
       {need3 ? (
         <SetInputPair
           tcpVal={p.set3_tcp}
           oppVal={p.set3_opp}
           onTcp={(v) => updateField(posIdx, "set3_tcp", v)}
           onOpp={(v) => updateField(posIdx, "set3_opp", v)}
-          colorClass={setColor(p.set3_tcp, p.set3_opp)}
+          colorClass={setColor(p.set3_tcp, p.set3_opp, true)}
           isTiebreak
         />
       ) : (

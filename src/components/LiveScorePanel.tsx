@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import type { Match, Team, MatchScore, IndividualMatch } from "../types";
 import { getSinglesCount } from "../data/team-format";
-import { computeTeamScore } from "../utils/score-helpers";
+import { computeTeamScore, isRegularSetComplete, isChampionsTiebreakComplete } from "../utils/score-helpers";
 import ScoreEntry from "./ScoreEntry";
 
 interface LiveScorePanelProps {
@@ -34,8 +34,12 @@ function abbreviateClub(name: string): string {
   return short;
 }
 
-function setDisplayColor(tcpScore: number | null, oppScore: number | null): string {
+function setDisplayColor(tcpScore: number | null, oppScore: number | null, isTiebreak: boolean): string {
   if (tcpScore == null || oppScore == null) return "bg-slate-800/40 text-slate-500";
+  const complete = isTiebreak
+    ? isChampionsTiebreakComplete(tcpScore, oppScore)
+    : isRegularSetComplete(tcpScore, oppScore);
+  if (!complete) return "bg-slate-800/40 text-slate-400";
   if (tcpScore > oppScore) return "bg-emerald-900/25 text-emerald-200";
   if (oppScore > tcpScore) return "bg-red-900/20 text-red-300";
   return "bg-slate-800/40 text-slate-400";
@@ -156,6 +160,7 @@ export default function LiveScorePanel({
                   tcp: tcpScore(im, s as 1 | 2 | 3),
                   opp: oppScore(im, s as 1 | 2 | 3),
                   show: s <= 2 || hasSet3(im),
+                  isTiebreak: s === 3,
                 }))}
               />
             );
@@ -181,6 +186,7 @@ export default function LiveScorePanel({
                   tcp: tcpScore(im, s as 1 | 2 | 3),
                   opp: oppScore(im, s as 1 | 2 | 3),
                   show: s <= 2 || hasSet3(im),
+                  isTiebreak: s === 3,
                 }))}
               />
             );
@@ -264,7 +270,7 @@ function ReadOnlyRow({
 }: {
   label: string;
   won: boolean | null;
-  sets: { tcp: number | null; opp: number | null; show: boolean }[];
+  sets: { tcp: number | null; opp: number | null; show: boolean; isTiebreak: boolean }[];
 }) {
   return (
     <div className="flex items-center gap-1.5 py-1 px-1">
@@ -281,7 +287,7 @@ function ReadOnlyRow({
       {sets.map((s, i) => {
         if (!s.show) return <span key={i} className="w-[62px] shrink-0" />;
         const hasScore = s.tcp != null && s.opp != null;
-        const color = setDisplayColor(s.tcp, s.opp);
+        const color = setDisplayColor(s.tcp, s.opp, s.isTiebreak);
         return (
           <span
             key={i}

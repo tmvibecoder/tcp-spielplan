@@ -1,6 +1,35 @@
 import type { IndividualMatch } from "../types";
 import { getSinglesCount } from "../data/team-format";
 
+/**
+ * Check if a regular set (Set 1 or Set 2) is complete.
+ * Complete when: 6:0–6:4, 7:5, or 7:6 (tiebreak).
+ */
+export function isRegularSetComplete(a: number | null, b: number | null): boolean {
+  if (a == null || b == null) return false;
+  const high = Math.max(a, b);
+  const low = Math.min(a, b);
+  if (high < 6) return false;
+  // 6:0 through 6:4, or 7:5
+  if (high >= 6 && high - low >= 2) return true;
+  // 7:6 (tiebreak decided)
+  if (high === 7 && low === 6) return true;
+  return false;
+}
+
+/**
+ * Check if a Champions Tie-Break (3rd set) is complete.
+ * First to 10, must win by 2. Valid: 10:0–10:8, 11:9, 12:10, etc.
+ */
+export function isChampionsTiebreakComplete(a: number | null, b: number | null): boolean {
+  if (a == null || b == null) return false;
+  const high = Math.max(a, b);
+  const low = Math.min(a, b);
+  if (high < 10) return false;
+  if (high - low >= 2) return true;
+  return false;
+}
+
 /** Determine winner of an individual match from set scores */
 export function computeWinner(
   im: Pick<IndividualMatch, "set1_home" | "set1_away" | "set2_home" | "set2_away" | "set3_home" | "set3_away">
@@ -8,22 +37,22 @@ export function computeWinner(
   let homeSets = 0;
   let awaySets = 0;
 
-  // Set 1
-  if (im.set1_home != null && im.set1_away != null && (im.set1_home >= 6 || im.set1_away >= 6)) {
-    if (im.set1_home > im.set1_away) homeSets++;
-    else if (im.set1_away > im.set1_home) awaySets++;
+  // Set 1 — only count if complete
+  if (isRegularSetComplete(im.set1_home, im.set1_away)) {
+    if (im.set1_home! > im.set1_away!) homeSets++;
+    else if (im.set1_away! > im.set1_home!) awaySets++;
   }
 
-  // Set 2
-  if (im.set2_home != null && im.set2_away != null && (im.set2_home >= 6 || im.set2_away >= 6)) {
-    if (im.set2_home > im.set2_away) homeSets++;
-    else if (im.set2_away > im.set2_home) awaySets++;
+  // Set 2 — only count if complete
+  if (isRegularSetComplete(im.set2_home, im.set2_away)) {
+    if (im.set2_home! > im.set2_away!) homeSets++;
+    else if (im.set2_away! > im.set2_home!) awaySets++;
   }
 
-  // Set 3 / Match-Tiebreak
-  if (im.set3_home != null && im.set3_away != null && (im.set3_home > 0 || im.set3_away > 0)) {
-    if (im.set3_home > im.set3_away) homeSets++;
-    else if (im.set3_away > im.set3_home) awaySets++;
+  // Set 3 — Champions Tie-Break, only count if complete
+  if (isChampionsTiebreakComplete(im.set3_home, im.set3_away)) {
+    if (im.set3_home! > im.set3_away!) homeSets++;
+    else if (im.set3_away! > im.set3_home!) awaySets++;
   }
 
   if (homeSets >= 2) return "home";
@@ -74,19 +103,19 @@ export function getSetScores(im: IndividualMatch): string[] {
   return scores;
 }
 
-/** Check if sets are 1:1 (third set needed) */
+/** Check if sets are 1:1 (third set needed) — only counts completed sets */
 export function needsThirdSet(im: Pick<IndividualMatch, "set1_home" | "set1_away" | "set2_home" | "set2_away">): boolean {
-  if (im.set1_home == null || im.set1_away == null) return false;
-  if (im.set2_home == null || im.set2_away == null) return false;
+  if (!isRegularSetComplete(im.set1_home, im.set1_away)) return false;
+  if (!isRegularSetComplete(im.set2_home, im.set2_away)) return false;
 
   let homeSets = 0;
   let awaySets = 0;
 
-  if (im.set1_home > im.set1_away) homeSets++;
-  else if (im.set1_away > im.set1_home) awaySets++;
+  if (im.set1_home! > im.set1_away!) homeSets++;
+  else if (im.set1_away! > im.set1_home!) awaySets++;
 
-  if (im.set2_home > im.set2_away) homeSets++;
-  else if (im.set2_away > im.set2_home) awaySets++;
+  if (im.set2_home! > im.set2_away!) homeSets++;
+  else if (im.set2_away! > im.set2_home!) awaySets++;
 
   return homeSets === 1 && awaySets === 1;
 }
