@@ -156,7 +156,6 @@ export default function ScoreEntry({
 
   const opponent = match.isHome ? match.away : match.home;
   const oppShort = abbreviateClub(opponent);
-  const singlesCount = getSinglesCount(match.teamId);
 
   const updateField = useCallback(
     (idx: number, field: keyof PositionData, value: string) => {

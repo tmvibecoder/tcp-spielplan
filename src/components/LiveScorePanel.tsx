@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import type { Match, Team, MatchScore, IndividualMatch } from "../types";
 import { getSinglesCount } from "../data/team-format";
-import { computeWinner, computeTeamScore } from "../utils/score-helpers";
+import { computeTeamScore } from "../utils/score-helpers";
 import ScoreEntry from "./ScoreEntry";
 
 interface LiveScorePanelProps {
