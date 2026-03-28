@@ -43,6 +43,7 @@ function WinterMatchRow({
   onClick,
   isFavorite,
   onToggleFavorite,
+  score,
 }: {
   match: WinterMatch;
   team: Team;
@@ -50,6 +51,7 @@ function WinterMatchRow({
   onClick: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: (e: React.MouseEvent) => void;
+  score?: MatchScore;
 }) {
   const opponent = match.isHome ? match.away : match.home;
   const isPlayed = match.status === "played";
@@ -68,6 +70,18 @@ function WinterMatchRow({
 
   const [mpH, mpA] = match.mp.split(":").map(Number);
   const tcpMp = match.isHome ? `${mpH}:${mpA}` : `${mpA}:${mpH}`;
+
+  // Live score from Supabase (for "open" matches with partial results)
+  const liveScore = useMemo(() => {
+    if (isPlayed || !score) return null;
+    const hasAnyData = score.individual_matches.some(
+      (im) => im.set1_home != null || im.set1_away != null
+    );
+    if (!hasAnyData) return null;
+    const tcpW = match.isHome ? score.home_wins : score.away_wins;
+    const oppW = match.isHome ? score.away_wins : score.home_wins;
+    return { tcp: tcpW, opp: oppW };
+  }, [isPlayed, score, match.isHome]);
 
   return (
     <button
@@ -116,6 +130,10 @@ function WinterMatchRow({
               : match.sets.split(":").reverse().join(":")}
           </span>
         </div>
+      ) : liveScore ? (
+        <span className="text-xs font-bold px-2 py-0.5 rounded border bg-slate-700/70 text-slate-200 border-slate-600/50 shrink-0">
+          {liveScore.tcp}:{liveScore.opp}
+        </span>
       ) : (
         <span className="text-[10px] text-slate-500 italic shrink-0">
           offen
@@ -351,6 +369,7 @@ export default function WinterTimelineView({
                     onClick={() => toggleMatch(key)}
                     isFavorite={true}
                     onToggleFavorite={(e) => { e.stopPropagation(); toggleFavorite?.(key); }}
+                    score={scores.get(key)}
                   />
                   {openMatch === key && (
                     <WinterMatchDetail
@@ -500,6 +519,7 @@ export default function WinterTimelineView({
                                     onClick={() => toggleMatch(key)}
                                     isFavorite={favorites?.has(key)}
                                     onToggleFavorite={toggleFavorite ? (e) => { e.stopPropagation(); toggleFavorite(key); } : undefined}
+                                    score={scores.get(key)}
                                   />
                                   {openMatch === key && (
                                     <WinterMatchDetail

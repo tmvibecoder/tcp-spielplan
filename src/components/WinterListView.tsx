@@ -246,6 +246,10 @@ export default function WinterListView({ matches, teamMap, scores, onSaveScore, 
               const [mH, mA] = m.mp.split(":").map(Number);
               const fTcpMp = m.isHome ? `${mH}:${mA}` : `${mA}:${mH}`;
               const fResult = isPlayed ? (m.isHome ? scoreResult(m.mp) : scoreResult(m.mp.split(":").reverse().join(":"))) : null;
+              const fMatchScore = scores.get(key);
+              const fLive = (!isPlayed && fMatchScore && fMatchScore.individual_matches.some(
+                (im) => im.set1_home != null || im.set1_away != null
+              )) ? { tcp: m.isHome ? fMatchScore.home_wins : fMatchScore.away_wins, opp: m.isHome ? fMatchScore.away_wins : fMatchScore.home_wins } : null;
               return (
                 <div key={`fav-${key}`}>
                   <button
@@ -265,6 +269,8 @@ export default function WinterListView({ matches, teamMap, scores, onSaveScore, 
                     <span className="text-sm text-slate-200 truncate flex-1 min-w-0">{opponent}</span>
                     {isPlayed && fResult ? (
                       <span className={`text-xs font-bold px-2 py-0.5 rounded border shrink-0 ${resultStyles[fResult]}`}>{fTcpMp}</span>
+                    ) : fLive ? (
+                      <span className="text-xs font-bold px-2 py-0.5 rounded border bg-slate-700/70 text-slate-200 border-slate-600/50 shrink-0">{fLive.tcp}:{fLive.opp}</span>
                     ) : (
                       <span className="text-[10px] text-slate-500 italic shrink-0">offen</span>
                     )}
@@ -366,6 +372,15 @@ export default function WinterListView({ matches, teamMap, scores, onSaveScore, 
             const tcpMp = m.isHome ? `${mpH}:${mpA}` : `${mpA}:${mpH}`;
             const isOpen = openMatch === key;
 
+            // Live score for open matches
+            const matchScore = scores.get(key);
+            const liveScore = (!isPlayed && matchScore && matchScore.individual_matches.some(
+              (im) => im.set1_home != null || im.set1_away != null
+            )) ? {
+              tcp: m.isHome ? matchScore.home_wins : matchScore.away_wins,
+              opp: m.isHome ? matchScore.away_wins : matchScore.home_wins,
+            } : null;
+
             return (
               <React.Fragment key={key}>
                 <tr
@@ -410,6 +425,10 @@ export default function WinterListView({ matches, teamMap, scores, onSaveScore, 
                       {isPlayed && result ? (
                         <span className={`text-xs font-bold px-2 py-0.5 rounded border ${resultStyles[result]}`}>
                           {tcpMp}
+                        </span>
+                      ) : liveScore ? (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded border bg-slate-700/70 text-slate-200 border-slate-600/50">
+                          {liveScore.tcp}:{liveScore.opp}
                         </span>
                       ) : (
                         <span className="text-[10px] text-slate-500 italic">offen</span>
