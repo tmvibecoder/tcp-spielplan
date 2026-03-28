@@ -7,8 +7,6 @@ interface SeasonDropdownProps {
 }
 
 export default function SeasonDropdown({ seasons, activeSeason, onChange }: SeasonDropdownProps) {
-  const current = seasons.find((s) => s.id === activeSeason);
-
   return (
     <div className="relative inline-block">
       <select
