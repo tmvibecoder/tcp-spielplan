@@ -121,10 +121,10 @@ export const WINTER_STANDINGS: LeagueStandings[] = [
     leagueName: "Südliga 2 · Gr. 117",
     ownRank: 4,
     entries: [
-      { rank: 1, club: "SV Heimstetten",          isOwnClub: false, points: "6:0",  matchPoints: "16:2",  sets: "34:6",   crossResults: ["***", "4:2", "6:0", "0:0", "6:0"] },
+      { rank: 1, club: "SV Heimstetten",          isOwnClub: false, points: "8:0",  matchPoints: "22:2",  sets: "46:8",   crossResults: ["***", "4:2", "6:0", "6:0", "6:0"] },
       { rank: 2, club: "SV Forsting-Pfaffing",    isOwnClub: false, points: "5:3",  matchPoints: "17:7",  sets: "36:17",  crossResults: ["2:4", "***", "3:3", "6:0", "6:0"] },
       { rank: 3, club: "TeG Kirchheim",           isOwnClub: false, points: "4:4",  matchPoints: "12:12", sets: "25:28",  crossResults: ["0:6", "3:3", "***", "3:3", "6:0"] },
-      { rank: 4, club: "TC Pliening II",           isOwnClub: true,  points: "3:3",  matchPoints: "7:11",  sets: "17:24",  crossResults: ["0:0", "0:6", "3:3", "***", "4:2"] },
+      { rank: 4, club: "TC Pliening II",           isOwnClub: true,  points: "3:5",  matchPoints: "7:17",  sets: "19:36",  crossResults: ["0:6", "0:6", "3:3", "***", "4:2"] },
       { rank: 5, club: "ATSV Kirchseeon",          isOwnClub: false, points: "0:8",  matchPoints: "2:22",  sets: "8:45",   crossResults: ["0:6", "0:6", "0:6", "2:4", "***"] },
     ],
   },
@@ -164,7 +164,7 @@ export const WINTER_MATCHES: WinterMatch[] = [
   { teamId: "w-herren30", date: "2026-03-15", time: "15:00", day: "So", home: "TC Pliening", away: "WB Fideliopark München", isHome: true, mp: "3:3", sets: "6:7", games: "50:63", venue: "Raschke Taufkirchen", status: "played" },
 
   // ── Herren 30 II Südliga 2 Gr. 117 ──
-  { teamId: "w-herren30ii", date: "2026-03-28", time: "16:00", day: "Sa", home: "TC Pliening II", away: "SV Heimstetten", isHome: true, mp: "0:0", sets: "0:0", games: "0:0", venue: "Tennispark Anzing", status: "open" },
+  { teamId: "w-herren30ii", date: "2026-03-28", time: "16:00", day: "Sa", home: "TC Pliening II", away: "SV Heimstetten", isHome: true, mp: "0:6", sets: "2:12", games: "33:67", venue: "Tennispark Anzing", status: "played" },
 
   // ── Damen 40 Südliga 2 Gr. 192 ──
   { teamId: "w-damen40", date: "2025-10-05", time: "12:00", day: "So", home: "TC Pliening", away: "TC Cosima München", isHome: true, mp: "1:5", sets: "4:10", games: "40:52", venue: "Tennispark Anzing", status: "played" },
