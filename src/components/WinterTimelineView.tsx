@@ -20,6 +20,9 @@ interface WinterTimelineViewProps {
     matchTime: string,
     individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
   ) => Promise<{ success: boolean; error?: string }>;
+  allMatches?: WinterMatch[];
+  favorites?: Set<string>;
+  toggleFavorite?: (key: string) => void;
 }
 
 function getYearFromMonth(monthKey: string): string {
@@ -38,11 +41,15 @@ function WinterMatchRow({
   team,
   isOpen,
   onClick,
+  isFavorite,
+  onToggleFavorite,
 }: {
   match: WinterMatch;
   team: Team;
   isOpen: boolean;
   onClick: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: (e: React.MouseEvent) => void;
 }) {
   const opponent = match.isHome ? match.away : match.home;
   const isPlayed = match.status === "played";
@@ -113,6 +120,17 @@ function WinterMatchRow({
         <span className="text-[10px] text-slate-500 italic shrink-0">
           offen
         </span>
+      )}
+
+      {onToggleFavorite && (
+        <button
+          onClick={onToggleFavorite}
+          className={`shrink-0 text-sm p-0.5 transition-colors ${
+            isFavorite ? "text-amber-400" : "text-slate-600 hover:text-slate-400"
+          }`}
+        >
+          {isFavorite ? "★" : "☆"}
+        </button>
       )}
 
       <span className="ml-1 text-slate-500 text-xs group-hover:text-slate-300 transition-colors shrink-0">
@@ -230,8 +248,18 @@ export default function WinterTimelineView({
   teamMap,
   scores,
   onSaveScore,
+  allMatches,
+  favorites,
+  toggleFavorite,
 }: WinterTimelineViewProps) {
   const [openMatch, setOpenMatch] = useState<string | null>(null);
+
+  const favoriteMatches = useMemo(() => {
+    if (!favorites || favorites.size === 0 || !allMatches) return [];
+    return allMatches
+      .filter((m) => favorites.has(`${m.teamId}-${m.date}-${m.time}`))
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  }, [allMatches, favorites]);
 
   const grouped = useMemo(() => {
     const sorted = [...matches].sort(
@@ -295,6 +323,51 @@ export default function WinterTimelineView({
 
   return (
     <div className="space-y-10">
+      {/* Meine Spiele — Favorited matches pinned to top */}
+      {favoriteMatches.length > 0 && (
+        <div>
+          <div
+            className="flex items-center justify-between px-4 py-3 rounded-xl mb-4"
+            style={{ backgroundColor: "rgba(245, 158, 11, 0.15)", borderLeft: "4px solid #f59e0b" }}
+          >
+            <h2 className="text-lg font-extrabold text-amber-200">
+              ★ Meine Spiele
+            </h2>
+            <span className="text-xs font-semibold text-amber-300">
+              {favoriteMatches.length}
+            </span>
+          </div>
+          <div className="space-y-1 bg-amber-900/10 border border-amber-500/20 rounded-xl p-2">
+            {favoriteMatches.map((m) => {
+              const key = matchKey(m);
+              const team = teamMap.get(m.teamId);
+              if (!team) return null;
+              return (
+                <div key={`fav-${key}`}>
+                  <WinterMatchRow
+                    match={m}
+                    team={team}
+                    isOpen={openMatch === key}
+                    onClick={() => toggleMatch(key)}
+                    isFavorite={true}
+                    onToggleFavorite={(e) => { e.stopPropagation(); toggleFavorite?.(key); }}
+                  />
+                  {openMatch === key && (
+                    <WinterMatchDetail
+                      match={m}
+                      team={team}
+                      onClose={() => setOpenMatch(null)}
+                      score={scores.get(key)}
+                      onSaveScore={onSaveScore}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {grouped.months.map((month) => {
         const colors = WINTER_MONTH_COLORS[month.key];
         const monthName = WINTER_MONTHS[month.key] || month.key;
@@ -425,6 +498,8 @@ export default function WinterTimelineView({
                                     team={team}
                                     isOpen={openMatch === key}
                                     onClick={() => toggleMatch(key)}
+                                    isFavorite={favorites?.has(key)}
+                                    onToggleFavorite={toggleFavorite ? (e) => { e.stopPropagation(); toggleFavorite(key); } : undefined}
                                   />
                                   {openMatch === key && (
                                     <WinterMatchDetail

@@ -23,6 +23,7 @@ import CalendarDownloads from "./components/CalendarDownloads";
 import Footer from "./components/Footer";
 import { Impressum, Datenschutz } from "./components/LegalPages";
 import { useLiveScores } from "./hooks/useLiveScores";
+import { useFavorites } from "./hooks/useFavorites";
 
 type View = "timeline" | "list";
 type Page = "spielplan" | "impressum" | "datenschutz";
@@ -131,6 +132,7 @@ function App() {
   }, [isSummer]);
 
   const { scores, saveScores } = useLiveScores();
+  const { favorites, toggleFavorite } = useFavorites();
 
   const handlePdf = useCallback(() => {
     generatePrintHTML(MATCHES, activeSummerTeams);
@@ -192,9 +194,9 @@ function App() {
 
                 {/* Main View */}
                 {view === "timeline" ? (
-                  <TimelineView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} />
+                  <TimelineView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} allMatches={MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
                 ) : (
-                  <ListView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} />
+                  <ListView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} allMatches={MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
                 )}
 
                 {/* Calendar Downloads */}
@@ -222,9 +224,9 @@ function App() {
 
                 {/* Winter View */}
                 {view === "timeline" ? (
-                  <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} />
+                  <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} allMatches={WINTER_MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
                 ) : (
-                  <WinterListView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} />
+                  <WinterListView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} allMatches={WINTER_MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
                 )}
 
                 {/* Calendar Downloads */}

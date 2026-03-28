@@ -20,6 +20,9 @@ interface TimelineViewProps {
     matchTime: string,
     individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
   ) => Promise<{ success: boolean; error?: string }>;
+  allMatches?: Match[];
+  favorites?: Set<string>;
+  toggleFavorite?: (key: string) => void;
 }
 
 interface GroupedData {
@@ -39,8 +42,15 @@ interface GroupedData {
   }[];
 }
 
-export default function TimelineView({ matches, teamMap, scores, onSaveScore }: TimelineViewProps) {
+export default function TimelineView({ matches, teamMap, scores, onSaveScore, allMatches, favorites, toggleFavorite }: TimelineViewProps) {
   const [openMatch, setOpenMatch] = useState<string | null>(null);
+
+  const favoriteMatches = useMemo(() => {
+    if (!favorites || favorites.size === 0 || !allMatches) return [];
+    return allMatches
+      .filter((m) => favorites.has(`${m.teamId}-${m.date}-${m.time}`))
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  }, [allMatches, favorites]);
 
   const grouped = useMemo<GroupedData>(() => {
     // Sort matches
@@ -104,6 +114,52 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore }: 
 
   return (
     <div className="space-y-10">
+      {/* Meine Spiele — Favorited matches pinned to top */}
+      {favoriteMatches.length > 0 && (
+        <div>
+          <div
+            className="flex items-center justify-between px-4 py-3 rounded-xl mb-4"
+            style={{ backgroundColor: "rgba(245, 158, 11, 0.15)", borderLeft: "4px solid #f59e0b" }}
+          >
+            <h2 className="text-lg font-extrabold text-amber-200">
+              ★ Meine Spiele
+            </h2>
+            <span className="text-xs font-semibold text-amber-300">
+              {favoriteMatches.length}
+            </span>
+          </div>
+          <div className="space-y-1 bg-amber-900/10 border border-amber-500/20 rounded-xl p-2">
+            {favoriteMatches.map((m) => {
+              const key = matchKey(m);
+              const team = teamMap.get(m.teamId);
+              if (!team) return null;
+              return (
+                <div key={`fav-${key}`}>
+                  <MatchRow
+                    match={m}
+                    team={team}
+                    isOpen={openMatch === key}
+                    onClick={() => toggleMatch(key)}
+                    score={scores.get(key)}
+                    isFavorite={true}
+                    onToggleFavorite={(e) => { e.stopPropagation(); toggleFavorite?.(key); }}
+                  />
+                  {openMatch === key && (
+                    <MatchDetail
+                      match={m}
+                      team={team}
+                      onClose={() => setOpenMatch(null)}
+                      score={scores.get(key)}
+                      onSaveScore={onSaveScore}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {grouped.months.map((month) => {
         const colors = MONTH_COLORS[month.key];
         const monthName = MONTHS[month.key] || month.key;
@@ -216,6 +272,8 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore }: 
                                   isOpen={openMatch === key}
                                   onClick={() => toggleMatch(key)}
                                   score={scores.get(key)}
+                                  isFavorite={favorites?.has(key)}
+                                  onToggleFavorite={toggleFavorite ? (e) => { e.stopPropagation(); toggleFavorite(key); } : undefined}
                                 />
                                 {openMatch === key && (
                                   <MatchDetail

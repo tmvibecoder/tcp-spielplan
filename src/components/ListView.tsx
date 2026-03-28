@@ -15,6 +15,9 @@ interface ListViewProps {
     matchTime: string,
     individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
   ) => Promise<{ success: boolean; error?: string }>;
+  allMatches?: Match[];
+  favorites?: Set<string>;
+  toggleFavorite?: (key: string) => void;
 }
 
 interface ListGroup {
@@ -27,8 +30,15 @@ interface ListGroup {
   match?: Match;
 }
 
-export default function ListView({ matches, teamMap, scores, onSaveScore }: ListViewProps) {
+export default function ListView({ matches, teamMap, scores, onSaveScore, allMatches, favorites, toggleFavorite }: ListViewProps) {
   const [openMatch, setOpenMatch] = useState<string | null>(null);
+
+  const favoriteMatches = useMemo(() => {
+    if (!favorites || favorites.size === 0 || !allMatches) return [];
+    return allMatches
+      .filter((m) => favorites.has(`${m.teamId}-${m.date}-${m.time}`))
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  }, [allMatches, favorites]);
 
   const rows = useMemo<ListGroup[]>(() => {
     const sorted = [...matches].sort(
@@ -103,6 +113,57 @@ export default function ListView({ matches, teamMap, scores, onSaveScore }: List
 
   return (
     <div className="overflow-x-auto">
+      {/* Meine Spiele — Favorited matches pinned to top */}
+      {favoriteMatches.length > 0 && (
+        <div className="mb-6">
+          <div
+            className="flex items-center justify-between px-4 py-3 rounded-xl mb-4"
+            style={{ backgroundColor: "rgba(245, 158, 11, 0.15)", borderLeft: "4px solid #f59e0b" }}
+          >
+            <h2 className="text-lg font-extrabold text-amber-200">★ Meine Spiele</h2>
+            <span className="text-xs font-semibold text-amber-300">{favoriteMatches.length}</span>
+          </div>
+          <div className="space-y-1 bg-amber-900/10 border border-amber-500/20 rounded-xl p-2">
+            {favoriteMatches.map((m) => {
+              const key = matchKey(m);
+              const team = teamMap.get(m.teamId);
+              if (!team) return null;
+              const opponent = m.isHome ? m.away : m.home;
+              return (
+                <div key={`fav-${key}`}>
+                  <button
+                    onClick={() => toggleMatch(key)}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-700/30 transition-colors text-left"
+                  >
+                    <span className="text-xs text-slate-400 w-11 shrink-0 font-mono">{m.time}</span>
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold shrink-0 border"
+                      style={{ borderColor: team.color + "40", backgroundColor: team.color + "18", color: team.color }}
+                    >
+                      {team.emoji} {team.shortLabel}
+                    </span>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${m.isHome ? "bg-green-900/60 text-green-200" : "bg-yellow-900/60 text-yellow-200"}`}>
+                      {m.isHome ? "H" : "A"}
+                    </span>
+                    <span className="text-sm text-slate-200 truncate flex-1 min-w-0">{opponent}</span>
+                    {scores.get(key) && <ScoreBadge score={scores.get(key)!} isHome={m.isHome} />}
+                    <span
+                      role="button"
+                      onClick={(e) => { e.stopPropagation(); toggleFavorite?.(key); }}
+                      className="shrink-0 text-sm text-amber-400 p-0.5"
+                    >★</span>
+                    <span className="text-slate-500 text-xs shrink-0">{openMatch === key ? "▲" : "▼"}</span>
+                  </button>
+                  {openMatch === key && (
+                    <MatchDetail match={m} team={team} onClose={() => setOpenMatch(null)} score={scores.get(key)} onSaveScore={onSaveScore} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <table className="w-full text-sm">
         <thead>
           <tr className="text-[11px] text-slate-500 uppercase tracking-wider">
@@ -218,6 +279,17 @@ export default function ListView({ matches, teamMap, scores, onSaveScore }: List
                     {scores.get(key) && (
                       <span className="px-1 py-2 shrink-0">
                         <ScoreBadge score={scores.get(key)!} isHome={m.isHome} />
+                      </span>
+                    )}
+                    {toggleFavorite && (
+                      <span
+                        role="button"
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(key); }}
+                        className={`shrink-0 text-sm px-1 py-2 transition-colors ${
+                          favorites?.has(key) ? "text-amber-400" : "text-slate-600 hover:text-slate-400"
+                        }`}
+                      >
+                        {favorites?.has(key) ? "★" : "☆"}
                       </span>
                     )}
                     <span className="px-3 py-2 text-xs text-slate-500 shrink-0">

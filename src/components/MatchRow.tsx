@@ -7,9 +7,11 @@ interface MatchRowProps {
   isOpen: boolean;
   onClick: () => void;
   score?: MatchScore;
+  isFavorite?: boolean;
+  onToggleFavorite?: (e: React.MouseEvent) => void;
 }
 
-export default function MatchRow({ match, team, isOpen, onClick, score }: MatchRowProps) {
+export default function MatchRow({ match, team, isOpen, onClick, score, isFavorite, onToggleFavorite }: MatchRowProps) {
   const opponent = match.isHome ? match.away : match.home;
 
   return (
@@ -48,7 +50,18 @@ export default function MatchRow({ match, team, isOpen, onClick, score }: MatchR
 
       {score && <ScoreBadge score={score} isHome={match.isHome} />}
 
-      <span className="ml-auto text-slate-500 text-xs group-hover:text-slate-300 transition-colors shrink-0">
+      {onToggleFavorite && (
+        <button
+          onClick={onToggleFavorite}
+          className={`shrink-0 text-sm p-0.5 transition-colors ${
+            isFavorite ? "text-amber-400" : "text-slate-600 hover:text-slate-400"
+          }`}
+        >
+          {isFavorite ? "★" : "☆"}
+        </button>
+      )}
+
+      <span className={`${onToggleFavorite ? "" : "ml-auto "}text-slate-500 text-xs group-hover:text-slate-300 transition-colors shrink-0`}>
         {isOpen ? "▲" : "▼"}
       </span>
     </button>
