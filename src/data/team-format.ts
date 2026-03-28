@@ -14,6 +14,14 @@ export const TEAM_FORMAT: Record<string, TeamFormat> = {
   damen40: "6er",
   damen50: "6er",
   damen50ii: "6er",
+  // Winter Mannschaften
+  "w-herren40": "6er",
+  "w-herren50": "6er",
+  "w-herren30": "6er",
+  "w-herren30ii": "6er",
+  "w-damen": "6er",
+  "w-damen40": "6er",
+  "w-damen50": "6er",
   // 4er Mannschaften (4 Einzel + 2 Doppel)
   herren30: "4er",
   juniorinnen18: "4er",
