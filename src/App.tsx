@@ -222,9 +222,9 @@ function App() {
 
                 {/* Winter View */}
                 {view === "timeline" ? (
-                  <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} />
+                  <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} />
                 ) : (
-                  <WinterListView matches={filteredWinterMatches} teamMap={winterTeamMap} />
+                  <WinterListView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} />
                 )}
 
                 {/* Calendar Downloads */}

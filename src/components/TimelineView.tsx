@@ -136,14 +136,14 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore }: 
             <div className="space-y-5 relative">
               {/* Vertical timeline line */}
               <div
-                className="absolute left-[23px] top-0 bottom-0 w-px"
+                className="absolute left-[15px] top-0 bottom-0 w-px"
                 style={{ backgroundColor: colors?.accent + "30" }}
               />
 
               {month.weeks.map((week, weekIdx) => (
                 <div
                   key={week.key}
-                  className="rounded-xl border overflow-hidden ml-6"
+                  className="rounded-xl border overflow-hidden ml-4"
                   style={{
                     backgroundColor: colors?.weekBgs?.[weekIdx % colors.weekBgs.length] || colors?.bg,
                     borderColor: colors?.border,
@@ -180,7 +180,7 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore }: 
                       <div key={dayData.date} className="flex" style={{ backgroundColor: dayStyle.rowBg }}>
                         {/* Date sidebar */}
                         <div
-                          className="shrink-0 w-16 flex flex-col items-center justify-center py-3 border-r"
+                          className="shrink-0 w-12 flex flex-col items-center justify-center py-2 border-r"
                           style={{ borderColor: colors?.border, backgroundColor: dayStyle.sidebarBg }}
                         >
                           <span

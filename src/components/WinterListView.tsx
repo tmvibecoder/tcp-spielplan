@@ -1,11 +1,19 @@
-import { useMemo } from "react";
-import type { WinterMatch, Team } from "../types";
+import React, { useMemo, useState } from "react";
+import type { WinterMatch, Team, MatchScore, IndividualMatch } from "../types";
 import { WINTER_MONTHS, WINTER_MONTH_COLORS } from "../data/winter-2526";
-import { getMonthKey, getWeekKey, weekendLabel, formatDate } from "../utils/date-helpers";
+import { getMonthKey, getWeekKey, weekendLabel, formatDate, formatDateFull } from "../utils/date-helpers";
+import LiveScorePanel from "./LiveScorePanel";
 
 interface WinterListViewProps {
   matches: WinterMatch[];
   teamMap: Map<string, Team>;
+  scores: Map<string, MatchScore>;
+  onSaveScore: (
+    teamId: string,
+    matchDate: string,
+    matchTime: string,
+    individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 interface ListGroup {
@@ -29,7 +37,116 @@ function getYearFromMonth(monthKey: string): string {
   return monthKey.split("-")[0];
 }
 
-export default function WinterListView({ matches, teamMap }: WinterListViewProps) {
+function WinterListMatchDetail({
+  match,
+  team,
+  onClose,
+  score,
+  onSaveScore,
+}: {
+  match: WinterMatch;
+  team: Team;
+  onClose: () => void;
+  score?: MatchScore;
+  onSaveScore: (
+    teamId: string,
+    matchDate: string,
+    matchTime: string,
+    individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
+  ) => Promise<{ success: boolean; error?: string }>;
+}) {
+  const opponent = match.isHome ? match.away : match.home;
+  const isPlayed = match.status === "played";
+
+  const [mpH, mpA] = match.mp.split(":").map(Number);
+  const tcpMp = match.isHome ? `${mpH}:${mpA}` : `${mpA}:${mpH}`;
+  const tcpSets = match.isHome
+    ? match.sets
+    : match.sets.split(":").reverse().join(":");
+  const tcpGames = match.isHome
+    ? match.games
+    : match.games.split(":").reverse().join(":");
+
+  return (
+    <tr>
+      <td colSpan={6} className="px-0 py-0">
+        <div className="animate-fadeIn bg-slate-800/50 border border-slate-700/50 rounded-lg p-4 mx-2 my-2">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <p className="text-sm font-bold text-slate-100">
+                {match.isHome
+                  ? `TC Pliening vs. ${opponent}`
+                  : `${opponent} vs. TC Pliening`}
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {team.emoji} {team.label} · {team.league}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-slate-500 hover:text-slate-200 text-lg leading-none p-1 transition-colors"
+            >
+              &#10005;
+            </button>
+          </div>
+
+          {/* Info grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                Termin
+              </p>
+              <p className="text-sm text-slate-200">
+                {formatDateFull(match.date, match.day)}
+              </p>
+              <p className="text-sm text-slate-200">{match.time} Uhr</p>
+            </div>
+
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                Spielort
+              </p>
+              <p className="text-sm text-slate-200">{match.venue}</p>
+            </div>
+          </div>
+
+          {/* Official team result */}
+          {isPlayed && (
+            <div className="bg-slate-900/50 rounded-lg p-3 mb-3">
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                Mannschaftsergebnis
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <span className="text-xs text-slate-400">TCP</span>
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-200">
+                  <span>MP {tcpMp}</span>
+                  <span className="text-slate-600">|</span>
+                  <span>S {tcpSets}</span>
+                  <span className="text-slate-600">|</span>
+                  <span>Sp {tcpGames}</span>
+                </div>
+                <span className="text-xs text-slate-500">{opponent}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Live Score Panel */}
+          <LiveScorePanel
+            match={match}
+            team={team}
+            score={score}
+            onSave={onSaveScore}
+          />
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+export default function WinterListView({ matches, teamMap, scores, onSaveScore }: WinterListViewProps) {
+  const [openMatch, setOpenMatch] = useState<string | null>(null);
+
   const rows = useMemo<ListGroup[]>(() => {
     const sorted = [...matches].sort(
       (a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)
@@ -92,6 +209,10 @@ export default function WinterListView({ matches, teamMap }: WinterListViewProps
     loss: "bg-red-900/40 text-red-300 border-red-500/30",
     draw: "bg-amber-900/40 text-amber-200 border-amber-500/30",
   };
+
+  const matchKey = (m: WinterMatch) => `${m.teamId}-${m.date}-${m.time}`;
+  const toggleMatch = (key: string) =>
+    setOpenMatch((prev) => (prev === key ? null : key));
 
   return (
     <div className="overflow-x-auto">
@@ -160,7 +281,7 @@ export default function WinterListView({ matches, teamMap }: WinterListViewProps
 
             // Match row
             const m = row.match!;
-            const key = `${m.teamId}-${m.date}-${m.time}`;
+            const key = matchKey(m);
             const team = teamMap.get(m.teamId);
             if (!team) return null;
             const opponent = m.isHome ? m.away : m.home;
@@ -174,55 +295,72 @@ export default function WinterListView({ matches, teamMap }: WinterListViewProps
             ) : null;
             const [mpH, mpA] = m.mp.split(":").map(Number);
             const tcpMp = m.isHome ? `${mpH}:${mpA}` : `${mpA}:${mpH}`;
+            const isOpen = openMatch === key;
 
             return (
-              <tr
-                key={key}
-                className="hover:bg-slate-700/30 transition-colors"
-                style={{ backgroundColor: multiMatch ? undefined : rowWeekBg }}
-              >
-                <td className="px-3 py-2 text-xs text-slate-400 w-24 shrink-0">
-                  {m.day} {formatDate(m.date)}
-                </td>
-                <td className="px-3 py-2 text-xs text-slate-400 w-14 shrink-0 font-mono">
-                  {m.time}
-                </td>
-                <td className="px-3 py-2 shrink-0">
-                  <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border"
-                    style={{
-                      borderColor: team.color + "40",
-                      backgroundColor: team.color + "18",
-                      color: team.color,
-                    }}
-                  >
-                    {team.emoji} {team.shortLabel}
-                  </span>
-                </td>
-                <td className="px-2 py-2 shrink-0">
-                  <span
-                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                      m.isHome
-                        ? "bg-green-900/60 text-green-200"
-                        : "bg-yellow-900/60 text-yellow-200"
-                    }`}
-                  >
-                    {m.isHome ? "H" : "A"}
-                  </span>
-                </td>
-                <td className="px-3 py-2 text-sm text-slate-200 truncate min-w-0">
-                  {opponent}
-                </td>
-                <td className="px-3 py-2 text-right shrink-0">
-                  {isPlayed && result ? (
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded border ${resultStyles[result]}`}>
-                      {tcpMp}
+              <React.Fragment key={key}>
+                <tr
+                  onClick={() => toggleMatch(key)}
+                  className="hover:bg-slate-700/30 transition-colors cursor-pointer"
+                  style={{ backgroundColor: multiMatch ? undefined : rowWeekBg }}
+                >
+                  <td className="px-3 py-2 text-xs text-slate-400 w-24 shrink-0">
+                    {m.day} {formatDate(m.date)}
+                  </td>
+                  <td className="px-3 py-2 text-xs text-slate-400 w-14 shrink-0 font-mono">
+                    {m.time}
+                  </td>
+                  <td className="px-3 py-2 shrink-0">
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border"
+                      style={{
+                        borderColor: team.color + "40",
+                        backgroundColor: team.color + "18",
+                        color: team.color,
+                      }}
+                    >
+                      {team.emoji} {team.shortLabel}
                     </span>
-                  ) : (
-                    <span className="text-[10px] text-slate-500 italic">offen</span>
-                  )}
-                </td>
-              </tr>
+                  </td>
+                  <td className="px-2 py-2 shrink-0">
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        m.isHome
+                          ? "bg-green-900/60 text-green-200"
+                          : "bg-yellow-900/60 text-yellow-200"
+                      }`}
+                    >
+                      {m.isHome ? "H" : "A"}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 text-sm text-slate-200 truncate min-w-0">
+                    {opponent}
+                  </td>
+                  <td className="px-3 py-2 text-right shrink-0">
+                    <div className="flex items-center justify-end gap-1.5">
+                      {isPlayed && result ? (
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded border ${resultStyles[result]}`}>
+                          {tcpMp}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-slate-500 italic">offen</span>
+                      )}
+                      <span className="text-slate-500 text-xs">
+                        {isOpen ? "▲" : "▼"}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+                {isOpen && (
+                  <WinterListMatchDetail
+                    match={m}
+                    team={team}
+                    onClose={() => setOpenMatch(null)}
+                    score={scores.get(key)}
+                    onSaveScore={onSaveScore}
+                  />
+                )}
+              </React.Fragment>
             );
           })}
         </tbody>
