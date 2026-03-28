@@ -18,7 +18,7 @@ export const TEAM_FORMAT: Record<string, TeamFormat> = {
   "w-herren40": "6er",
   "w-herren50": "6er",
   "w-herren30": "6er",
-  "w-herren30ii": "6er",
+  "w-herren30ii": "4er",
   "w-damen": "6er",
   "w-damen40": "6er",
   "w-damen50": "6er",

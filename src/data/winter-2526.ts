@@ -163,6 +163,9 @@ export const WINTER_MATCHES: WinterMatch[] = [
   { teamId: "w-herren30", date: "2026-02-21", time: "17:00", day: "Sa", home: "TC Thalkirchen München", away: "TC Pliening", isHome: false, mp: "0:6", sets: "2:12", games: "33:70", venue: "tenniscoMpany Marschand München", status: "played" },
   { teamId: "w-herren30", date: "2026-03-15", time: "15:00", day: "So", home: "TC Pliening", away: "WB Fideliopark München", isHome: true, mp: "3:3", sets: "6:7", games: "50:63", venue: "Raschke Taufkirchen", status: "played" },
 
+  // ── Herren 30 II Südliga 2 Gr. 117 ──
+  { teamId: "w-herren30ii", date: "2026-03-28", time: "16:00", day: "Sa", home: "TC Pliening II", away: "SV Heimstetten", isHome: true, mp: "0:0", sets: "0:0", games: "0:0", venue: "Tennispark Anzing", status: "open" },
+
   // ── Damen 40 Südliga 2 Gr. 192 ──
   { teamId: "w-damen40", date: "2025-10-05", time: "12:00", day: "So", home: "TC Pliening", away: "TC Cosima München", isHome: true, mp: "1:5", sets: "4:10", games: "40:52", venue: "Tennispark Anzing", status: "played" },
   { teamId: "w-damen40", date: "2025-11-29", time: "17:00", day: "Sa", home: "TeG Kirchheim", away: "TC Pliening", isHome: false, mp: "3:3", sets: "7:6", games: "53:46", venue: "TSV Haar", status: "played" },
