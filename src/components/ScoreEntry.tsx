@@ -386,6 +386,7 @@ export default function ScoreEntry({
                   oppPlayer={p.opp_player}
                   onTcpChange={(v) => updateField(posIdx, "tcp_player", v)}
                   onOppChange={(v) => updateField(posIdx, "opp_player", v)}
+                  onClear={() => { updateField(posIdx, "tcp_player", ""); updateField(posIdx, "opp_player", ""); }}
                   tcpPlaceholder={`Spieler ${idx + 1}`}
                   oppPlaceholder={`Spieler ${idx + 1}`}
                 />
@@ -404,6 +405,7 @@ export default function ScoreEntry({
                   oppPlayer={p.opp_player}
                   onTcpChange={(v) => updateField(posIdx, "tcp_player", v)}
                   onOppChange={(v) => updateField(posIdx, "opp_player", v)}
+                  onClear={() => { updateField(posIdx, "tcp_player", ""); updateField(posIdx, "opp_player", ""); }}
                   tcpPlaceholder={`Doppel ${idx + 1}`}
                   oppPlaceholder={`Doppel ${idx + 1}`}
                 />
@@ -595,6 +597,7 @@ function LineupRow({
   oppPlayer,
   onTcpChange,
   onOppChange,
+  onClear,
   tcpPlaceholder,
   oppPlaceholder,
 }: {
@@ -603,9 +606,11 @@ function LineupRow({
   oppPlayer: string;
   onTcpChange: (v: string) => void;
   onOppChange: (v: string) => void;
+  onClear: () => void;
   tcpPlaceholder: string;
   oppPlaceholder: string;
 }) {
+  const hasData = !!(tcpPlayer || oppPlayer);
   return (
     <div className="flex items-center gap-2 px-1">
       <span className="text-[11px] font-bold text-slate-500 w-8 shrink-0">{label}</span>
@@ -623,6 +628,20 @@ function LineupRow({
         placeholder={oppPlaceholder}
         className="flex-1 bg-slate-800/60 border border-slate-700/40 rounded px-2 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-sky-500/40 text-right min-w-0"
       />
+      <button
+        onClick={onClear}
+        title="Zeile löschen"
+        className={`shrink-0 p-0.5 rounded transition-colors ${
+          hasData
+            ? "text-slate-400 hover:text-red-400 hover:bg-red-900/20"
+            : "text-slate-700 cursor-default"
+        }`}
+        disabled={!hasData}
+      >
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
     </div>
   );
 }
