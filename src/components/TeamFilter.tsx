@@ -1,5 +1,6 @@
 import { CATEGORIES } from "../data/constants";
 import { TEAMS } from "../data/teams";
+import { BTV_VEREIN_URL } from "../data/constants";
 import type { Team } from "../types";
 
 interface TeamFilterProps {
@@ -8,6 +9,8 @@ interface TeamFilterProps {
   toggleCategory: (ids: string[]) => void;
   categories?: { label: string; ids: string[] }[];
   teams?: Team[];
+  homeOnly: boolean;
+  setHomeOnly: (v: boolean) => void;
 }
 
 export default function TeamFilter({
@@ -16,6 +19,8 @@ export default function TeamFilter({
   toggleCategory,
   categories,
   teams,
+  homeOnly,
+  setHomeOnly,
 }: TeamFilterProps) {
   const cats = categories || CATEGORIES;
   const teamList = teams || TEAMS;
@@ -59,6 +64,28 @@ export default function TeamFilter({
           </div>
         );
       })}
+
+      {/* Bottom row: Nur Heim toggle + BTV link */}
+      <div className="flex items-center gap-3 pt-1">
+        <button
+          onClick={() => setHomeOnly(!homeOnly)}
+          className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border transition-colors ${
+            homeOnly
+              ? "bg-green-600/30 text-green-300 border-green-500/50 hover:bg-green-600/40"
+              : "bg-slate-800 text-slate-400 border-slate-600 hover:bg-slate-700"
+          }`}
+        >
+          Nur Heim
+        </button>
+        <a
+          href={BTV_VEREIN_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[11px] text-sky-400 hover:text-sky-300 transition-colors ml-auto"
+        >
+          BTV Vereinsseite →
+        </a>
+      </div>
     </div>
   );
 }

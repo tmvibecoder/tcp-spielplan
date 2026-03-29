@@ -12,7 +12,6 @@ import type { Team, SeasonId, SubTab } from "./types";
 import { generatePrintHTML } from "./utils/pdf-export";
 import Header from "./components/Header";
 import SeasonDropdown from "./components/SeasonTabs";
-import SubTabs from "./components/SubTabs";
 import TeamFilter from "./components/TeamFilter";
 import TimelineView from "./components/TimelineView";
 import ListView from "./components/ListView";
@@ -50,14 +49,6 @@ function App() {
 
   const isSummer = season === "sommer-26";
 
-  // Current season's active teams
-  const activeTeams = isSummer ? activeSummerTeams : activeWinterTeams;
-  const allTeamIds = isSummer ? allSummerTeamIds : allWinterTeamIds;
-
-  const currentSeason = useMemo(
-    () => SEASONS.find((s) => s.id === season) || DEFAULT_SEASON,
-    [season]
-  );
 
   const navigateToLegal = useCallback((p: "impressum" | "datenschutz") => {
     setPage(p);
@@ -89,24 +80,6 @@ function App() {
     () => WINTER_MATCHES.filter((m) => activeWinterTeams.has(m.teamId) && (!homeOnly || m.isHome)),
     [activeWinterTeams, homeOnly]
   );
-
-  const filteredMatches = isSummer ? filteredSummerMatches : filteredWinterMatches;
-
-  const homeCount = useMemo(
-    () => filteredMatches.filter((m) => m.isHome).length,
-    [filteredMatches]
-  );
-  const awayCount = filteredMatches.length - homeCount;
-
-  const allActive = activeTeams.size === allTeamIds.size;
-
-  const toggleAll = useCallback(() => {
-    if (isSummer) {
-      setActiveSummerTeams(allActive ? new Set() : new Set(allSummerTeamIds));
-    } else {
-      setActiveWinterTeams(allActive ? new Set() : new Set(allWinterTeamIds));
-    }
-  }, [allActive, allSummerTeamIds, allWinterTeamIds, isSummer]);
 
   const toggleTeam = useCallback((id: string) => {
     const setter = isSummer ? setActiveSummerTeams : setActiveWinterTeams;
@@ -146,17 +119,11 @@ function App() {
       <Header
         view={view}
         setView={setView}
-        allActive={allActive}
-        toggleAll={toggleAll}
         onPdf={handlePdf}
-        totalMatches={filteredMatches.length}
-        homeMatches={homeCount}
-        awayMatches={awayCount}
-        homeOnly={homeOnly}
-        setHomeOnly={setHomeOnly}
-        seasonLabel={currentSeason.label}
-        showControls={subTab === "spielplan"}
         isSummer={isSummer}
+        subTab={subTab}
+        setSubTab={setSubTab}
+        showSpielplanControls={subTab === "spielplan"}
         seasonDropdown={
           <SeasonDropdown
             seasons={SEASONS}
@@ -170,15 +137,6 @@ function App() {
       />
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        {/* Sub Tabs (Spielplan / Tabelle) */}
-        <div className="mb-6">
-          <SubTabs
-            activeTab={subTab}
-            onChange={setSubTab}
-            spielplanCount={filteredMatches.length}
-          />
-        </div>
-
         {isSummer ? (
           <>
             {subTab === "spielplan" ? (
@@ -189,6 +147,8 @@ function App() {
                     activeTeams={activeSummerTeams}
                     toggleTeam={toggleTeam}
                     toggleCategory={toggleCategory}
+                    homeOnly={homeOnly}
+                    setHomeOnly={setHomeOnly}
                   />
                 </div>
 
@@ -219,6 +179,8 @@ function App() {
                     toggleCategory={toggleCategory}
                     categories={WINTER_CATEGORIES}
                     teams={WINTER_TEAMS as Team[]}
+                    homeOnly={homeOnly}
+                    setHomeOnly={setHomeOnly}
                   />
                 </div>
 
