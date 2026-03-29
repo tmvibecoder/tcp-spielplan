@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type { Match, Team, IndividualMatch } from "../types";
 import { getSinglesCount, getDoublesCount } from "../data/team-format";
 import { computeWinner, needsThirdSet, isRegularSetComplete, isChampionsTiebreakComplete } from "../utils/score-helpers";
@@ -142,6 +142,26 @@ function showSet3(p: PositionData, isHome: boolean): boolean {
   });
 }
 
+/** Collect all score input refs in order for Enter-to-next navigation */
+function useScoreInputRefs() {
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const register = useCallback((index: number) => (el: HTMLInputElement | null) => {
+    refs.current[index] = el;
+  }, []);
+  const focusNext = useCallback((currentIndex: number) => {
+    // Find the next visible (non-null, rendered) input
+    for (let i = currentIndex + 1; i < refs.current.length; i++) {
+      const el = refs.current[i];
+      if (el && el.offsetParent !== null) {
+        el.focus();
+        el.select();
+        return;
+      }
+    }
+  }, []);
+  return { register, focusNext };
+}
+
 export default function ScoreEntry({
   match,
   team: _team,
@@ -161,11 +181,32 @@ export default function ScoreEntry({
   const opponent = match.isHome ? match.away : match.home;
   const oppShort = abbreviateClub(opponent);
 
+  const { register, focusNext } = useScoreInputRefs();
+  // Global input index counter — reset each render
+  const inputIndexRef = useRef(0);
+  useEffect(() => { inputIndexRef.current = 0; });
+
   const updateField = useCallback(
     (idx: number, field: keyof PositionData, value: string) => {
       setPositions((prev) => {
         const next = [...prev];
         next[idx] = { ...next[idx], [field]: value };
+        return next;
+      });
+    },
+    []
+  );
+
+  const clearRow = useCallback(
+    (posIdx: number) => {
+      setPositions((prev) => {
+        const next = [...prev];
+        next[posIdx] = {
+          ...next[posIdx],
+          set1_tcp: "", set1_opp: "",
+          set2_tcp: "", set2_opp: "",
+          set3_tcp: "", set3_opp: "",
+        };
         return next;
       });
     },
@@ -229,6 +270,9 @@ export default function ScoreEntry({
   const singles = positions.filter((p) => p.match_type === "singles");
   const doubles = positions.filter((p) => p.match_type === "doubles");
 
+  // Reset input index counter before rendering rows
+  inputIndexRef.current = 0;
+
   return (
     <div className="space-y-4">
       {/* Header with team names and live score */}
@@ -273,6 +317,10 @@ export default function ScoreEntry({
                 isHome={isHome}
                 showSet3={need3}
                 updateField={updateField}
+                onClear={() => clearRow(posIdx)}
+                registerInput={register}
+                onEnter={focusNext}
+                inputIndexRef={inputIndexRef}
               />
             );
           })}
@@ -297,6 +345,10 @@ export default function ScoreEntry({
                 isHome={isHome}
                 showSet3={need3}
                 updateField={updateField}
+                onClear={() => clearRow(posIdx)}
+                registerInput={register}
+                onEnter={focusNext}
+                inputIndexRef={inputIndexRef}
               />
             );
           })}
@@ -388,6 +440,10 @@ function ScoreRow({
   isHome,
   showSet3: need3,
   updateField,
+  onClear,
+  registerInput,
+  onEnter,
+  inputIndexRef,
 }: {
   label: string;
   p: PositionData;
@@ -395,16 +451,21 @@ function ScoreRow({
   isHome: boolean;
   showSet3: boolean;
   updateField: (idx: number, field: keyof PositionData, value: string) => void;
+  onClear: () => void;
+  registerInput: (index: number) => (el: HTMLInputElement | null) => void;
+  onEnter: (currentIndex: number) => void;
+  inputIndexRef: React.MutableRefObject<number>;
 }) {
   const icon = winnerIcon(p, isHome);
+  const hasData = !!(p.set1_tcp || p.set1_opp || p.set2_tcp || p.set2_opp || p.set3_tcp || p.set3_opp);
 
   return (
-    <div className="flex items-center gap-1.5 py-1 px-1">
+    <div className="flex items-center gap-1 py-1 px-0.5 min-w-0 overflow-x-auto">
       {/* Winner icon */}
       {icon}
 
       {/* Position label */}
-      <span className="text-xs font-bold text-slate-400 w-6 shrink-0">{label}</span>
+      <span className="text-[11px] font-bold text-slate-400 w-5 shrink-0">{label}</span>
 
       {/* Set 1 */}
       <SetInputPair
@@ -413,6 +474,9 @@ function ScoreRow({
         onTcp={(v) => updateField(posIdx, "set1_tcp", v)}
         onOpp={(v) => updateField(posIdx, "set1_opp", v)}
         colorClass={setColor(p.set1_tcp, p.set1_opp, false)}
+        registerInput={registerInput}
+        onEnter={onEnter}
+        inputIndexRef={inputIndexRef}
       />
 
       {/* Set 2 */}
@@ -422,6 +486,9 @@ function ScoreRow({
         onTcp={(v) => updateField(posIdx, "set2_tcp", v)}
         onOpp={(v) => updateField(posIdx, "set2_opp", v)}
         colorClass={setColor(p.set2_tcp, p.set2_opp, false)}
+        registerInput={registerInput}
+        onEnter={onEnter}
+        inputIndexRef={inputIndexRef}
       />
 
       {/* Set 3 (only if 1:1 in sets) — Champions Tie-Break */}
@@ -433,11 +500,27 @@ function ScoreRow({
           onOpp={(v) => updateField(posIdx, "set3_opp", v)}
           colorClass={setColor(p.set3_tcp, p.set3_opp, true)}
           isTiebreak
+          registerInput={registerInput}
+          onEnter={onEnter}
+          inputIndexRef={inputIndexRef}
         />
-      ) : (
-        /* Spacer for alignment when no set 3 */
-        <span className="w-[62px] shrink-0" />
-      )}
+      ) : null}
+
+      {/* Delete row button */}
+      <button
+        onClick={onClear}
+        title="Zeile löschen"
+        className={`shrink-0 p-0.5 rounded transition-colors ${
+          hasData
+            ? "text-slate-400 hover:text-red-400 hover:bg-red-900/20"
+            : "text-slate-700 cursor-default"
+        }`}
+        disabled={!hasData}
+      >
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
     </div>
   );
 }
@@ -450,6 +533,9 @@ function SetInputPair({
   onOpp,
   colorClass,
   isTiebreak = false,
+  registerInput,
+  onEnter,
+  inputIndexRef,
 }: {
   tcpVal: string;
   oppVal: string;
@@ -457,27 +543,46 @@ function SetInputPair({
   onOpp: (v: string) => void;
   colorClass: string;
   isTiebreak?: boolean;
+  registerInput: (index: number) => (el: HTMLInputElement | null) => void;
+  onEnter: (currentIndex: number) => void;
+  inputIndexRef: React.MutableRefObject<number>;
 }) {
+  const tcpIdx = inputIndexRef.current++;
+  const oppIdx = inputIndexRef.current++;
+
+  const handleKeyDown = (idx: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onEnter(idx);
+    }
+  };
+
   return (
     <div className={`flex items-center gap-0.5 rounded-md px-1 py-0.5 border shrink-0 ${colorClass}`}>
       <input
+        ref={registerInput(tcpIdx)}
         type="number"
         inputMode="numeric"
+        enterKeyHint="next"
         min={0}
         max={isTiebreak ? 99 : 7}
         value={tcpVal}
         onChange={(e) => onTcp(e.target.value)}
-        className="w-7 h-8 bg-transparent text-center text-sm font-bold text-slate-200 focus:outline-none focus:bg-slate-700/40 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        onKeyDown={handleKeyDown(tcpIdx)}
+        className="w-6 h-7 bg-transparent text-center text-xs font-bold text-slate-200 focus:outline-none focus:bg-slate-700/40 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       />
       <span className="text-[10px] font-bold text-slate-500">:</span>
       <input
+        ref={registerInput(oppIdx)}
         type="number"
         inputMode="numeric"
+        enterKeyHint="next"
         min={0}
         max={isTiebreak ? 99 : 7}
         value={oppVal}
         onChange={(e) => onOpp(e.target.value)}
-        className="w-7 h-8 bg-transparent text-center text-sm font-bold text-slate-200 focus:outline-none focus:bg-slate-700/40 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        onKeyDown={handleKeyDown(oppIdx)}
+        className="w-6 h-7 bg-transparent text-center text-xs font-bold text-slate-200 focus:outline-none focus:bg-slate-700/40 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       />
     </div>
   );
