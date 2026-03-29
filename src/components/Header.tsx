@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { SubTab } from "../types";
 
@@ -24,6 +25,21 @@ export default function Header({
   setSubTab,
   showSpielplanControls,
 }: HeaderProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
+
   return (
     <header className="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-sm border-b border-slate-700/50">
       <div className="max-w-5xl mx-auto px-2 py-1.5 flex items-center gap-1.5">
@@ -62,54 +78,50 @@ export default function Header({
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Spielplan-specific controls (only visible when Spielplan tab active) */}
+        {/* ⋯ Menu (only when Spielplan tab is active) */}
         {showSpielplanControls && (
-          <div className="flex items-center gap-1 shrink-0">
-            {/* View toggle: Timeline / List as icons */}
-            <div className="flex rounded-md overflow-hidden border border-slate-600">
-              <button
-                onClick={() => setView("timeline")}
-                title="Zeitstrahl"
-                className={`px-1.5 py-1 transition-colors ${
-                  view === "timeline"
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-800 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                  <circle cx="4" cy="6" r="1.5" fill="currentColor" />
-                  <circle cx="4" cy="12" r="1.5" fill="currentColor" />
-                  <circle cx="4" cy="18" r="1.5" fill="currentColor" />
-                </svg>
-              </button>
-              <button
-                onClick={() => setView("list")}
-                title="Liste"
-                className={`px-1.5 py-1 transition-colors ${
-                  view === "list"
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-800 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h18M3 10h18M3 15h18M3 20h18" />
-                </svg>
-              </button>
-            </div>
+          <div className="relative shrink-0" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className={`px-2 py-1 text-[11px] font-bold rounded-md border transition-colors ${
+                menuOpen
+                  ? "bg-slate-700 text-slate-100 border-slate-500"
+                  : "bg-slate-800 text-slate-400 border-slate-600 hover:text-slate-200 hover:bg-slate-700"
+              }`}
+            >
+              ⋯
+            </button>
 
-            {/* PDF button (summer only) */}
-            {isSummer && (
-              <button
-                onClick={onPdf}
-                title="PDF exportieren"
-                className="px-1.5 py-1 rounded-md bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600/30 transition-colors"
-              >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 13h6m-6 4h4" />
-                </svg>
-              </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl py-1 min-w-[140px] z-50">
+                <button
+                  onClick={() => { setView("timeline"); setMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-1.5 text-[11px] font-semibold transition-colors flex items-center gap-2 ${
+                    view === "timeline" ? "text-blue-400" : "text-slate-300 hover:bg-slate-700"
+                  }`}
+                >
+                  {view === "timeline" ? "●" : "○"} Zeitstrahl
+                </button>
+                <button
+                  onClick={() => { setView("list"); setMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-1.5 text-[11px] font-semibold transition-colors flex items-center gap-2 ${
+                    view === "list" ? "text-blue-400" : "text-slate-300 hover:bg-slate-700"
+                  }`}
+                >
+                  {view === "list" ? "●" : "○"} Liste
+                </button>
+                {isSummer && (
+                  <>
+                    <div className="border-t border-slate-600/50 my-1" />
+                    <button
+                      onClick={() => { onPdf(); setMenuOpen(false); }}
+                      className="w-full text-left px-3 py-1.5 text-[11px] font-semibold text-purple-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
+                    >
+                      PDF exportieren
+                    </button>
+                  </>
+                )}
+              </div>
             )}
           </div>
         )}
