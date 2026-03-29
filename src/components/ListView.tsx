@@ -102,14 +102,6 @@ export default function ListView({ matches, teamMap, scores, onSaveScore, allMat
     setOpenMatch((prev) => (prev === key ? null : key));
   };
 
-  // Count matches per date for tinting
-  const dateMatchCount = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const m of matches) {
-      counts.set(m.date, (counts.get(m.date) || 0) + 1);
-    }
-    return counts;
-  }, [matches]);
 
   return (
     <div className="overflow-x-auto">
@@ -200,29 +192,38 @@ export default function ListView({ matches, teamMap, scores, onSaveScore, allMat
             if (row.type === "weekend") {
               const colors = MONTH_COLORS[row.monthKey!];
               const wBg = colors?.weekBgs?.[(row.weekIdx || 0) % (colors?.weekBgs?.length || 1)] || colors?.bg;
+              // Check if this is NOT the first weekend in the month (needs spacing)
+              const needsSpacing = i > 0 && rows[i - 1]?.type !== "month";
               return (
-                <tr key={`w-${i}`}>
-                  <td
-                    colSpan={6}
-                    className="px-4 py-1.5"
-                    style={{ backgroundColor: wBg }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-400">
-                        📅 {weekendLabel(row.dates || [])}
-                      </span>
-                      <span
-                        className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor: colors?.accent + "20",
-                          color: colors?.accent,
-                        }}
-                      >
-                        {row.matchCount}
-                      </span>
-                    </div>
-                  </td>
-                </tr>
+                <>
+                  {needsSpacing && (
+                    <tr key={`ws-${i}`}>
+                      <td colSpan={6} className="h-3 border-b border-slate-700/30" />
+                    </tr>
+                  )}
+                  <tr key={`w-${i}`}>
+                    <td
+                      colSpan={6}
+                      className="px-4 py-1.5"
+                      style={{ backgroundColor: wBg }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-400">
+                          📅 {weekendLabel(row.dates || [])}
+                        </span>
+                        <span
+                          className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                          style={{
+                            backgroundColor: colors?.accent + "20",
+                            color: colors?.accent,
+                          }}
+                        >
+                          {row.matchCount}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </>
               );
             }
 
@@ -232,7 +233,6 @@ export default function ListView({ matches, teamMap, scores, onSaveScore, allMat
             const team = teamMap.get(m.teamId);
             if (!team) return null;
             const opponent = m.isHome ? m.away : m.home;
-            const multiMatch = (dateMatchCount.get(m.date) || 0) >= 2;
             const rowColors = MONTH_COLORS[row.monthKey!];
             const rowWeekBg = rowColors?.weekBgs?.[(row.weekIdx || 0) % (rowColors?.weekBgs?.length || 1)];
 
@@ -242,7 +242,7 @@ export default function ListView({ matches, teamMap, scores, onSaveScore, allMat
                   <button
                     onClick={() => toggleMatch(key)}
                     className="w-full flex items-center gap-0 text-left hover:bg-slate-700/30 transition-colors"
-                    style={{ backgroundColor: multiMatch ? undefined : rowWeekBg }}
+                    style={{ backgroundColor: rowWeekBg }}
                   >
                     <span className="px-3 py-2 text-xs text-slate-400 w-24 shrink-0">
                       {m.day} {formatDate(m.date)}
