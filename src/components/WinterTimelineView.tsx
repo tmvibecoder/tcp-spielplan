@@ -5,8 +5,8 @@ import {
   getMonthKey,
   getWeekKey,
   weekendLabel,
-  getDayFromDate,
   formatDateFull,
+  formatDayHeader,
 } from "../utils/date-helpers";
 import LiveScorePanel from "./LiveScorePanel";
 
@@ -113,7 +113,7 @@ function WinterMatchRow({
         {match.isHome ? "H" : "A"}
       </span>
 
-      <span className="text-sm text-slate-200 truncate flex-1 min-w-0">
+      <span className="text-sm text-slate-200 truncate min-w-0">
         {opponent}
       </span>
 
@@ -140,20 +140,28 @@ function WinterMatchRow({
         </span>
       )}
 
+      {/* Spacer pushes star + arrow to the right */}
+      <span className="flex-1" />
+
       {onToggleFavorite && (
         <button
           onClick={onToggleFavorite}
-          className={`shrink-0 text-sm p-0.5 transition-colors ${
-            isFavorite ? "text-amber-400" : "text-slate-600 hover:text-slate-400"
+          className={`shrink-0 flex items-center justify-center w-9 h-9 rounded-lg transition-colors ${
+            isFavorite
+              ? "text-amber-400 bg-amber-400/10"
+              : "text-slate-600 hover:text-slate-400 hover:bg-slate-700/40"
           }`}
         >
-          {isFavorite ? "★" : "☆"}
+          <span className="text-base">{isFavorite ? "★" : "☆"}</span>
         </button>
       )}
 
-      <span className="ml-1 text-slate-500 text-xs group-hover:text-slate-300 transition-colors shrink-0">
-        {isOpen ? "▲" : "▼"}
-      </span>
+      <button
+        className="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg text-slate-500 group-hover:text-slate-300 hover:bg-slate-700/40 transition-colors"
+        tabIndex={-1}
+      >
+        <span className="text-xs">{isOpen ? "▲" : "▼"}</span>
+      </button>
     </button>
   );
 }
@@ -417,16 +425,11 @@ export default function WinterTimelineView({
             </div>
 
             {/* Weeks */}
-            <div className="space-y-5 relative">
-              <div
-                className="absolute left-[15px] top-0 bottom-0 w-px"
-                style={{ backgroundColor: colors?.accent + "30" }}
-              />
-
+            <div className="space-y-5">
               {month.weeks.map((week, weekIdx) => (
                 <div
                   key={week.key}
-                  className="rounded-xl border overflow-hidden ml-4"
+                  className="rounded-xl border overflow-hidden"
                   style={{
                     backgroundColor:
                       colors?.weekBgs?.[
@@ -457,86 +460,58 @@ export default function WinterTimelineView({
                     className="divide-y"
                     style={{ borderColor: colors?.border + "60" }}
                   >
-                    {week.days.map((dayData) => {
-                      const dayStyle =
-                        dayData.day === "Sa"
-                          ? {
-                              sidebarBg: colors?.accent + "18",
-                              rowBg: colors?.accent + "06",
-                              labelColor: "#94a3b8",
-                              numColor: "#cbd5e1",
-                            }
-                          : {
-                              sidebarBg: colors?.accent + "22",
-                              rowBg: colors?.accent + "0c",
-                              labelColor: "#93c5fd",
-                              numColor: "#60a5fa",
-                            };
-
-                      return (
+                    {week.days.map((dayData) => (
+                      <div key={dayData.date}>
+                        {/* Day header */}
                         <div
-                          key={dayData.date}
-                          className="flex"
-                          style={{ backgroundColor: dayStyle.rowBg }}
+                          className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider border-b"
+                          style={{
+                            color: colors?.accent,
+                            backgroundColor: colors?.accent + "10",
+                            borderColor: colors?.border + "40",
+                            letterSpacing: "0.5px",
+                          }}
                         >
-                          <div
-                            className="shrink-0 w-12 flex flex-col items-center justify-center py-2 border-r"
-                            style={{
-                              borderColor: colors?.border,
-                              backgroundColor: dayStyle.sidebarBg,
-                            }}
-                          >
-                            <span
-                              className="text-[10px] font-bold uppercase tracking-wider"
-                              style={{ color: dayStyle.labelColor }}
-                            >
-                              {dayData.day}
+                          {formatDayHeader(dayData.date, dayData.day)}
+                          {dayData.matches.length >= 2 && (
+                            <span className="ml-2 text-[9px] font-bold bg-yellow-500/20 text-yellow-300 px-1.5 py-0.5 rounded-full">
+                              {dayData.matches.length}
                             </span>
-                            <span
-                              className="text-xl font-extrabold leading-tight"
-                              style={{ color: dayStyle.numColor }}
-                            >
-                              {getDayFromDate(dayData.date)}
-                            </span>
-                            {dayData.matches.length >= 2 && (
-                              <span className="text-[9px] font-bold bg-yellow-500/20 text-yellow-300 px-1.5 rounded-full mt-0.5">
-                                {dayData.matches.length}
-                              </span>
-                            )}
-                          </div>
+                          )}
+                        </div>
 
-                          <div className="flex-1 py-1 min-w-0">
-                            {dayData.matches.map((m) => {
-                              const key = matchKey(m);
-                              const team = teamMap.get(m.teamId);
-                              if (!team) return null;
-                              return (
-                                <div key={key}>
-                                  <WinterMatchRow
+                        {/* Matches */}
+                        <div className="py-1">
+                          {dayData.matches.map((m) => {
+                            const key = matchKey(m);
+                            const team = teamMap.get(m.teamId);
+                            if (!team) return null;
+                            return (
+                              <div key={key}>
+                                <WinterMatchRow
+                                  match={m}
+                                  team={team}
+                                  isOpen={openMatch === key}
+                                  onClick={() => toggleMatch(key)}
+                                  isFavorite={favorites?.has(key)}
+                                  onToggleFavorite={toggleFavorite ? (e) => { e.stopPropagation(); toggleFavorite(key); } : undefined}
+                                  score={scores.get(key)}
+                                />
+                                {openMatch === key && (
+                                  <WinterMatchDetail
                                     match={m}
                                     team={team}
-                                    isOpen={openMatch === key}
-                                    onClick={() => toggleMatch(key)}
-                                    isFavorite={favorites?.has(key)}
-                                    onToggleFavorite={toggleFavorite ? (e) => { e.stopPropagation(); toggleFavorite(key); } : undefined}
+                                    onClose={() => setOpenMatch(null)}
                                     score={scores.get(key)}
+                                    onSaveScore={onSaveScore}
                                   />
-                                  {openMatch === key && (
-                                    <WinterMatchDetail
-                                      match={m}
-                                      team={team}
-                                      onClose={() => setOpenMatch(null)}
-                                      score={scores.get(key)}
-                                      onSaveScore={onSaveScore}
-                                    />
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}

@@ -14,9 +14,7 @@ import Header from "./components/Header";
 import SeasonDropdown from "./components/SeasonTabs";
 import TeamFilter from "./components/TeamFilter";
 import TimelineView from "./components/TimelineView";
-import ListView from "./components/ListView";
 import WinterTimelineView from "./components/WinterTimelineView";
-import WinterListView from "./components/WinterListView";
 import StandingsView from "./components/StandingsView";
 import CalendarDownloads from "./components/CalendarDownloads";
 import Footer from "./components/Footer";
@@ -24,7 +22,6 @@ import { Impressum, Datenschutz } from "./components/LegalPages";
 import { useLiveScores } from "./hooks/useLiveScores";
 import { useFavorites } from "./hooks/useFavorites";
 
-type View = "timeline" | "list";
 type Page = "spielplan" | "impressum" | "datenschutz";
 
 function App() {
@@ -43,7 +40,6 @@ function App() {
     () => new Set(allWinterTeamIds)
   );
 
-  const [view, setView] = useState<View>("timeline");
   const [homeOnly, setHomeOnly] = useState(false);
   const [page, setPage] = useState<Page>("spielplan");
 
@@ -117,8 +113,6 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <Header
-        view={view}
-        setView={setView}
         onPdf={handlePdf}
         isSummer={isSummer}
         subTab={subTab}
@@ -153,11 +147,7 @@ function App() {
                 </div>
 
                 {/* Main View */}
-                {view === "timeline" ? (
-                  <TimelineView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} allMatches={MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
-                ) : (
-                  <ListView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} allMatches={MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
-                )}
+                <TimelineView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} allMatches={MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
 
                 {/* Calendar Downloads */}
                 <CalendarDownloads season="sommer-26" />
@@ -185,11 +175,7 @@ function App() {
                 </div>
 
                 {/* Winter View */}
-                {view === "timeline" ? (
-                  <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} allMatches={WINTER_MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
-                ) : (
-                  <WinterListView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} allMatches={WINTER_MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
-                )}
+                <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} allMatches={WINTER_MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
 
                 {/* Calendar Downloads */}
                 <CalendarDownloads season="winter-2526" />

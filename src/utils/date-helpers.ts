@@ -70,3 +70,17 @@ export function weekendLabel(dates: string[]): string {
 export function getMonthKey(dateStr: string): string {
   return dateStr.substring(0, 7);
 }
+
+/**
+ * Format day header like "SA 2. MAI" or "SO 10. MAI" from date + day abbreviation.
+ */
+export function formatDayHeader(dateStr: string, day: string): string {
+  const monthNames: Record<string, string> = {
+    "01": "JAN", "02": "FEB", "03": "MÄR", "04": "APR",
+    "05": "MAI", "06": "JUN", "07": "JUL", "08": "AUG",
+    "09": "SEP", "10": "OKT", "11": "NOV", "12": "DEZ",
+  };
+  const dayNum = parseInt(dateStr.split("-")[2], 10);
+  const month = dateStr.split("-")[1];
+  return `${day.toUpperCase()} ${dayNum}. ${monthNames[month] || month}`;
+}

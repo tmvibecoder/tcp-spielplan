@@ -5,7 +5,7 @@ import {
   getMonthKey,
   getWeekKey,
   weekendLabel,
-  getDayFromDate,
+  formatDayHeader,
 } from "../utils/date-helpers";
 import MatchRow from "./MatchRow";
 import MatchDetail from "./MatchDetail";
@@ -189,17 +189,11 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore, al
             </div>
 
             {/* Weeks */}
-            <div className="space-y-5 relative">
-              {/* Vertical timeline line */}
-              <div
-                className="absolute left-[15px] top-0 bottom-0 w-px"
-                style={{ backgroundColor: colors?.accent + "30" }}
-              />
-
+            <div className="space-y-5">
               {month.weeks.map((week, weekIdx) => (
                 <div
                   key={week.key}
-                  className="rounded-xl border overflow-hidden ml-4"
+                  className="rounded-xl border overflow-hidden"
                   style={{
                     backgroundColor: colors?.weekBgs?.[weekIdx % colors.weekBgs.length] || colors?.bg,
                     borderColor: colors?.border,
@@ -225,41 +219,28 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore, al
 
                   {/* Days */}
                   <div className="divide-y" style={{ borderColor: colors?.border + "60" }}>
-                    {week.days.map((dayData) => {
-                      const dayStyle = dayData.day === "Fr"
-                        ? { sidebarBg: colors?.accent + "10", rowBg: "transparent", labelColor: "#a5b4fc", numColor: "#818cf8" }
-                        : dayData.day === "Sa"
-                        ? { sidebarBg: colors?.accent + "18", rowBg: colors?.accent + "06", labelColor: "#94a3b8", numColor: "#cbd5e1" }
-                        : { sidebarBg: colors?.accent + "22", rowBg: colors?.accent + "0c", labelColor: "#93c5fd", numColor: "#60a5fa" };
-
-                      return (
-                      <div key={dayData.date} className="flex" style={{ backgroundColor: dayStyle.rowBg }}>
-                        {/* Date sidebar */}
+                    {week.days.map((dayData) => (
+                      <div key={dayData.date}>
+                        {/* Day header */}
                         <div
-                          className="shrink-0 w-12 flex flex-col items-center justify-center py-2 border-r"
-                          style={{ borderColor: colors?.border, backgroundColor: dayStyle.sidebarBg }}
+                          className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider border-b"
+                          style={{
+                            color: colors?.accent,
+                            backgroundColor: colors?.accent + "10",
+                            borderColor: colors?.border + "40",
+                            letterSpacing: "0.5px",
+                          }}
                         >
-                          <span
-                            className="text-[10px] font-bold uppercase tracking-wider"
-                            style={{ color: dayStyle.labelColor }}
-                          >
-                            {dayData.day}
-                          </span>
-                          <span
-                            className="text-xl font-extrabold leading-tight"
-                            style={{ color: dayStyle.numColor }}
-                          >
-                            {getDayFromDate(dayData.date)}
-                          </span>
+                          {formatDayHeader(dayData.date, dayData.day)}
                           {dayData.matches.length >= 2 && (
-                            <span className="text-[9px] font-bold bg-yellow-500/20 text-yellow-300 px-1.5 rounded-full mt-0.5">
+                            <span className="ml-2 text-[9px] font-bold bg-yellow-500/20 text-yellow-300 px-1.5 py-0.5 rounded-full">
                               {dayData.matches.length}
                             </span>
                           )}
                         </div>
 
                         {/* Matches */}
-                        <div className="flex-1 py-1 min-w-0">
+                        <div className="py-1">
                           {dayData.matches.map((m) => {
                             const key = matchKey(m);
                             const team = teamMap.get(m.teamId);
@@ -289,8 +270,7 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore, al
                           })}
                         </div>
                       </div>
-                      );
-                    })}
+                    ))}
                   </div>
                 </div>
               ))}

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vorschlag A vs B — TCP Spielplan</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0f172a; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 20px; }
+
+  h1 { text-align: center; font-size: 18px; color: #94a3b8; margin-bottom: 24px; }
+  .proposals { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .phone-frame {
+    width: 375px;
+    border: 2px solid #334155;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #0f172a;
+    flex-shrink: 0;
+  }
+  .phone-label {
+    text-align: center;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #38bdf8;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+  }
+  .phone-label small { display: block; font-size: 11px; color: #64748b; font-weight: 400; margin-top: 2px; }
+
+  /* ===== SHARED ===== */
+  .month-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: 10px; margin: 12px 8px 10px;
+    background: rgba(56,189,248,0.12); border-left: 4px solid #38bdf8;
+  }
+  .month-header h2 { font-size: 16px; font-weight: 800; color: #7dd3fc; }
+  .month-header .count { font-size: 11px; font-weight: 600; color: #7dd3fc; }
+
+  .weekend-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 12px; border-bottom: 1px solid rgba(56,189,248,0.15);
+    font-size: 11px; font-weight: 600; color: #94a3b8;
+  }
+  .weekend-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+    background: rgba(56,189,248,0.15); color: #38bdf8;
+  }
+
+  .week-card {
+    border: 1px solid rgba(56,189,248,0.12);
+    border-radius: 10px; overflow: hidden;
+    margin-bottom: 10px;
+    background: rgba(30,41,59,0.5);
+  }
+
+  /* Match row shared */
+  .match-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 8px; min-height: 44px;
+    transition: background 0.15s;
+  }
+  .match-row:hover { background: rgba(71,85,105,0.25); }
+
+  .time { font-size: 12px; color: #64748b; font-family: 'SF Mono', 'Menlo', monospace; font-variant-numeric: tabular-nums; }
+  .team-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    white-space: nowrap;
+  }
+  .ha-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+  }
+  .ha-home { background: rgba(34,197,94,0.2); color: #86efac; }
+  .ha-away { background: rgba(234,179,8,0.2); color: #fde68a; }
+
+  .opponent { font-size: 13px; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
+
+  .spacer { flex: 1; }
+
+  .btn-icon {
+    width: 34px; height: 34px; border-radius: 8px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: #475569; cursor: pointer; flex-shrink: 0;
+    font-size: 12px; transition: all 0.15s;
+  }
+  .btn-icon:hover { background: rgba(71,85,105,0.3); color: #94a3b8; }
+  .btn-icon.starred { color: #fbbf24; background: rgba(251,191,36,0.1); }
+
+  /* ===== VORSCHLAG A ===== */
+  .a-content { padding: 0 8px 12px; }
+  .a-week-card { margin-left: 0; }
+
+  .a-day-row { display: flex; }
+  .a-date-sidebar {
+    width: 36px; flex-shrink: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 4px 0;
+    border-right: 1px solid rgba(56,189,248,0.12);
+    background: rgba(56,189,248,0.06);
+  }
+  .a-date-sidebar .day-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; }
+  .a-date-sidebar .day-num { font-size: 18px; font-weight: 800; color: #cbd5e1; line-height: 1; }
+  .a-matches { flex: 1; min-width: 0; padding: 2px 0; }
+  .a-time { width: 38px; flex-shrink: 0; text-align: right; }
+
+  /* ===== VORSCHLAG B ===== */
+  .b-content { padding: 0 8px 12px; }
+
+  .b-day-header {
+    padding: 6px 12px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; color: #64748b;
+    background: rgba(30,41,59,0.8); border-bottom: 1px solid rgba(56,189,248,0.1);
+  }
+  .b-time { width: 42px; flex-shrink: 0; text-align: right; }
+
+  /* Divider between days */
+  .day-divider { border-top: 1px solid rgba(56,189,248,0.08); }
+
+  /* Annotation arrows */
+  .annotation {
+    position: absolute; font-size: 10px; color: #f97316; font-weight: 600;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<h1>TCP Spielplan — Vorschlag A vs Vorschlag B</h1>
+
+<div class="proposals">
+
+<!-- ===== VORSCHLAG A ===== -->
+<div class="phone-frame">
+  <div class="phone-label">
+    Vorschlag A — Kompakter Zeitstrahl
+    <small>Timeline-Linie entfernt · Sidebar 36px · Uhrzeit 38px</small>
+  </div>
+  <div class="a-content">
+    <div class="month-header">
+      <h2>Mai 2026</h2>
+      <span class="count">8 Spiele</span>
+    </div>
+
+    <!-- Week 1 -->
+    <div class="week-card a-week-card">
+      <div class="weekend-header">
+        <span>📅 Fr 1. – So 3. Mai</span>
+        <span class="weekend-badge">4</span>
+      </div>
+
+      <!-- Freitag -->
+      <div class="a-day-row">
+        <div class="a-date-sidebar">
+          <span class="day-label">Fr</span>
+          <span class="day-num">1</span>
+        </div>
+        <div class="a-matches">
+          <div class="match-row">
+            <span class="time a-time">18:00</span>
+            <span class="team-badge" style="border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.1);color:#60a5fa;">🎾 H1</span>
+            <span class="ha-badge ha-home">H</span>
+            <span class="opponent">TC Markt Schwaben</span>
+            <span class="spacer"></span>
+            <button class="btn-icon">☆</button>
+            <button class="btn-icon">▼</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Samstag -->
+      <div class="a-day-row" style="background:rgba(56,189,248,0.03)">
+        <div class="a-date-sidebar">
+          <span class="day-label">Sa</span>
+          <span class="day-num">2</span>
+        </div>
+        <div class="a-matches">
+          <div class="match-row">
+            <span class="time a-time">10:00</span>
+            <span class="team-badge" style="border:1px solid rgba(168,85,247,0.3);background:rgba(168,85,247,0.1);color:#c084fc;">🏆 H40</span>
+            <span class="ha-badge ha-away">A</span>
+            <span class="opponent">DJK Ottenhofen</span>
+            <span class="spacer"></span>
+            <button class="btn-icon starred">★</button>
+            <button class="btn-icon">▼</button>
+          </div>
+          <div class="match-row">
+            <span class="time a-time">14:00</span>
+            <span class="team-badge" style="border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.1);color:#4ade80;">🌟 D30</span>
+            <span class="ha-badge ha-home">H</span>
+            <span class="opponent">TSV Zorneding</span>
+            <span class="spacer"></span>
+            <button class="btn-icon">☆</button>
+            <button class="btn-icon">▼</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sonntag -->
+      <div class="a-day-row" style="background:rgba(56,189,248,0.05)">
+        <div class="a-date-sidebar">
+          <span class="day-label">So</span>
+          <span class="day-num">3</span>
+        </div>
+        <div class="a-matches">
+          <div class="match-row">
+            <span class="time a-time">9:00</span>
+            <span class="team-badge" style="border:1px solid rgba(251,146,60,0.3);background:rgba(251,146,60,0.1);color:#fb923c;">⚡ Kna</span>
+            <span class="ha-badge ha-home">H</span>
+            <span class="opponent">TC Vaterstetten</span>
+            <span class="spacer"></span>
+            <button class="btn-icon">☆</button>
+            <button class="btn-icon">▼</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 2 -->
+    <div class="week-card a-week-card">
+      <div class="weekend-header">
+        <span>📅 Sa 9. – So 10. Mai</span>
+        <span class="weekend-badge">2</span>
+      </div>
+      <div class="a-day-row">
+        <div class="a-date-sidebar">
+          <span class="day-label">Sa</span>
+          <span class="day-num">9</span>
+        </div>
+        <div class="a-matches">
+          <div class="match-row">
+            <span class="time a-time">10:00</span>
+            <span class="team-badge" style="border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.1);color:#60a5fa;">🎾 H1</span>
+            <span class="ha-badge ha-away">A</span>
+            <span class="opponent">SV Anzing</span>
+            <span class="spacer"></span>
+            <button class="btn-icon">☆</button>
+            <button class="btn-icon">▼</button>
+          </div>
+        </div>
+      </div>
+      <div class="a-day-row" style="background:rgba(56,189,248,0.04)">
+        <div class="a-date-sidebar">
+          <span class="day-label">So</span>
+          <span class="day-num">10</span>
+        </div>
+        <div class="a-matches">
+          <div class="match-row">
+            <span class="time a-time">11:00</span>
+            <span class="team-badge" style="border:1px solid rgba(168,85,247,0.3);background:rgba(168,85,247,0.1);color:#c084fc;">🏆 H40</span>
+            <span class="ha-badge ha-home">H</span>
+            <span class="opponent">TC Kirchseeon</span>
+            <span class="spacer"></span>
+            <button class="btn-icon">☆</button>
+            <button class="btn-icon">▼</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VORSCHLAG B ===== -->
+<div class="phone-frame">
+  <div class="phone-label">
+    Vorschlag B — Datum als Gruppen-Header
+    <small>Keine Sidebar · Tages-Header statt Sidebar · Max. Platz für Inhalte</small>
+  </div>
+  <div class="b-content">
+    <div class="month-header">
+      <h2>Mai 2026</h2>
+      <span class="count">8 Spiele</span>
+    </div>
+
+    <!-- Week 1 -->
+    <div class="week-card">
+      <div class="weekend-header">
+        <span>📅 Fr 1. – So 3. Mai</span>
+        <span class="weekend-badge">4</span>
+      </div>
+
+      <!-- Freitag Header -->
+      <div class="b-day-header">FR 1. MAI</div>
+      <div class="match-row">
+        <span class="time b-time">18:00</span>
+        <span class="team-badge" style="border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.1);color:#60a5fa;">🎾 H1</span>
+        <span class="ha-badge ha-home">H</span>
+        <span class="opponent">TC Markt Schwaben</span>
+        <span class="spacer"></span>
+        <button class="btn-icon">☆</button>
+        <button class="btn-icon">▼</button>
+      </div>
+
+      <!-- Samstag Header -->
+      <div class="day-divider"></div>
+      <div class="b-day-header">SA 2. MAI</div>
+      <div class="match-row">
+        <span class="time b-time">10:00</span>
+        <span class="team-badge" style="border:1px solid rgba(168,85,247,0.3);background:rgba(168,85,247,0.1);color:#c084fc;">🏆 H40</span>
+        <span class="ha-badge ha-away">A</span>
+        <span class="opponent">DJK Ottenhofen</span>
+        <span class="spacer"></span>
+        <button class="btn-icon starred">★</button>
+        <button class="btn-icon">▼</button>
+      </div>
+      <div class="match-row">
+        <span class="time b-time">14:00</span>
+        <span class="team-badge" style="border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.1);color:#4ade80;">🌟 D30</span>
+        <span class="ha-badge ha-home">H</span>
+        <span class="opponent">TSV Zorneding</span>
+        <span class="spacer"></span>
+        <button class="btn-icon">☆</button>
+        <button class="btn-icon">▼</button>
+      </div>
+
+      <!-- Sonntag Header -->
+      <div class="day-divider"></div>
+      <div class="b-day-header">SO 3. MAI</div>
+      <div class="match-row">
+        <span class="time b-time">9:00</span>
+        <span class="team-badge" style="border:1px solid rgba(251,146,60,0.3);background:rgba(251,146,60,0.1);color:#fb923c;">⚡ Kna</span>
+        <span class="ha-badge ha-home">H</span>
+        <span class="opponent">TC Vaterstetten</span>
+        <span class="spacer"></span>
+        <button class="btn-icon">☆</button>
+        <button class="btn-icon">▼</button>
+      </div>
+    </div>
+
+    <!-- Week 2 -->
+    <div class="week-card">
+      <div class="weekend-header">
+        <span>📅 Sa 9. – So 10. Mai</span>
+        <span class="weekend-badge">2</span>
+      </div>
+
+      <div class="b-day-header">SA 9. MAI</div>
+      <div class="match-row">
+        <span class="time b-time">10:00</span>
+        <span class="team-badge" style="border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.1);color:#60a5fa;">🎾 H1</span>
+        <span class="ha-badge ha-away">A</span>
+        <span class="opponent">SV Anzing</span>
+        <span class="spacer"></span>
+        <button class="btn-icon">☆</button>
+        <button class="btn-icon">▼</button>
+      </div>
+
+      <div class="day-divider"></div>
+      <div class="b-day-header">SO 10. MAI</div>
+      <div class="match-row">
+        <span class="time b-time">11:00</span>
+        <span class="team-badge" style="border:1px solid rgba(168,85,247,0.3);background:rgba(168,85,247,0.1);color:#c084fc;">🏆 H40</span>
+        <span class="ha-badge ha-home">H</span>
+        <span class="opponent">TC Kirchseeon</span>
+        <span class="spacer"></span>
+        <button class="btn-icon">☆</button>
+        <button class="btn-icon">▼</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div style="text-align:center;margin-top:24px;color:#475569;font-size:12px;">
+  Vorschlag A: Kompakte Sidebar (36px) · Vorschlag B: Tages-Header ohne Sidebar (FotMob-Style)
+</div>
+
+</body>
+</html>

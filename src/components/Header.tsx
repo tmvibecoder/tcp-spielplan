@@ -2,11 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { SubTab } from "../types";
 
-type View = "timeline" | "list";
-
 interface HeaderProps {
-  view: View;
-  setView: (v: View) => void;
   onPdf: () => void;
   isSummer: boolean;
   seasonDropdown: ReactNode;
@@ -16,8 +12,6 @@ interface HeaderProps {
 }
 
 export default function Header({
-  view,
-  setView,
   onPdf,
   isSummer,
   seasonDropdown,
@@ -94,32 +88,13 @@ export default function Header({
 
             {menuOpen && (
               <div className="absolute right-0 top-full mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl py-1 min-w-[140px] z-50">
-                <button
-                  onClick={() => { setView("timeline"); setMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-1.5 text-[11px] font-semibold transition-colors flex items-center gap-2 ${
-                    view === "timeline" ? "text-blue-400" : "text-slate-300 hover:bg-slate-700"
-                  }`}
-                >
-                  {view === "timeline" ? "●" : "○"} Zeitstrahl
-                </button>
-                <button
-                  onClick={() => { setView("list"); setMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-1.5 text-[11px] font-semibold transition-colors flex items-center gap-2 ${
-                    view === "list" ? "text-blue-400" : "text-slate-300 hover:bg-slate-700"
-                  }`}
-                >
-                  {view === "list" ? "●" : "○"} Liste
-                </button>
                 {isSummer && (
-                  <>
-                    <div className="border-t border-slate-600/50 my-1" />
-                    <button
-                      onClick={() => { onPdf(); setMenuOpen(false); }}
-                      className="w-full text-left px-3 py-1.5 text-[11px] font-semibold text-purple-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
-                    >
-                      PDF exportieren
-                    </button>
-                  </>
+                  <button
+                    onClick={() => { onPdf(); setMenuOpen(false); }}
+                    className="w-full text-left px-3 py-1.5 text-[11px] font-semibold text-purple-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  >
+                    PDF exportieren
+                  </button>
                 )}
               </div>
             )}

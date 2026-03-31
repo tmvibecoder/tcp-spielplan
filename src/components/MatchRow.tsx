@@ -50,20 +50,28 @@ export default function MatchRow({ match, team, isOpen, onClick, score, isFavori
 
       {score && <ScoreBadge score={score} isHome={match.isHome} />}
 
+      {/* Spacer pushes star + arrow to the right */}
+      <span className="flex-1" />
+
       {onToggleFavorite && (
         <button
           onClick={onToggleFavorite}
-          className={`shrink-0 text-sm p-0.5 transition-colors ${
-            isFavorite ? "text-amber-400" : "text-slate-600 hover:text-slate-400"
+          className={`shrink-0 flex items-center justify-center w-9 h-9 rounded-lg transition-colors ${
+            isFavorite
+              ? "text-amber-400 bg-amber-400/10"
+              : "text-slate-600 hover:text-slate-400 hover:bg-slate-700/40"
           }`}
         >
-          {isFavorite ? "★" : "☆"}
+          <span className="text-base">{isFavorite ? "★" : "☆"}</span>
         </button>
       )}
 
-      <span className={`${onToggleFavorite ? "" : "ml-auto "}text-slate-500 text-xs group-hover:text-slate-300 transition-colors shrink-0`}>
-        {isOpen ? "▲" : "▼"}
-      </span>
+      <button
+        className="shrink-0 flex items-center justify-center w-9 h-9 rounded-lg text-slate-500 group-hover:text-slate-300 hover:bg-slate-700/40 transition-colors"
+        tabIndex={-1}
+      >
+        <span className="text-xs">{isOpen ? "▲" : "▼"}</span>
+      </button>
     </button>
   );
 }
