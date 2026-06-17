@@ -71,3 +71,12 @@ export default defineConfig([
   },
 ])
 ```
+
+## Deployment
+
+Seit 2026-06-17 Auto-Deploy via GitHub Actions (`.github/workflows/deploy.yml`):
+Push auf `main` → SSH zu Server web01 → `git pull` + `npm install` + `npm run build` (Vite).
+
+- Statische Site: nginx serviert `/var/www/tcp-spielplan.de/dist`, kein pm2/Server-Prozess.
+- Repo-Secrets: `SERVER_IP`, `SERVER_USER`, `SSH_PRIVATE_KEY` (gemeinsamer Deploy-Key auf web01).
+- Doku-Commits, die NICHT deployen sollen, mit `[skip ci]` in der Commit-Message versehen.
