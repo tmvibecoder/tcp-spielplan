@@ -25,11 +25,23 @@ function resultColor(r: string): string {
 }
 
 function rankBadge(rank: number): string {
+  // Best-of-Konzept: Das Medaillen-Icon (rankMedal) trägt das eigentliche Signal,
+  // die warme/edle Tönung ist nur Garnitur. Dadurch hebt sich der Platz sicher ab,
+  // ohne mit den Mannschaftsfarben (z.B. Damen 40/50 orange) zu verschwimmen.
   switch (rank) {
-    case 1: return "bg-yellow-500/20 text-yellow-300 border-yellow-500/40";
-    case 2: return "bg-slate-400/15 text-slate-300 border-slate-400/30";
-    case 3: return "bg-amber-700/20 text-amber-400 border-amber-600/30";
+    case 1: return "bg-yellow-400/20 text-amber-200 border-yellow-400/70"; // Gold
+    case 2: return "bg-zinc-200/20 text-zinc-100 border-zinc-200/70";      // helles Silber (statt unsichtbarem Grau)
+    case 3: return "bg-amber-700/30 text-amber-300 border-amber-600/70";   // Bronze
     default: return "bg-slate-800/50 text-slate-400 border-slate-600/30";
+  }
+}
+
+function rankMedal(rank: number): string {
+  switch (rank) {
+    case 1: return "🥇";
+    case 2: return "🥈";
+    case 3: return "🥉";
+    default: return "";
   }
 }
 
@@ -75,7 +87,8 @@ export default function StandingsView({ standings }: StandingsViewProps) {
               </div>
               <div className="flex items-center gap-3">
                 {ownEntry && (
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${rankBadge(ownEntry.rank)}`}>
+                  <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full border ${rankBadge(ownEntry.rank)}`}>
+                    {rankMedal(ownEntry.rank) && <span aria-hidden="true">{rankMedal(ownEntry.rank)}</span>}
                     Platz {ownEntry.rank}
                   </span>
                 )}
@@ -107,8 +120,15 @@ export default function StandingsView({ standings }: StandingsViewProps) {
                           }`}
                         >
                           <td className="py-2 px-2">
-                            <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold border ${rankBadge(entry.rank)}`}>
-                              {entry.rank}
+                            <span className="inline-flex items-center gap-1.5">
+                              {rankMedal(entry.rank) && (
+                                <span className="text-[15px] leading-none" aria-hidden="true">
+                                  {rankMedal(entry.rank)}
+                                </span>
+                              )}
+                              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold border ${rankBadge(entry.rank)}`}>
+                                {entry.rank}
+                              </span>
                             </span>
                           </td>
                           <td className={`py-2 px-2 font-medium ${entry.isOwnClub ? "text-sky-300" : "text-slate-200"}`}>
