@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import type { Match, Team, MatchScore, IndividualMatch } from "../types";
 import { MONTHS, MONTH_COLORS } from "../data/constants";
 import {
@@ -106,6 +106,40 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore, al
     return { months };
   }, [matches]);
 
+  // Heutiges Datum als YYYY-MM-DD (lokale Zeit), passend zum Match-Datumsformat.
+  const todayStr = useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+  }, []);
+
+  // Wochenende, das beim Laden angezeigt werden soll: das erste, das heute noch
+  // läuft oder in der Zukunft liegt. Ist die Saison vorbei, das zuletzt gespielte.
+  const targetWeekKey = useMemo(() => {
+    let lastKey: string | null = null;
+    for (const month of grouped.months) {
+      for (const week of month.weeks) {
+        lastKey = week.key;
+        const weekEnd = week.dates[week.dates.length - 1]; // dates aufsteigend sortiert
+        if (weekEnd >= todayStr) return week.key;
+      }
+    }
+    return lastKey;
+  }, [grouped, todayStr]);
+
+  // Einmalig beim ersten Laden zum nächsten Wochenende scrollen
+  // (nicht bei Filterwechseln, damit die Ansicht dann nicht wegspringt).
+  const targetWeekRef = useRef<HTMLDivElement>(null);
+  const hasScrolled = useRef(false);
+  useEffect(() => {
+    if (hasScrolled.current || !targetWeekRef.current) return;
+    hasScrolled.current = true;
+    requestAnimationFrame(() => {
+      targetWeekRef.current?.scrollIntoView({ block: "start" });
+    });
+  }, [targetWeekKey]);
+
   const toggleMatch = (key: string) => {
     setOpenMatch((prev) => (prev === key ? null : key));
   };
@@ -193,7 +227,8 @@ export default function TimelineView({ matches, teamMap, scores, onSaveScore, al
               {month.weeks.map((week, weekIdx) => (
                 <div
                   key={week.key}
-                  className="rounded-xl border overflow-hidden"
+                  ref={week.key === targetWeekKey ? targetWeekRef : undefined}
+                  className="rounded-xl border overflow-hidden scroll-mt-20"
                   style={{
                     backgroundColor: colors?.weekBgs?.[weekIdx % colors.weekBgs.length] || colors?.bg,
                     borderColor: colors?.border,
