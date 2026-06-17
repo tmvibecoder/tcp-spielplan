@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { TEAMS } from "./data/teams";
 import { MATCHES } from "./data/matches";
 import { SEASONS, DEFAULT_SEASON } from "./data/seasons";
+import { SUMMER_STANDINGS } from "./data/summer-2026";
 import {
   WINTER_STANDINGS,
   WINTER_TEAMS,
@@ -154,7 +155,7 @@ function App() {
               </>
             ) : (
               /* Summer Standings */
-              <StandingsView standings={[]} />
+              <StandingsView standings={SUMMER_STANDINGS} />
             )}
           </>
         ) : (
