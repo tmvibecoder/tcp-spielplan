@@ -3,6 +3,8 @@ import type { LeagueStandings, IndividualMatch } from "../types";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 import { getSpielbericht } from "../data/spielberichte";
 import type { SpielberichtMeeting } from "../utils/spielbericht";
+import { getTeamStats } from "../data/player-stats";
+import TeamStatsDetail from "./TeamStatsDetail";
 
 interface StandingsViewProps {
   standings: LeagueStandings[];
@@ -57,6 +59,7 @@ function rankMedal(rank: number): string {
 export default function StandingsView({ standings }: StandingsViewProps) {
   const [expandedLeague, setExpandedLeague] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectedMeeting | null>(null);
+  const [selectedClub, setSelectedClub] = useState<string | null>(null);
 
   function openCell(league: LeagueStandings, rowClub: string, colClub: string, result: string) {
     const [a, b] = result.split(":").map(Number);
@@ -102,7 +105,10 @@ export default function StandingsView({ standings }: StandingsViewProps) {
           >
             {/* League Header */}
             <button
-              onClick={() => setExpandedLeague(isExpanded ? null : league.leagueName)}
+              onClick={() => {
+                setExpandedLeague(isExpanded ? null : league.leagueName);
+                setSelectedClub(null);
+              }}
               className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -132,6 +138,48 @@ export default function StandingsView({ standings }: StandingsViewProps) {
             {/* Standings Table */}
             {isExpanded && (
               <div className="px-3 pb-3 animate-[fadeIn_200ms_ease-out]">
+                {selectedClub ? (
+                  (() => {
+                    const stats = getTeamStats(league.leagueName, selectedClub);
+                    const rank = league.entries.find(
+                      (e) => e.club === selectedClub
+                    )?.rank;
+                    if (stats) {
+                      return (
+                        <TeamStatsDetail
+                          team={stats}
+                          rank={rank}
+                          accentColor={league.teamColor}
+                          onBack={() => setSelectedClub(null)}
+                        />
+                      );
+                    }
+                    return (
+                      <div className="animate-[fadeIn_200ms_ease-out]">
+                        <button
+                          onClick={() => setSelectedClub(null)}
+                          className="mb-3 rounded-lg border border-slate-600/50 bg-slate-800/60 px-2.5 py-1.5 text-xs font-semibold text-sky-300 hover:bg-slate-700/60"
+                        >
+                          ‹ Tabelle
+                        </button>
+                        <div className="rounded-lg border border-slate-700/50 bg-slate-800/30 px-4 py-6 text-center">
+                          <p className="text-sm font-semibold text-slate-300">
+                            {selectedClub}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            Für diese Mannschaft sind noch keine Spielberichte
+                            erfasst.
+                          </p>
+                          <p className="mt-1 text-[11px] text-slate-600">
+                            Sobald die Begegnungen als Spielbericht (Einzel/Doppel)
+                            eingetragen sind, erscheint hier die Spieler-Statistik.
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <>
                 {/* Main standings */}
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -142,13 +190,15 @@ export default function StandingsView({ standings }: StandingsViewProps) {
                         <th className="py-2 px-2 text-center w-14">PKT</th>
                         <th className="py-2 px-2 text-center w-14">MP</th>
                         <th className="py-2 px-2 text-center w-16">Sätze</th>
+                        <th className="w-5"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {league.entries.map((entry) => (
                         <tr
                           key={entry.rank}
-                          className={`border-t border-slate-700/30 ${
+                          onClick={() => setSelectedClub(entry.club)}
+                          className={`border-t border-slate-700/30 cursor-pointer hover:bg-white/[0.04] transition-colors ${
                             entry.isOwnClub ? "bg-sky-900/20" : ""
                           }`}
                         >
@@ -175,6 +225,7 @@ export default function StandingsView({ standings }: StandingsViewProps) {
                           <td className="py-2 px-2 text-center font-bold text-slate-200">{entry.points}</td>
                           <td className="py-2 px-2 text-center text-slate-300">{entry.matchPoints}</td>
                           <td className="py-2 px-2 text-center text-slate-400">{entry.sets}</td>
+                          <td className="py-2 pr-2 text-center text-sky-500/70">›</td>
                         </tr>
                       ))}
                     </tbody>
@@ -240,6 +291,8 @@ export default function StandingsView({ standings }: StandingsViewProps) {
                     </table>
                   </div>
                 </div>
+                  </>
+                )}
               </div>
             )}
           </div>

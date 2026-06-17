@@ -403,3 +403,8 @@ const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
 export function getSpielbericht(league: string, clubA: string, clubB: string): Spielbericht | null {
   return SPIELBERICHTE[key(league, clubA, clubB)] ?? SPIELBERICHTE[key(league, clubB, clubA)] ?? null;
 }
+
+// Alle erfassten Spielberichte (für saisonweite Auswertungen wie die Spieler-Statistik).
+export function getAllSpielberichte(): Spielbericht[] {
+  return ALL;
+}
