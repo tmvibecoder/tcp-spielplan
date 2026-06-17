@@ -1,9 +1,18 @@
 import { useState } from "react";
-import type { LeagueStandings } from "../types";
+import type { LeagueStandings, IndividualMatch } from "../types";
+import SpielberichtDrawer from "./SpielberichtDrawer";
+import { getSpielbericht } from "../data/spielberichte";
+import type { SpielberichtMeeting } from "../utils/spielbericht";
 
 interface StandingsViewProps {
   standings: LeagueStandings[];
   activeTeamIds?: Set<string>;
+}
+
+interface SelectedMeeting {
+  meeting: SpielberichtMeeting;
+  matches: IndividualMatch[] | null;
+  example?: boolean;
 }
 
 function parseResult(r: string): "win" | "loss" | "draw" | "none" {
@@ -47,6 +56,30 @@ function rankMedal(rank: number): string {
 
 export default function StandingsView({ standings }: StandingsViewProps) {
   const [expandedLeague, setExpandedLeague] = useState<string | null>(null);
+  const [selected, setSelected] = useState<SelectedMeeting | null>(null);
+
+  function openCell(league: LeagueStandings, rowClub: string, colClub: string, result: string) {
+    const [a, b] = result.split(":").map(Number);
+    const bericht = getSpielbericht(league.leagueName, rowClub, colClub);
+    const leagueDisplay = `${league.teamLabel} · ${league.leagueName}`;
+    setSelected({
+      // Bei vorhandenem Bericht den kanonischen Heim/Gast-Stand (echtes Spiel) zeigen,
+      // sonst Zellen-Orientierung (Zeile=Heim) + Zellenergebnis.
+      meeting: bericht
+        ? {
+            league: leagueDisplay,
+            homeClub: bericht.homeClub,
+            awayClub: bericht.awayClub,
+            finalHome: bericht.finalHome,
+            finalAway: bericht.finalAway,
+            date: bericht.date,
+            day: bericht.day,
+          }
+        : { league: leagueDisplay, homeClub: rowClub, awayClub: colClub, finalHome: a, finalAway: b },
+      matches: bericht?.matches ?? null,
+      example: bericht?.example,
+    });
+  }
 
   return (
     <div className="space-y-6">
@@ -150,8 +183,11 @@ export default function StandingsView({ standings }: StandingsViewProps) {
 
                 {/* Cross-table results */}
                 <div className="mt-4 pt-3 border-t border-slate-700/30">
-                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2 px-1">
+                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1 px-1">
                     Kreuztabelle
+                  </p>
+                  <p className="text-[11px] text-slate-500 mb-2 px-1">
+                    Tipp: auf ein Ergebnis tippen für den Spielbericht (Einzel/Doppel).
                   </p>
                   <div className="overflow-x-auto">
                     <table className="text-xs w-full">
@@ -187,9 +223,14 @@ export default function StandingsView({ standings }: StandingsViewProps) {
                                 ) : result === "0:0" ? (
                                   <span className="inline-block w-9 h-6 leading-6 rounded bg-slate-800/40 text-slate-600 text-[10px]">n.a.</span>
                                 ) : (
-                                  <span className={`inline-block w-9 h-6 leading-6 rounded font-bold text-[11px] ${resultColor(result)}`}>
+                                  <button
+                                    type="button"
+                                    onClick={() => openCell(league, row.club, league.entries[ci].club, result)}
+                                    title={`${row.club} – ${league.entries[ci].club}: Spielbericht öffnen`}
+                                    className={`inline-block w-9 h-6 leading-6 rounded font-bold text-[11px] cursor-pointer transition hover:ring-2 hover:ring-white/40 ${resultColor(result)}`}
+                                  >
                                     {result}
-                                  </span>
+                                  </button>
                                 )}
                               </td>
                             ))}
@@ -211,6 +252,14 @@ export default function StandingsView({ standings }: StandingsViewProps) {
           <p className="text-xs mt-1">Ergebnisse werden eingetragen sobald die Saison läuft.</p>
         </div>
       )}
+
+      <SpielberichtDrawer
+        open={selected !== null}
+        onClose={() => setSelected(null)}
+        meeting={selected?.meeting ?? null}
+        matches={selected?.matches ?? null}
+        example={selected?.example}
+      />
     </div>
   );
 }
