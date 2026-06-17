@@ -6,8 +6,6 @@ import type { Spielbericht } from "../utils/spielbericht";
 // Auto-generiert aus den Spielbericht-PDFs (Stand 17.06.2026). Doppel ohne LK, da nuLiga sie dort nicht ausweist.
 // Lookup ist richtungsunabhängig: eine Begegnung erscheint in zwei Kreuztabellen-Zellen.
 
-const LEAGUE = "Südliga 2 · Gr. 023";
-
 function key(league: string, homeClub: string, awayClub: string): string {
   return `${league}::${homeClub}::${awayClub}`;
 }
@@ -40,7 +38,7 @@ function m(
 
 // Polizei SV Haar 3:6 TF Markt Schwaben — echte nuLiga-Daten (meeting 12686331)
 const SB_12686331: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "Polizei SV Haar",
   awayClub: "TF Markt Schwaben",
   date: "2026-06-14",
@@ -62,7 +60,7 @@ const SB_12686331: Spielbericht = {
 
 // TSV Feldkirchen II 9:0 TC Pliening — echte nuLiga-Daten (meeting 12686332)
 const SB_12686332: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TSV Feldkirchen II",
   awayClub: "TC Pliening",
   date: "2026-05-10",
@@ -84,7 +82,7 @@ const SB_12686332: Spielbericht = {
 
 // TC Aschheim III 8:1 TC Unterföhring II — echte nuLiga-Daten (meeting 12686339)
 const SB_12686339: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TC Aschheim III",
   awayClub: "TC Unterföhring II",
   date: "2026-05-17",
@@ -106,7 +104,7 @@ const SB_12686339: Spielbericht = {
 
 // TC Aschheim III 5:4 TC Finsing — echte nuLiga-Daten (meeting 12686344)
 const SB_12686344: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TC Aschheim III",
   awayClub: "TC Finsing",
   date: "2026-06-14",
@@ -128,7 +126,7 @@ const SB_12686344: Spielbericht = {
 
 // TSV Feldkirchen II 9:0 TC Finsing — echte nuLiga-Daten (meeting 12686362)
 const SB_12686362: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TSV Feldkirchen II",
   awayClub: "TC Finsing",
   date: "2026-05-17",
@@ -150,7 +148,7 @@ const SB_12686362: Spielbericht = {
 
 // TC Erding II 0:9 TC Pliening — echte nuLiga-Daten (meeting 12686367)
 const SB_12686367: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TC Erding II",
   awayClub: "TC Pliening",
   date: "2026-06-14",
@@ -172,7 +170,7 @@ const SB_12686367: Spielbericht = {
 
 // TF Markt Schwaben 7:2 TC Unterföhring II — echte nuLiga-Daten (meeting 12686404)
 const SB_12686404: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TF Markt Schwaben",
   awayClub: "TC Unterföhring II",
   date: "2026-05-10",
@@ -194,7 +192,7 @@ const SB_12686404: Spielbericht = {
 
 // TC Pliening 8:1 Polizei SV Haar — echte nuLiga-Daten (meeting 12686409)
 const SB_12686409: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TC Pliening",
   awayClub: "Polizei SV Haar",
   date: "2026-05-17",
@@ -216,7 +214,7 @@ const SB_12686409: Spielbericht = {
 
 // Polizei SV Haar 1:8 TC Aschheim III — echte nuLiga-Daten (meeting 12686412)
 const SB_12686412: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "Polizei SV Haar",
   awayClub: "TC Aschheim III",
   date: "2026-05-10",
@@ -238,7 +236,7 @@ const SB_12686412: Spielbericht = {
 
 // TF Markt Schwaben 7:2 TC Erding II — echte nuLiga-Daten (meeting 12686481)
 const SB_12686481: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TF Markt Schwaben",
   awayClub: "TC Erding II",
   date: "2026-05-17",
@@ -260,7 +258,7 @@ const SB_12686481: Spielbericht = {
 
 // TC Finsing 7:2 TC Erding II — echte nuLiga-Daten (meeting 12686499)
 const SB_12686499: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TC Finsing",
   awayClub: "TC Erding II",
   date: "2026-05-10",
@@ -282,7 +280,7 @@ const SB_12686499: Spielbericht = {
 
 // TC Unterföhring II 1:8 TSV Feldkirchen II — echte nuLiga-Daten (meeting 12686506)
 const SB_12686506: Spielbericht = {
-  league: LEAGUE,
+  league: "Südliga 2 · Gr. 023",
   homeClub: "TC Unterföhring II",
   awayClub: "TSV Feldkirchen II",
   date: "2026-06-14",
@@ -302,6 +300,82 @@ const SB_12686506: Spielbericht = {
   ],
 };
 
+// TC Pliening 6:0 TC Putzbrunn — echte nuLiga-Daten (meeting 12692665)
+const SB_12692665: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TC Pliening",
+  awayClub: "TC Putzbrunn",
+  date: "2026-06-13",
+  day: "Sa",
+  finalHome: 6,
+  finalAway: 0,
+  matches: [
+    m("12692665-e1", 1, "singles", "Miler, Thomas (10, LK14,3)", "Schnurr, Matthias (4, LK20,4)", [[6, 1], [6, 1]], "home"),
+    m("12692665-e2", 2, "singles", "Widl, Alexander (20, LK19,8)", "Sturm, Kevin (5, LK20,7)", [[6, 3], [6, 0]], "home"),
+    m("12692665-e3", 3, "singles", "Bauer, Maximilian (27, LK22,1)", "Frey, Michael (9, LK23,2)", [[7, 5], [6, 1]], "home"),
+    m("12692665-e4", 4, "singles", "Merkl, Julian (34, LK25,0)", "Johannes, Maximilian (10, LK23,4)", [[6, 3], [1, 6], [10, 5]], "home"),
+    m("12692665-d1", 7, "doubles", "Gelhart, Daniel / Widl, Alexander", "Karatasos, Kostantinos / Johannes, Maximilian", [[6, 0], [6, 7], [10, 5]], "home"),
+    m("12692665-d2", 8, "doubles", "Miler, Thomas / Bauer, Maximilian", "Sturm, Kevin / Frey, Michael", [[6, 4], [6, 2]], "home"),
+  ],
+};
+
+// TSV Oberpframmern 2:4 TC Finsing — echte nuLiga-Daten (meeting 12692624)
+const SB_12692624: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TSV Oberpframmern",
+  awayClub: "TC Finsing",
+  date: "2026-06-13",
+  day: "Sa",
+  finalHome: 2,
+  finalAway: 4,
+  matches: [
+    m("12692624-e1", 1, "singles", "Putzke, Christian (1, LK9,5)", "Bunk, Michael (2, LK15,9)", [[4, 6], [4, 6]], "away"),
+    m("12692624-e2", 2, "singles", "Bauer, Andreas (3, LK14,9)", "Weinreich, Matthias (3, LK18,3)", [[5, 7], [1, 6]], "away"),
+    m("12692624-e3", 3, "singles", "Janetschko, Florian (4, LK16,3)", "Greiner, Dennis (6, LK19,2)", [[6, 7], [3, 6]], "away"),
+    m("12692624-e4", 4, "singles", "Meßner, Tobias (10, LK19,9)", "Zillner, Benedikt (17, LK24,8)", [[6, 0], [6, 1]], "home"),
+    m("12692624-d1", 7, "doubles", "Putzke, Christian / Bauer, Andreas", "Bunk, Michael / Greiner, Dennis", [[6, 3], [6, 7], [6, 10]], "away"),
+    m("12692624-d2", 8, "doubles", "Janetschko, Florian / Meßner, Tobias", "Weinreich, Matthias / Zillner, Benedikt", [[6, 1], [6, 2]], "home"),
+  ],
+};
+
+// TC Pliening 3:3 TC Philathlos München — echte nuLiga-Daten (meeting 12692763)
+const SB_12692763: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TC Pliening",
+  awayClub: "TC Philathlos München",
+  date: "2026-05-16",
+  day: "Sa",
+  finalHome: 3,
+  finalAway: 3,
+  matches: [
+    m("12692763-e1", 1, "singles", "Krug, Max (3, LK8,8)", "Stöcklein, Veit (1, LK15,4)", [[6, 0], [6, 0]], "home"),
+    m("12692763-e2", 2, "singles", "Miler, Thomas (10, LK14,3)", "Schetter, Daniel (5, LK17,2)", [[6, 1], [6, 2]], "home"),
+    m("12692763-e3", 3, "singles", "Bauer, Maximilian (27, LK22,1)", "Daubeuf, Nicolas (7, LK18,4)", [[0, 6], [1, 6]], "away"),
+    m("12692763-e4", 4, "singles", "Nowroth, Fabian (28, LK22,6)", "Kasperek, Jan (14, LK22,0)", [[5, 7], [4, 6]], "away"),
+    m("12692763-d1", 7, "doubles", "Krug, Max / Ehlers, Nico", "Stöcklein, Veit / Kasperek, Jan", [[6, 0], [6, 0]], "home"),
+    m("12692763-d2", 8, "doubles", "Miler, Thomas / Nowroth, Fabian", "Schetter, Daniel / Daubeuf, Nicolas", [[1, 6], [1, 6]], "away"),
+  ],
+};
+
+// TC Putzbrunn 2:4 TC Finsing — echte nuLiga-Daten (meeting 12692807)
+const SB_12692807: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TC Putzbrunn",
+  awayClub: "TC Finsing",
+  date: "2026-05-16",
+  day: "Sa",
+  finalHome: 2,
+  finalAway: 4,
+  matches: [
+    m("12692807-e1", 1, "singles", "Karatasos, Kostantinos (2, LK15,4)", "Bunk, Michael (2, LK15,9)", [[6, 4], [3, 6], [20, 18]], "home"),
+    m("12692807-e2", 2, "singles", "Schnurr, Matthias (4, LK20,4)", "Weinreich, Matthias (3, LK18,3)", [[3, 6], [6, 0], [6, 10]], "away"),
+    m("12692807-e3", 3, "singles", "Sturm, Kevin (5, LK20,7)", "Greiner, Dennis (6, LK19,2)", [[0, 6], [2, 6]], "away"),
+    m("12692807-e4", 4, "singles", "Hierlmeier, Tobias (6, LK21,6)", "Schauer, Jakob (8, LK21,2)", [[3, 6], [6, 2], [10, 4]], "home"),
+    m("12692807-d1", 7, "doubles", "Karatasos, Kostantinos / Hierlmeier, Tobias", "Weinreich, Matthias / Greiner, Dennis", [[3, 6], [6, 2], [7, 10]], "away"),
+    m("12692807-d2", 8, "doubles", "Schnurr, Matthias / Frey, Michael", "Bunk, Michael / Schauer, Jakob", [[0, 6], [2, 6]], "away"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686331,
   SB_12686332,
@@ -315,6 +389,10 @@ const ALL: Spielbericht[] = [
   SB_12686481,
   SB_12686499,
   SB_12686506,
+  SB_12692665,
+  SB_12692624,
+  SB_12692763,
+  SB_12692807,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
