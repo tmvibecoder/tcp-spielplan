@@ -15,8 +15,18 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -euo pipefail
             cd /var/www/tcp-spielplan.de
-            git pull origin main
-            npm install
+            # Hart auf den aktuellen main-Stand synchronisieren.
+            # 'git pull' scheiterte bisher still, wenn lokale Aenderungen
+            # (z.B. an package-lock.json durch npm install) im Weg waren –
+            # der alte Code wurde dann unbemerkt neu gebaut.
+            git fetch origin main
+            git reset --hard origin/main
+            BUILT_COMMIT="$(git rev-parse --short HEAD)"
+            # Deterministische, reproduzierbare Installation (veraendert package-lock.json nicht).
+            npm ci
             npm run build
-            echo "Deployment completed at $(date)"
+            # Sicherstellen, dass wirklich neu gebaut wurde.
+            test -d dist/assets
+            echo "Deployment of $BUILT_COMMIT completed at $(date)"
