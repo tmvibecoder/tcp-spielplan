@@ -728,6 +728,207 @@ const SB_12556822: Spielbericht = {
   ],
 };
 
+// ── Herren 40 III · Südliga 2 · Gr. 315 ── echte nuLiga-Daten (Stand 18.06.2026).
+// Quelle: BTV nuLiga MeetingReportFOP je Begegnung. Forstinning ist zurückgezogen,
+// daher liegt für deren Begegnung (TF Markt Schwaben 6:3) kein Spielbericht vor.
+// TC Grün-Gold München II 6:3 TF Markt Schwaben — echte nuLiga-Daten (meeting 12742402)
+const SB_12742402: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Grün-Gold München II",
+  awayClub: "TF Markt Schwaben",
+  date: "2026-05-17",
+  day: "So",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12742402-e1", 1, "singles", "Harz, Karsten (17, LK14,1)", "Eraerds, Patrick (1, LK10,4)", [[2, 6], [4, 6]], "away"),
+    m("12742402-e2", 2, "singles", "Hasselmann, Roland (21, LK14,5)", "Krahnke, Andreas (3, LK13,0)", [[4, 6], [4, 6]], "away"),
+    m("12742402-e3", 3, "singles", "Diener, Christian (24, LK15,0)", "Walther, Oliver (4, LK13,1)", [[6, 3], [6, 1]], "home"),
+    m("12742402-e4", 4, "singles", "Hallenberger, Philipp (26, LK16,0)", "Leon Diaz, Esteban (5, LK14,9)", [[6, 0], [6, 1]], "home"),
+    m("12742402-e5", 5, "singles", "Kopachev, Alexey (42, LK20,8)", "Eckert, Thomas (9, LK21,6)", [[6, 1], [6, 7], [10, 8]], "home"),
+    m("12742402-e6", 6, "singles", "Souche, Thomas FRA (43, LK20,9)", "Göhrum, Andreas (14, LK22,2)", [[6, 7], [5, 7]], "away"),
+    m("12742402-d1", 7, "doubles", "Harz, Karsten / Hasselmann, Roland", "Krahnke, Andreas / Walther, Oliver", [[6, 1], [3, 6], [14, 12]], "home"),
+    m("12742402-d2", 8, "doubles", "Hallenberger, Philipp / Richter, Sönke", "Eraerds, Patrick / Göhrum, Andreas", [[4, 6], [6, 3], [10, 7]], "home"),
+    m("12742402-d3", 9, "doubles", "Diener, Christian / Kuhlmann, Peter", "Leon Diaz, Esteban / Eckert, Thomas", [[7, 6], [6, 0]], "home"),
+  ],
+};
+
+// TSV Haar II 5:4 TSV Feldkirchen II — echte nuLiga-Daten (meeting 12742413)
+const SB_12742413: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TSV Haar II",
+  awayClub: "TSV Feldkirchen II",
+  date: "2026-05-16",
+  day: "Sa",
+  finalHome: 5,
+  finalAway: 4,
+  matches: [
+    m("12742413-e1", 1, "singles", "Rebele, Tobias (17, LK12,8)", "Petz, Veit (10, LK12,9)", [[2, 6], [2, 6]], "away"),
+    m("12742413-e2", 2, "singles", "Lenders, Matthias (19, LK13,4)", "Körber, Simon (12, LK13,3)", [[3, 6], [1, 6]], "away"),
+    m("12742413-e3", 3, "singles", "Malik, Oliver (20, LK13,5)", "Brand, Michael (16, LK14,4)", [[6, 3], [6, 1]], "home"),
+    m("12742413-e4", 4, "singles", "Brasse, Matthias (23, LK13,8)", "Parzefall, Florian (17, LK15,0)", [[6, 1], [6, 7], [10, 4]], "home"),
+    m("12742413-e5", 5, "singles", "Amend, Philipp (30, LK16,4)", "Keil, Patrick (20, LK16,1)", [[6, 2], [0, 6], [10, 8]], "home"),
+    m("12742413-e6", 6, "singles", "Potschkat, Torsten (46, LK21,2)", "Ide, Dennis (w.o.) (32, LK24,3)", [[3, 2]], "home"),
+    m("12742413-d1", 7, "doubles", "Rebele, Tobias / Brasse, Matthias", "Körber, Simon / Hargasser, Manfred", [[7, 6], [3, 6], [7, 10]], "away"),
+    m("12742413-d2", 8, "doubles", "Lenders, Matthias / Malik, Oliver", "Petz, Veit / Brand, Michael", [[6, 0], [2, 6], [10, 7]], "home"),
+    m("12742413-d3", 9, "doubles", "Amend, Philipp / Potschkat, Torsten", "Parzefall, Florian / Keil, Patrick", [[2, 6], [1, 6]], "away"),
+  ],
+};
+
+// TC Pliening III 7:2 WB Fideliopark München II — echte nuLiga-Daten (meeting 12742450)
+const SB_12742450: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Pliening III",
+  awayClub: "WB Fideliopark München II",
+  date: "2026-05-16",
+  day: "Sa",
+  finalHome: 7,
+  finalAway: 2,
+  matches: [
+    m("12742450-e1", 1, "singles", "Wörner, Martin (31, LK10,4)", "Schütz, Alexander (12, LK15,5)", [[6, 0], [6, 2]], "home"),
+    m("12742450-e2", 2, "singles", "Anetzberger, Martin (42, LK14,0)", "Steinbach, Jan (15, LK17,2)", [[6, 3], [3, 6], [10, 3]], "home"),
+    m("12742450-e3", 3, "singles", "Forchhammer, Sebastian (49, LK16,6)", "Pröll, Markus (20, LK19,1)", [[6, 0], [4, 6], [8, 10]], "away"),
+    m("12742450-e4", 4, "singles", "Gelhart, Daniel (54, LK18,6)", "Ockert, Tim (21, LK19,3)", [[6, 7], [1, 6]], "away"),
+    m("12742450-e5", 5, "singles", "Widl, Alexander (59, LK19,8)", "Ries, Sebastian (25, LK20,0)", [[7, 6], [6, 2]], "home"),
+    m("12742450-e6", 6, "singles", "Wagner, Patrick IRL (62, LK20,3)", "Wagh, Vijay (26, LK20,1)", [[7, 6], [6, 0]], "home"),
+    m("12742450-d1", 7, "doubles", "Wörner, Martin / Forchhammer, Sebastian", "Schütz, Alexander / Ockert, Tim", [[7, 5], [6, 3]], "home"),
+    m("12742450-d2", 8, "doubles", "Anetzberger, Martin / Wagner, Patrick IRL", "Steinbach, Jan / Ries, Sebastian", [[4, 6], [6, 3], [10, 3]], "home"),
+    m("12742450-d3", 9, "doubles", "Gelhart, Daniel / Widl, Alexander", "Pröll, Markus / Wagh, Vijay", [[6, 4], [6, 1]], "home"),
+  ],
+};
+
+// TSV Feldkirchen II 4:5 TC Grün-Gold München II — echte nuLiga-Daten (meeting 12742475)
+const SB_12742475: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TSV Feldkirchen II",
+  awayClub: "TC Grün-Gold München II",
+  date: "2026-06-13",
+  day: "Sa",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12742475-e1", 1, "singles", "Petz, Veit (10, LK12,9)", "Hasselmann, Roland (21, LK14,5)", [[6, 2], [6, 1]], "home"),
+    m("12742475-e2", 2, "singles", "Körber, Simon (12, LK13,3)", "Diener, Christian (24, LK15,0)", [[5, 7], [3, 6]], "away"),
+    m("12742475-e3", 3, "singles", "Hargasser, Manfred (15, LK13,9)", "Maier, Ulf (27, LK16,0)", [[5, 7], [1, 6]], "away"),
+    m("12742475-e4", 4, "singles", "Parzefall, Florian (17, LK15,0)", "Gammisch, Sebastian (30, LK17,6)", [[4, 6], [2, 6]], "away"),
+    m("12742475-e5", 5, "singles", "Mutter, Sebastian (21, LK16,3)", "Kopachev, Alexey (42, LK20,8)", [[6, 1], [6, 3]], "home"),
+    m("12742475-e6", 6, "singles", "Ide, Dennis (32, LK24,3)", "Kuhlmann, Peter (45, LK22,3)", [[6, 4], [6, 4]], "home"),
+    m("12742475-d1", 7, "doubles", "Körber, Simon / Hargasser, Manfred", "Hasselmann, Roland / Kopachev, Alexey", [[6, 1], [7, 5]], "home"),
+    m("12742475-d2", 8, "doubles", "Petz, Veit (w.o.) / Parzefall, Florian (w.o.)", "Diener, Christian / Gammisch, Sebastian", [[1, 6], [0, 2]], "away"),
+    m("12742475-d3", 9, "doubles", "Mutter, Sebastian / Ide, Dennis", "Maier, Ulf / Kuhlmann, Peter", [[5, 7], [5, 7]], "away"),
+  ],
+};
+
+// TC Pliening III 7:2 TC Aschheim — echte nuLiga-Daten (meeting 12742477)
+const SB_12742477: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Pliening III",
+  awayClub: "TC Aschheim",
+  date: "2026-06-13",
+  day: "Sa",
+  finalHome: 7,
+  finalAway: 2,
+  matches: [
+    m("12742477-e1", 1, "singles", "Wörner, Martin (31, LK10,4)", "Faschang, Michael AUT (1, LK7,2)", [[2, 6], [6, 4], [10, 7]], "home"),
+    m("12742477-e2", 2, "singles", "Anetzberger, Martin (42, LK14,0)", "Bodai, Daniel HUN (8, LK17,9)", [[6, 1], [6, 1]], "home"),
+    m("12742477-e3", 3, "singles", "Schwarz, Heiko (44, LK15,6)", "Dietzel, Patrice (9, LK18,6)", [[6, 4], [2, 6], [11, 9]], "home"),
+    m("12742477-e4", 4, "singles", "Forchhammer, Sebastian (49, LK16,6)", "Ahmetaj, Erton ALB (13, LK19,8)", [[5, 7], [7, 5], [10, 6]], "home"),
+    m("12742477-e5", 5, "singles", "Lange, Marc (56, LK18,8)", "Norris, David GBR (21, LK22,7)", [[0, 6], [6, 3], [10, 6]], "home"),
+    m("12742477-e6", 6, "singles", "Rohrmeier, Patrick (63, LK20,6)", "Musielak, Radoslaw (25, LK24,2)", [[3, 6], [6, 2], [5, 10]], "away"),
+    m("12742477-d1", 7, "doubles", "Wörner, Martin / Schwarz, Heiko", "Bodai, Daniel HUN (w.o.) / Norris, David GBR (w.o.)", [], "home"),
+    m("12742477-d2", 8, "doubles", "Anetzberger, Martin / Rohrmeier, Patrick", "Faschang, Michael AUT / Musielak, Radoslaw", [[6, 0], [6, 7], [10, 6]], "home"),
+    m("12742477-d3", 9, "doubles", "Ehlers, Nico / Lange, Marc", "Dietzel, Patrice / Ahmetaj, Erton ALB", [[6, 7], [3, 6]], "away"),
+  ],
+};
+
+// TSV Haar II 5:4 TF Markt Schwaben — echte nuLiga-Daten (meeting 12742536)
+const SB_12742536: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TSV Haar II",
+  awayClub: "TF Markt Schwaben",
+  date: "2026-06-13",
+  day: "Sa",
+  finalHome: 5,
+  finalAway: 4,
+  matches: [
+    m("12742536-e1", 1, "singles", "Schmid, Christian (16, LK12,8)", "Eraerds, Patrick (1, LK10,4)", [[6, 3], [4, 6], [10, 8]], "home"),
+    m("12742536-e2", 2, "singles", "Rebele, Tobias (17, LK12,8)", "Krahnke, Andreas (3, LK13,0)", [[5, 7], [1, 6]], "away"),
+    m("12742536-e3", 3, "singles", "Zirngibl, Rupert (22, LK13,6)", "Walther, Oliver (4, LK13,1)", [[6, 3], [6, 1]], "home"),
+    m("12742536-e4", 4, "singles", "Venus, Ulrich (27, LK15,0)", "Leon Diaz, Esteban (5, LK14,9)", [[4, 6], [6, 3], [10, 5]], "home"),
+    m("12742536-e5", 5, "singles", "Herrmann, Philipp (43, LK20,0)", "Eckert, Thomas (9, LK21,6)", [[6, 4], [6, 0]], "home"),
+    m("12742536-e6", 6, "singles", "Mehrlich, Thomas (54, LK25,0)", "Göhrum, Andreas (14, LK22,2)", [[1, 6], [1, 6]], "away"),
+    m("12742536-d1", 7, "doubles", "Rebele, Tobias / Zirngibl, Rupert", "Krahnke, Andreas / Walther, Oliver", [[6, 4], [1, 6], [6, 10]], "away"),
+    m("12742536-d2", 8, "doubles", "Schmid, Christian / Venus, Ulrich", "Eraerds, Patrick / Göhrum, Andreas", [[7, 6], [6, 4]], "home"),
+    m("12742536-d3", 9, "doubles", "Herrmann, Philipp / Mehrlich, Thomas", "Leon Diaz, Esteban / Eckert, Thomas", [[3, 6], [3, 6]], "away"),
+  ],
+};
+
+// TSV Feldkirchen II 7:2 WB Fideliopark München II — echte nuLiga-Daten (meeting 12742553)
+const SB_12742553: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TSV Feldkirchen II",
+  awayClub: "WB Fideliopark München II",
+  date: "2026-05-02",
+  day: "Sa",
+  finalHome: 7,
+  finalAway: 2,
+  matches: [
+    m("12742553-e1", 1, "singles", "Amrehn, Michael (9, LK12,5)", "Savci-Keck, Koray (10, LK15,3)", [[6, 2], [6, 3]], "home"),
+    m("12742553-e2", 2, "singles", "Körber, Simon (12, LK13,3)", "Steinbach, Jan (15, LK17,2)", [[7, 5], [6, 4]], "home"),
+    m("12742553-e3", 3, "singles", "Brand, Michael (16, LK14,4)", "Kahle, Robert (19, LK18,1)", [[6, 7], [4, 6]], "away"),
+    m("12742553-e4", 4, "singles", "Parzefall, Florian (17, LK15,0)", "Pröll, Markus (20, LK19,1)", [[6, 4], [6, 2]], "home"),
+    m("12742553-e5", 5, "singles", "Kruschwitz, Martin (19, LK16,1)", "Ockert, Tim (21, LK19,3)", [[6, 0], [6, 1]], "home"),
+    m("12742553-e6", 6, "singles", "Schmid, Peter (23, LK17,2)", "Mutter, Jan (31, LK22,4)", [[6, 1], [6, 2]], "home"),
+    m("12742553-d1", 7, "doubles", "Amrehn, Michael / Kruschwitz, Martin", "Steinbach, Jan / Pröll, Markus", [[6, 1], [6, 0]], "home"),
+    m("12742553-d2", 8, "doubles", "Brand, Michael / Parzefall, Florian", "Savci-Keck, Koray / Ockert, Tim", [[4, 6], [4, 6]], "away"),
+    m("12742553-d3", 9, "doubles", "Körber, Simon / Schmid, Peter", "Kahle, Robert / Mutter, Jan", [[6, 1], [6, 0]], "home"),
+  ],
+};
+
+// TC Grün-Gold München II 5:4 TC Pliening III — echte nuLiga-Daten (meeting 12742565)
+const SB_12742565: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Grün-Gold München II",
+  awayClub: "TC Pliening III",
+  date: "2026-05-03",
+  day: "So",
+  finalHome: 5,
+  finalAway: 4,
+  matches: [
+    m("12742565-e1", 1, "singles", "Harz, Karsten (17, LK14,1)", "Wörner, Martin (31, LK10,4)", [[4, 6], [2, 6]], "away"),
+    m("12742565-e2", 2, "singles", "Hasselmann, Roland (21, LK14,5)", "Forchhammer, Sebastian (49, LK16,6)", [[6, 2], [6, 3]], "home"),
+    m("12742565-e3", 3, "singles", "Diener, Christian (24, LK15,0)", "Ehlers, Nico (53, LK18,5)", [[6, 0], [6, 1]], "home"),
+    m("12742565-e4", 4, "singles", "Hallenberger, Philipp (26, LK16,0)", "Gelhart, Daniel (54, LK18,6)", [[6, 1], [6, 4]], "home"),
+    m("12742565-e5", 5, "singles", "Maier, Ulf (27, LK16,0)", "Widl, Alexander (59, LK19,8)", [[6, 1], [6, 2]], "home"),
+    m("12742565-e6", 6, "singles", "Richter, Sönke (36, LK18,4)", "Rohrmeier, Patrick (63, LK20,6)", [[3, 6], [6, 4], [3, 10]], "away"),
+    m("12742565-d1", 7, "doubles", "Harz, Karsten / Hasselmann, Roland", "Wörner, Martin / Forchhammer, Sebastian", [[3, 6], [6, 4], [6, 10]], "away"),
+    m("12742565-d2", 8, "doubles", "Diener, Christian / Maier, Ulf", "Ehlers, Nico / Schwarz, Heiko", [[6, 4], [6, 3]], "home"),
+    m("12742565-d3", 9, "doubles", "Lausch, Felix / Hallenberger, Philipp", "Rohrmeier, Patrick / Gelhart, Daniel", [[0, 6], [0, 6]], "away"),
+  ],
+};
+
+// TC Aschheim 6:3 TSV Haar II — echte nuLiga-Daten (meeting 12742577)
+const SB_12742577: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Aschheim",
+  awayClub: "TSV Haar II",
+  date: "2026-05-02",
+  day: "Sa",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12742577-e1", 1, "singles", "Faschang, Michael AUT (1, LK7,2)", "Lenders, Matthias (19, LK13,4)", [[6, 2], [6, 1]], "home"),
+    m("12742577-e2", 2, "singles", "Höcherl, Georg (2, LK10,5)", "Malik, Oliver (20, LK13,5)", [[5, 7], [6, 3], [10, 3]], "home"),
+    m("12742577-e3", 3, "singles", "Bodai, Daniel HUN (8, LK17,9)", "Zirngibl, Rupert (22, LK13,6)", [[0, 6], [6, 4], [4, 10]], "away"),
+    m("12742577-e4", 4, "singles", "Dietzel, Patrice (9, LK18,6)", "Pettazzi, Lorenzo ITA (26, LK14,9)", [[5, 7], [6, 7]], "away"),
+    m("12742577-e5", 5, "singles", "Trügler, Marcus (10, LK19,2)", "Füller, Christian (29, LK15,8)", [[5, 7], [6, 2], [10, 8]], "home"),
+    m("12742577-e6", 6, "singles", "Musielak, Radoslaw (25, LK24,2)", "Herrmann, Philipp (43, LK20,0)", [[6, 4], [7, 5]], "home"),
+    m("12742577-d1", 7, "doubles", "Faschang, Michael AUT / Dietzel, Patrice", "Malik, Oliver / Pettazzi, Lorenzo ITA", [[7, 5], [6, 4]], "home"),
+    m("12742577-d2", 8, "doubles", "Höcherl, Georg / Vogelhuber, Axel", "Lenders, Matthias / Füller, Christian", [[6, 4], [6, 2]], "home"),
+    m("12742577-d3", 9, "doubles", "Trügler, Marcus / Musielak, Radoslaw", "Zirngibl, Rupert / Herrmann, Philipp", [[4, 6], [2, 6]], "away"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686331,
   SB_12686332,
@@ -761,6 +962,15 @@ const ALL: Spielbericht[] = [
   SB_12556812,
   SB_12556819,
   SB_12556822,
+  SB_12742402,
+  SB_12742413,
+  SB_12742450,
+  SB_12742475,
+  SB_12742477,
+  SB_12742536,
+  SB_12742553,
+  SB_12742565,
+  SB_12742577,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
