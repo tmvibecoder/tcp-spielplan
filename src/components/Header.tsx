@@ -4,6 +4,7 @@ import type { SubTab } from "../types";
 
 interface HeaderProps {
   onPdf: () => void;
+  onSavePrefs: () => void;
   isSummer: boolean;
   seasonDropdown: ReactNode;
   subTab: SubTab;
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export default function Header({
   onPdf,
+  onSavePrefs,
   isSummer,
   seasonDropdown,
   subTab,
@@ -20,7 +22,14 @@ export default function Header({
   showSpielplanControls,
 }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const handleSavePrefs = () => {
+    onSavePrefs();
+    setSavedFlash(true);
+    window.setTimeout(() => setSavedFlash(false), 1500);
+  };
 
   // Close on outside click
   useEffect(() => {
@@ -87,7 +96,7 @@ export default function Header({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl py-1 min-w-[140px] z-50">
+              <div className="absolute right-0 top-full mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl py-1 min-w-[160px] z-50">
                 {isSummer && (
                   <button
                     onClick={() => { onPdf(); setMenuOpen(false); }}
@@ -96,6 +105,16 @@ export default function Header({
                     PDF exportieren
                   </button>
                 )}
+                <button
+                  onClick={handleSavePrefs}
+                  className={`w-full text-left px-3 py-1.5 text-[11px] font-semibold transition-colors flex items-center gap-2 ${
+                    savedFlash
+                      ? "text-green-300"
+                      : "text-sky-300 hover:bg-slate-700"
+                  }`}
+                >
+                  {savedFlash ? "✓ Gespeichert" : "Auswahl speichern"}
+                </button>
               </div>
             )}
           </div>

@@ -25,23 +25,46 @@ import { useFavorites } from "./hooks/useFavorites";
 
 type Page = "spielplan" | "impressum" | "datenschutz";
 
+// Persistenz der Filter-Auswahl (welche Konkurrenzen aktiv, Nur-Heim-Schalter).
+// Wird nur per "Auswahl speichern" im Menü geschrieben und beim Laden angewandt.
+const PREFS_KEY = "tcp-filter-prefs";
+
+interface FilterPrefs {
+  summer: string[];
+  winter: string[];
+  homeOnly: boolean;
+}
+
+function loadPrefs(): FilterPrefs | null {
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (raw) return JSON.parse(raw) as FilterPrefs;
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 function App() {
+  // Gespeicherte Auswahl einmalig beim Mount lesen
+  const savedPrefs = useMemo(() => loadPrefs(), []);
+
   const [season, setSeason] = useState<SeasonId>(DEFAULT_SEASON.id);
   const [subTab, setSubTab] = useState<SubTab>("spielplan");
 
   // Summer team state
   const allSummerTeamIds = useMemo(() => new Set(TEAMS.map((t) => t.id)), []);
   const [activeSummerTeams, setActiveSummerTeams] = useState<Set<string>>(
-    () => new Set(allSummerTeamIds)
+    () => (savedPrefs ? new Set(savedPrefs.summer) : new Set(allSummerTeamIds))
   );
 
   // Winter team state
   const allWinterTeamIds = useMemo(() => new Set(WINTER_TEAMS.map((t) => t.id)), []);
   const [activeWinterTeams, setActiveWinterTeams] = useState<Set<string>>(
-    () => new Set(allWinterTeamIds)
+    () => (savedPrefs ? new Set(savedPrefs.winter) : new Set(allWinterTeamIds))
   );
 
-  const [homeOnly, setHomeOnly] = useState(false);
+  const [homeOnly, setHomeOnly] = useState(() => savedPrefs?.homeOnly ?? false);
   const [page, setPage] = useState<Page>("spielplan");
 
   const isSummer = season === "sommer-26";
@@ -101,6 +124,29 @@ function App() {
     });
   }, [isSummer]);
 
+  // Alle Konkurrenzen der aktiven Saison ein- (on=true) oder ausschalten (on=false)
+  const setAllTeams = useCallback((on: boolean) => {
+    const setter = isSummer ? setActiveSummerTeams : setActiveWinterTeams;
+    const allIds = isSummer ? allSummerTeamIds : allWinterTeamIds;
+    setter(on ? new Set(allIds) : new Set());
+  }, [isSummer, allSummerTeamIds, allWinterTeamIds]);
+
+  // Aktuelle Filter-Auswahl dauerhaft im Browser speichern
+  const savePrefs = useCallback(() => {
+    try {
+      localStorage.setItem(
+        PREFS_KEY,
+        JSON.stringify({
+          summer: [...activeSummerTeams],
+          winter: [...activeWinterTeams],
+          homeOnly,
+        })
+      );
+    } catch {
+      // ignore
+    }
+  }, [activeSummerTeams, activeWinterTeams, homeOnly]);
+
   const { scores, saveScores } = useLiveScores();
   const { favorites, toggleFavorite } = useFavorites();
 
@@ -115,6 +161,7 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <Header
         onPdf={handlePdf}
+        onSavePrefs={savePrefs}
         isSummer={isSummer}
         subTab={subTab}
         setSubTab={setSubTab}
@@ -142,6 +189,7 @@ function App() {
                     activeTeams={activeSummerTeams}
                     toggleTeam={toggleTeam}
                     toggleCategory={toggleCategory}
+                    setAllTeams={setAllTeams}
                     homeOnly={homeOnly}
                     setHomeOnly={setHomeOnly}
                   />
@@ -168,6 +216,7 @@ function App() {
                     activeTeams={activeWinterTeams}
                     toggleTeam={toggleTeam}
                     toggleCategory={toggleCategory}
+                    setAllTeams={setAllTeams}
                     categories={WINTER_CATEGORIES}
                     teams={WINTER_TEAMS as Team[]}
                     homeOnly={homeOnly}
