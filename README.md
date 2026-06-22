@@ -15,13 +15,40 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 - **Spieler** – jeder Spieler nach **Ø-Position** sortiert (Durchschnitt der gespielten Position; `1` = oben/stärkste Position), mit eigener **LK**. Aufklappen zeigt pro Einsatz: Gegner **inkl. dessen LK**, Position, Satz-Ergebnis und **SIEG/NIEDERL.** Marker **▲ LK-Sieg** = gegen besseren (niedrigeren) LK gewonnen, **▼** = gegen schwächeren LK verloren.
 - **Doppel** – Paarungen separat (Schlüssel = sortierte Nachnamen). Ohne LK, da nuLiga für Doppel keine LK ausweist.
 
-**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Aktuell erfasst (Sommer 2026): **H00** (Südliga 2 · Gr. 023) und **H30** (Südliga 4 · Gr. 292).
+**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Aktuell erfasst (Sommer 2026, Stand 22.06.): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004) und **H40 III** (Südliga 2 · Gr. 315).
 
 **Code-Landkarte:**
 - `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `aggregatePlayers`, `aggregateDoubles`, `parseLk`.
 - `src/components/TeamStatsDetail.tsx` – die Detailseite (Reiter, Drilldown, LK-Pillen).
 - `src/components/StandingsView.tsx` – Tabellenzeile klickbar (`selectedClub`-State); koexistiert mit der Spielbericht-Ansicht der Kreuztabelle.
 - Spieler-Strings haben das Format `"Nachname, Vorname (Meldeposition, LKxx,x)"` und werden von `src/utils/spielbericht.ts` (`parsePlayer`/`parseSide`) geparst. LK-Format `"LK14,3"` (Komma als Dezimaltrenner).
+
+---
+
+## Daten pflegen (nuLiga)
+
+Alle Liga-/Spieldaten stammen aus offiziellen **BTV-nuLiga-PDFs** und liegen in zwei Dateien. `club=22844` = TC Pliening; Saison Sommer 2026 = `season=18103` (wechselt je Saison — aktuellen Link von der [Vereinsseite](https://www.btv.de/de/mein-verein/vereinsseite/tc-pliening.html) holen).
+
+### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
+
+Quelle: **eine** PDF mit allen Ligen, „Ergebnistabellen gesamt":
+`https://btv.liga.nu/.../nuDokument?dokument=ResultReportFOP&type=full&club=22844&season=18103`
+
+Pro Liga ein `LeagueStandings`-Objekt; `entries` in **Rang-Reihenfolge**. `crossResults[i]` = Ergebnis der Zeilen-Mannschaft gegen die Mannschaft mit `rank = i+1` (`"***"` = Diagonale, `"0:0"` = noch nicht gespielt → „n.a."); Array-Länge = Mannschaftszahl. Werte **1:1** übernehmen — auch bei zurückgezogenen Teams, wo offizielle Matchpunkte von der Kreuztabelle abweichen. Erfasst sind die 13 Herren-/Damen-Ligen (Jugend bewusst nicht). `ownRank`/`isOwnClub` zeigen auf den TC-Pliening-Eintrag.
+
+### Spielberichte (Kreuztabellen-Detailansicht) → `src/data/spielberichte.ts`
+
+Quelle: **je Begegnung** eine PDF, „MeetingReportFOP":
+`https://btv.liga.nu/.../nuDokument?dokument=MeetingReportFOP&meeting=<ID>` (das `etag` im Link ist optional). Pro Begegnung ein `const SB_<meetingID>` über den Helfer `m(...)`, danach in `const ALL` eintragen.
+
+- `league` / `homeClub` / `awayClub` müssen **exakt** den Strings in `summer-2026.ts` entsprechen (Lookup `getSpielbericht` ist richtungsunabhängig — eine Begegnung steht in 2 Spiegel-Zellen der Kreuztabelle).
+- Einzel-Spieler: `"Nachname, Vorname [LÄNDERKÜRZEL≠GER] (Meldeposition, LKx,x)"` — die Meldeposition ist die PDF-Spalte „Nr. laut Meldeliste", nicht die laufende Nr.; `GER` weglassen. Doppel: `"Nachname, Vorname / Nachname, Vorname"` ohne LK.
+- `position`: Einzel 1–6, Doppel 7–9 (4er-Ligen: Einzel 1–4, Doppel 7–8).
+- `sets`: Liste von `[heim, gast]`-Sätzen; ein 3. Eintrag ist der Match-Tiebreak (z. B. `[10, 6]`). Nicht gespielte Sätze weglassen. Walkover → `(w.o.)` am Spielernamen **und** `sets: []`.
+
+### Workflow
+
+PDF(s) ziehen → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
 
 ---
 
