@@ -193,3 +193,13 @@ npm run build && npm run preview -- --port 4317
 Headless-Browser-Smoke-Test (Chrome via `puppeteer-core`, `npm i --no-save puppeteer-core`,
 damit `package.json`/`package-lock.json` unberührt bleiben): prüfen, dass `button`-Elemente
 gerendert werden und `localStorage["tcp-filter-prefs"]` nach „Auswahl speichern" gesetzt ist.
+
+**Derselbe Smoke-Test läuft auch direkt gegen die Live-URL** (`https://tcp-spielplan.de/`) —
+praktisch zur Nach-Deploy-Kontrolle, ganz ohne lokale `.env`/Build.
+
+**Mobil mitprüfen (die App ist mobil-erst).** Geräte emulieren statt nur Desktop-Viewport:
+`page.setUserAgent(<iPhone-UA>)` + `page.setViewport({ width, height, isMobile: true, hasTouch: true })`
+und mit **`elementHandle.tap()` statt `.click()`** interagieren (echte Touch-Events; deckt z. B.
+das ⋯-Menü-Öffnen ab). Sinnvolle Viewports: iPhone 13 `390×844` und iPhone SE `375×667`
+(kleinster gängiger Screen). Zusätzlich auf **horizontalen Overflow** prüfen
+(`document.documentElement.scrollWidth > clientWidth` muss `false` sein).
