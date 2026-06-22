@@ -29,6 +29,8 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 
 Alle Liga-/Spieldaten stammen aus offiziellen **BTV-nuLiga-PDFs** und liegen in zwei Dateien. `club=22844` = TC Pliening; Saison Sommer 2026 = `season=18103` (wechselt je Saison — aktuellen Link von der [Vereinsseite](https://www.btv.de/de/mein-verein/vereinsseite/tc-pliening.html) holen).
 
+> **Zuordnung passiert automatisch aus dem PDF.** Jedes Spielbericht-PDF (MeetingReportFOP) nennt im Kopf **Liga/Gruppe, Termin, beide Mannschaften und Endergebnis** — daraus folgt eindeutig die Ziel-Liga und -Begegnung. Es genügt also, die **PDF-Links zu liefern** (die Konkurrenz muss nicht dazugeschrieben werden). Auch Begegnungen **ohne TC Pliening** werden eingetragen (sie füllen die Kreuztabelle der jeweiligen Liga). Den **Gesamt-Tabellen-Report** (ResultReportFOP, s. u.) holt man sich selbst dazu — er steckt NICHT im einzelnen Spielbericht.
+
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
 Quelle: **eine** PDF mit allen Ligen, „Ergebnistabellen gesamt":
