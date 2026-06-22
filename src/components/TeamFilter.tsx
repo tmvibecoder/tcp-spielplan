@@ -7,6 +7,7 @@ interface TeamFilterProps {
   activeTeams: Set<string>;
   toggleTeam: (id: string) => void;
   toggleCategory: (ids: string[]) => void;
+  setAllTeams: (on: boolean) => void;
   categories?: { label: string; ids: string[] }[];
   teams?: Team[];
   homeOnly: boolean;
@@ -17,6 +18,7 @@ export default function TeamFilter({
   activeTeams,
   toggleTeam,
   toggleCategory,
+  setAllTeams,
   categories,
   teams,
   homeOnly,
@@ -25,6 +27,11 @@ export default function TeamFilter({
   const cats = categories || CATEGORIES;
   const teamList = teams || TEAMS;
   const teamMap = new Map<string, Team>(teamList.map((t) => [t.id, t]));
+
+  // "Alle aus" / "Alle an" toggle: solange noch eine Konkurrenz aktiv ist,
+  // schaltet der Button alle aus – andernfalls alle wieder an.
+  const allIds = cats.flatMap((cat) => cat.ids);
+  const anyActive = allIds.some((id) => activeTeams.has(id));
 
   return (
     <div className="space-y-3">
@@ -65,8 +72,14 @@ export default function TeamFilter({
         );
       })}
 
-      {/* Bottom row: Nur Heim toggle + BTV link */}
-      <div className="flex items-center gap-3 pt-1">
+      {/* Bottom row: Alle aus/an + Nur Heim toggle + BTV link */}
+      <div className="flex items-center gap-2 pt-1">
+        <button
+          onClick={() => setAllTeams(!anyActive)}
+          className="px-2.5 py-1 text-[11px] font-semibold rounded-md border border-slate-600 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 transition-colors"
+        >
+          {anyActive ? "Alle aus" : "Alle an"}
+        </button>
         <button
           onClick={() => setHomeOnly(!homeOnly)}
           className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border transition-colors ${
