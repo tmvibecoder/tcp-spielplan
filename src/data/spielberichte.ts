@@ -3,7 +3,7 @@ import type { Spielbericht } from "../utils/spielbericht";
 
 // Spielberichte (Einzel/Doppel je Begegnung) je Liga — ECHTE nuLiga-Daten.
 // Quelle: BTV nuLiga "MeetingReportFOP" je Begegnung (…/nuDokument?dokument=MeetingReportFOP&meeting=<ID>).
-// Auto-generiert aus den Spielbericht-PDFs (Stand 17.06.2026). Doppel ohne LK, da nuLiga sie dort nicht ausweist.
+// Auto-generiert aus den Spielbericht-PDFs (Stand 22.06.2026). Doppel ohne LK, da nuLiga sie dort nicht ausweist.
 // Lookup ist richtungsunabhängig: eine Begegnung erscheint in zwei Kreuztabellen-Zellen.
 
 function key(league: string, homeClub: string, awayClub: string): string {
@@ -929,6 +929,113 @@ const SB_12742577: Spielbericht = {
   ],
 };
 
+// TSV Oberpframmern 5:1 TC Pliening — echte nuLiga-Daten (meeting 12692679)
+const SB_12692679: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TSV Oberpframmern",
+  awayClub: "TC Pliening",
+  date: "2026-06-20",
+  day: "Sa",
+  finalHome: 5,
+  finalAway: 1,
+  matches: [
+    m("12692679-e1", 1, "singles", "Putzke, Christian (1, LK9,5)", "Miler, Thomas (10, LK14,3)", [[1, 6], [2, 6]], "away"),
+    m("12692679-e2", 2, "singles", "Bauer, Andreas (3, LK14,9)", "Widl, Alexander (20, LK19,8)", [[6, 0], [6, 1]], "home"),
+    m("12692679-e3", 3, "singles", "Lutz, Emanuel (8, LK19,5)", "Wagner, Patrick IRL (22, LK20,3)", [[6, 3], [6, 1]], "home"),
+    m("12692679-e4", 4, "singles", "Meßner, Tobias (10, LK19,9)", "Bauer, Maximilian (27, LK22,1)", [[6, 2], [6, 0]], "home"),
+    m("12692679-d1", 7, "doubles", "Putzke, Christian / Bauer, Andreas", "Miler, Thomas / Merkl, Maximilian", [[7, 5], [6, 4]], "home"),
+    m("12692679-d2", 8, "doubles", "Lutz, Emanuel / Meßner, Tobias", "Widl, Alexander / Wagner, Patrick IRL", [[3, 6], [6, 1], [10, 6]], "home"),
+  ],
+};
+
+// TSV Feldkirchen II 8:1 TC Aschheim III — echte nuLiga-Daten (meeting 12686393)
+const SB_12686393: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TSV Feldkirchen II",
+  awayClub: "TC Aschheim III",
+  date: "2026-06-21",
+  day: "So",
+  finalHome: 8,
+  finalAway: 1,
+  matches: [
+    m("12686393-e1", 1, "singles", "Hargasser, Niclas (14, LK8,7)", "Faschang, Michael AUT (23, LK7,2)", [[6, 1], [6, 4]], "home"),
+    m("12686393-e2", 2, "singles", "Schumacher, Tobias (15, LK8,8)", "Steidle, Raphael (24, LK8,6)", [[3, 6], [5, 7]], "away"),
+    m("12686393-e3", 3, "singles", "Fauth, Felix (18, LK9,9)", "Fischer, Maddox (28, LK10,8)", [[6, 4], [6, 1]], "home"),
+    m("12686393-e4", 4, "singles", "Kellerer, Felix (22, LK11,6)", "Kannewurf, Nils (31, LK13,1)", [[7, 6], [4, 6], [10, 6]], "home"),
+    m("12686393-e5", 5, "singles", "Baade, Sebastian (24, LK11,9)", "Fausch, Quirin (36, LK16,0)", [[6, 0], [6, 1]], "home"),
+    m("12686393-e6", 6, "singles", "Geuer, Felix (27, LK12,6)", "Brandt, Philip (37, LK16,2)", [[6, 2], [7, 6]], "home"),
+    m("12686393-d1", 7, "doubles", "Hargasser, Niclas / Geuer, Felix", "Steidle, Raphael / Fischer, Maddox", [[6, 7], [6, 3], [10, 7]], "home"),
+    m("12686393-d2", 8, "doubles", "Schumacher, Tobias / Baade, Sebastian", "Faschang, Michael AUT (w.o.) / Fausch, Quirin (w.o.)", [], "home"),
+    m("12686393-d3", 9, "doubles", "Fauth, Felix / Kellerer, Felix", "Kannewurf, Nils / Brandt, Stefan", [[7, 6], [6, 1]], "home"),
+  ],
+};
+
+// Polizei SV Haar 4:5 TC Erding II — echte nuLiga-Daten (meeting 12686342)
+const SB_12686342: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "Polizei SV Haar",
+  awayClub: "TC Erding II",
+  date: "2026-06-21",
+  day: "So",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12686342-e1", 1, "singles", "Bobinger, Benno (5, LK10,7)", "Widmann, Maximilian (7, LK8,5)", [[4, 6], [3, 6]], "away"),
+    m("12686342-e2", 2, "singles", "Koppmann, Tobias (16, LK14,7)", "Lachner, Zeno (14, LK10,5)", [[2, 6], [0, 6]], "away"),
+    m("12686342-e3", 3, "singles", "Jessen, Frederik (17, LK14,9)", "Widmann, Florian (16, LK11,6)", [[6, 4], [4, 6], [2, 10]], "away"),
+    m("12686342-e4", 4, "singles", "Zelonka, Matus (19, LK15,5)", "Widmann, Valentin (17, LK11,8)", [[7, 5], [6, 1]], "home"),
+    m("12686342-e5", 5, "singles", "Erath, Andreas (22, LK17,4)", "Hildenbrand, Maximilian (20, LK12,7)", [[6, 2], [3, 6], [11, 9]], "home"),
+    m("12686342-e6", 6, "singles", "Bingold, Konstantin (27, LK18,0)", "Müller, Maximilian (27, LK15,7)", [[6, 0], [6, 1]], "home"),
+    m("12686342-d1", 7, "doubles", "Bobinger, Benno / Jessen, Frederik", "Widmann, Maximilian / Widmann, Valentin", [[4, 6], [2, 6]], "away"),
+    m("12686342-d2", 8, "doubles", "Koppmann, Tobias / Erath, Andreas", "Lachner, Zeno / Hildenbrand, Maximilian", [[3, 6], [1, 6]], "away"),
+    m("12686342-d3", 9, "doubles", "Zelonka, Matus / Stenger, Moritz", "Widmann, Florian / Müller, Maximilian", [[6, 2], [6, 3]], "home"),
+  ],
+};
+
+// TF Markt Schwaben 4:5 TSV Feldkirchen II — echte nuLiga-Daten (meeting 12742502)
+const SB_12742502: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TF Markt Schwaben",
+  awayClub: "TSV Feldkirchen II",
+  date: "2026-06-20",
+  day: "Sa",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12742502-e1", 1, "singles", "Eraerds, Patrick (1, LK10,4)", "Körber, Simon (12, LK13,3)", [[3, 6], [6, 1], [10, 8]], "home"),
+    m("12742502-e2", 2, "singles", "Krahnke, Andreas (3, LK13,0)", "Hargasser, Manfred (15, LK13,9)", [[6, 2], [6, 1]], "home"),
+    m("12742502-e3", 3, "singles", "Leon Diaz, Esteban (5, LK14,9)", "Brand, Michael (16, LK14,4)", [[6, 3], [6, 7], [10, 7]], "home"),
+    m("12742502-e4", 4, "singles", "Schreib, Ronny (10, LK21,4)", "Keil, Patrick (20, LK16,1)", [[1, 6], [0, 6]], "away"),
+    m("12742502-e5", 5, "singles", "Göhrum, Andreas (14, LK22,2)", "Mutter, Sebastian (21, LK16,3)", [[0, 6], [6, 3], [10, 1]], "home"),
+    m("12742502-e6", 6, "singles", "Klotz-Zürbig, Matthias (15, LK22,6)", "Eckel, Frank Alexander (27, LK20,6)", [[2, 6], [4, 6]], "away"),
+    m("12742502-d1", 7, "doubles", "Krahnke, Andreas / Walther, Oliver", "Körber, Simon / Hargasser, Manfred", [[4, 6], [3, 6]], "away"),
+    m("12742502-d2", 8, "doubles", "Eraerds, Patrick / Göhrum, Andreas", "Petz, Veit / Mutter, Sebastian", [[6, 3], [4, 6], [5, 10]], "away"),
+    m("12742502-d3", 9, "doubles", "Leon Diaz, Esteban / Eckert, Thomas", "Brand, Michael / Keil, Patrick", [[1, 6], [0, 6]], "away"),
+  ],
+};
+
+// TC Aschheim 6:3 TC Grün-Gold München II — echte nuLiga-Daten (meeting 12742404)
+const SB_12742404: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Aschheim",
+  awayClub: "TC Grün-Gold München II",
+  date: "2026-06-20",
+  day: "Sa",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12742404-e1", 1, "singles", "Faschang, Michael AUT (1, LK7,2)", "Harz, Karsten (17, LK14,1)", [[6, 2], [6, 4]], "home"),
+    m("12742404-e2", 2, "singles", "Höcherl, Georg (2, LK10,5)", "Hasselmann, Roland (21, LK14,5)", [[6, 1], [6, 3]], "home"),
+    m("12742404-e3", 3, "singles", "Bodai, Daniel HUN (8, LK17,9)", "Maier, Ulf (27, LK16,0)", [[0, 6], [1, 6]], "away"),
+    m("12742404-e4", 4, "singles", "Dietzel, Patrice (9, LK18,6)", "Gammisch, Sebastian (30, LK17,6)", [[6, 7], [6, 3], [14, 12]], "home"),
+    m("12742404-e5", 5, "singles", "Trügler, Marcus (10, LK19,2)", "Erb, Stefan (34, LK18,2)", [[4, 6], [4, 6]], "away"),
+    m("12742404-e6", 6, "singles", "Mexis, Nikolaus (18, LK23,1)", "Mummert, Markus (41, LK20,6)", [[6, 0], [6, 1]], "home"),
+    m("12742404-d1", 7, "doubles", "Faschang, Michael AUT / Höcherl, Georg", "Harz, Karsten / Hasselmann, Roland", [[2, 6], [6, 4], [10, 2]], "home"),
+    m("12742404-d2", 8, "doubles", "Bodai, Daniel HUN / Trügler, Marcus", "Maier, Ulf / Gammisch, Sebastian", [[1, 6], [6, 3], [8, 10]], "away"),
+    m("12742404-d3", 9, "doubles", "Dietzel, Patrice / Mexis, Nikolaus", "Erb, Stefan / Kopachev, Alexey", [[7, 6], [6, 2]], "home"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686331,
   SB_12686332,
@@ -971,6 +1078,11 @@ const ALL: Spielbericht[] = [
   SB_12742553,
   SB_12742565,
   SB_12742577,
+  SB_12692679,
+  SB_12686393,
+  SB_12686342,
+  SB_12742502,
+  SB_12742404,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
