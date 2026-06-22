@@ -5,8 +5,24 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 ## Features
 
 - **Spielplan** – kommende/vergangene Begegnungen; springt beim Laden automatisch ans nächste Wochenende.
+- **Konkurrenz-Filter** – einzelne Mannschaften/Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **gespeicherte Auswahl** (seit 2026-06-22) – siehe unten.
 - **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung.
 - **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – siehe unten.
+
+### Konkurrenz-Filter & gespeicherte Auswahl
+
+Über dem Spielplan stehen die Konkurrenzen nach Kategorie (HERREN/DAMEN/JUGEND); ein Klick blendet eine Mannschaft ein/aus, ein Klick auf die Kategorie-Überschrift schaltet die ganze Kategorie um. In der unteren Zeile:
+
+- **`Alle aus` / `Alle an`** – ein Toggle-Button, der sich nach dem Zustand richtet: solange **noch eine** Konkurrenz aktiv ist, heißt er `Alle aus` (Klick → alle ab); ist **keine** aktiv, heißt er `Alle an` (Klick → alle ein). Wirkt nur auf die **gerade angezeigte Saison** (Sommer **oder** Winter), nicht auf beide.
+- **`Nur Heim`** – blendet Auswärtsbegegnungen aus (saisonübergreifender Schalter).
+
+**Auswahl speichern:** Im **⋯-Menü** (oben rechts, neben „PDF exportieren") liegt **`Auswahl speichern`**. Das schreibt die aktuelle Auswahl **explizit** (nicht automatisch) in `localStorage` und zeigt kurz „✓ Gespeichert". Beim nächsten Seitenaufruf wird sie automatisch geladen – ohne erneutes Einstellen.
+
+**Code-Landkarte:**
+- `src/components/TeamFilter.tsx` – Filter-UI; `Alle aus`/`Alle an` leitet sich aus `anyActive` über alle Kategorie-IDs ab und ruft den Prop `setAllTeams(on)`.
+- `src/App.tsx` – Quelle der Wahrheit: getrennte Sets `activeSummerTeams` / `activeWinterTeams` (+ `homeOnly`). `setAllTeams` wirkt auf die aktive Saison. **Persistenz**: `loadPrefs()` einmalig beim Mount (initialisiert die State-Sets), `savePrefs()` schreibt auf Knopfdruck.
+- `src/components/Header.tsx` – Menüpunkt `Auswahl speichern` (Prop `onSavePrefs`) inkl. „✓ Gespeichert"-Flash.
+- `localStorage`-Key **`tcp-filter-prefs`**, Format `{ "summer": string[], "winter": string[], "homeOnly": boolean }` (Team-IDs der **aktiven** Konkurrenzen, beide Saisons in einem Eintrag). Liegt neben dem separaten Favoriten-Key `tcp-favorites` aus `src/hooks/useFavorites.ts`.
 
 ### Spieler-Statistik je Mannschaft
 
@@ -159,3 +175,21 @@ Bundle-Hash prüfen, z. B.:
 curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[A-Za-z0-9_]+\.js'
 curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c <feature-string>
 ```
+
+### ⚠️ Stolperfalle „leere Seite im git-worktree" (lokales Testen)
+
+Die Supabase-Zugangsdaten kommen aus `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` und werden
+**zur Build-Zeit** ins Bundle eingebettet (`src/lib/supabase.ts` ruft `createClient(...)` schon
+beim Modul-Import). Die `.env` ist **gitignored** und wird daher **nicht** in einen frischen
+`git worktree` übernommen. Folge: ohne `.env` baut zwar alles, aber `createClient(undefined, …)`
+wirft beim Laden → die App rendert eine **leere Seite** (Filter/Spielplan fehlen komplett).
+
+**Vor dem lokalen Browser-Test im Worktree** die `.env` aus dem Haupt-Checkout kopieren und
+**neu bauen** (env-Vars stecken im Build, nicht zur Laufzeit):
+```bash
+cp ../../../.env .env   # vom Worktree aus; Pfad zum Haupt-Repo anpassen
+npm run build && npm run preview -- --port 4317
+```
+Headless-Browser-Smoke-Test (Chrome via `puppeteer-core`, `npm i --no-save puppeteer-core`,
+damit `package.json`/`package-lock.json` unberührt bleiben): prüfen, dass `button`-Elemente
+gerendert werden und `localStorage["tcp-filter-prefs"]` nach „Auswahl speichern" gesetzt ist.
