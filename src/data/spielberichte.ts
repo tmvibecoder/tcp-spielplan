@@ -1650,7 +1650,99 @@ const SB_12686386: Spielbericht = {
   ],
 };
 
+// TC Erding II 1:8 TC Aschheim III — echte nuLiga-Daten (meeting 12686507)
+const SB_12686507: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Erding II",
+  awayClub: "TC Aschheim III",
+  date: "2026-06-28",
+  day: "So",
+  finalHome: 1,
+  finalAway: 8,
+  matches: [
+    m("12686507-e1", 1, "singles", "Widmann, Maximilian (7, LK8,5)", "Baltz, Stefan (14, LK2,8)", [[0, 6], [2, 6]], "away"),
+    m("12686507-e2", 2, "singles", "Lachner, Zeno (14, LK10,5)", "Hajcik, Maximilian (22, LK6,2)", [[0, 6], [4, 6]], "away"),
+    m("12686507-e3", 3, "singles", "Widmann, Florian (16, LK11,6)", "Steidle, Raphael (24, LK8,6)", [[2, 6], [0, 6]], "away"),
+    m("12686507-e4", 4, "singles", "Widmann, Valentin (17, LK11,8)", "Fischer, Maddox (28, LK10,8)", [[2, 6], [4, 6]], "away"),
+    m("12686507-e5", 5, "singles", "Lehnert, Patrick (18, LK12,1)", "Gaißert, Till (30, LK12,9)", [[3, 6], [3, 6]], "away"),
+    m("12686507-e6", 6, "singles", "Hildenbrand, Maximilian (20, LK12,7)", "Kannewurf, Nils (31, LK13,1)", [[6, 4], [6, 4]], "home"),
+    m("12686507-d1", 7, "doubles", "Widmann, Maximilian / Lehnert, Patrick", "Hajcik, Maximilian / Fischer, Maddox", [[6, 7], [4, 6]], "away"),
+    m("12686507-d2", 8, "doubles", "Widmann, Florian / Widmann, Valentin", "Baltz, Stefan / Gaißert, Till", [[4, 6], [3, 6]], "away"),
+    m("12686507-d3", 9, "doubles", "Lachner, Zeno / Hildenbrand, Maximilian", "Steidle, Raphael / Kannewurf, Nils", [[7, 5], [4, 6], [7, 10]], "away"),
+  ],
+};
+
+// TC Unterföhring II 4:5 Polizei SV Haar — echte nuLiga-Daten (meeting 12686477)
+const SB_12686477: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Unterföhring II",
+  awayClub: "Polizei SV Haar",
+  date: "2026-06-28",
+  day: "So",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12686477-e1", 1, "singles", "Brandenburg, Sven (11, LK9,4)", "Bobinger, Benno (5, LK10,7)", [[0, 6], [2, 6]], "away"),
+    m("12686477-e2", 2, "singles", "Teichmann, Luis (13, LK9,7)", "Ullrich, Matthias (7, LK11,4)", [[6, 0], [6, 4]], "home"),
+    m("12686477-e3", 3, "singles", "Mayrhofer, Jonas (14, LK9,7)", "Armbrüster, Christian (14, LK13,6)", [[6, 0], [6, 2]], "home"),
+    m("12686477-e4", 4, "singles", "Schweykart, Julius (15, LK10,0)", "Zelonka, Matus (19, LK15,5)", [[6, 1], [0, 6], [6, 10]], "away"),
+    m("12686477-e5", 5, "singles", "Maier, Kilian (20, LK10,8)", "Erath, Andreas (22, LK17,4)", [[6, 4], [2, 6], [10, 12]], "away"),
+    m("12686477-e6", 6, "singles", "Djordjevic, Noah (24, LK12,4)", "Bingold, Konstantin (27, LK18,0)", [[4, 6], [0, 6]], "away"),
+    m("12686477-d1", 7, "doubles", "Brandenburg, Sven / Mayrhofer, Jonas", "Ullrich, Matthias / Armbrüster, Christian", [[3, 6], [4, 6]], "away"),
+    m("12686477-d2", 8, "doubles", "Teichmann, Luis / Djordjevic, Noah", "Bobinger, Benno / Zelonka, Matus", [[7, 5], [7, 5]], "home"),
+    m("12686477-d3", 9, "doubles", "Schweykart, Julius / Maier, Kilian", "Krück, Johannes / Erath, Andreas", [[6, 2], [6, 3]], "home"),
+  ],
+};
+
+// TC Grün-Gold München II 3:6 TSV Haar II — echte nuLiga-Daten (meeting 12742397)
+const SB_12742397: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Grün-Gold München II",
+  awayClub: "TSV Haar II",
+  date: "2026-06-28",
+  day: "So",
+  finalHome: 3,
+  finalAway: 6,
+  matches: [
+    m("12742397-e1", 1, "singles", "Harz, Karsten (17, LK14,1)", "Leiß, Sascha (11, LK9,4)", [[1, 6], [0, 6]], "away"),
+    m("12742397-e2", 2, "singles", "Hasselmann, Roland (21, LK14,5)", "Keim, Stefan (15, LK12,2)", [[1, 6], [6, 3], [6, 10]], "away"),
+    m("12742397-e3", 3, "singles", "Diener, Christian (24, LK15,0)", "Schmid, Christian (16, LK12,8)", [[6, 3], [6, 1]], "home"),
+    m("12742397-e4", 4, "singles", "Erb, Stefan (34, LK18,2)", "Rebele, Tobias (17, LK12,8)", [[6, 4], [6, 4]], "home"),
+    m("12742397-e5", 5, "singles", "Kopachev, Alexey (42, LK20,8)", "Pettazzi, Lorenzo ITA (26, LK14,9)", [[4, 6], [2, 6]], "away"),
+    m("12742397-e6", 6, "singles", "Le Grand de Mercey, Grégoire FRA (56, LK25,0)", "Füller, Christian (29, LK15,8)", [[2, 6], [0, 6]], "away"),
+    m("12742397-d1", 7, "doubles", "Harz, Karsten / Hasselmann, Roland", "Keim, Stefan / Schmid, Christian", [[1, 6], [1, 6]], "away"),
+    m("12742397-d2", 8, "doubles", "Erb, Stefan / Kopachev, Alexey", "Rebele, Tobias / Potschkat, Torsten", [[2, 6], [6, 2], [10, 6]], "home"),
+    m("12742397-d3", 9, "doubles", "Diener, Christian / von Tempsky, Max", "Pettazzi, Lorenzo ITA / Füller, Christian", [[6, 2], [2, 6], [6, 10]], "away"),
+  ],
+};
+
+// WB Fideliopark München II 1:8 TC Aschheim — echte nuLiga-Daten (meeting 12742513)
+const SB_12742513: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "WB Fideliopark München II",
+  awayClub: "TC Aschheim",
+  date: "2026-06-28",
+  day: "So",
+  finalHome: 1,
+  finalAway: 8,
+  matches: [
+    m("12742513-e1", 1, "singles", "Savci-Keck, Koray (10, LK15,3)", "Faschang, Michael AUT (1, LK7,2)", [[1, 6], [2, 6]], "away"),
+    m("12742513-e2", 2, "singles", "Steinbach, Jan (15, LK17,2)", "Bodai, Daniel HUN (8, LK17,9)", [[1, 6], [4, 6]], "away"),
+    m("12742513-e3", 3, "singles", "Kahle, Robert (19, LK18,1)", "Dietzel, Patrice (9, LK18,6)", [[2, 6], [5, 7]], "away"),
+    m("12742513-e4", 4, "singles", "Pröll, Markus (20, LK19,1)", "Deiritz, Thomas (15, LK20,5)", [[2, 6], [4, 6]], "away"),
+    m("12742513-e5", 5, "singles", "Hellmann, Sven (22, LK19,6)", "Mexis, Nikolaus (18, LK23,1)", [[0, 6], [1, 6]], "away"),
+    m("12742513-e6", 6, "singles", "Ries, Sebastian (25, LK20,0)", "Musielak, Radoslaw (25, LK24,2)", [[7, 6], [3, 6], [11, 9]], "home"),
+    m("12742513-d1", 7, "doubles", "Savci-Keck, Koray / Kahle, Robert", "Höcherl, Georg / Vogelhuber, Axel", [[2, 6], [3, 6]], "away"),
+    m("12742513-d2", 8, "doubles", "Steinbach, Jan / Pröll, Markus", "Faschang, Michael AUT / Mexis, Nikolaus", [[2, 6], [5, 7]], "away"),
+    m("12742513-d3", 9, "doubles", "Hellmann, Sven / Mutter, Jan", "Ahmetaj, Erton ALB* / Deiritz, Thomas", [[3, 6], [7, 6], [1, 10]], "away"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
+  SB_12686507,
+  SB_12686477,
+  SB_12742397,
+  SB_12742513,
   SB_12686394,
   SB_12686386,
   SB_12692627,
