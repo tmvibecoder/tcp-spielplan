@@ -4,7 +4,7 @@ import type { LeagueStandings } from "../types";
 // Quelle: offizielle BTV nuLiga "Ergebnistabellen gesamt" (vereinsweiter Report, alle Mannschaften):
 //   https://btv.liga.nu/.../nuDokument?dokument=ResultReportFOP&type=full&club=22844&season=18103
 //   (club=22844 = TC Pliening, season=18103 = Sommer 2026; verlinkt auf der btv.de-Vereinsseite)
-// Tabellen + Kreuztabellen 1:1 aus dem offiziellen Report übernommen. Stand: 28.06.2026.
+// Tabellen + Kreuztabellen 1:1 aus dem offiziellen Report übernommen. Stand: 29.06.2026.
 // Hinweis: Bei zurückgezogenen Mannschaften weichen offizielle Matchpunkte und
 // Kreuztabelle ab (BTV streicht gewertete Spiele aus der Tabelle) — Werte verbatim wie offiziell.
 // crossResults: "***" = Diagonale, "0:0" = noch nicht gespielt (zeigt "n.a.").
@@ -17,14 +17,14 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     leagueName: "Südliga 2 · Gr. 023",
     ownRank: 5,
     entries: [
-      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "10:0", matchPoints: "36:9", sets: "73:22", crossResults: ["***", "7:2", "0:0", "0:0", "9:0", "7:2", "6:3", "7:2"] },
+      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "10:0", matchPoints: "36:9", sets: "73:22", crossResults: ["***", "7:2", "0:0", "0:0", "9:0", "6:3", "7:2", "7:2"] },
       { rank: 2, club: "TSV Feldkirchen II", isOwnClub: false, points: "8:2", matchPoints: "36:9", sets: "74:24", crossResults: ["2:7", "***", "8:1", "9:0", "9:0", "0:0", "0:0", "8:1"] },
-      { rank: 3, club: "TC Aschheim III", isOwnClub: false, points: "6:2", matchPoints: "22:14", sets: "47:31", crossResults: ["0:0", "1:8", "***", "5:4", "0:0", "0:0", "8:1", "8:1"] },
-      { rank: 4, club: "TC Finsing", isOwnClub: false, points: "4:4", matchPoints: "17:19", sets: "41:39", crossResults: ["0:0", "0:9", "4:5", "***", "0:0", "7:2", "0:0", "6:3"] },
-      { rank: 5, club: "TC Pliening", isOwnClub: true , points: "4:4", matchPoints: "17:19", sets: "37:40", crossResults: ["0:9", "0:9", "0:0", "0:0", "***", "9:0", "8:1", "0:0"] },
-      { rank: 6, club: "TC Erding II", isOwnClub: false, points: "2:6", matchPoints: "9:27", sets: "22:58", crossResults: ["2:7", "0:0", "0:0", "2:7", "0:9", "***", "5:4", "0:0"] },
-      { rank: 7, club: "Polizei SV Haar", isOwnClub: false, points: "0:8", matchPoints: "9:27", sets: "21:57", crossResults: ["3:6", "0:0", "1:8", "0:0", "1:8", "4:5", "***", "0:0"] },
-      { rank: 8, club: "TC Unterföhring II", isOwnClub: false, points: "0:8", matchPoints: "7:29", sets: "15:59", crossResults: ["2:7", "1:8", "1:8", "3:6", "0:0", "0:0", "0:0", "***"] },
+      { rank: 3, club: "TC Aschheim III", isOwnClub: false, points: "8:2", matchPoints: "30:15", sets: "63:34", crossResults: ["0:0", "1:8", "***", "5:4", "0:0", "8:1", "8:1", "8:1"] },
+      { rank: 4, club: "TC Finsing", isOwnClub: false, points: "4:4", matchPoints: "17:19", sets: "41:39", crossResults: ["0:0", "0:9", "4:5", "***", "0:0", "0:0", "7:2", "6:3"] },
+      { rank: 5, club: "TC Pliening", isOwnClub: true , points: "4:4", matchPoints: "17:19", sets: "37:40", crossResults: ["0:9", "0:9", "0:0", "0:0", "***", "8:1", "9:0", "0:0"] },
+      { rank: 6, club: "Polizei SV Haar", isOwnClub: false, points: "2:8", matchPoints: "14:31", sets: "31:67", crossResults: ["3:6", "0:0", "1:8", "0:0", "1:8", "***", "4:5", "5:4"] },
+      { rank: 7, club: "TC Erding II", isOwnClub: false, points: "2:8", matchPoints: "10:35", sets: "25:74", crossResults: ["2:7", "0:0", "1:8", "2:7", "0:9", "5:4", "***", "0:0"] },
+      { rank: 8, club: "TC Unterföhring II", isOwnClub: false, points: "0:10", matchPoints: "11:34", sets: "25:69", crossResults: ["2:7", "1:8", "1:8", "3:6", "0:0", "4:5", "0:0", "***"] },
     ],
   },
   // ── Herren 30 Südliga 4 (4er)  Gr. 292 ──
