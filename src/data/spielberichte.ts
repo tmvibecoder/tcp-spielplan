@@ -3,7 +3,7 @@ import type { Spielbericht } from "../utils/spielbericht";
 
 // Spielberichte (Einzel/Doppel je Begegnung) je Liga — ECHTE nuLiga-Daten.
 // Quelle: BTV nuLiga "MeetingReportFOP" je Begegnung (…/nuDokument?dokument=MeetingReportFOP&meeting=<ID>).
-// Auto-generiert aus den Spielbericht-PDFs (Stand 28.06.2026). Doppel ohne LK, da nuLiga sie dort nicht ausweist.
+// Auto-generiert aus den Spielbericht-PDFs (Stand 29.06.2026). Doppel ohne LK, da nuLiga sie dort nicht ausweist.
 // Lookup ist richtungsunabhängig: eine Begegnung erscheint in zwei Kreuztabellen-Zellen.
 
 function key(league: string, homeClub: string, awayClub: string): string {
@@ -1606,7 +1606,53 @@ const SB_12689661: Spielbericht = {
   ],
 };
 
+// TF Markt Schwaben 7:2 TSV Feldkirchen II — echte nuLiga-Daten (meeting 12686394)
+const SB_12686394: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TF Markt Schwaben",
+  awayClub: "TSV Feldkirchen II",
+  date: "2026-06-28",
+  day: "So",
+  finalHome: 7,
+  finalAway: 2,
+  matches: [
+    m("12686394-e1", 1, "singles", "Simml, Marco (1, LK5,8)", "El-Wafi, Sofian (11, LK8,2)", [[6, 2], [6, 7], [10, 6]], "home"),
+    m("12686394-e2", 2, "singles", "Huber, Andreas (2, LK7,9)", "Hargasser, Niclas (14, LK8,7)", [[7, 5], [6, 3]], "home"),
+    m("12686394-e3", 3, "singles", "Lohmaier, Lukas (3, LK8,0)", "Schumacher, Tobias (15, LK8,8)", [[4, 6], [6, 2], [10, 8]], "home"),
+    m("12686394-e4", 4, "singles", "Camerzan, Flavio (4, LK8,2)", "Fauth, Felix (18, LK9,9)", [[2, 6], [2, 6]], "away"),
+    m("12686394-e5", 5, "singles", "Widmann, Vitus (5, LK9,1)", "Kellerer, Felix (22, LK11,6)", [[6, 2], [6, 2]], "home"),
+    m("12686394-e6", 6, "singles", "Warta, Roland (7, LK9,9)", "Geuer, Felix (27, LK12,6)", [[6, 4], [6, 0]], "home"),
+    m("12686394-d1", 7, "doubles", "Simml, Marco (w.o.) / Widmann, Vitus (w.o.)", "El-Wafi, Sofian / Schumacher, Tobias", [], "away"),
+    m("12686394-d2", 8, "doubles", "Huber, Andreas / Warta, Roland", "Hargasser, Niclas (w.o.) / Geuer, Felix (w.o.)", [], "home"),
+    m("12686394-d3", 9, "doubles", "Camerzan, Flavio / Nahrhaft, Lukas", "Fauth, Felix (w.o.) / Kellerer, Felix (w.o.)", [], "home"),
+  ],
+};
+
+// TC Finsing 6:3 TC Unterföhring II — echte nuLiga-Daten (meeting 12686386)
+const SB_12686386: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Finsing",
+  awayClub: "TC Unterföhring II",
+  date: "2026-06-21",
+  day: "So",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12686386-e1", 1, "singles", "Keller, Florian (1, LK4,2)", "Teichmann, Luis (13, LK9,7)", [[6, 2], [6, 1]], "home"),
+    m("12686386-e2", 2, "singles", "Malik, Daniel (3, LK8,9)", "Mayrhofer, Jonas (14, LK9,7)", [[3, 6], [6, 7]], "away"),
+    m("12686386-e3", 3, "singles", "Ioan, Niklas (4, LK12,4)", "Maier, Kilian (20, LK10,8)", [[7, 6], [1, 6], [5, 10]], "away"),
+    m("12686386-e4", 4, "singles", "Keller, Timo (6, LK14,3)", "Hafner, Daniel Jan (28, LK13,2)", [[6, 1], [6, 0]], "home"),
+    m("12686386-e5", 5, "singles", "Huber, Jonas (7, LK15,1)", "Faghihzadeh, Peyman (45, LK17,3)", [[3, 6], [3, 6]], "away"),
+    m("12686386-e6", 6, "singles", "Bunk, Michael (9, LK15,9)", "Ertelt, Edwin (53, LK19,2)", [[6, 2], [6, 1]], "home"),
+    m("12686386-d1", 7, "doubles", "Malik, Daniel / Keller, Timo", "Maier, Kilian / Hafner, Daniel Jan", [[6, 2], [6, 2]], "home"),
+    m("12686386-d2", 8, "doubles", "Keller, Florian / Greiner, Dennis", "Teichmann, Luis / Ertelt, Edwin", [[6, 1], [2, 6], [10, 4]], "home"),
+    m("12686386-d3", 9, "doubles", "Huber, Jonas / Bunk, Michael", "Mayrhofer, Jonas / Faghihzadeh, Peyman", [[7, 5], [6, 4]], "home"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
+  SB_12686394,
+  SB_12686386,
   SB_12692627,
   SB_12556794,
   SB_12556792,
