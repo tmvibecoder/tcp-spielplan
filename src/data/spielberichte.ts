@@ -1757,6 +1757,25 @@ const SB_6962: Spielbericht = {
   ],
 };
 
+// TC Philathlos München 0:6 TSV Oberpframmern — aus dem Original-Spielbericht übernommen (Papier-Spielbericht Nr. 6961, 04.07.2026)
+const SB_6961: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TC Philathlos München",
+  awayClub: "TSV Oberpframmern",
+  date: "2026-07-04",
+  day: "Sa",
+  finalHome: 0,
+  finalAway: 6,
+  matches: [
+    m("6961-e1", 1, "singles", "Golimbus, Jan (11, LK20,5)", "Putzke, Christian (1, LK9,5)", [[6, 7], [2, 6]], "away"),
+    m("6961-e2", 2, "singles", "Tigiroglou, Panagiotis GRE (16, LK22,6)", "Bauer, Andreas (3, LK14,9)", [[1, 6], [0, 6]], "away"),
+    m("6961-e3", 3, "singles", "Dzinovic, Almir BIH* (24, LK24,9)", "Janetschko, Florian (4, LK16,3)", [[2, 6], [2, 6]], "away"),
+    m("6961-e4", 4, "singles", "Kecman, Sinisa (35, LK25,0)", "Meßner, Tobias (10, LK19,9)", [[2, 6], [1, 6]], "away"),
+    m("6961-d1", 7, "doubles", "Tigiroglou, Panagiotis GRE / Dzinovic, Almir BIH*", "Putzke, Christian / Janetschko, Florian", [[3, 6], [1, 6]], "away"),
+    m("6961-d2", 8, "doubles", "Golimbus, Jan / Kecman, Sinisa", "Bauer, Andreas / Meßner, Tobias", [[0, 6], [0, 6]], "away"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686507,
   SB_12686477,
@@ -1837,6 +1856,7 @@ const ALL: Spielbericht[] = [
   SB_12742502,
   SB_12742404,
   SB_6962,
+  SB_6961,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
