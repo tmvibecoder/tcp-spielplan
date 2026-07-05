@@ -28,17 +28,19 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ],
   },
   // ── Herren 30 Südliga 4 (4er)  Gr. 292 ──
+  // Stand 04.07.2026: inkl. Finsing–Pliening 2:4 (aus Original-Spielbericht Nr. 6962 übernommen,
+  // Punkte/Matchpunkte/Sätze fortgeschrieben; Rangfolge nach Punkt-, dann Matchpunkt-Differenz).
   {
     teamLabel: "Herren 30",
     teamColor: "#22d3ee",
     leagueName: "Südliga 4 (4er) · Gr. 292",
-    ownRank: 2,
+    ownRank: 1,
     entries: [
-      { rank: 1, club: "TC Finsing", isOwnClub: false, points: "4:0", matchPoints: "8:4", sets: "18:11", crossResults: ["***", "0:0", "4:2", "0:0", "4:2"] },
-      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "3:3", matchPoints: "10:8", sets: "21:18", crossResults: ["0:0", "***", "1:5", "3:3", "6:0"] },
-      { rank: 3, club: "TSV Oberpframmern", isOwnClub: false, points: "2:2", matchPoints: "7:5", sets: "15:11", crossResults: ["2:4", "5:1", "***", "0:0", "0:0"] },
-      { rank: 4, club: "TC Philathlos München", isOwnClub: false, points: "1:3", matchPoints: "5:7", sets: "11:15", crossResults: ["0:0", "3:3", "0:0", "***", "2:4"] },
-      { rank: 5, club: "TC Putzbrunn", isOwnClub: false, points: "2:4", matchPoints: "6:12", sets: "17:27", crossResults: ["2:4", "0:6", "0:0", "4:2", "***"] },
+      { rank: 1, club: "TC Pliening", isOwnClub: true , points: "5:3", matchPoints: "14:10", sets: "29:24", crossResults: ["***", "4:2", "1:5", "3:3", "6:0"] },
+      { rank: 2, club: "TC Finsing", isOwnClub: false, points: "4:2", matchPoints: "10:8", sets: "24:19", crossResults: ["2:4", "***", "4:2", "0:0", "4:2"] },
+      { rank: 3, club: "TSV Oberpframmern", isOwnClub: false, points: "2:2", matchPoints: "7:5", sets: "15:11", crossResults: ["5:1", "2:4", "***", "0:0", "0:0"] },
+      { rank: 4, club: "TC Philathlos München", isOwnClub: false, points: "1:3", matchPoints: "5:7", sets: "11:15", crossResults: ["3:3", "0:0", "0:0", "***", "2:4"] },
+      { rank: 5, club: "TC Putzbrunn", isOwnClub: false, points: "2:4", matchPoints: "6:12", sets: "17:27", crossResults: ["0:6", "2:4", "0:0", "4:2", "***"] },
     ],
   },
   // ── Herren 40 Regionalliga Süd-Ost  Gr. 004 ──

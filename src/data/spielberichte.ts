@@ -1738,6 +1738,25 @@ const SB_12742513: Spielbericht = {
   ],
 };
 
+// TC Finsing 2:4 TC Pliening — aus dem Original-Spielbericht übernommen (Papier-Spielbericht Nr. 6962, 04.07.2026)
+const SB_6962: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TC Finsing",
+  awayClub: "TC Pliening",
+  date: "2026-07-04",
+  day: "Sa",
+  finalHome: 2,
+  finalAway: 4,
+  matches: [
+    m("6962-e1", 1, "singles", "Bunk, Michael (2, LK15,9)", "Miler, Thomas (10, LK14,3)", [[3, 6], [6, 4], [7, 10]], "away"),
+    m("6962-e2", 2, "singles", "Weinreich, Matthias (3, LK18,3)", "Schumacher, Robin (18, LK18,8)", [[6, 0], [3, 6], [6, 10]], "away"),
+    m("6962-e3", 3, "singles", "Greiner, Dennis (6, LK19,2)", "Bauer, Maximilian (27, LK22,1)", [[6, 1], [6, 2]], "home"),
+    m("6962-e4", 4, "singles", "Kuckuk, Michael (20, LK25,0)", "Nowroth, Fabian (28, LK22,6)", [[2, 6], [0, 6]], "away"),
+    m("6962-d1", 7, "doubles", "Weinreich, Matthias / Greiner, Dennis", "Schumacher, Robin / Bauer, Maximilian", [[6, 4], [7, 5]], "home"),
+    m("6962-d2", 8, "doubles", "Bunk, Michael / Kuckuk, Michael", "Miler, Thomas / Nowroth, Fabian", [[3, 6], [3, 6]], "away"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686507,
   SB_12686477,
@@ -1817,6 +1836,7 @@ const ALL: Spielbericht[] = [
   SB_12686342,
   SB_12742502,
   SB_12742404,
+  SB_6962,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
