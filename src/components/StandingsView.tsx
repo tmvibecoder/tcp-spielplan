@@ -90,6 +90,12 @@ export default function StandingsView({ standings }: StandingsViewProps) {
         <span className="text-base">📊</span> Tabellen
       </h2>
 
+      {standings.length === 0 && (
+        <div className="rounded-xl border border-slate-700/50 bg-slate-800/30 px-4 py-8 text-center text-sm text-slate-400">
+          Keine Konkurrenz ausgewählt — oben im Filter mindestens eine Konkurrenz aktivieren.
+        </div>
+      )}
+
       {standings.map((league) => {
         const isExpanded = expandedLeague === league.leagueName;
         const ownEntry = league.entries.find((e) => e.isOwnClub);
