@@ -13,7 +13,7 @@ import type { Team, SeasonId, SubTab } from "./types";
 import { generatePrintHTML } from "./utils/pdf-export";
 import Header from "./components/Header";
 import SeasonDropdown from "./components/SeasonTabs";
-import TeamFilter from "./components/TeamFilter";
+import TeamFilterDropdown from "./components/TeamFilterDropdown";
 import TimelineView from "./components/TimelineView";
 import WinterTimelineView from "./components/WinterTimelineView";
 import StandingsView from "./components/StandingsView";
@@ -182,7 +182,6 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <Header
         onPdf={handlePdf}
-        onSavePrefs={savePrefs}
         isSummer={isSummer}
         subTab={subTab}
         setSubTab={setSubTab}
@@ -197,24 +196,36 @@ function App() {
             }}
           />
         }
+        teamFilter={
+          isSummer ? (
+            <TeamFilterDropdown
+              activeTeams={activeSummerTeams}
+              toggleTeam={toggleTeam}
+              toggleCategory={toggleCategory}
+              setAllTeams={setAllTeams}
+              homeOnly={homeOnly}
+              setHomeOnly={setHomeOnly}
+              onSavePrefs={savePrefs}
+            />
+          ) : (
+            <TeamFilterDropdown
+              activeTeams={activeWinterTeams}
+              toggleTeam={toggleTeam}
+              toggleCategory={toggleCategory}
+              setAllTeams={setAllTeams}
+              categories={WINTER_CATEGORIES}
+              teams={WINTER_TEAMS as Team[]}
+              homeOnly={homeOnly}
+              setHomeOnly={setHomeOnly}
+              onSavePrefs={savePrefs}
+            />
+          )
+        }
       />
 
       <main className="max-w-5xl mx-auto px-4 py-6">
         {isSummer ? (
           <>
-            {/* Team Filter — gilt für Spielplan UND Tabelle */}
-            <div className="mb-6">
-              <TeamFilter
-                activeTeams={activeSummerTeams}
-                toggleTeam={toggleTeam}
-                toggleCategory={toggleCategory}
-                setAllTeams={setAllTeams}
-                homeOnly={homeOnly}
-                setHomeOnly={setHomeOnly}
-                showHomeOnly={subTab === "spielplan"}
-              />
-            </div>
-
             {subTab === "spielplan" ? (
               <>
                 {/* Main View */}
@@ -230,21 +241,6 @@ function App() {
           </>
         ) : (
           <>
-            {/* Winter Team Filter — gilt für Spielplan UND Tabelle */}
-            <div className="mb-6">
-              <TeamFilter
-                activeTeams={activeWinterTeams}
-                toggleTeam={toggleTeam}
-                toggleCategory={toggleCategory}
-                setAllTeams={setAllTeams}
-                categories={WINTER_CATEGORIES}
-                teams={WINTER_TEAMS as Team[]}
-                homeOnly={homeOnly}
-                setHomeOnly={setHomeOnly}
-                showHomeOnly={subTab === "spielplan"}
-              />
-            </div>
-
             {subTab === "spielplan" ? (
               <>
                 {/* Winter View */}
