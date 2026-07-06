@@ -5,23 +5,26 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 ## Features
 
 - **Spielplan** – kommende/vergangene Begegnungen; springt beim Laden automatisch ans nächste Wochenende.
-- **Konkurrenz-Filter** – einzelne Mannschaften/Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **gespeicherte Auswahl** (seit 2026-06-22) – siehe unten.
+- **Konkurrenz-Filter** – als Button **`Konkurrenzen (n) ▾`** im Header (seit 2026-07-06); gilt für **Spielplan UND Tabelle**. Im Overlay: Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **`Auswahl speichern`** – siehe unten.
 - **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung.
 - **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – siehe unten.
 
 ### Konkurrenz-Filter & gespeicherte Auswahl
 
-Über dem Spielplan stehen die Konkurrenzen nach Kategorie (HERREN/DAMEN/JUGEND); ein Klick blendet eine Mannschaft ein/aus, ein Klick auf die Kategorie-Überschrift schaltet die ganze Kategorie um. In der unteren Zeile:
+**Hierarchie (seit 2026-07-06, „Variante B"):** Die Konkurrenz-Auswahl steht **über** der Ansicht — Header-Zeile 1 zeigt `TCP · Saison · Konkurrenzen (n) ▾ · ⋯`, Zeile 2 die volle Segment-Leiste `📅 Spielplan | 📊 Tabelle`. Die Auswahl gilt für **beide** Ansichten: Der Spielplan zeigt nur Begegnungen, die Tabellen-Ansicht nur Ligen der aktiven Konkurrenzen (Zuordnung Standings ↔ Konkurrenz über `teamLabel` = `Team.label`). Es gibt keinen Filterblock mehr über dem Inhalt.
+
+Der Button **`Konkurrenzen (n) ▾`** (n = aktive Konkurrenzen der Saison) öffnet ein Overlay-Panel; schließen per ✕, Klick auf den Hintergrund oder `ESC`. Darin die Konkurrenzen nach Kategorie (HERREN/DAMEN/JUGEND); ein Klick blendet eine Mannschaft ein/aus, ein Klick auf die Kategorie-Überschrift schaltet die ganze Kategorie um. In der unteren Zeile:
 
 - **`Alle aus` / `Alle an`** – ein Toggle-Button, der sich nach dem Zustand richtet: solange **noch eine** Konkurrenz aktiv ist, heißt er `Alle aus` (Klick → alle ab); ist **keine** aktiv, heißt er `Alle an` (Klick → alle ein). Wirkt nur auf die **gerade angezeigte Saison** (Sommer **oder** Winter), nicht auf beide.
-- **`Nur Heim`** – blendet Auswärtsbegegnungen aus (saisonübergreifender Schalter).
+- **`Nur Heim`** – blendet Auswärtsbegegnungen aus (saisonübergreifender Schalter; wirkt nur auf den Spielplan, nicht auf Tabellen).
 
-**Auswahl speichern:** Im **⋯-Menü** (oben rechts, neben „PDF exportieren") liegt **`Auswahl speichern`**. Das schreibt die aktuelle Auswahl **explizit** (nicht automatisch) in `localStorage` und zeigt kurz „✓ Gespeichert". Beim nächsten Seitenaufruf wird sie automatisch geladen – ohne erneutes Einstellen.
+**Auswahl speichern:** Unten im **Konkurrenzen-Overlay** (nicht mehr im ⋯-Menü) liegt **`Auswahl speichern`**. Das schreibt die aktuelle Auswahl **explizit** (nicht automatisch) in `localStorage` und zeigt kurz „✓ Gespeichert". Beim nächsten Seitenaufruf wird sie automatisch geladen – ohne erneutes Einstellen. Das **⋯-Menü** (nur Sommer-Spielplan) enthält seitdem nur noch `PDF exportieren`.
 
 **Code-Landkarte:**
-- `src/components/TeamFilter.tsx` – Filter-UI; `Alle aus`/`Alle an` leitet sich aus `anyActive` über alle Kategorie-IDs ab und ruft den Prop `setAllTeams(on)`.
-- `src/App.tsx` – Quelle der Wahrheit: getrennte Sets `activeSummerTeams` / `activeWinterTeams` (+ `homeOnly`). `setAllTeams` wirkt auf die aktive Saison. **Persistenz**: `loadPrefs()` einmalig beim Mount (initialisiert die State-Sets), `savePrefs()` schreibt auf Knopfdruck.
-- `src/components/Header.tsx` – Menüpunkt `Auswahl speichern` (Prop `onSavePrefs`) inkl. „✓ Gespeichert"-Flash.
+- `src/components/TeamFilterDropdown.tsx` – Header-Button + Overlay-Panel (React-Portal an `<body>`, da der Header per `sticky` + `backdrop-blur` sonst Positionierung/Backdrop einschränkt); enthält `Auswahl speichern` inkl. „✓ Gespeichert"-Flash (Prop `onSavePrefs`).
+- `src/components/TeamFilter.tsx` – Filter-UI (Chips/Kategorien), wird im Overlay wiederverwendet; `Alle aus`/`Alle an` leitet sich aus `anyActive` über alle Kategorie-IDs ab und ruft den Prop `setAllTeams(on)`.
+- `src/App.tsx` – Quelle der Wahrheit: getrennte Sets `activeSummerTeams` / `activeWinterTeams` (+ `homeOnly`). `setAllTeams` wirkt auf die aktive Saison. Filtert Spiele **und** Standings (`filteredSummerStandings` / `filteredWinterStandings` via `teamLabel`→Id-Map). **Persistenz**: `loadPrefs()` einmalig beim Mount (initialisiert die State-Sets), `savePrefs()` schreibt auf Knopfdruck.
+- `src/components/Header.tsx` – zweizeilig: nimmt den Dropdown als `teamFilter`-Prop (ReactNode) auf; Tab-Umschaltung als volle Segment-Leiste; ⋯-Menü nur noch PDF-Export.
 - `localStorage`-Key **`tcp-filter-prefs`**, Format `{ "summer": string[], "winter": string[], "homeOnly": boolean }` (Team-IDs der **aktiven** Konkurrenzen, beide Saisons in einem Eintrag). Liegt neben dem separaten Favoriten-Key `tcp-favorites` aus `src/hooks/useFavorites.ts`.
 
 ### Spieler-Statistik je Mannschaft
@@ -31,7 +34,7 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 - **Spieler** – jeder Spieler nach **Ø-Position** sortiert (Durchschnitt der gespielten Position; `1` = oben/stärkste Position), mit eigener **LK**. Aufklappen zeigt pro Einsatz: Gegner **inkl. dessen LK**, Position, Satz-Ergebnis und **SIEG/NIEDERL.** Marker **▲ LK-Sieg** = gegen besseren (niedrigeren) LK gewonnen, **▼** = gegen schwächeren LK verloren.
 - **Doppel** – Paarungen separat (Schlüssel = sortierte Nachnamen). Ohne LK, da nuLiga für Doppel keine LK ausweist.
 
-**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Aktuell erfasst (Sommer 2026, Stand 22.06.): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004) und **H40 III** (Südliga 2 · Gr. 315).
+**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Aktuell erfasst (Sommer 2026, Stand 06.07.): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315) und **Damen** (Südliga 2 · Gr. 160).
 
 **Code-Landkarte:**
 - `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `aggregatePlayers`, `aggregateDoubles`, `parseLk`.
@@ -63,6 +66,13 @@ Quelle: **je Begegnung** eine PDF, „MeetingReportFOP":
 - Einzel-Spieler: `"Nachname, Vorname [LÄNDERKÜRZEL≠GER] (Meldeposition, LKx,x)"` — die Meldeposition ist die PDF-Spalte „Nr. laut Meldeliste", nicht die laufende Nr.; `GER` weglassen. Doppel: `"Nachname, Vorname / Nachname, Vorname"` ohne LK.
 - `position`: Einzel 1–6, Doppel 7–9 (4er-Ligen: Einzel 1–4, Doppel 7–8).
 - `sets`: Liste von `[heim, gast]`-Sätzen; ein 3. Eintrag ist der Match-Tiebreak (z. B. `[10, 6]`). Nicht gespielte Sätze weglassen. Walkover → `(w.o.)` am Spielernamen **und** `sets: []`.
+
+### Alternative Quelle: fotografierter Papier-Spielbericht
+
+Liegt der offizielle nuLiga-Report noch nicht vor, können Ergebnisse auch aus dem **fotografierten Papier-Spielbericht** übernommen werden (so geschehen am 04.07.2026 für Gr. 292, Berichte Nr. 6961/6962):
+
+- **Spielbericht**: gleiche Struktur wie oben; da die nuLiga-Meeting-ID fehlt, als Konstante die **Papier-Spielbericht-Nr.** verwenden (z. B. `SB_6962`, Match-IDs `"6962-e1"` …) und die Quelle im Kommentar vermerken. Sobald der nuLiga-Report vorliegt, kann die ID ersetzt werden. Meldeposition = PDF-/Papier-Spalte „Nr. laut Meldeliste".
+- **Tabelle fortschreiben** (statt 1:1 aus dem Gesamt-Report): Punkte/Matchpunkte/Sätze beider Teams addieren, Kreuztabellen-Zellen in **beiden** Spiegel-Zellen füllen. **Rangfolge** wie nuLiga: erst **Punkt-Differenz**, dann **Matchpunkt-Differenz** (dann Satz-Differenz); ändert sich die Rangfolge, müssen die `crossResults`-**Spalten aller Zeilen** mitsortiert werden (Spaltenreihenfolge = Zeilen-/Rangreihenfolge). Beim nächsten offiziellen Gesamt-Report gegenprüfen.
 
 ### Workflow
 
