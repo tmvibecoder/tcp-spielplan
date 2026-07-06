@@ -101,6 +101,27 @@ function App() {
     [activeWinterTeams, homeOnly]
   );
 
+  // Der Konkurrenz-Filter gilt auch für die Tabellen: Standings sind über
+  // teamLabel (1:1 zu Team.label) den Konkurrenz-Ids zugeordnet.
+  const summerLabelToId = useMemo(
+    () => new Map(TEAMS.map((t) => [t.label, t.id])),
+    []
+  );
+  const winterLabelToId = useMemo(
+    () => new Map(WINTER_TEAMS.map((t) => [t.label, t.id])),
+    []
+  );
+
+  const filteredSummerStandings = useMemo(
+    () => SUMMER_STANDINGS.filter((s) => activeSummerTeams.has(summerLabelToId.get(s.teamLabel) ?? "")),
+    [activeSummerTeams, summerLabelToId]
+  );
+
+  const filteredWinterStandings = useMemo(
+    () => WINTER_STANDINGS.filter((s) => activeWinterTeams.has(winterLabelToId.get(s.teamLabel) ?? "")),
+    [activeWinterTeams, winterLabelToId]
+  );
+
   const toggleTeam = useCallback((id: string) => {
     const setter = isSummer ? setActiveSummerTeams : setActiveWinterTeams;
     setter((prev) => {
@@ -181,20 +202,21 @@ function App() {
       <main className="max-w-5xl mx-auto px-4 py-6">
         {isSummer ? (
           <>
+            {/* Team Filter — gilt für Spielplan UND Tabelle */}
+            <div className="mb-6">
+              <TeamFilter
+                activeTeams={activeSummerTeams}
+                toggleTeam={toggleTeam}
+                toggleCategory={toggleCategory}
+                setAllTeams={setAllTeams}
+                homeOnly={homeOnly}
+                setHomeOnly={setHomeOnly}
+                showHomeOnly={subTab === "spielplan"}
+              />
+            </div>
+
             {subTab === "spielplan" ? (
               <>
-                {/* Team Filter */}
-                <div className="mb-6">
-                  <TeamFilter
-                    activeTeams={activeSummerTeams}
-                    toggleTeam={toggleTeam}
-                    toggleCategory={toggleCategory}
-                    setAllTeams={setAllTeams}
-                    homeOnly={homeOnly}
-                    setHomeOnly={setHomeOnly}
-                  />
-                </div>
-
                 {/* Main View */}
                 <TimelineView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} allMatches={MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
 
@@ -203,27 +225,28 @@ function App() {
               </>
             ) : (
               /* Summer Standings */
-              <StandingsView standings={SUMMER_STANDINGS} />
+              <StandingsView standings={filteredSummerStandings} />
             )}
           </>
         ) : (
           <>
+            {/* Winter Team Filter — gilt für Spielplan UND Tabelle */}
+            <div className="mb-6">
+              <TeamFilter
+                activeTeams={activeWinterTeams}
+                toggleTeam={toggleTeam}
+                toggleCategory={toggleCategory}
+                setAllTeams={setAllTeams}
+                categories={WINTER_CATEGORIES}
+                teams={WINTER_TEAMS as Team[]}
+                homeOnly={homeOnly}
+                setHomeOnly={setHomeOnly}
+                showHomeOnly={subTab === "spielplan"}
+              />
+            </div>
+
             {subTab === "spielplan" ? (
               <>
-                {/* Winter Team Filter */}
-                <div className="mb-6">
-                  <TeamFilter
-                    activeTeams={activeWinterTeams}
-                    toggleTeam={toggleTeam}
-                    toggleCategory={toggleCategory}
-                    setAllTeams={setAllTeams}
-                    categories={WINTER_CATEGORIES}
-                    teams={WINTER_TEAMS as Team[]}
-                    homeOnly={homeOnly}
-                    setHomeOnly={setHomeOnly}
-                  />
-                </div>
-
                 {/* Winter View */}
                 <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} allMatches={WINTER_MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
 
@@ -232,7 +255,7 @@ function App() {
               </>
             ) : (
               /* Winter Standings */
-              <StandingsView standings={WINTER_STANDINGS} />
+              <StandingsView standings={filteredWinterStandings} />
             )}
           </>
         )}

@@ -12,6 +12,8 @@ interface TeamFilterProps {
   teams?: Team[];
   homeOnly: boolean;
   setHomeOnly: (v: boolean) => void;
+  // "Nur Heim" gilt nur für den Spielplan — auf dem Tabellen-Tab ausblenden.
+  showHomeOnly?: boolean;
 }
 
 export default function TeamFilter({
@@ -23,6 +25,7 @@ export default function TeamFilter({
   teams,
   homeOnly,
   setHomeOnly,
+  showHomeOnly = true,
 }: TeamFilterProps) {
   const cats = categories || CATEGORIES;
   const teamList = teams || TEAMS;
@@ -80,16 +83,18 @@ export default function TeamFilter({
         >
           {anyActive ? "Alle aus" : "Alle an"}
         </button>
-        <button
-          onClick={() => setHomeOnly(!homeOnly)}
-          className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border transition-colors ${
-            homeOnly
-              ? "bg-green-600/30 text-green-300 border-green-500/50 hover:bg-green-600/40"
-              : "bg-slate-800 text-slate-400 border-slate-600 hover:bg-slate-700"
-          }`}
-        >
-          Nur Heim
-        </button>
+        {showHomeOnly && (
+          <button
+            onClick={() => setHomeOnly(!homeOnly)}
+            className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border transition-colors ${
+              homeOnly
+                ? "bg-green-600/30 text-green-300 border-green-500/50 hover:bg-green-600/40"
+                : "bg-slate-800 text-slate-400 border-slate-600 hover:bg-slate-700"
+            }`}
+          >
+            Nur Heim
+          </button>
+        )}
         <a
           href={BTV_VEREIN_URL}
           target="_blank"
