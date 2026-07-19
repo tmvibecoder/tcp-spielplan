@@ -47,7 +47,7 @@ Alle Liga-/Spieldaten stammen aus offiziellen **BTV-nuLiga-PDFs** und liegen in 
 
 > **Zuordnung passiert automatisch aus dem PDF.** Jedes Spielbericht-PDF (MeetingReportFOP) nennt im Kopf **Liga/Gruppe, Termin, beide Mannschaften und Endergebnis** — daraus folgt eindeutig die Ziel-Liga und -Begegnung. Es genügt also, die **PDF-Links zu liefern** (die Konkurrenz muss nicht dazugeschrieben werden). Auch Begegnungen **ohne TC Pliening** werden eingetragen (sie füllen die Kreuztabelle der jeweiligen Liga). Den **Gesamt-Tabellen-Report** (ResultReportFOP, s. u.) holt man sich selbst dazu — er steckt NICHT im einzelnen Spielbericht.
 
-**Datenstand (19.07.2026):** **Gr. 023** und **Gr. 292** sind auf **Saison-Endstand** (PR #26). Gr. 023 damit lückenlos: alle 27 gespielten Begegnungen haben einen Spielbericht; Pliening–Finsing (28.06.) blieb ungespielt und steht auch offiziell mit 0:0. In Gr. 292 blieb Oberpframmern–Putzbrunn ungespielt. **Noch offen:** Gr. 004 fehlen 6, Gr. 315 fehlen 7, Gr. 160 fehlen 8 Ergebnisse — diese Tabellen (wie auch die 8 Ligen ohne Spielberichte) stehen auf Stand 29.06.
+**Datenstand (19.07.2026):** **Gr. 023**, **Gr. 292** und **Gr. 160** sind auf **Saison-Endstand** (PR #26/#28). Gr. 023 und Gr. 160 damit lückenlos (27 bzw. 26 gespielte Begegnungen, alle mit Spielbericht); ungespielt blieben Pliening–Finsing (Gr. 023), Oberpframmern–Putzbrunn (Gr. 292), Fideliopark II–Steinhöring und Jahn–Grün-Gold (Gr. 160) — alle offiziell 0:0. **Noch offen:** Gr. 004 fehlen 6, Gr. 315 fehlen 7 Ergebnisse — diese Tabellen (wie auch die 8 Ligen ohne Spielberichte) stehen auf Stand 29.06.
 
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
