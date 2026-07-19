@@ -64,11 +64,12 @@ Quelle: **je Begegnung** eine PDF, „MeetingReportFOP":
 - `league` / `homeClub` / `awayClub` müssen **exakt** den Strings in `summer-2026.ts` entsprechen (Lookup `getSpielbericht` ist richtungsunabhängig — eine Begegnung steht in 2 Spiegel-Zellen der Kreuztabelle).
 - Einzel-Spieler: `"Nachname, Vorname [LÄNDERKÜRZEL≠GER] (Meldeposition, LKx,x)"` — die Meldeposition ist die PDF-Spalte „Nr. laut Meldeliste", nicht die laufende Nr.; `GER` weglassen. Doppel: `"Nachname, Vorname / Nachname, Vorname"` ohne LK.
 - `position`: Einzel 1–6, Doppel 7–9 (4er-Ligen: Einzel 1–4, Doppel 7–8).
-- `sets`: Liste von `[heim, gast]`-Sätzen; ein 3. Eintrag ist der Match-Tiebreak (z. B. `[10, 6]`). Nicht gespielte Sätze weglassen. Walkover → `(w.o.)` am Spielernamen **und** `sets: []`.
+- `sets`: Liste von `[heim, gast]`-Sätzen; ein 3. Eintrag ist der Match-Tiebreak (z. B. `[10, 6]`). Nicht gespielte Sätze weglassen. **Reiner** Walkover → `(w.o.)` am Spielernamen **und** `sets: []`; bei Aufgabe mitten im Match die im PDF stehenden (Teil-)Sätze verbatim behalten (auch formale wie `1:0`/`3:0`), Sieger = die nicht aufgebende Seite.
+- Tritt ein Team ohne vollständige Aufstellung an, steht im PDF „Spieler/in nicht anwesend k.A.*" → als Platzhalter `"— (w.o.)"` speichern (Doppel: `"— (w.o.) / — (w.o.)"`), `sets: []`.
 
 ### Workflow
 
-PDF(s) ziehen → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
+PDF(s) ziehen → **erst prüfen, ob `SB_<meetingID>` schon existiert** (gelieferte Link-Listen enthalten öfter bereits eingetragene oder doppelte Links → überspringen) → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
 
 **Fehlende Spiele finden:** aktuellen Gesamt-Report (ResultReportFOP) ziehen und dessen Kreuztabellen gegen `SUMMER_STANDINGS` diffen — Zellen, die bei uns `"0:0"` sind und offiziell ein Ergebnis haben, fehlen. Die **Spieltage** von Fremd-Begegnungen stehen nicht im Gesamt-Report; sie folgen aber eindeutig aus der Rundenlogik (jede Paarung genau 1×, pro Spieltag jedes Team genau 1×) — Vorsicht bei **Nachholspielen** (Beispiel Gr. 292: Finsing–Philathlos, Termin 27.06., erst am 18.07. „abgeschlossen" und damit lange ohne Ergebnis im Report). Der Spielbericht-PDF-Kopf nennt immer den echten Termin.
 
@@ -213,7 +214,9 @@ damit `package.json`/`package-lock.json` unberührt bleiben): prüfen, dass `but
 gerendert werden und `localStorage["tcp-filter-prefs"]` nach „Auswahl speichern" gesetzt ist.
 
 **Derselbe Smoke-Test läuft auch direkt gegen die Live-URL** (`https://tcp-spielplan.de/`) —
-praktisch zur Nach-Deploy-Kontrolle, ganz ohne lokale `.env`/Build.
+praktisch zur Nach-Deploy-Kontrolle, ganz ohne lokale `.env`/Build. Achtung Race: direkt
+nach „Deploy erfolgreich" kann der erste Aufruf noch den alten Stand liefern — bei rotem
+Ergebnis zuerst den Bundle-Hash prüfen (s. o.) und den Test einfach wiederholen.
 
 **Mobil mitprüfen (die App ist mobil-erst).** Geräte emulieren statt nur Desktop-Viewport:
 `page.setUserAgent(<iPhone-UA>)` + `page.setViewport({ width, height, isMobile: true, hasTouch: true })`
