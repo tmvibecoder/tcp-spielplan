@@ -2148,6 +2148,251 @@ const SB_12689853: Spielbericht = {
   ],
 };
 
+// TC Pliening 9:0 SpVgg Zolling — echte nuLiga-Daten (meeting 12556759);
+// Zolling trat weitgehend nicht an (fast alles w.o.)
+const SB_12556759: Spielbericht = {
+  league: "Regionalliga Süd-Ost · Gr. 004",
+  homeClub: "TC Pliening",
+  awayClub: "SpVgg Zolling",
+  date: "2026-07-04",
+  day: "Sa",
+  finalHome: 9,
+  finalAway: 0,
+  matches: [
+    m("12556759-e1", 1, "singles", "Hahn, Matthias (4, LK2,1)", "Knieper, Philipp (w.o.) (2, LK2,6)", [[6, 2], [3, 0]], "home"),
+    m("12556759-e2", 2, "singles", "Reicherseder, Christian (8, LK3,2)", "Jarczyk, Herbert (w.o.) (5, LK2,6)", [[6, 3], [1, 0]], "home"),
+    m("12556759-e3", 3, "singles", "Hauser, Michael (9, LK3,2)", "Stippler, Toni (w.o.) (6, LK2,8)", [[6, 4]], "home"),
+    m("12556759-e4", 4, "singles", "Gottwald, Markus (15, LK4,6)", "Ludwig, Sven (w.o.) (8, LK4,6)", [[1, 0]], "home"),
+    m("12556759-e5", 5, "singles", "Bosch, Simon (18, LK5,4)", "Braun, Michael (w.o.) (20, LK8,9)", [[1, 0]], "home"),
+    m("12556759-e6", 6, "singles", "Aigner, Peter (23, LK6,1)", "Lehner, Marcus (30, LK12,8)", [[6, 1], [6, 0]], "home"),
+    m("12556759-d1", 7, "doubles", "Hahn, Matthias / Reicherseder, Christian", "Knieper, Philipp (w.o.) / Jarczyk, Herbert (w.o.)", [[1, 0]], "home"),
+    m("12556759-d2", 8, "doubles", "Hauser, Michael / Gottwald, Markus", "Stippler, Toni (w.o.) / Ludwig, Sven (w.o.)", [[1, 0]], "home"),
+    m("12556759-d3", 9, "doubles", "Bosch, Simon / Aigner, Peter", "Bauer, Peter (w.o.) / Lehner, Marcus (w.o.)", [[1, 0]], "home"),
+  ],
+};
+
+// TC Grün-Weiß Gräfelfing 2:7 MTTC Iphitos München — echte nuLiga-Daten (meeting 12556783),
+// Nachholspiel vom 27.06., abgeschlossen am 12.07.2026
+const SB_12556783: Spielbericht = {
+  league: "Regionalliga Süd-Ost · Gr. 004",
+  homeClub: "TC Grün-Weiß Gräfelfing",
+  awayClub: "MTTC Iphitos München",
+  date: "2026-06-27",
+  day: "Sa",
+  finalHome: 2,
+  finalAway: 7,
+  matches: [
+    m("12556783-e1", 1, "singles", "Gürtner, Andreas (3, LK2,0)", "Beck, Karol SVK (3, LK2,0)", [[3, 6], [6, 4], [9, 11]], "away"),
+    m("12556783-e2", 2, "singles", "Weislmaier, Dieter (4, LK3,4)", "Kralert, Petr CZE (5, LK2,0)", [[6, 1], [4, 6], [10, 6]], "home"),
+    m("12556783-e3", 3, "singles", "Prix, Josef AUT (9, LK4,6)", "Senkbeil, Marc (7, LK2,0)", [[3, 6], [3, 6]], "away"),
+    m("12556783-e4", 4, "singles", "Drapal, Ladislav (10, LK4,6)", "Hutt, Felix (8, LK2,7)", [[6, 4], [5, 7], [7, 10]], "away"),
+    m("12556783-e5", 5, "singles", "Schwenk, Christian AUT (13, LK5,5)", "Fehske, Stephan (24, LK7,5)", [[6, 7], [4, 6]], "away"),
+    m("12556783-e6", 6, "singles", "Kudena, Michael (20, LK12,8)", "Hotman, Evhenii UKR* (27, LK8,6)", [[4, 6], [3, 6]], "away"),
+    m("12556783-d1", 7, "doubles", "Gürtner, Andreas / Weislmaier, Dieter", "Beck, Karol SVK / Fehske, Stephan", [[4, 6], [7, 5], [12, 10]], "home"),
+    m("12556783-d2", 8, "doubles", "Prix, Josef AUT / Drapal, Ladislav", "Senkbeil, Marc / Hutt, Felix", [[4, 6], [3, 6]], "away"),
+    m("12556783-d3", 9, "doubles", "Schwenk, Christian AUT / Kudena, Michael", "Kralert, Petr CZE / Soulier, Andre", [[2, 6], [2, 6]], "away"),
+  ],
+};
+
+// TC Grün-Weiß Gräfelfing 6:3 TSV Kottern — echte nuLiga-Daten (meeting 12556784)
+const SB_12556784: Spielbericht = {
+  league: "Regionalliga Süd-Ost · Gr. 004",
+  homeClub: "TC Grün-Weiß Gräfelfing",
+  awayClub: "TSV Kottern",
+  date: "2026-07-04",
+  day: "Sa",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12556784-e1", 1, "singles", "Gürtner, Andreas (3, LK2,0)", "Marsoun, Lukas CZE (1, LK3,5)", [[1, 6], [6, 1], [10, 3]], "home"),
+    m("12556784-e2", 2, "singles", "Weislmaier, Dieter (4, LK3,4)", "Kesthely, Soma NOR* (2, LK4,3)", [[3, 6], [1, 6]], "away"),
+    m("12556784-e3", 3, "singles", "Herz, Ivan SVK (5, LK4,2)", "Birner, Christoph (3, LK4,6)", [[6, 7], [2, 6]], "away"),
+    m("12556784-e4", 4, "singles", "Fellner, Helmuth AUT (7, LK4,4)", "Kiefer, Florian AUT (6, LK5,5)", [[6, 1], [6, 2]], "home"),
+    m("12556784-e5", 5, "singles", "Prix, Josef AUT (9, LK4,6)", "Hörmann, Thomas (8, LK7,0)", [[6, 3], [6, 2]], "home"),
+    m("12556784-e6", 6, "singles", "Geissler, Mathias (16, LK6,1)", "Riess, Manfred AUT (9, LK7,5)", [[2, 6], [7, 5], [8, 10]], "away"),
+    m("12556784-d1", 7, "doubles", "Gürtner, Andreas / Fellner, Helmuth AUT", "Marsoun, Lukas CZE / Kiefer, Florian AUT", [[6, 2], [2, 6], [11, 9]], "home"),
+    m("12556784-d2", 8, "doubles", "Weislmaier, Dieter / Geissler, Mathias", "Kesthely, Soma NOR* / Birner, Christoph", [[6, 4], [2, 6], [10, 4]], "home"),
+    m("12556784-d3", 9, "doubles", "Prix, Josef AUT / Schwenk, Christian AUT", "Hörmann, Thomas / Riess, Manfred AUT", [[6, 2], [3, 6], [10, 8]], "home"),
+  ],
+};
+
+// TC Kümmersbruck 0:9 TC Herzogenaurach — echte nuLiga-Daten (meeting 12556805)
+const SB_12556805: Spielbericht = {
+  league: "Regionalliga Süd-Ost · Gr. 004",
+  homeClub: "TC Kümmersbruck",
+  awayClub: "TC Herzogenaurach",
+  date: "2026-07-04",
+  day: "Sa",
+  finalHome: 0,
+  finalAway: 9,
+  matches: [
+    m("12556805-e1", 1, "singles", "Bauer, Jochen (3, LK2,6)", "Devoty, Theodor CZE (1, LK3,1)", [[0, 6], [2, 6]], "away"),
+    m("12556805-e2", 2, "singles", "Izdebski, Maciej POL (w.o.) (6, LK5,4)", "Moser, Klaus-Ferdinand (2, LK3,1)", [], "away"),
+    m("12556805-e3", 3, "singles", "Schall, Tobias (18, LK12,3)", "Gaber, Jakob SLO (3, LK3,1)", [[1, 6], [1, 6]], "away"),
+    m("12556805-e4", 4, "singles", "Sperber, Christoph (21, LK14,0)", "Hippenstiel, Björn (5, LK3,7)", [[3, 6], [6, 7]], "away"),
+    m("12556805-e5", 5, "singles", "Kick, Thomas (29, LK17,9)", "Dörschuck, Thomas (7, LK3,9)", [[0, 6], [4, 6]], "away"),
+    m("12556805-e6", 6, "singles", "Baldauf, Christian (32, LK20,0)", "Roth, Stephan (8, LK4,1)", [[1, 6], [0, 6]], "away"),
+    m("12556805-d1", 7, "doubles", "Bauer, Jochen (w.o.) / Schall, Tobias (w.o.)", "Moser, Klaus-Ferdinand / Gaber, Jakob SLO", [], "away"),
+    m("12556805-d2", 8, "doubles", "Sperber, Christoph (w.o.) / Kick, Thomas (w.o.)", "Devoty, Theodor CZE / Roth, Stephan", [], "away"),
+    m("12556805-d3", 9, "doubles", "Szautner, Florian (w.o.) / Baldauf, Christian (w.o.)", "Hippenstiel, Björn / Dörschuck, Thomas", [], "away"),
+  ],
+};
+
+// Bad WH Dresden 9:0 TSV Kottern — echte nuLiga-Daten (meeting 12556814),
+// Nachholspiel vom 27.06., abgeschlossen am 11.07.2026; Kottern nur mit 4 Spielern angetreten
+const SB_12556814: Spielbericht = {
+  league: "Regionalliga Süd-Ost · Gr. 004",
+  homeClub: "Bad WH Dresden",
+  awayClub: "TSV Kottern",
+  date: "2026-06-27",
+  day: "Sa",
+  finalHome: 9,
+  finalAway: 0,
+  matches: [
+    m("12556814-e1", 1, "singles", "Nebojsa, Stanislav CZE (2, LK2,4)", "Marsoun, Lukas CZE (1, LK3,5)", [[6, 2], [6, 2]], "home"),
+    m("12556814-e2", 2, "singles", "Triebe, Mathias (3, LK2,5)", "Birner, Christoph (w.o.) (3, LK4,6)", [[1, 0]], "home"),
+    m("12556814-e3", 3, "singles", "Tränkner, Stefan (4, LK2,6)", "Maier, Moritz (12, LK9,3)", [[6, 1], [6, 3]], "home"),
+    m("12556814-e4", 4, "singles", "Möhrke, Christian (5, LK2,9)", "Jakob, Frank (14, LK10,5)", [[6, 2], [6, 1]], "home"),
+    m("12556814-e5", 5, "singles", "Jentsch, Oliver (6, LK3,5)", "— (w.o.)", [], "home"),
+    m("12556814-e6", 6, "singles", "Makaschin, Sergej (8, LK4,3)", "— (w.o.)", [], "home"),
+    m("12556814-d1", 7, "doubles", "Nebojsa, Stanislav CZE / Triebe, Mathias", "— (w.o.) / — (w.o.)", [], "home"),
+    m("12556814-d2", 8, "doubles", "Tränkner, Stefan / Möhrke, Christian", "— (w.o.) / — (w.o.)", [], "home"),
+    m("12556814-d3", 9, "doubles", "Jentsch, Oliver / Makaschin, Sergej", "— (w.o.) / — (w.o.)", [], "home"),
+  ],
+};
+
+// MTTC Iphitos München 3:6 Bad WH Dresden — echte nuLiga-Daten (meeting 12556817)
+const SB_12556817: Spielbericht = {
+  league: "Regionalliga Süd-Ost · Gr. 004",
+  homeClub: "MTTC Iphitos München",
+  awayClub: "Bad WH Dresden",
+  date: "2026-07-04",
+  day: "Sa",
+  finalHome: 3,
+  finalAway: 6,
+  matches: [
+    m("12556817-e1", 1, "singles", "Beck, Karol SVK (w.o.) (3, LK2,0)", "Seká#, Branislav SVK (1, LK2,3)", [[2, 6], [0, 1]], "away"),
+    m("12556817-e2", 2, "singles", "Kralert, Petr CZE (5, LK2,0)", "Nebojsa, Stanislav CZE (2, LK2,4)", [[6, 1], [4, 6], [10, 8]], "home"),
+    m("12556817-e3", 3, "singles", "Senkbeil, Marc (7, LK2,0)", "Triebe, Mathias (3, LK2,5)", [[2, 6], [7, 5], [6, 10]], "away"),
+    m("12556817-e4", 4, "singles", "Hutt, Felix (8, LK2,7)", "Tränkner, Stefan (4, LK2,6)", [[5, 7], [2, 6]], "away"),
+    m("12556817-e5", 5, "singles", "Uebel, Lars (w.o.) (14, LK3,9)", "Möhrke, Christian (5, LK2,9)", [[3, 3]], "away"),
+    m("12556817-e6", 6, "singles", "Gottesleben, Patrick (16, LK5,3)", "Jentsch, Oliver (6, LK3,5)", [[6, 3], [6, 4]], "home"),
+    m("12556817-d1", 7, "doubles", "Beck, Karol SVK (w.o.) / Hutt, Felix (w.o.)", "Seká#, Branislav SVK / Nebojsa, Stanislav CZE", [[4, 6], [0, 4]], "away"),
+    m("12556817-d2", 8, "doubles", "Kralert, Petr CZE / Gottesleben, Patrick", "Triebe, Mathias / Jentsch, Oliver", [[6, 3], [6, 2]], "home"),
+    m("12556817-d3", 9, "doubles", "Soulier, Andre / Fehske, Stephan", "Tränkner, Stefan / Möhrke, Christian", [[6, 7], [2, 6]], "away"),
+  ],
+};
+
+// TC Pliening III 5:4 TF Markt Schwaben — echte nuLiga-Daten (meeting 12742460)
+const SB_12742460: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Pliening III",
+  awayClub: "TF Markt Schwaben",
+  date: "2026-07-04",
+  day: "Sa",
+  finalHome: 5,
+  finalAway: 4,
+  matches: [
+    m("12742460-e1", 1, "singles", "Anetzberger, Martin (42, LK14,0)", "Eraerds, Patrick (1, LK10,4)", [[6, 4], [7, 6]], "home"),
+    m("12742460-e2", 2, "singles", "Schwarz, Heiko (44, LK15,6)", "Krahnke, Andreas (3, LK13,0)", [[1, 6], [6, 4], [6, 10]], "away"),
+    m("12742460-e3", 3, "singles", "Ehlers, Nico (53, LK18,5)", "Walther, Oliver (4, LK13,1)", [[5, 7], [6, 3], [6, 10]], "away"),
+    m("12742460-e4", 4, "singles", "Gelhart, Daniel (54, LK18,6)", "Leon Diaz, Esteban (5, LK14,9)", [[2, 6], [6, 1], [10, 12]], "away"),
+    m("12742460-e5", 5, "singles", "Widl, Alexander (59, LK19,8)", "Eckert, Thomas (9, LK21,6)", [[6, 2], [6, 3]], "home"),
+    m("12742460-e6", 6, "singles", "Rohrmeier, Patrick (63, LK20,6)", "Göhrum, Andreas (14, LK22,2)", [[1, 6], [6, 0], [10, 1]], "home"),
+    m("12742460-d1", 7, "doubles", "Anetzberger, Martin / Widl, Alexander", "Walther, Oliver / Leon Diaz, Esteban", [[6, 3], [6, 3]], "home"),
+    m("12742460-d2", 8, "doubles", "Schwarz, Heiko / Ehlers, Nico", "Eraerds, Patrick / Göhrum, Andreas", [[2, 6], [6, 2], [13, 11]], "home"),
+    m("12742460-d3", 9, "doubles", "Wagner, Patrick IRL / Frick, Matthias", "Krahnke, Andreas / Eckert, Thomas", [[5, 7], [0, 6]], "away"),
+  ],
+};
+
+// TF Markt Schwaben 7:2 WB Fideliopark München II — echte nuLiga-Daten (meeting 12742416)
+const SB_12742416: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TF Markt Schwaben",
+  awayClub: "WB Fideliopark München II",
+  date: "2026-07-11",
+  day: "Sa",
+  finalHome: 7,
+  finalAway: 2,
+  matches: [
+    m("12742416-e1", 1, "singles", "Eraerds, Patrick (1, LK10,4)", "Savci-Keck, Koray (10, LK15,3)", [[6, 4], [6, 3]], "home"),
+    m("12742416-e2", 2, "singles", "Handl, Ralph (2, LK12,1)", "Schütz, Alexander (12, LK15,5)", [[7, 6], [6, 3]], "home"),
+    m("12742416-e3", 3, "singles", "Krahnke, Andreas (3, LK13,0)", "Steinbach, Jan (15, LK17,2)", [[6, 1], [6, 4]], "home"),
+    m("12742416-e4", 4, "singles", "Leon Diaz, Esteban (5, LK14,9)", "Kahle, Robert (19, LK18,1)", [[6, 4], [4, 6], [10, 7]], "home"),
+    m("12742416-e5", 5, "singles", "Schreib, Ronny (10, LK21,4)", "Pröll, Markus (20, LK19,1)", [[0, 6], [4, 6]], "away"),
+    m("12742416-e6", 6, "singles", "Hoffmann, Andreas (11, LK21,6)", "Ockert, Tim (21, LK19,3)", [[0, 6], [1, 6]], "away"),
+    m("12742416-d1", 7, "doubles", "Eraerds, Patrick / Krahnke, Andreas", "Savci-Keck, Koray / Ockert, Tim", [[6, 4], [6, 2]], "home"),
+    m("12742416-d2", 8, "doubles", "Handl, Ralph / Mayer, Peter", "Steinbach, Jan / Pröll, Markus", [[7, 6], [6, 2]], "home"),
+    m("12742416-d3", 9, "doubles", "Leon Diaz, Esteban / Eckert, Thomas", "Kahle, Robert / Meier, Andreas", [[6, 7], [6, 2], [12, 10]], "home"),
+  ],
+};
+
+// TC Aschheim 6:3 TSV Feldkirchen II — echte nuLiga-Daten (meeting 12742492)
+const SB_12742492: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Aschheim",
+  awayClub: "TSV Feldkirchen II",
+  date: "2026-07-11",
+  day: "Sa",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12742492-e1", 1, "singles", "Faschang, Michael AUT (1, LK7,2)", "Petz, Veit (w.o.) (10, LK12,9)", [[6, 0], [3, 6], [7, 4]], "home"),
+    m("12742492-e2", 2, "singles", "Bodai, Daniel HUN (8, LK17,9)", "Körber, Simon (12, LK13,3)", [[6, 1], [3, 6], [2, 10]], "away"),
+    m("12742492-e3", 3, "singles", "Dietzel, Patrice (9, LK18,6)", "Brand, Michael (16, LK14,4)", [[7, 6], [6, 4]], "home"),
+    m("12742492-e4", 4, "singles", "Ahmetaj, Erton ALB* (13, LK19,8)", "Keil, Patrick (20, LK16,1)", [[0, 6], [2, 6]], "away"),
+    m("12742492-e5", 5, "singles", "Mexis, Nikolaus (18, LK23,1)", "Mutter, Sebastian (21, LK16,3)", [[6, 1], [6, 2]], "home"),
+    m("12742492-e6", 6, "singles", "Musielak, Radoslaw (25, LK24,2)", "Ide, Dennis (32, LK24,3)", [[3, 6], [6, 3], [4, 10]], "away"),
+    m("12742492-d1", 7, "doubles", "Faschang, Michael AUT / Ahmetaj, Erton ALB*", "Körber, Simon / Hargasser, Manfred", [[4, 6], [6, 3], [10, 2]], "home"),
+    m("12742492-d2", 8, "doubles", "Bodai, Daniel HUN / Musielak, Radoslaw", "Brand, Michael / Gunkel, Jan", [[6, 7], [6, 3], [10, 3]], "home"),
+    m("12742492-d3", 9, "doubles", "Dietzel, Patrice / Mexis, Nikolaus", "Mutter, Sebastian / Ide, Dennis", [[6, 3], [6, 4]], "home"),
+  ],
+};
+
+// TC Pliening III 1:8 TSV Haar II — echte nuLiga-Daten (meeting 12742538)
+const SB_12742538: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Pliening III",
+  awayClub: "TSV Haar II",
+  date: "2026-07-11",
+  day: "Sa",
+  finalHome: 1,
+  finalAway: 8,
+  matches: [
+    m("12742538-e1", 1, "singles", "Ertl, Harald (39, LK13,6)", "Biringer, Kai (10, LK8,9)", [[2, 6], [3, 6]], "away"),
+    m("12742538-e2", 2, "singles", "Veigl, Christian (40, LK13,6)", "Leiß, Sascha (11, LK9,4)", [[3, 6], [2, 6]], "away"),
+    m("12742538-e3", 3, "singles", "Anetzberger, Martin (42, LK14,0)", "Schmid, Christian (16, LK12,8)", [[3, 6], [2, 6]], "away"),
+    m("12742538-e4", 4, "singles", "Schwarz, Heiko (44, LK15,6)", "Rebele, Tobias (17, LK12,8)", [[5, 7], [6, 1], [7, 10]], "away"),
+    m("12742538-e5", 5, "singles", "Forchhammer, Sebastian (49, LK16,6)", "Zirngibl, Rupert (22, LK13,6)", [[1, 6], [0, 6]], "away"),
+    m("12742538-e6", 6, "singles", "Gelhart, Daniel (54, LK18,6)", "Venus, Ulrich (27, LK15,0)", [[3, 6], [4, 6]], "away"),
+    m("12742538-d1", 7, "doubles", "Ertl, Harald / Forchhammer, Sebastian", "Biringer, Kai / Raev, Zahari", [[6, 1], [6, 2]], "home"),
+    m("12742538-d2", 8, "doubles", "Schwarz, Heiko / Ehlers, Nico", "Leiß, Sascha / Venus, Ulrich", [[2, 6], [0, 6]], "away"),
+    m("12742538-d3", 9, "doubles", "Anetzberger, Martin / Davis, Collin", "Rauch, Oliver / Zirngibl, Rupert", [[6, 4], [4, 6], [7, 10]], "away"),
+  ],
+};
+
+// TC Aschheim 8:1 TF Markt Schwaben — echte nuLiga-Daten (meeting 12742446)
+const SB_12742446: Spielbericht = {
+  league: "Südliga 2 · Gr. 315",
+  homeClub: "TC Aschheim",
+  awayClub: "TF Markt Schwaben",
+  date: "2026-07-18",
+  day: "Sa",
+  finalHome: 8,
+  finalAway: 1,
+  matches: [
+    m("12742446-e1", 1, "singles", "Faschang, Michael AUT (1, LK7,2)", "Walther, Oliver (4, LK13,1)", [[6, 1], [6, 1]], "home"),
+    m("12742446-e2", 2, "singles", "Bodai, Daniel HUN (8, LK17,9)", "Schreib, Ronny (10, LK21,4)", [[6, 2], [6, 1]], "home"),
+    m("12742446-e3", 3, "singles", "Dietzel, Patrice (9, LK18,6)", "Göhrum, Andreas (14, LK22,2)", [[6, 4], [6, 3]], "home"),
+    m("12742446-e4", 4, "singles", "Mexis, Nikolaus (18, LK23,1)", "Klotz-Zürbig, Matthias (15, LK22,6)", [[6, 3], [6, 2]], "home"),
+    m("12742446-e5", 5, "singles", "Coriand, Marco (23, LK23,7)", "Stelzer, Gerhard (18, LK24,5)", [[6, 3], [6, 3]], "home"),
+    m("12742446-e6", 6, "singles", "Musielak, Radoslaw (25, LK24,2)", "Bruhnke, Michael (23, LK25,0)", [[6, 0], [6, 0]], "home"),
+    m("12742446-d1", 7, "doubles", "Faschang, Michael AUT / Dietzel, Patrice", "Walther, Oliver / Schreib, Ronny", [[6, 1], [6, 2]], "home"),
+    m("12742446-d2", 8, "doubles", "Bodai, Daniel HUN / Coriand, Marco", "Leitner, Michael / Göhrum, Andreas", [[3, 6], [2, 6]], "away"),
+    m("12742446-d3", 9, "doubles", "Mexis, Nikolaus / Musielak, Radoslaw", "Klotz-Zürbig, Matthias / Stelzer, Gerhard", [[6, 3], [6, 2]], "home"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686507,
   SB_12686477,
@@ -2246,6 +2491,17 @@ const ALL: Spielbericht[] = [
   SB_12689814,
   SB_12689783,
   SB_12689853,
+  SB_12556759,
+  SB_12556783,
+  SB_12556784,
+  SB_12556805,
+  SB_12556814,
+  SB_12556817,
+  SB_12742460,
+  SB_12742416,
+  SB_12742492,
+  SB_12742538,
+  SB_12742446,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(

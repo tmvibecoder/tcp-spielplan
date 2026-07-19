@@ -5,7 +5,8 @@ import type { LeagueStandings } from "../types";
 //   https://btv.liga.nu/.../nuDokument?dokument=ResultReportFOP&type=full&club=22844&season=18103
 //   (club=22844 = TC Pliening, season=18103 = Sommer 2026; verlinkt auf der btv.de-Vereinsseite)
 // Tabellen + Kreuztabellen 1:1 aus dem offiziellen Report übernommen. Stand: 29.06.2026;
-// Gr. 023, Gr. 292 und Gr. 160 auf Endstand gebracht (Report vom 19.07.2026).
+// Die fünf Spielbericht-Konkurrenzen (Gr. 023, 292, 004, 315, 160) auf Endstand
+// gebracht (Report vom 19.07.2026).
 // Hinweis: Bei zurückgezogenen Mannschaften weichen offizielle Matchpunkte und
 // Kreuztabelle ab (BTV streicht gewertete Spiele aus der Tabelle) — Werte verbatim wie offiziell.
 // crossResults: "***" = Diagonale, "0:0" = noch nicht gespielt (zeigt "n.a.").
@@ -49,20 +50,22 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ],
   },
   // ── Herren 40 Regionalliga Süd-Ost  Gr. 004 ──
+  // Endstand (Report vom 19.07.2026): inkl. Nachholspiele Gräfelfing–Iphitos 2:7 und
+  // Dresden–Kottern 9:0 (Termin 27.06., abgeschlossen 12./11.07.) — Saison komplett.
   {
     teamLabel: "Herren 40",
     teamColor: "#38bdf8",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
-    ownRank: 6,
+    ownRank: 5,
     entries: [
-      { rank: 1, club: "MTTC Iphitos München", isOwnClub: false, points: "10:0", matchPoints: "33:12", sets: "69:30", crossResults: ["***", "0:0", "8:1", "0:0", "5:4", "5:4", "7:2", "8:1"] },
-      { rank: 2, club: "Bad WH Dresden", isOwnClub: false, points: "8:2", matchPoints: "27:18", sets: "61:40", crossResults: ["0:0", "***", "6:3", "3:6", "0:0", "6:3", "5:4", "7:2"] },
-      { rank: 3, club: "TC Kümmersbruck", isOwnClub: false, points: "8:4", matchPoints: "27:27", sets: "58:59", crossResults: ["1:8", "3:6", "***", "5:4", "6:3", "6:3", "0:0", "6:3"] },
-      { rank: 4, club: "TC Grün-Weiß Gräfelfing", isOwnClub: false, points: "6:4", matchPoints: "24:21", sets: "54:45", crossResults: ["0:0", "6:3", "4:5", "***", "0:0", "5:4", "5:4", "4:5"] },
-      { rank: 5, club: "TSV Kottern", isOwnClub: false, points: "4:6", matchPoints: "21:24", sets: "45:50", crossResults: ["4:5", "0:0", "3:6", "0:0", "***", "3:6", "6:3", "5:4"] },
-      { rank: 6, club: "TC Pliening", isOwnClub: true , points: "4:8", matchPoints: "27:27", sets: "62:61", crossResults: ["4:5", "3:6", "3:6", "4:5", "6:3", "***", "7:2", "0:0"] },
-      { rank: 7, club: "TC Herzogenaurach", isOwnClub: false, points: "2:10", matchPoints: "21:33", sets: "45:73", crossResults: ["2:7", "4:5", "0:0", "4:5", "3:6", "2:7", "***", "6:3"] },
-      { rank: 8, club: "SpVgg Zolling", isOwnClub: false, points: "2:10", matchPoints: "18:36", sets: "41:77", crossResults: ["1:8", "2:7", "3:6", "5:4", "4:5", "0:0", "3:6", "***"] },
+      { rank: 1, club: "MTTC Iphitos München", isOwnClub: false, points: "12:2", matchPoints: "43:20", sets: "92:49", crossResults: ["***", "3:6", "7:2", "8:1", "5:4", "7:2", "5:4", "8:1"] },
+      { rank: 2, club: "Bad WH Dresden", isOwnClub: false, points: "12:2", matchPoints: "42:21", sets: "92:47", crossResults: ["6:3", "***", "3:6", "6:3", "6:3", "5:4", "9:0", "7:2"] },
+      { rank: 3, club: "TC Grün-Weiß Gräfelfing", isOwnClub: false, points: "8:6", matchPoints: "32:31", sets: "73:71", crossResults: ["2:7", "6:3", "***", "4:5", "5:4", "5:4", "6:3", "4:5"] },
+      { rank: 4, club: "TC Kümmersbruck", isOwnClub: false, points: "8:6", matchPoints: "27:36", sets: "58:77", crossResults: ["1:8", "3:6", "5:4", "***", "6:3", "0:9", "6:3", "6:3"] },
+      { rank: 5, club: "TC Pliening", isOwnClub: true , points: "6:8", matchPoints: "36:27", sets: "80:61", crossResults: ["4:5", "3:6", "4:5", "3:6", "***", "7:2", "6:3", "9:0"] },
+      { rank: 6, club: "TC Herzogenaurach", isOwnClub: false, points: "4:10", matchPoints: "30:33", sets: "63:73", crossResults: ["2:7", "4:5", "4:5", "9:0", "2:7", "***", "3:6", "6:3"] },
+      { rank: 7, club: "TSV Kottern", isOwnClub: false, points: "4:10", matchPoints: "24:39", sets: "55:81", crossResults: ["4:5", "0:9", "3:6", "3:6", "3:6", "6:3", "***", "5:4"] },
+      { rank: 8, club: "SpVgg Zolling", isOwnClub: false, points: "2:12", matchPoints: "18:45", sets: "41:95", crossResults: ["1:8", "2:7", "5:4", "3:6", "0:9", "3:6", "4:5", "***"] },
     ],
   },
   // ── Herren 40 II Landesliga 2  Gr. 043 SU ──
@@ -83,19 +86,22 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ],
   },
   // ── Herren 40 III Südliga 2  Gr. 315 ──
+  // Endstand (Report vom 19.07.2026, 11:12): inkl. Aschheim–Markt Schwaben 8:1 (18.07.).
+  // Feldkirchen II–Pliening III (18.07.) steht offiziell weiter ohne Ergebnis (0:0);
+  // Forstinning-Begegnungen (zurückgezogen 11.05.) bleiben gestrichen.
   {
     teamLabel: "Herren 40 III",
     teamColor: "#7dd3fc",
     leagueName: "Südliga 2 · Gr. 315",
     ownRank: 3,
     entries: [
-      { rank: 1, club: "TC Aschheim", isOwnClub: false, points: "6:2", matchPoints: "22:14", sets: "52:34", crossResults: ["***", "6:3", "2:7", "6:3", "0:0", "0:0", "8:1", "0:0"] },
-      { rank: 2, club: "TSV Haar II", isOwnClub: false, points: "6:2", matchPoints: "19:17", sets: "43:42", crossResults: ["3:6", "***", "0:0", "6:3", "5:4", "5:4", "0:0", "0:0"] },
-      { rank: 3, club: "TC Pliening III", isOwnClub: true , points: "4:2", matchPoints: "18:9", sets: "38:27", crossResults: ["7:2", "0:0", "***", "4:5", "0:0", "0:0", "7:2", "0:0"] },
+      { rank: 1, club: "TC Aschheim", isOwnClub: false, points: "10:2", matchPoints: "36:18", sets: "82:45", crossResults: ["***", "6:3", "2:7", "6:3", "6:3", "8:1", "8:1", "0:0"] },
+      { rank: 2, club: "TSV Haar II", isOwnClub: false, points: "10:2", matchPoints: "36:18", sets: "77:47", crossResults: ["3:6", "***", "8:1", "6:3", "5:4", "5:4", "9:0", "0:0"] },
+      { rank: 3, club: "TC Pliening III", isOwnClub: true , points: "6:4", matchPoints: "24:21", sets: "55:53", crossResults: ["7:2", "1:8", "***", "4:5", "0:0", "5:4", "7:2", "0:0"] },
       { rank: 4, club: "TC Grün-Gold München II", isOwnClub: false, points: "6:4", matchPoints: "22:23", sets: "50:51", crossResults: ["3:6", "3:6", "5:4", "***", "5:4", "6:3", "0:0", "0:0"] },
-      { rank: 5, club: "TSV Feldkirchen II", isOwnClub: false, points: "4:4", matchPoints: "20:16", sets: "46:34", crossResults: ["0:0", "4:5", "0:0", "4:5", "***", "5:4", "7:2", "0:0"] },
-      { rank: 6, club: "TF Markt Schwaben", isOwnClub: false, points: "0:6", matchPoints: "11:16", sets: "28:36", crossResults: ["0:0", "4:5", "0:0", "3:6", "4:5", "***", "0:0", "6:3"] },
-      { rank: 7, club: "WB Fideliopark München II", isOwnClub: false, points: "0:6", matchPoints: "5:22", sets: "13:46", crossResults: ["1:8", "0:0", "2:7", "0:0", "2:7", "0:0", "***", "0:0"] },
+      { rank: 5, club: "TSV Feldkirchen II", isOwnClub: false, points: "4:6", matchPoints: "23:22", sets: "55:48", crossResults: ["3:6", "4:5", "0:0", "4:5", "***", "5:4", "7:2", "0:0"] },
+      { rank: 6, club: "TF Markt Schwaben", isOwnClub: false, points: "2:10", matchPoints: "23:31", sets: "54:71", crossResults: ["1:8", "4:5", "4:5", "3:6", "4:5", "***", "7:2", "6:3"] },
+      { rank: 7, club: "WB Fideliopark München II", isOwnClub: false, points: "0:10", matchPoints: "7:38", sets: "20:78", crossResults: ["1:8", "0:9", "2:7", "0:0", "2:7", "2:7", "***", "0:0"] },
       { rank: 8, club: "VfB Forstinning (zurückgezogen)", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "3:6", "0:0", "***"] },
     ],
   },
