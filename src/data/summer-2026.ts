@@ -5,7 +5,7 @@ import type { LeagueStandings } from "../types";
 //   https://btv.liga.nu/.../nuDokument?dokument=ResultReportFOP&type=full&club=22844&season=18103
 //   (club=22844 = TC Pliening, season=18103 = Sommer 2026; verlinkt auf der btv.de-Vereinsseite)
 // Tabellen + Kreuztabellen 1:1 aus dem offiziellen Report übernommen. Stand: 29.06.2026;
-// Gr. 023 und Gr. 292 auf Endstand gebracht (Report vom 19.07.2026).
+// Gr. 023, Gr. 292 und Gr. 160 auf Endstand gebracht (Report vom 19.07.2026).
 // Hinweis: Bei zurückgezogenen Mannschaften weichen offizielle Matchpunkte und
 // Kreuztabelle ab (BTV streicht gewertete Spiele aus der Tabelle) — Werte verbatim wie offiziell.
 // crossResults: "***" = Diagonale, "0:0" = noch nicht gespielt (zeigt "n.a.").
@@ -166,20 +166,22 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ],
   },
   // ── Damen Südliga 2  Gr. 160 ──
+  // Endstand (Report vom 19.07.2026): Spieltage 05.07. + 12.07. komplett; ungespielt
+  // blieben Fideliopark II–Steinhöring und Jahn–Grün-Gold (offiziell 0:0).
   {
     teamLabel: "Damen",
     teamColor: "#f59e0b",
     leagueName: "Südliga 2 · Gr. 160",
     ownRank: 2,
     entries: [
-      { rank: 1, club: "WB Fideliopark München II", isOwnClub: false, points: "8:0", matchPoints: "28:8", sets: "57:24", crossResults: ["***", "7:2", "0:0", "0:0", "0:0", "5:4", "8:1", "8:1"] },
-      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "6:4", matchPoints: "25:20", sets: "53:45", crossResults: ["2:7", "***", "0:0", "4:5", "6:3", "0:0", "7:2", "6:3"] },
-      { rank: 3, club: "TC Neukeferloh", isOwnClub: false, points: "6:4", matchPoints: "23:22", sets: "50:49", crossResults: ["0:0", "0:0", "***", "5:4", "6:3", "2:7", "4:5", "6:3"] },
-      { rank: 4, club: "TC Steinhöring", isOwnClub: false, points: "4:4", matchPoints: "18:18", sets: "40:37", crossResults: ["0:0", "5:4", "4:5", "***", "0:0", "3:6", "0:0", "6:3"] },
-      { rank: 5, club: "TS Jahn München", isOwnClub: false, points: "4:4", matchPoints: "17:19", sets: "40:44", crossResults: ["0:0", "3:6", "3:6", "0:0", "***", "5:4", "6:3", "0:0"] },
-      { rank: 6, club: "TC Unterföhring", isOwnClub: false, points: "4:6", matchPoints: "23:22", sets: "54:50", crossResults: ["4:5", "0:0", "7:2", "6:3", "4:5", "***", "2:7", "0:0"] },
-      { rank: 7, club: "TC Topspin", isOwnClub: false, points: "4:6", matchPoints: "18:27", sets: "41:59", crossResults: ["1:8", "2:7", "5:4", "0:0", "3:6", "7:2", "***", "0:0"] },
-      { rank: 8, club: "TC Grün-Gold München", isOwnClub: false, points: "0:8", matchPoints: "10:26", sets: "27:54", crossResults: ["1:8", "3:6", "3:6", "3:6", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "WB Fideliopark München II", isOwnClub: false, points: "10:2", matchPoints: "37:17", sets: "77:44", crossResults: ["***", "7:2", "0:0", "4:5", "5:4", "8:1", "5:4", "8:1"] },
+      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "10:4", matchPoints: "38:25", sets: "80:57", crossResults: ["2:7", "***", "4:5", "6:3", "7:2", "7:2", "6:3", "6:3"] },
+      { rank: 3, club: "TC Steinhöring", isOwnClub: false, points: "8:4", matchPoints: "30:24", sets: "65:51", crossResults: ["0:0", "5:4", "***", "4:5", "3:6", "7:2", "5:4", "6:3"] },
+      { rank: 4, club: "TC Neukeferloh", isOwnClub: false, points: "8:6", matchPoints: "31:32", sets: "68:71", crossResults: ["5:4", "3:6", "5:4", "***", "2:7", "4:5", "6:3", "6:3"] },
+      { rank: 5, club: "TC Unterföhring", isOwnClub: false, points: "6:8", matchPoints: "30:33", sets: "72:73", crossResults: ["4:5", "2:7", "6:3", "7:2", "***", "2:7", "4:5", "5:4"] },
+      { rank: 6, club: "TC Topspin", isOwnClub: false, points: "6:8", matchPoints: "25:38", sets: "57:85", crossResults: ["1:8", "2:7", "2:7", "5:4", "7:2", "***", "3:6", "5:4"] },
+      { rank: 7, club: "TS Jahn München", isOwnClub: false, points: "4:8", matchPoints: "25:29", sets: "57:66", crossResults: ["4:5", "3:6", "4:5", "3:6", "5:4", "6:3", "***", "0:0"] },
+      { rank: 8, club: "TC Grün-Gold München", isOwnClub: false, points: "0:12", matchPoints: "18:36", sets: "48:77", crossResults: ["1:8", "3:6", "3:6", "3:6", "4:5", "4:5", "0:0", "***"] },
     ],
   },
   // ── Damen 40 Südliga 1  Gr. 441 ──

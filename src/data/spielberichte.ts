@@ -1972,6 +1972,182 @@ const SB_12692775: Spielbericht = {
   ],
 };
 
+// TC Unterföhring 2:7 TC Pliening — echte nuLiga-Daten (meeting 12689708)
+const SB_12689708: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TC Unterföhring",
+  awayClub: "TC Pliening",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 2,
+  finalAway: 7,
+  matches: [
+    m("12689708-e1", 1, "singles", "Anic, Ana Lara (5, LK11,7)", "Rehberg, Julia (1, LK5,5)", [[1, 6], [3, 6]], "away"),
+    m("12689708-e2", 2, "singles", "Teichmann, Letizia (12, LK14,2)", "Bauer, Emma (5, LK13,1)", [[6, 4], [6, 3]], "home"),
+    m("12689708-e3", 3, "singles", "Weidemann, Clara (14, LK14,4)", "Rehberg, Hanna (8, LK15,4)", [[4, 6], [2, 6]], "away"),
+    m("12689708-e4", 4, "singles", "Gavrilovic, Lara (15, LK14,5)", "Hollerith, Emma (17, LK19,8)", [[4, 6], [6, 2], [11, 13]], "away"),
+    m("12689708-e5", 5, "singles", "Oetzbach, Melina (27, LK17,4)", "Zelger, Selina (18, LK20,0)", [[7, 5], [6, 2]], "home"),
+    m("12689708-e6", 6, "singles", "Winderl, Vivien (38, LK19,7)", "Haun, Franziska (19, LK20,2)", [[6, 7], [3, 6]], "away"),
+    m("12689708-d1", 7, "doubles", "Anic, Ana Lara / Teichmann, Letizia", "Rehberg, Julia / Rehberg, Hanna", [[6, 3], [6, 7], [2, 10]], "away"),
+    m("12689708-d2", 8, "doubles", "Weidemann, Clara / Gavrilovic, Lara", "Bauer, Emma / Zelger, Selina", [[4, 6], [4, 6]], "away"),
+    m("12689708-d3", 9, "doubles", "Oetzbach, Melina / Winderl, Vivien", "Hollerith, Emma / Haun, Franziska", [[1, 6], [3, 6]], "away"),
+  ],
+};
+
+// TS Jahn München 4:5 TC Steinhöring — echte nuLiga-Daten (meeting 12689649)
+const SB_12689649: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TS Jahn München",
+  awayClub: "TC Steinhöring",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12689649-e1", 1, "singles", "Fanta, Julia (1, LK14,7)", "Altmann, Christine (1, LK2,8)", [[2, 6], [1, 6]], "away"),
+    m("12689649-e2", 2, "singles", "Stuhler, Francesca (2, LK15,0)", "Windstetter, Sabrina (8, LK14,1)", [[6, 3], [6, 3]], "home"),
+    m("12689649-e3", 3, "singles", "Mayerhofer, Monika (3, LK16,3)", "Kohlen, Franziska (9, LK14,7)", [[6, 2], [6, 3]], "home"),
+    m("12689649-e4", 4, "singles", "Riegler, Nicola (4, LK16,9)", "Herbst, Martina (10, LK17,1)", [[2, 6], [2, 6]], "away"),
+    m("12689649-e5", 5, "singles", "Laumer, Julia Theresa (7, LK19,4)", "Kreuzer, Franziska (11, LK17,5)", [[2, 6], [2, 6]], "away"),
+    m("12689649-e6", 6, "singles", "Vogel, Joy (8, LK19,9)", "Scheib, Sophia (12, LK17,6)", [[6, 2], [5, 7], [8, 10]], "away"),
+    m("12689649-d1", 7, "doubles", "Fanta, Julia / Riegler, Nicola", "Altmann, Christine / Windstetter, Sabrina", [[1, 6], [3, 6]], "away"),
+    m("12689649-d2", 8, "doubles", "Stuhler, Francesca / Laumer, Julia Theresa", "Straßmair, Michaela / Kohlen, Franziska", [[6, 2], [7, 6]], "home"),
+    m("12689649-d3", 9, "doubles", "Mayerhofer, Monika / Vogel, Joy", "Kreuzer, Franziska / Scheib, Sophia", [[5, 7], [6, 3], [10, 4]], "home"),
+  ],
+};
+
+// TC Grün-Gold München 4:5 TC Topspin — echte nuLiga-Daten (meeting 12689727)
+const SB_12689727: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TC Grün-Gold München",
+  awayClub: "TC Topspin",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12689727-e1", 1, "singles", "Steffan, Lea (4, LK12,6)", "Settele, Bärbel (1, LK9,5)", [[6, 0], [6, 2]], "home"),
+    m("12689727-e2", 2, "singles", "Strobl, Tamara (7, LK13,4)", "Quattrer, Astrid (3, LK11,7)", [[1, 6], [6, 2], [10, 8]], "home"),
+    m("12689727-e3", 3, "singles", "Hetzenecker, Julia (10, LK14,0)", "Daumoser, Melanie (5, LK15,9)", [[6, 3], [6, 1]], "home"),
+    m("12689727-e4", 4, "singles", "Vennemann, Emma (17, LK18,1)", "Ahammer, Josefine (8, LK17,0)", [[6, 1], [5, 7], [1, 10]], "away"),
+    m("12689727-e5", 5, "singles", "Offermann, Cathrin (18, LK18,1)", "Schütze, Veronika (13, LK18,5)", [[2, 6], [3, 6]], "away"),
+    m("12689727-e6", 6, "singles", "Stadler, Mathilda (22, LK20,0)", "Settele, Patricia (15, LK19,2)", [[6, 4], [3, 6], [5, 10]], "away"),
+    m("12689727-d1", 7, "doubles", "Strobl, Tamara / Hetzenecker, Julia", "Quattrer, Astrid / Ahammer, Josefine", [[6, 3], [6, 2]], "home"),
+    m("12689727-d2", 8, "doubles", "Steffan, Lea / Stadler, Mathilda", "Settele, Bärbel / Schütze, Veronika", [[2, 6], [6, 4], [5, 10]], "away"),
+    m("12689727-d3", 9, "doubles", "Vennemann, Emma / Offermann, Cathrin", "Daumoser, Melanie / Settele, Patricia", [[3, 6], [6, 3], [5, 10]], "away"),
+  ],
+};
+
+// TC Neukeferloh 5:4 WB Fideliopark München II — echte nuLiga-Daten (meeting 12689854)
+const SB_12689854: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TC Neukeferloh",
+  awayClub: "WB Fideliopark München II",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 5,
+  finalAway: 4,
+  matches: [
+    m("12689854-e1", 1, "singles", "Brühl, Samira (4, LK13,0)", "Krause, Sabine (11, LK14,3)", [[6, 3], [6, 1]], "home"),
+    m("12689854-e2", 2, "singles", "Roßberg, Franziska (6, LK14,0)", "Gantner, Sarah (20, LK16,2)", [[6, 1], [6, 1]], "home"),
+    m("12689854-e3", 3, "singles", "Bretting, Stefanie (12, LK21,2)", "Zerlin, Verena (26, LK18,0)", [[4, 6], [5, 7]], "away"),
+    m("12689854-e4", 4, "singles", "Silbereisen, Theresa (14, LK22,1)", "Preyhs, Amelie (29, LK19,1)", [[3, 6], [6, 4], [4, 10]], "away"),
+    m("12689854-e5", 5, "singles", "Kahlhammer, Katharina (16, LK23,0)", "Furtner, Alexandra (30, LK19,5)", [[0, 6], [0, 6]], "away"),
+    m("12689854-e6", 6, "singles", "Peters, Nicole (20, LK23,6)", "Lipsky, Katharina (48, LK25,0)", [[6, 4], [1, 6], [2, 10]], "away"),
+    m("12689854-d1", 7, "doubles", "Sauer, Sabine / Silbereisen, Theresa", "Krause, Sabine / Gantner, Sarah", [[6, 1], [6, 1]], "home"),
+    m("12689854-d2", 8, "doubles", "Brühl, Samira / Bretting, Stefanie", "Zerlin, Verena / Furtner, Alexandra", [[3, 6], [6, 4], [10, 5]], "home"),
+    m("12689854-d3", 9, "doubles", "Roßberg, Franziska / Kahlhammer, Katharina", "Preyhs, Amelie / Lipsky, Katharina", [[6, 2], [6, 1]], "home"),
+  ],
+};
+
+// TC Steinhöring 7:2 TC Topspin — echte nuLiga-Daten (meeting 12689838)
+const SB_12689838: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TC Steinhöring",
+  awayClub: "TC Topspin",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 7,
+  finalAway: 2,
+  matches: [
+    m("12689838-e1", 1, "singles", "Altmann, Christine (1, LK2,8)", "Settele, Bärbel (1, LK9,5)", [[6, 1], [6, 2]], "home"),
+    m("12689838-e2", 2, "singles", "Windstetter, Sabrina (8, LK14,1)", "Quattrer, Astrid (3, LK11,7)", [[5, 7], [3, 6]], "away"),
+    m("12689838-e3", 3, "singles", "Herbst, Martina (10, LK17,1)", "Bierwirth, Carolin (w.o.) (6, LK16,1)", [], "home"),
+    m("12689838-e4", 4, "singles", "Kreuzer, Franziska (11, LK17,5)", "Ahammer, Josefine (8, LK17,0)", [[6, 1], [6, 1]], "home"),
+    m("12689838-e5", 5, "singles", "Scheib, Sophia (12, LK17,6)", "Adler, Miriam (10, LK17,6)", [[6, 1], [6, 3]], "home"),
+    m("12689838-e6", 6, "singles", "Grundner, Natascha (16, LK20,1)", "Schütze, Veronika (13, LK18,5)", [[2, 6], [2, 6]], "away"),
+    m("12689838-d1", 7, "doubles", "Altmann, Christine / Kreuzer, Franziska", "Quattrer, Astrid / Ahammer, Josefine", [[6, 1], [7, 6]], "home"),
+    m("12689838-d2", 8, "doubles", "Herbst, Martina / Scheib, Sophia", "Settele, Bärbel / Schütze, Veronika", [[1, 6], [6, 2], [10, 7]], "home"),
+    m("12689838-d3", 9, "doubles", "Windstetter, Sabrina / Grundner, Natascha", "Bierwirth, Carolin (w.o.) / Adler, Miriam (w.o.)", [], "home"),
+  ],
+};
+
+// WB Fideliopark München II 5:4 TS Jahn München — echte nuLiga-Daten (meeting 12689814)
+const SB_12689814: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "WB Fideliopark München II",
+  awayClub: "TS Jahn München",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 5,
+  finalAway: 4,
+  matches: [
+    m("12689814-e1", 1, "singles", "Rieff, Cassandra (17, LK15,6)", "Fanta, Julia (1, LK14,7)", [[2, 6], [3, 6]], "away"),
+    m("12689814-e2", 2, "singles", "Zhu, Xiaoyun (21, LK16,4)", "Laumer, Julia Theresa (7, LK19,4)", [[6, 1], [6, 3]], "home"),
+    m("12689814-e3", 3, "singles", "Fendt, Leonora (27, LK18,2)", "Vogel, Joy (8, LK19,9)", [[6, 4], [6, 4]], "home"),
+    m("12689814-e4", 4, "singles", "Preyhs, Amelie (29, LK19,1)", "Eichelberg, Jule (9, LK20,0)", [[6, 4], [6, 4]], "home"),
+    m("12689814-e5", 5, "singles", "Dörfler, Laura (34, LK20,7)", "Bayer, Patricia (15, LK21,5)", [[1, 6], [1, 6]], "away"),
+    m("12689814-e6", 6, "singles", "Fichte, Annelina (36, LK21,3)", "Matthäus, Fernanda Anne (30, LK25,0)", [[6, 1], [6, 2]], "home"),
+    m("12689814-d1", 7, "doubles", "Zhu, Xiaoyun / Fendt, Leonora", "Fanta, Julia / Vogel, Joy", [[4, 6], [0, 6]], "away"),
+    m("12689814-d2", 8, "doubles", "Rieff, Cassandra / Dörfler, Laura", "Laumer, Julia Theresa / Eichelberg, Jule", [[6, 7], [6, 2], [5, 10]], "away"),
+    m("12689814-d3", 9, "doubles", "Preyhs, Amelie / Fichte, Annelina", "Bayer, Patricia / Matthäus, Fernanda Anne", [[6, 4], [6, 0]], "home"),
+  ],
+};
+
+// TC Pliening 6:3 TC Neukeferloh — echte nuLiga-Daten (meeting 12689783)
+const SB_12689783: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TC Pliening",
+  awayClub: "TC Neukeferloh",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12689783-e1", 1, "singles", "Bauer, Emma (5, LK13,1)", "Sauer, Sabine (2, LK10,7)", [[1, 6], [2, 6]], "away"),
+    m("12689783-e2", 2, "singles", "Rehberg, Hanna (8, LK15,4)", "Brühl, Samira (4, LK13,0)", [[7, 5], [6, 2]], "home"),
+    m("12689783-e3", 3, "singles", "Wörner, Ella (12, LK17,9)", "Gortol, Lena (10, LK20,0)", [[6, 4], [6, 2]], "home"),
+    m("12689783-e4", 4, "singles", "Hollerith, Emma (17, LK19,8)", "Ulsamer, Nina-Sophia (19, LK23,6)", [[6, 0], [6, 2]], "home"),
+    m("12689783-e5", 5, "singles", "Zelger, Selina (18, LK20,0)", "Weber, Felicitas (22, LK23,9)", [[6, 0], [6, 3]], "home"),
+    m("12689783-e6", 6, "singles", "Römer, Sophie (28, LK23,7)", "Schüler, Estefania (24, LK24,2)", [[5, 7], [6, 4], [4, 10]], "away"),
+    m("12689783-d1", 7, "doubles", "Rehberg, Hanna / Wörner, Ella", "Sauer, Sabine / Brühl, Samira", [[2, 6], [6, 7]], "away"),
+    m("12689783-d2", 8, "doubles", "Bauer, Emma / Zelger, Selina", "Gortol, Lena / Ulsamer, Nina-Sophia", [[6, 4], [6, 1]], "home"),
+    m("12689783-d3", 9, "doubles", "Hollerith, Emma / Haun, Franziska", "Weber, Felicitas / Schüler, Estefania", [[6, 3], [6, 1]], "home"),
+  ],
+};
+
+// TC Grün-Gold München 4:5 TC Unterföhring — echte nuLiga-Daten (meeting 12689853)
+const SB_12689853: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TC Grün-Gold München",
+  awayClub: "TC Unterföhring",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12689853-e1", 1, "singles", "Steffan, Lea (4, LK12,6)", "Anic, Ana Lara (5, LK11,7)", [[4, 6], [0, 6]], "away"),
+    m("12689853-e2", 2, "singles", "Strobl, Tamara (7, LK13,4)", "Djordjevic, Mila (13, LK14,2)", [[6, 1], [6, 3]], "home"),
+    m("12689853-e3", 3, "singles", "Vennemann, Emma (17, LK18,1)", "Weidemann, Clara (14, LK14,4)", [[7, 6], [1, 6], [7, 10]], "away"),
+    m("12689853-e4", 4, "singles", "Stadler, Amanda (20, LK19,1)", "Gavrilovic, Lara (15, LK14,5)", [[4, 6], [3, 6]], "away"),
+    m("12689853-e5", 5, "singles", "Stadler, Mathilda (22, LK20,0)", "Brietzke, Felicitas (17, LK15,0)", [[6, 7], [2, 6]], "away"),
+    m("12689853-e6", 6, "singles", "Gavriilidou, Christina GRE (25, LK21,1)", "Winderl, Vivien (w.o.) (38, LK19,7)", [[1, 6]], "home"),
+    m("12689853-d1", 7, "doubles", "Steffan, Lea / Stadler, Mathilda", "Anic, Ana Lara / Weidemann, Clara", [[1, 6], [6, 7]], "away"),
+    m("12689853-d2", 8, "doubles", "Strobl, Tamara / Stadler, Amanda", "Djordjevic, Mila / Gavrilovic, Lara", [[6, 4], [6, 1]], "home"),
+    m("12689853-d3", 9, "doubles", "Vennemann, Emma / Gavriilidou, Christina GRE", "Brietzke, Felicitas / Oetzbach, Melina", [[4, 6], [6, 0], [10, 6]], "home"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686507,
   SB_12686477,
@@ -2062,6 +2238,14 @@ const ALL: Spielbericht[] = [
   SB_12686325,
   SB_12686317,
   SB_12692775,
+  SB_12689708,
+  SB_12689649,
+  SB_12689727,
+  SB_12689854,
+  SB_12689838,
+  SB_12689814,
+  SB_12689783,
+  SB_12689853,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
