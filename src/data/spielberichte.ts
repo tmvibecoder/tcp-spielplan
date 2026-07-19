@@ -1776,6 +1776,202 @@ const SB_6961: Spielbericht = {
   ],
 };
 
+// Polizei SV Haar 0:9 TSV Feldkirchen II — echte nuLiga-Daten (meeting 12686410)
+const SB_12686410: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "Polizei SV Haar",
+  awayClub: "TSV Feldkirchen II",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 0,
+  finalAway: 9,
+  matches: [
+    m("12686410-e1", 1, "singles", "Bobinger, Benno (5, LK10,7)", "Hargasser, Niclas (14, LK8,7)", [[1, 6], [2, 6]], "away"),
+    m("12686410-e2", 2, "singles", "Ullrich, Matthias (7, LK11,4)", "Schumacher, Tobias (15, LK8,8)", [[4, 6], [0, 6]], "away"),
+    m("12686410-e3", 3, "singles", "Jessen, Frederik (17, LK14,9)", "Fauth, Felix (18, LK9,9)", [[2, 6], [2, 6]], "away"),
+    m("12686410-e4", 4, "singles", "Michler, Vincent (18, LK15,4)", "Kellerer, Felix (22, LK11,6)", [[2, 6], [0, 6]], "away"),
+    m("12686410-e5", 5, "singles", "Bingold, Konstantin (27, LK18,0)", "Baade, Sebastian (24, LK11,9)", [[0, 6], [0, 6]], "away"),
+    m("12686410-e6", 6, "singles", "Doerr, Constantin (28, LK18,8)", "Konitz, Christoph (33, LK13,4)", [[0, 6], [2, 6]], "away"),
+    m("12686410-d1", 7, "doubles", "Bobinger, Benno / Bingold, Konstantin", "Hargasser, Niclas / Baade, Sebastian", [[3, 6], [1, 6]], "away"),
+    m("12686410-d2", 8, "doubles", "Ullrich, Matthias / Jessen, Frederik", "Schumacher, Tobias / Kellerer, Felix", [[3, 6], [1, 6]], "away"),
+    m("12686410-d3", 9, "doubles", "Doerr, Constantin / Mülfarth, Noah", "Fauth, Felix / Konitz, Christoph", [[1, 6], [1, 6]], "away"),
+  ],
+};
+
+// TC Aschheim III 9:0 TC Pliening — echte nuLiga-Daten (meeting 12686439)
+const SB_12686439: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Aschheim III",
+  awayClub: "TC Pliening",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 9,
+  finalAway: 0,
+  matches: [
+    m("12686439-e1", 1, "singles", "Grigore, Tudor ROU (21, LK6,2)", "Reicherseder, Christian (1, LK3,2)", [[3, 6], [6, 3], [10, 3]], "home"),
+    m("12686439-e2", 2, "singles", "Hajcik, Maximilian (22, LK6,2)", "Slepchenko, Vitaliy (13, LK12,2)", [[7, 5], [6, 2]], "home"),
+    m("12686439-e3", 3, "singles", "Steidle, Raphael (24, LK8,6)", "Kerger, Justus (15, LK12,7)", [[6, 4], [6, 3]], "home"),
+    m("12686439-e4", 4, "singles", "Fischer, Maddox (28, LK10,8)", "Volkwein, Samuel (16, LK13,3)", [[6, 0], [4, 6], [10, 5]], "home"),
+    m("12686439-e5", 5, "singles", "Gaißert, Till (30, LK12,9)", "Graeve, Ben (21, LK16,9)", [[7, 5], [6, 3]], "home"),
+    m("12686439-e6", 6, "singles", "Brandt, Philip (37, LK16,2)", "Hempel, Frederick (25, LK19,7)", [[6, 4], [6, 1]], "home"),
+    m("12686439-d1", 7, "doubles", "Hajcik, Maximilian / Gaißert, Till", "Reicherseder, Christian (w.o.) / Slepchenko, Vitaliy (w.o.)", [[1, 0]], "home"),
+    m("12686439-d2", 8, "doubles", "Grigore, Tudor ROU / Brandt, Philip", "Kerger, Justus / Volkwein, Samuel", [[7, 5], [6, 1]], "home"),
+    m("12686439-d3", 9, "doubles", "Steidle, Raphael / Fischer, Maddox", "Graeve, Ben / Hempel, Frederick", [[6, 2], [6, 3]], "home"),
+  ],
+};
+
+// TC Finsing 2:7 TF Markt Schwaben — echte nuLiga-Daten (meeting 12686418)
+const SB_12686418: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Finsing",
+  awayClub: "TF Markt Schwaben",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 2,
+  finalAway: 7,
+  matches: [
+    m("12686418-e1", 1, "singles", "Keller, Florian (1, LK4,2)", "Simml, Marco (1, LK5,8)", [[6, 4], [7, 5]], "home"),
+    m("12686418-e2", 2, "singles", "Malik, Daniel (3, LK8,9)", "Huber, Andreas (2, LK7,9)", [[4, 6], [6, 3], [6, 10]], "away"),
+    m("12686418-e3", 3, "singles", "Keller, Timo (6, LK14,3)", "Lohmaier, Lukas (3, LK8,0)", [[2, 6], [2, 6]], "away"),
+    m("12686418-e4", 4, "singles", "Huber, Jonas (7, LK15,1)", "Camerzan, Flavio (4, LK8,2)", [[4, 6], [1, 6]], "away"),
+    m("12686418-e5", 5, "singles", "Bunk, Michael (9, LK15,9)", "Widmann, Vitus (5, LK9,1)", [[0, 6], [2, 6]], "away"),
+    m("12686418-e6", 6, "singles", "Greiner, Dennis (15, LK19,2)", "Nahrhaft, Lukas (6, LK9,3)", [[0, 6], [0, 6]], "away"),
+    m("12686418-d1", 7, "doubles", "Keller, Florian / Bunk, Michael", "Simml, Marco / Widmann, Vitus", [[2, 6], [4, 6]], "away"),
+    m("12686418-d2", 8, "doubles", "Malik, Daniel / Huber, Jonas", "Camerzan, Flavio / Nahrhaft, Lukas", [[6, 7], [7, 5], [10, 8]], "home"),
+    m("12686418-d3", 9, "doubles", "Keller, Timo (w.o.) / Greiner, Dennis (w.o.)", "Lohmaier, Lukas / Warta, Roland", [[1, 4]], "away"),
+  ],
+};
+
+// TC Erding II 1:8 TC Unterföhring II — echte nuLiga-Daten (meeting 12686370)
+const SB_12686370: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Erding II",
+  awayClub: "TC Unterföhring II",
+  date: "2026-07-05",
+  day: "So",
+  finalHome: 1,
+  finalAway: 8,
+  matches: [
+    m("12686370-e1", 1, "singles", "Widmann, Franz (11, LK8,8)", "Teichmann, Luis (13, LK9,7)", [[3, 6], [3, 6]], "away"),
+    m("12686370-e2", 2, "singles", "Lachner, Zeno (14, LK10,5)", "Mayrhofer, Jonas (14, LK9,7)", [[2, 6], [1, 6]], "away"),
+    m("12686370-e3", 3, "singles", "Widmann, Florian (16, LK11,6)", "Schweykart, Julius (15, LK10,0)", [[7, 6], [5, 7], [9, 11]], "away"),
+    m("12686370-e4", 4, "singles", "Hildenbrand, Maximilian (20, LK12,7)", "Maier, Kilian (20, LK10,8)", [[3, 6], [6, 3], [5, 10]], "away"),
+    m("12686370-e5", 5, "singles", "Huber, Michael (45, LK21,2)", "Djordjevic, Noah (24, LK12,4)", [[0, 6], [1, 6]], "away"),
+    m("12686370-e6", 6, "singles", "Neundorf, Dominik (46, LK21,6)", "Faghihzadeh, Peyman (45, LK17,3)", [[0, 6], [0, 6]], "away"),
+    m("12686370-d1", 7, "doubles", "Widmann, Franz / Widmann, Florian", "Teichmann, Luis / Maier, Kilian", [[0, 6], [0, 6]], "away"),
+    m("12686370-d2", 8, "doubles", "Lachner, Zeno / Hildenbrand, Maximilian", "Mayrhofer, Jonas / Djordjevic, Noah", [[2, 6], [6, 3], [10, 5]], "home"),
+    m("12686370-d3", 9, "doubles", "Huber, Michael / Neundorf, Dominik", "Schweykart, Julius / Faghihzadeh, Peyman", [[0, 6], [0, 6]], "away"),
+  ],
+};
+
+// TF Markt Schwaben 6:3 TC Aschheim III — echte nuLiga-Daten (meeting 12686379)
+const SB_12686379: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TF Markt Schwaben",
+  awayClub: "TC Aschheim III",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12686379-e1", 1, "singles", "Simml, Marco (1, LK5,8)", "Hajcik, Maximilian (22, LK6,2)", [[1, 6], [7, 5], [7, 10]], "away"),
+    m("12686379-e2", 2, "singles", "Huber, Andreas (2, LK7,9)", "Faschang, Michael AUT (w.o.) (23, LK7,2)", [], "home"),
+    m("12686379-e3", 3, "singles", "Lohmaier, Lukas (3, LK8,0)", "Fausch, Yannik (26, LK10,4)", [[6, 1], [6, 0]], "home"),
+    m("12686379-e4", 4, "singles", "Widmann, Vitus (5, LK9,1)", "Fausch, Quirin (36, LK16,0)", [[6, 0], [6, 0]], "home"),
+    m("12686379-e5", 5, "singles", "Warta, Roland (7, LK9,9)", "Brandt, Philip (37, LK16,2)", [[6, 4], [6, 1]], "home"),
+    m("12686379-e6", 6, "singles", "Herling, Fabian (11, LK12,7)", "Thöne, Tim (42, LK20,0)", [[6, 2], [6, 4]], "home"),
+    m("12686379-d1", 7, "doubles", "Simml, Marco / Huber, Andreas", "Faschang, Michael AUT (w.o.) / Fausch, Yannik (w.o.)", [], "home"),
+    m("12686379-d2", 8, "doubles", "Camerzan, Flavio / Nahrhaft, Lukas", "Hajcik, Maximilian / Brandt, Philip", [[1, 6], [7, 5], [7, 10]], "away"),
+    m("12686379-d3", 9, "doubles", "Widmann, Vitus (w.o.) / Warta, Roland (w.o.)", "Fausch, Quirin / Thöne, Tim", [], "away"),
+  ],
+};
+
+// TC Unterföhring II 7:2 TC Pliening — echte nuLiga-Daten (meeting 12686503)
+const SB_12686503: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Unterföhring II",
+  awayClub: "TC Pliening",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 7,
+  finalAway: 2,
+  matches: [
+    m("12686503-e1", 1, "singles", "Böckle, Jannis (7, LK8,0)", "Krug, Max (9, LK8,8)", [[3, 6], [6, 3], [8, 10]], "away"),
+    m("12686503-e2", 2, "singles", "Teichmann, Luis (13, LK9,7)", "Kerger, Justus (15, LK12,7)", [[7, 5], [6, 3]], "home"),
+    m("12686503-e3", 3, "singles", "Mayrhofer, Jonas (14, LK9,7)", "Volkwein, Samuel (16, LK13,3)", [[6, 1], [6, 1]], "home"),
+    m("12686503-e4", 4, "singles", "Schweykart, Julius (15, LK10,0)", "Schumacher, Robin (23, LK18,8)", [[6, 4], [6, 2]], "home"),
+    m("12686503-e5", 5, "singles", "Thiemann, Marius (18, LK10,6)", "Hempel, Frederick (25, LK19,7)", [[6, 0], [6, 0]], "home"),
+    m("12686503-e6", 6, "singles", "Maier, Kilian (20, LK10,8)", "Davis, Louis (28, LK21,8)", [[6, 0], [6, 1]], "home"),
+    m("12686503-d1", 7, "doubles", "Teichmann, Luis / Mayrhofer, Jonas", "Krug, Max / Kerger, Justus", [[4, 6], [6, 4], [3, 10]], "away"),
+    m("12686503-d2", 8, "doubles", "Böckle, Jannis / Thiemann, Marius", "Volkwein, Samuel / Schumacher, Robin", [[6, 2], [6, 0]], "home"),
+    m("12686503-d3", 9, "doubles", "Schweykart, Julius / Maier, Kilian", "Hempel, Frederick / Davis, Louis", [[6, 2], [6, 0]], "home"),
+  ],
+};
+
+// TC Finsing 6:3 Polizei SV Haar — echte nuLiga-Daten (meeting 12686325)
+const SB_12686325: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Finsing",
+  awayClub: "Polizei SV Haar",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12686325-e1", 1, "singles", "Keller, Florian (1, LK4,2)", "Schmidt, Helmut (2, LK9,7)", [[6, 0], [6, 1]], "home"),
+    m("12686325-e2", 2, "singles", "Malik, Daniel (3, LK8,9)", "Terlinde, Christoph (3, LK10,1)", [[6, 2], [6, 2]], "home"),
+    m("12686325-e3", 3, "singles", "Keller, Timo (6, LK14,3)", "Ullrich, Matthias (7, LK11,4)", [[6, 2], [6, 0]], "home"),
+    m("12686325-e4", 4, "singles", "Huber, Jonas (7, LK15,1)", "Armbrüster, Christian (14, LK13,6)", [[3, 6], [6, 1], [10, 6]], "home"),
+    m("12686325-e5", 5, "singles", "Bunk, Michael (9, LK15,9)", "Zelonka, Matus (19, LK15,5)", [[4, 6], [3, 6]], "away"),
+    m("12686325-e6", 6, "singles", "Greiner, Dennis (15, LK19,2)", "Bingold, Konstantin (27, LK18,0)", [[2, 6], [1, 6]], "away"),
+    m("12686325-d1", 7, "doubles", "Keller, Florian / Keller, Timo", "Ullrich, Matthias / Armbrüster, Christian", [[1, 6], [6, 4], [12, 10]], "home"),
+    m("12686325-d2", 8, "doubles", "Malik, Daniel / Huber, Jonas", "Schmidt, Helmut / Bingold, Konstantin", [[6, 1], [6, 2]], "home"),
+    m("12686325-d3", 9, "doubles", "Bunk, Michael / Greiner, Dennis", "Terlinde, Christoph / Zelonka, Matus", [[3, 6], [3, 6]], "away"),
+  ],
+};
+
+// TSV Feldkirchen II 6:3 TC Erding II — echte nuLiga-Daten (meeting 12686317)
+const SB_12686317: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TSV Feldkirchen II",
+  awayClub: "TC Erding II",
+  date: "2026-07-12",
+  day: "So",
+  finalHome: 6,
+  finalAway: 3,
+  matches: [
+    m("12686317-e1", 1, "singles", "El-Wafi, Sofian (11, LK8,2)", "Widmann, Maximilian (7, LK8,5)", [[6, 3], [5, 7], [8, 10]], "away"),
+    m("12686317-e2", 2, "singles", "Hargasser, Niclas (14, LK8,7)", "Lachner, Zeno (14, LK10,5)", [[6, 1], [6, 3]], "home"),
+    m("12686317-e3", 3, "singles", "Fauth, Felix (18, LK9,9)", "Widmann, Florian (16, LK11,6)", [[6, 2], [6, 1]], "home"),
+    m("12686317-e4", 4, "singles", "Kellerer, Felix (22, LK11,6)", "Lehnert, Patrick (18, LK12,1)", [[6, 1], [6, 4]], "home"),
+    m("12686317-e5", 5, "singles", "Baade, Sebastian (24, LK11,9)", "Müller, Maximilian (27, LK15,7)", [[6, 0], [6, 0]], "home"),
+    m("12686317-e6", 6, "singles", "Geuer, Felix (27, LK12,6)", "Lübbe, Raphael (28, LK16,8)", [[5, 7], [6, 2], [7, 10]], "away"),
+    m("12686317-d1", 7, "doubles", "El-Wafi, Sofian / Kellerer, Felix", "Lachner, Zeno / Widmann, Florian", [[6, 3], [6, 2]], "home"),
+    m("12686317-d2", 8, "doubles", "Hargasser, Niclas / Geuer, Felix", "Widmann, Maximilian / Lehnert, Patrick", [[4, 6], [3, 6]], "away"),
+    m("12686317-d3", 9, "doubles", "Fauth, Felix / Baade, Sebastian", "Müller, Maximilian / Lübbe, Raphael", [[6, 0], [6, 0]], "home"),
+  ],
+};
+
+// TC Finsing 4:2 TC Philathlos München — echte nuLiga-Daten (meeting 12692775),
+// Nachholspiel vom 27.06., abgeschlossen am 18.07.2026 (Bericht Nr. 6959)
+const SB_12692775: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TC Finsing",
+  awayClub: "TC Philathlos München",
+  date: "2026-06-27",
+  day: "Sa",
+  finalHome: 4,
+  finalAway: 2,
+  matches: [
+    m("12692775-e1", 1, "singles", "Bunk, Michael (2, LK15,9)", "Bastian, Sylvain FRA (3, LK16,8)", [[6, 1], [6, 7], [10, 6]], "home"),
+    m("12692775-e2", 2, "singles", "Weinreich, Matthias (3, LK18,3)", "Sollinger, Patrick (8, LK19,4)", [[6, 2], [6, 1]], "home"),
+    m("12692775-e3", 3, "singles", "Greiner, Dennis (6, LK19,2)", "Golimbus, Jan (11, LK20,5)", [[6, 1], [6, 4]], "home"),
+    m("12692775-e4", 4, "singles", "Töpfer, Daniel (18, LK25,0)", "Butollo, Leo (15, LK22,6)", [[1, 6], [0, 6]], "away"),
+    m("12692775-d1", 7, "doubles", "Weinreich, Matthias / Greiner, Dennis", "Bastian, Sylvain FRA / Sollinger, Patrick", [[6, 1], [6, 3]], "home"),
+    m("12692775-d2", 8, "doubles", "Bunk, Michael / Töpfer, Daniel", "Golimbus, Jan / Butollo, Leo", [[6, 4], [4, 6], [10, 12]], "away"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686507,
   SB_12686477,
@@ -1857,6 +2053,15 @@ const ALL: Spielbericht[] = [
   SB_12742404,
   SB_6962,
   SB_6961,
+  SB_12686410,
+  SB_12686439,
+  SB_12686418,
+  SB_12686370,
+  SB_12686379,
+  SB_12686503,
+  SB_12686325,
+  SB_12686317,
+  SB_12692775,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
