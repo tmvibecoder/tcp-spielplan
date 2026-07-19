@@ -31,7 +31,7 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 - **Spieler** – jeder Spieler nach **Ø-Position** sortiert (Durchschnitt der gespielten Position; `1` = oben/stärkste Position), mit eigener **LK**. Aufklappen zeigt pro Einsatz: Gegner **inkl. dessen LK**, Position, Satz-Ergebnis und **SIEG/NIEDERL.** Marker **▲ LK-Sieg** = gegen besseren (niedrigeren) LK gewonnen, **▼** = gegen schwächeren LK verloren.
 - **Doppel** – Paarungen separat (Schlüssel = sortierte Nachnamen). Ohne LK, da nuLiga für Doppel keine LK ausweist.
 
-**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Aktuell erfasst (Sommer 2026, Stand 22.06.): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004) und **H40 III** (Südliga 2 · Gr. 315).
+**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Mit Spielberichten gepflegt werden **fünf Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315) und **D00** (Südliga 2 · Gr. 160).
 
 **Code-Landkarte:**
 - `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `aggregatePlayers`, `aggregateDoubles`, `parseLk`.
@@ -46,6 +46,8 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 Alle Liga-/Spieldaten stammen aus offiziellen **BTV-nuLiga-PDFs** und liegen in zwei Dateien. `club=22844` = TC Pliening; Saison Sommer 2026 = `season=18103` (wechselt je Saison — aktuellen Link von der [Vereinsseite](https://www.btv.de/de/mein-verein/vereinsseite/tc-pliening.html) holen).
 
 > **Zuordnung passiert automatisch aus dem PDF.** Jedes Spielbericht-PDF (MeetingReportFOP) nennt im Kopf **Liga/Gruppe, Termin, beide Mannschaften und Endergebnis** — daraus folgt eindeutig die Ziel-Liga und -Begegnung. Es genügt also, die **PDF-Links zu liefern** (die Konkurrenz muss nicht dazugeschrieben werden). Auch Begegnungen **ohne TC Pliening** werden eingetragen (sie füllen die Kreuztabelle der jeweiligen Liga). Den **Gesamt-Tabellen-Report** (ResultReportFOP, s. u.) holt man sich selbst dazu — er steckt NICHT im einzelnen Spielbericht.
+
+**Datenstand (19.07.2026):** **Gr. 023** und **Gr. 292** sind auf **Saison-Endstand** (PR #26). Gr. 023 damit lückenlos: alle 27 gespielten Begegnungen haben einen Spielbericht; Pliening–Finsing (28.06.) blieb ungespielt und steht auch offiziell mit 0:0. In Gr. 292 blieb Oberpframmern–Putzbrunn ungespielt. **Noch offen:** Gr. 004 fehlen 6, Gr. 315 fehlen 7, Gr. 160 fehlen 8 Ergebnisse — diese Tabellen (wie auch die 8 Ligen ohne Spielberichte) stehen auf Stand 29.06.
 
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
@@ -67,6 +69,16 @@ Quelle: **je Begegnung** eine PDF, „MeetingReportFOP":
 ### Workflow
 
 PDF(s) ziehen → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
+
+**Fehlende Spiele finden:** aktuellen Gesamt-Report (ResultReportFOP) ziehen und dessen Kreuztabellen gegen `SUMMER_STANDINGS` diffen — Zellen, die bei uns `"0:0"` sind und offiziell ein Ergebnis haben, fehlen. Die **Spieltage** von Fremd-Begegnungen stehen nicht im Gesamt-Report; sie folgen aber eindeutig aus der Rundenlogik (jede Paarung genau 1×, pro Spieltag jedes Team genau 1×) — Vorsicht bei **Nachholspielen** (Beispiel Gr. 292: Finsing–Philathlos, Termin 27.06., erst am 18.07. „abgeschlossen" und damit lange ohne Ergebnis im Report). Der Spielbericht-PDF-Kopf nennt immer den echten Termin.
+
+**Rangfolge verbatim übernehmen**, auch wenn sie „falsch" aussieht: bei ungleicher Spielzahl (ungespielte Begegnungen) sortiert der BTV nach Punkt-**Quotient**, nicht -Summe — z. B. steht in Gr. 292 Finsing (6:2 aus 4) vor Pliening (5:3 aus 4).
+
+### nuLiga-Zugriff: Was funktioniert (und was nicht)
+
+- ✅ **Nur die PDF-Endpoints** (`nuDokument`) sind maschinell erreichbar: `ResultReportFOP` (Gesamt-Tabellen) und `MeetingReportFOP&meeting=<ID>` (Einzelbericht; `etag` optional). Per `curl` laden, als PDF lesen.
+- ❌ `btv.liga.nu/...groupPage?...` (HTML-Gruppenseiten) leitet inzwischen generisch auf das btv.de-Portal um — mit beliebigen `championship`-Werten kommt nur die Portal-Startseite.
+- ❌ Die btv.de-Seite „Tabelle/Spielplan" (`tabelle-spielplan.html?groupid=<id>`) ist ein iframe auf `widget.btv.de/btvgroup/` — eine **ZK-Java-App**, die headless nicht bootet (Cookiebot-Consent + ZK-Client rendern nicht). Nicht scrapbar; Meeting-IDs fehlender Begegnungen lassen sich daher nicht automatisch ermitteln → **MeetingReportFOP-Links müssen geliefert werden** (aus dem Browser kopiert).
 
 ---
 
@@ -190,6 +202,12 @@ wirft beim Laden → die App rendert eine **leere Seite** (Filter/Spielplan fehl
 cp ../../../.env .env   # vom Worktree aus; Pfad zum Haupt-Repo anpassen
 npm run build && npm run preview -- --port 4317
 ```
+Geht es nur um Rendering/Daten (nicht um Live-Scores), reichen auch **Dummy-Werte** statt der echten `.env`:
+```bash
+VITE_SUPABASE_URL=https://dummy.supabase.co VITE_SUPABASE_ANON_KEY=dummy npm run build
+```
+Nützliche Selektoren für den Tabellen-Smoke-Test: Liga-Akkordeon = `button` mit Text `Gr. <NNN>`;
+Kreuztabellen-Zellen = `button[title$="Spielbericht öffnen"]` (Anzahl = gespielte Begegnungen × 2).
 Headless-Browser-Smoke-Test (Chrome via `puppeteer-core`, `npm i --no-save puppeteer-core`,
 damit `package.json`/`package-lock.json` unberührt bleiben): prüfen, dass `button`-Elemente
 gerendert werden und `localStorage["tcp-filter-prefs"]` nach „Auswahl speichern" gesetzt ist.
