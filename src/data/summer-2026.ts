@@ -4,44 +4,48 @@ import type { LeagueStandings } from "../types";
 // Quelle: offizielle BTV nuLiga "Ergebnistabellen gesamt" (vereinsweiter Report, alle Mannschaften):
 //   https://btv.liga.nu/.../nuDokument?dokument=ResultReportFOP&type=full&club=22844&season=18103
 //   (club=22844 = TC Pliening, season=18103 = Sommer 2026; verlinkt auf der btv.de-Vereinsseite)
-// Tabellen + Kreuztabellen 1:1 aus dem offiziellen Report übernommen. Stand: 29.06.2026.
+// Tabellen + Kreuztabellen 1:1 aus dem offiziellen Report übernommen. Stand: 29.06.2026;
+// Gr. 023 und Gr. 292 auf Endstand gebracht (Report vom 19.07.2026).
 // Hinweis: Bei zurückgezogenen Mannschaften weichen offizielle Matchpunkte und
 // Kreuztabelle ab (BTV streicht gewertete Spiele aus der Tabelle) — Werte verbatim wie offiziell.
 // crossResults: "***" = Diagonale, "0:0" = noch nicht gespielt (zeigt "n.a.").
 
 export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Herren Südliga 2  Gr. 023 ──
+  // Endstand (Report vom 19.07.2026), alle 7 Spieltage: Pliening–Finsing (28.06.)
+  // blieb ungespielt und steht auch offiziell mit 0:0.
   {
     teamLabel: "Herren",
     teamColor: "#0ea5e9",
     leagueName: "Südliga 2 · Gr. 023",
     ownRank: 5,
     entries: [
-      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "10:0", matchPoints: "36:9", sets: "73:22", crossResults: ["***", "7:2", "0:0", "0:0", "9:0", "6:3", "7:2", "7:2"] },
-      { rank: 2, club: "TSV Feldkirchen II", isOwnClub: false, points: "8:2", matchPoints: "36:9", sets: "74:24", crossResults: ["2:7", "***", "8:1", "9:0", "9:0", "0:0", "0:0", "8:1"] },
-      { rank: 3, club: "TC Aschheim III", isOwnClub: false, points: "8:2", matchPoints: "30:15", sets: "63:34", crossResults: ["0:0", "1:8", "***", "5:4", "0:0", "8:1", "8:1", "8:1"] },
-      { rank: 4, club: "TC Finsing", isOwnClub: false, points: "4:4", matchPoints: "17:19", sets: "41:39", crossResults: ["0:0", "0:9", "4:5", "***", "0:0", "0:0", "7:2", "6:3"] },
-      { rank: 5, club: "TC Pliening", isOwnClub: true , points: "4:4", matchPoints: "17:19", sets: "37:40", crossResults: ["0:9", "0:9", "0:0", "0:0", "***", "8:1", "9:0", "0:0"] },
-      { rank: 6, club: "Polizei SV Haar", isOwnClub: false, points: "2:8", matchPoints: "14:31", sets: "31:67", crossResults: ["3:6", "0:0", "1:8", "0:0", "1:8", "***", "4:5", "5:4"] },
-      { rank: 7, club: "TC Erding II", isOwnClub: false, points: "2:8", matchPoints: "10:35", sets: "25:74", crossResults: ["2:7", "0:0", "1:8", "2:7", "0:9", "5:4", "***", "0:0"] },
-      { rank: 8, club: "TC Unterföhring II", isOwnClub: false, points: "0:10", matchPoints: "11:34", sets: "25:69", crossResults: ["2:7", "1:8", "1:8", "3:6", "0:0", "4:5", "0:0", "***"] },
+      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "14:0", matchPoints: "49:14", sets: "102:33", crossResults: ["***", "7:2", "6:3", "7:2", "9:0", "7:2", "6:3", "7:2"] },
+      { rank: 2, club: "TSV Feldkirchen II", isOwnClub: false, points: "12:2", matchPoints: "51:12", sets: "106:30", crossResults: ["2:7", "***", "8:1", "9:0", "9:0", "8:1", "9:0", "6:3"] },
+      { rank: 3, club: "TC Aschheim III", isOwnClub: false, points: "10:4", matchPoints: "42:21", sets: "87:50", crossResults: ["3:6", "1:8", "***", "5:4", "9:0", "8:1", "8:1", "8:1"] },
+      { rank: 4, club: "TC Finsing", isOwnClub: false, points: "6:6", matchPoints: "25:29", sets: "58:62", crossResults: ["2:7", "0:9", "4:5", "***", "0:0", "6:3", "6:3", "7:2"] },
+      { rank: 5, club: "TC Pliening", isOwnClub: true , points: "4:8", matchPoints: "19:35", sets: "43:74", crossResults: ["0:9", "0:9", "0:9", "0:0", "***", "2:7", "8:1", "9:0"] },
+      { rank: 6, club: "TC Unterföhring II", isOwnClub: false, points: "4:10", matchPoints: "26:37", sets: "58:77", crossResults: ["2:7", "1:8", "1:8", "3:6", "7:2", "***", "4:5", "8:1"] },
+      { rank: 7, club: "Polizei SV Haar", isOwnClub: false, points: "2:12", matchPoints: "17:46", sets: "39:97", crossResults: ["3:6", "0:9", "1:8", "3:6", "1:8", "5:4", "***", "4:5"] },
+      { rank: 8, club: "TC Erding II", isOwnClub: false, points: "2:12", matchPoints: "14:49", sets: "35:105", crossResults: ["2:7", "3:6", "1:8", "2:7", "0:9", "1:8", "5:4", "***"] },
     ],
   },
   // ── Herren 30 Südliga 4 (4er)  Gr. 292 ──
-  // Stand 04.07.2026: inkl. Finsing–Pliening 2:4 (Original-Spielbericht Nr. 6962) und
-  // Philathlos–Oberpframmern 0:6 (Nr. 6961); Punkte/Matchpunkte/Sätze fortgeschrieben,
-  // Rangfolge nach Punkt-, dann Matchpunkt-Differenz.
+  // Endstand (Report vom 19.07.2026): inkl. Nachholspiel Finsing–Philathlos 4:2
+  // (27.06., abgeschlossen 18.07., meeting 12692775); Oberpframmern–Putzbrunn blieb
+  // ungespielt (0:0). Rangfolge verbatim wie offizieller Report (Finsing mit 6:2 aus
+  // 4 Spielen vor Pliening mit 5:3 aus 4 Spielen).
   {
     teamLabel: "Herren 30",
     teamColor: "#22d3ee",
     leagueName: "Südliga 4 (4er) · Gr. 292",
-    ownRank: 2,
+    ownRank: 3,
     entries: [
-      { rank: 1, club: "TSV Oberpframmern", isOwnClub: false, points: "4:2", matchPoints: "13:5", sets: "27:11", crossResults: ["***", "5:1", "2:4", "0:0", "6:0"] },
-      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "5:3", matchPoints: "14:10", sets: "29:24", crossResults: ["1:5", "***", "4:2", "6:0", "3:3"] },
-      { rank: 3, club: "TC Finsing", isOwnClub: false, points: "4:2", matchPoints: "10:8", sets: "24:19", crossResults: ["4:2", "2:4", "***", "4:2", "0:0"] },
-      { rank: 4, club: "TC Putzbrunn", isOwnClub: false, points: "2:4", matchPoints: "6:12", sets: "17:27", crossResults: ["0:0", "0:6", "2:4", "***", "4:2"] },
-      { rank: 5, club: "TC Philathlos München", isOwnClub: false, points: "1:5", matchPoints: "5:13", sets: "11:27", crossResults: ["0:6", "3:3", "0:0", "2:4", "***"] },
+      { rank: 1, club: "TC Finsing", isOwnClub: false, points: "6:2", matchPoints: "14:10", sets: "33:24", crossResults: ["***", "4:2", "2:4", "4:2", "4:2"] },
+      { rank: 2, club: "TSV Oberpframmern", isOwnClub: false, points: "4:2", matchPoints: "13:5", sets: "27:11", crossResults: ["2:4", "***", "5:1", "0:0", "6:0"] },
+      { rank: 3, club: "TC Pliening", isOwnClub: true , points: "5:3", matchPoints: "14:10", sets: "29:24", crossResults: ["4:2", "1:5", "***", "6:0", "3:3"] },
+      { rank: 4, club: "TC Putzbrunn", isOwnClub: false, points: "2:4", matchPoints: "6:12", sets: "17:27", crossResults: ["2:4", "0:0", "0:6", "***", "4:2"] },
+      { rank: 5, club: "TC Philathlos München", isOwnClub: false, points: "1:7", matchPoints: "7:17", sets: "16:36", crossResults: ["2:4", "0:6", "3:3", "2:4", "***"] },
     ],
   },
   // ── Herren 40 Regionalliga Süd-Ost  Gr. 004 ──
