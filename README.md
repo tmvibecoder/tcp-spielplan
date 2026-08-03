@@ -66,7 +66,47 @@ Quelle: **je Begegnung** eine PDF, „MeetingReportFOP":
 
 ### Workflow
 
-PDF(s) ziehen → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
+PDF(s) ziehen → Daten eintragen → **`npm run check`** → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
+
+### `npm run check` — Konsistenz-Check der Daten
+
+`scripts/check-data.ts` macht die früher händischen Sanity-Checks automatisch (Node ≥ 22, via `--experimental-strip-types`; die Datendateien haben nur Type-Imports und sind daher direkt ausführbar). Exit-Code 1 bei Fehlern:
+
+1. **Doppelte/gespiegelte Spielberichte** — eine Begegnung zweimal (auch in umgekehrter Richtung) eingetragen; der zweite Eintrag würde den ersten still überschreiben.
+2. **Endstand = Summe der Einzel/Doppel** — `finalHome`/`finalAway` gegen die `winner`-Felder gezählt, plus: Anzahl Matches = Summe, keine doppelten Positionen.
+3. **Gewinner = Satz-Ergebnis** — wer mehr Sätze hat, muss auch `winner` sein (Walkover ausgenommen).
+4. **Endstand = Kreuztabelle** — gegen `crossResults` in `summer-2026.ts`, in **beiden** Spiegel-Zellen.
+5. **Vereinsnamen** — jeder `homeClub`/`awayClub` muss exakt so in der Tabelle stehen, sonst schlägt `getSpielbericht` **still** fehl (liefert `null`, die Kreuztabellen-Zelle ist dann einfach nicht klickbar). Spielplan-Gegner werden ebenfalls geprüft (als Warnung).
+6. **Kreuztabellen-Struktur** — quadratisch, `"***"` auf der Diagonale, spiegelsymmetrisch, `rank` = Position, genau ein `isOwnClub` und dieser auf `ownRank`.
+
+> Punkt 5 ist die häufigste stille Fehlerquelle: `summer-2026.ts` ist die **Autorität** für Vereinsnamen (1:1 aus dem offiziellen Report), `spielberichte.ts` und `matches.ts` müssen sich danach richten.
+
+### Stand der Erfassung (Sommer 2026)
+
+Erfasst sind **80 Spielberichte**, davon **22 mit TC-Pliening-Beteiligung** — verteilt auf 5 der 13 Ligen. Für 8 Mannschaften existiert **kein einziger** Spielbericht, deren Kreuztabellen-Zellen sind daher nicht aufklappbar und sie tauchen in der Spieler-Statistik nicht auf:
+
+| Konkurrenz | Liga | erfasst |
+|---|---|---|
+| Herren | Südliga 2 · Gr. 023 | 4 / 7 |
+| Herren 30 | Südliga 4 (4er) · Gr. 292 | **4 / 4 ✅** |
+| Herren 40 | Regionalliga Süd-Ost · Gr. 004 | 6 / 7 |
+| Herren 40 II | Landesliga 2 · Gr. 043 SU | – *(zurückgezogen)* |
+| Herren 40 III | Südliga 2 · Gr. 315 | 3 / 7 |
+| Herren 50 | Regionalliga Süd-Ost · Gr. 005 | 0 / 7 |
+| Herren 50 II | Südliga 1 · Gr. 355 | 0 / 7 |
+| Herren 50 III | Südliga 3 · Gr. 379 | 0 / 6 |
+| Herren 60 | Südliga 1 · Gr. 404 | 0 / 6 |
+| Damen | Südliga 2 · Gr. 160 | 5 / 7 |
+| Damen 40 | Südliga 1 · Gr. 441 | 0 / 7 |
+| Damen 50 | Landesliga 1 (4er) · Gr. 103 SU | 0 / 7 |
+| Damen 50 II | Südliga 2 (4er) · Gr. 488 | 0 / 7 |
+
+Die Tabellen in `summer-2026.ts` stehen auf **29.06.2026** (Gr. 292 auf 04.07.); die Saison endete am **18.07.** Die Spieltage danach fehlen also auch in den Tabellen.
+
+**Einstiegslink für die PDFs** (listet alle Begegnungen aller Mannschaften mit Links auf die jeweiligen `MeetingReportFOP`):
+`https://btv.liga.nu/cgi-bin/WebObjects/nuLigaTENDE.woa/wa/clubMeetings?club=22844`
+
+> ⚠️ **nuLiga ist nicht scriptbar.** Öffentliche nuLiga-Seiten antworten auf automatisierte Aufrufe mit `302 → btv.de`, der Dokument-Endpunkt (`nuDokument?dokument=…`) mit `403 forbidden call`. Die PDFs müssen aus einem echten Browser geholt werden — sie lassen sich nicht per Job aktualisieren.
 
 ---
 
