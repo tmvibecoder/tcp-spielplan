@@ -11,7 +11,7 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 
 ### Konkurrenz-Filter & gespeicherte Auswahl
 
-Über dem Spielplan stehen die Konkurrenzen nach Kategorie (HERREN/DAMEN/JUGEND); ein Klick blendet eine Mannschaft ein/aus, ein Klick auf die Kategorie-Überschrift schaltet die ganze Kategorie um. In der unteren Zeile:
+Über dem Spielplan stehen die Konkurrenzen nach Kategorie (HERREN/DAMEN/MIXED/JUGEND); ein Klick blendet eine Mannschaft ein/aus, ein Klick auf die Kategorie-Überschrift schaltet die ganze Kategorie um. In der unteren Zeile:
 
 - **`Alle aus` / `Alle an`** – ein Toggle-Button, der sich nach dem Zustand richtet: solange **noch eine** Konkurrenz aktiv ist, heißt er `Alle aus` (Klick → alle ab); ist **keine** aktiv, heißt er `Alle an` (Klick → alle ein). Wirkt nur auf die **gerade angezeigte Saison** (Sommer **oder** Winter), nicht auf beide.
 - **`Nur Heim`** – blendet Auswärtsbegegnungen aus (saisonübergreifender Schalter).
@@ -31,7 +31,7 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 - **Spieler** – jeder Spieler nach **Ø-Position** sortiert (Durchschnitt der gespielten Position; `1` = oben/stärkste Position), mit eigener **LK**. Aufklappen zeigt pro Einsatz: Gegner **inkl. dessen LK**, Position, Satz-Ergebnis und **SIEG/NIEDERL.** Marker **▲ LK-Sieg** = gegen besseren (niedrigeren) LK gewonnen, **▼** = gegen schwächeren LK verloren.
 - **Doppel** – Paarungen separat (Schlüssel = sortierte Nachnamen). Ohne LK, da nuLiga für Doppel keine LK ausweist.
 
-**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Mit Spielberichten gepflegt werden **fünf Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315) und **D00** (Südliga 2 · Gr. 160).
+**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Mit Spielberichten gepflegt werden **sechs Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315), **D00** (Südliga 2 · Gr. 160) und **Mixed** (Spielebene B · Gr. 074, seit 06.08.2026 — läuft noch).
 
 **Code-Landkarte:**
 - `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `aggregatePlayers`, `aggregateDoubles`, `parseLk`.
@@ -46,6 +46,28 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 Alle Liga-/Spieldaten stammen aus offiziellen **BTV-nuLiga-PDFs** und liegen in zwei Dateien. `club=22844` = TC Pliening; Saison Sommer 2026 = `season=18103` (wechselt je Saison — aktuellen Link von der [Vereinsseite](https://www.btv.de/de/mein-verein/vereinsseite/tc-pliening.html) holen).
 
 > **Zuordnung passiert automatisch aus dem PDF.** Jedes Spielbericht-PDF (MeetingReportFOP) nennt im Kopf **Liga/Gruppe, Termin, beide Mannschaften und Endergebnis** — daraus folgt eindeutig die Ziel-Liga und -Begegnung. Es genügt also, die **PDF-Links zu liefern** (die Konkurrenz muss nicht dazugeschrieben werden). Auch Begegnungen **ohne TC Pliening** werden eingetragen (sie füllen die Kreuztabelle der jeweiligen Liga). Den **Gesamt-Tabellen-Report** (ResultReportFOP, s. u.) holt man sich selbst dazu — er steckt NICHT im einzelnen Spielbericht.
+
+### Mixed-Runde (Gr. 074) — Sonderfall
+
+Seit 05.08.2026 ist die **Mixed-Mannschaft** (`mixed`, „Spielebene B · Gr. 074") in Sommer 2026 mit
+aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommerrunde läuft
+(Spieltage **01.08.–27.09.2026**) und deshalb ein paar Besonderheiten hat:
+
+- **Eigene Quelle:** Der vereinsweite `ResultReportFOP` deckt sie **nicht** ab. Datenbasis ist der
+  Gruppen-Report **„Tabelle und Spielplan"** (`nu.Dokument 013`) der Gruppe 074 — er enthält Tabelle
+  **und** Spielplan, aber **keine Kreuztabelle**; die `crossResults` werden aus den Spielplan-Ergebnissen
+  abgeleitet (alles Ungespielte `"0:0"`).
+- **Format:** 2 Herren-Einzel + 2 Damen-Einzel + 2 Mixed-Doppel = 6 Matches → in `team-format.ts` als
+  `"4er"` geführt (Einzel 1–4, Doppel 7–8), damit Positions-Logik und Spielberichte passen.
+- **August/September** sind in `MONTHS`/`MONTH_COLORS` (`src/data/constants.ts`) und in den
+  Druckfarben von `src/utils/pdf-export.ts` ergänzt (Violett bzw. Türkis), sonst blieben die
+  Monatsköpfe im Spielplan farb- und namenlos.
+- **Spielbericht-PDFs ohne Meeting-ID:** Die Mixed-Berichte (`nu.Dokument 011d`) nennen im Kopf nur
+  eine gruppeninterne **„Spielbericht (Nr. n)"**, keine Meeting-ID. Schlüssel in
+  `spielberichte.ts` daher **`SB_mx074n<Nr>`** statt `SB_<meetingID>`.
+- **Stand 05.08.2026:** nur der 1. Spieltag gespielt — Pliening–Kirchheim **4:2** (Nr. 1),
+  Feldkirchen–Markt Schwaben **2:4** (Nr. 3), beide **mit Spielbericht** erfasst;
+  Forstern–Haar (Nr. 2) vom 01.08. auf den **27.09.** verlegt.
 
 **Datenstand (19.07.2026): alle fünf Spielbericht-Konkurrenzen auf Saison-Endstand** (PR #26/#28/#30). Gr. 023, Gr. 004 und Gr. 160 lückenlos (jede gespielte Begegnung mit Spielbericht). Ungespielt blieben (offiziell 0:0): Pliening–Finsing (Gr. 023), Oberpframmern–Putzbrunn (Gr. 292), Fideliopark II–Steinhöring und Jahn–Grün-Gold (Gr. 160) sowie Feldkirchen II–Pliening III (Gr. 315, Termin 18.07. — ggf. kommt noch ein Ergebnis nach). Ohne Spielbericht-PDF, aber mit Tabellen-Ergebnis: Haar II–Fideliopark II 9:0 und Markt Schwaben–Forstinning 6:3 (Gr. 315; Forstinning-Begegnungen gelten als gestrichen). Die 8 Ligen ohne Spielberichte stehen auf Stand 29.06.
 

@@ -16,6 +16,8 @@ export const TEAMS: Team[] = [
   { id: "damen40",      label: "Damen 40",        shortLabel: "D40",    league: "Südliga 1 · Gr. 441",                color: "#fbbf24", emoji: "🟠" },
   { id: "damen50",      label: "Damen 50",        shortLabel: "D50",    league: "Landesliga 1 (4er) · Gr. 103 SU",    color: "#fcd34d", emoji: "🟠" },
   { id: "damen50ii",    label: "Damen 50 II",     shortLabel: "D50-2",  league: "Südliga 2 (4er) · Gr. 488",          color: "#fde68a", emoji: "🟠" },
+  // ── Mixed (Violett; eigene Südbayern Mixed-Runde, läuft erst nach der Sommerrunde) ──
+  { id: "mixed",        label: "Mixed",           shortLabel: "Mix",    league: "Spielebene B · Gr. 074",             color: "#a855f7", emoji: "🟣" },
   // ── Jugend (Grün-Lime Palette: kräftig → hell je jünger) ──
   { id: "juniorinnen18",label: "Juniorinnen 18",  shortLabel: "J18w",   league: "Südliga 3 · Gr. 686",                color: "#22c55e", emoji: "🟢" },
   { id: "knaben15",     label: "Knaben 15",       shortLabel: "Kn15",   league: "Südliga 4 · Gr. 596",                color: "#4ade80", emoji: "🟢" },
