@@ -59,6 +59,8 @@ export function generatePrintHTML(matches: Match[], activeTeamIds: Set<string>):
     "2026-05": { bg: "#e0f2fe", border: "#0284c7", accent: "#0369a1", headerBg: "#bae6fd", dayFr: "#f0f9ff", daySa: "#e0f2fe", daySo: "#bae6fd" },
     "2026-06": { bg: "#dcfce7", border: "#16a34a", accent: "#15803d", headerBg: "#bbf7d0", dayFr: "#f0fdf4", daySa: "#dcfce7", daySo: "#bbf7d0" },
     "2026-07": { bg: "#fee2e2", border: "#dc2626", accent: "#b91c1c", headerBg: "#fecaca", dayFr: "#fef2f2", daySa: "#fee2e2", daySo: "#fecaca" },
+    "2026-08": { bg: "#ede9fe", border: "#7c3aed", accent: "#6d28d9", headerBg: "#ddd6fe", dayFr: "#f5f3ff", daySa: "#ede9fe", daySo: "#ddd6fe" },
+    "2026-09": { bg: "#ccfbf1", border: "#0d9488", accent: "#0f766e", headerBg: "#99f6e4", dayFr: "#f0fdfa", daySa: "#ccfbf1", daySo: "#99f6e4" },
   };
 
   const dayFullName: Record<string, string> = { Fr: "Freitag", Sa: "Samstag", So: "Sonntag", Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag" };

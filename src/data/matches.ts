@@ -100,6 +100,12 @@ export const MATCHES: Match[] = [
   { teamId: "damen50ii", date: "2026-07-04", time: "14:00", day: "Sa", home: "TeG Kirchheim", away: "TC Pliening II", isHome: false },
   { teamId: "damen50ii", date: "2026-07-11", time: "14:00", day: "Sa", home: "TC Pliening II", away: "FC Forstern", isHome: true },
   { teamId: "damen50ii", date: "2026-07-18", time: "14:00", day: "Sa", home: "TC Anzing", away: "TC Pliening II", isHome: false },
+  // Mixed (5) — Südbayern Mixed-Runde, Spielebene B Gr. 074 (August/September)
+  { teamId: "mixed", date: "2026-08-01", time: "13:00", day: "Sa", home: "TC Pliening", away: "TeG Kirchheim", isHome: true },
+  { teamId: "mixed", date: "2026-08-09", time: "11:00", day: "So", home: "TSV Haar", away: "TC Pliening", isHome: false },
+  { teamId: "mixed", date: "2026-08-15", time: "11:00", day: "Sa", home: "TC Pliening", away: "TSV Feldkirchen", isHome: true },
+  { teamId: "mixed", date: "2026-08-30", time: "11:00", day: "So", home: "TC Pliening", away: "FC Forstern", isHome: true },
+  { teamId: "mixed", date: "2026-09-06", time: "11:00", day: "So", home: "TF Markt Schwaben", away: "TC Pliening", isHome: false },
   // Juniorinnen 18 (5)
   { teamId: "juniorinnen18", date: "2026-05-02", time: "09:00", day: "Sa", home: "TC Pliening", away: "TC Ottobrunn", isHome: true },
   { teamId: "juniorinnen18", date: "2026-05-09", time: "09:00", day: "Sa", home: "TC Unterföhring II", away: "TC Pliening", isHome: false },

@@ -24,6 +24,9 @@ export const TEAM_FORMAT: Record<string, TeamFormat> = {
   "w-damen50": "6er",
   // 4er Mannschaften (4 Einzel + 2 Doppel)
   herren30: "4er",
+  // Mixed: 2 Herren-Einzel + 2 Damen-Einzel + 2 Mixed-Doppel = 6 Matches → gleiche
+  // Positions-Logik wie eine 4er-Mannschaft (Einzel 1–4, Doppel 7–8).
+  mixed: "4er",
   juniorinnen18: "4er",
   knaben15: "4er",
   knaben15ii: "4er",

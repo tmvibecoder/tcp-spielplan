@@ -11,6 +11,8 @@ import type { LeagueStandings } from "../types";
 // Hinweis: Bei zurückgezogenen Mannschaften weichen offizielle Matchpunkte und
 // Kreuztabelle ab (BTV streicht gewertete Spiele aus der Tabelle) — Werte verbatim wie offiziell.
 // crossResults: "***" = Diagonale, "0:0" = noch nicht gespielt (zeigt "n.a.").
+// Ausnahme Mixed (Gr. 074): eigene Südbayern Mixed-Runde im August/September mit
+// eigenem Gruppen-Report ("Tabelle und Spielplan", Stand 05.08.2026) — läuft noch.
 
 export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Herren Südliga 2  Gr. 023 ──
@@ -253,6 +255,27 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
       { rank: 6, club: "FC Forstern", isOwnClub: false, points: "6:8", matchPoints: "19:23", sets: "48:54", crossResults: ["1:5", "1:5", "4:2", "3:3", "2:4", "***", "3:3", "5:1"] },
       { rank: 7, club: "TC Anzing", isOwnClub: false, points: "5:9", matchPoints: "17:25", sets: "40:55", crossResults: ["2:4", "3:3", "0:6", "2:4", "3:3", "3:3", "***", "4:2"] },
       { rank: 8, club: "SpVgg Altenerding", isOwnClub: false, points: "2:12", matchPoints: "11:31", sets: "27:66", crossResults: ["3:3", "1:5", "0:6", "1:5", "3:3", "1:5", "2:4", "***"] },
+    ],
+  },
+  // ── Mixed  Spielebene B  Gr. 074 (Südbayern Mixed-Runde) ──
+  // Eigener Report "Tabelle und Spielplan" der Gruppe (nu.Dokument 013 vom 05.08.2026),
+  // nicht Teil des vereinsweiten ResultReportFOP der Sommerrunde.
+  // Stand 05.08.2026: erst der 1. Spieltag (01.08.) ist gespielt —
+  // Pliening–Kirchheim 4:2 und Feldkirchen–Markt Schwaben 2:4.
+  // Forstern–Haar (ursprünglich 01.08.) wurde auf den 27.09. verlegt.
+  // Kreuztabelle daher aus den Spielplan-Ergebnissen abgeleitet; alles Übrige "0:0".
+  {
+    teamLabel: "Mixed",
+    teamColor: "#a855f7",
+    leagueName: "Spielebene B · Gr. 074",
+    ownRank: 2,
+    entries: [
+      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "9:4", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "4:2"] },
+      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "2:0", matchPoints: "4:2", sets: "8:4", crossResults: ["0:0", "***", "0:0", "0:0", "4:2", "0:0"] },
+      { rank: 3, club: "FC Forstern", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "TSV Haar", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "TeG Kirchheim", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:8", crossResults: ["0:0", "2:4", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "TSV Feldkirchen", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:9", crossResults: ["2:4", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
   // ── Juniorinnen 18  Südliga 3  Gr. 686 ──
