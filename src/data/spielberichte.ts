@@ -2393,6 +2393,50 @@ const SB_12742446: Spielbericht = {
   ],
 };
 
+// ── Mixed-Runde Gr. 074 ──────────────────────────────────────────────────────
+// Die Mixed-Spielberichte kamen als PDF ohne Meeting-ID (nu.Dokument 011d); sie
+// tragen im Kopf nur eine gruppeninterne "Spielbericht (Nr. n)". Schlüssel daher
+// mx074n<Nr> statt der sonst üblichen Meeting-ID.
+// Format: Einzel 1–2 Herren, 3–4 Damen (Positionen 1–4), 2 Mixed-Doppel (7–8).
+
+// TC Pliening 4:2 TeG Kirchheim — echte nuLiga-Daten (Spielbericht Nr. 1)
+const SB_mx074n1: Spielbericht = {
+  league: "Spielebene B · Gr. 074",
+  homeClub: "TC Pliening",
+  awayClub: "TeG Kirchheim",
+  date: "2026-08-01",
+  day: "Sa",
+  finalHome: 4,
+  finalAway: 2,
+  matches: [
+    m("mx074n1-e1", 1, "singles", "Forchhammer, Sebastian (10, LK16,9)", "Langer, Ernst (3, LK18,1)", [[5, 7], [2, 6]], "away"),
+    m("mx074n1-e2", 2, "singles", "Hempel, Frederick (14, LK19,7)", "Hendrikse, Lion (6, LK25,0)", [[6, 0], [6, 0]], "home"),
+    m("mx074n1-e3", 3, "singles", "Hollerith, Emma (7, LK19,6)", "Steck, Sonja (2, LK15,8)", [[4, 6], [2, 6]], "away"),
+    m("mx074n1-e4", 4, "singles", "Zelger, Selina (8, LK19,9)", "Graeve, Lynn (3, LK19,2)", [[6, 2], [7, 5]], "home"),
+    m("mx074n1-d1", 7, "doubles", "Hempel, Frederick / Hollerith, Emma", "Hendrikse, Lion / Steck, Sonja", [[6, 1], [6, 2]], "home"),
+    m("mx074n1-d2", 8, "doubles", "Forchhammer, Sebastian / Zelger, Selina", "Langer, Ernst / Graeve, Lynn", [[6, 2], [6, 1]], "home"),
+  ],
+};
+
+// TSV Feldkirchen 2:4 TF Markt Schwaben — echte nuLiga-Daten (Spielbericht Nr. 3)
+const SB_mx074n3: Spielbericht = {
+  league: "Spielebene B · Gr. 074",
+  homeClub: "TSV Feldkirchen",
+  awayClub: "TF Markt Schwaben",
+  date: "2026-08-01",
+  day: "Sa",
+  finalHome: 2,
+  finalAway: 4,
+  matches: [
+    m("mx074n3-e1", 1, "singles", "Schumacher, Tobias (2, LK8,5)", "Warta, Roland (4, LK9,4)", [[5, 7], [3, 6]], "away"),
+    m("mx074n3-e2", 2, "singles", "Meyer, Oskar (16, LK13,1)", "Schreib, Maximilian (14, LK17,0)", [[5, 7], [6, 2], [10, 4]], "home"),
+    m("mx074n3-e3", 3, "singles", "Möbus, Lisa (10, LK18,4)", "Fischer, Franziska (4, LK14,6)", [[2, 6], [1, 6]], "away"),
+    m("mx074n3-e4", 4, "singles", "Schumacher, Anna (13, LK19,5)", "Warta, Annika (5, LK16,0)", [[1, 6], [4, 6]], "away"),
+    m("mx074n3-d1", 7, "doubles", "Meyer, Oskar / Möbus, Lisa", "Warta, Roland / Warta, Annika", [[3, 6], [4, 6]], "away"),
+    m("mx074n3-d2", 8, "doubles", "Schumacher, Tobias / Schumacher, Anna", "Schreib, Maximilian / Fischer, Franziska", [[6, 4], [6, 3]], "home"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686507,
   SB_12686477,
@@ -2502,6 +2546,8 @@ const ALL: Spielbericht[] = [
   SB_12742492,
   SB_12742538,
   SB_12742446,
+  SB_mx074n1,
+  SB_mx074n3,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(

@@ -31,7 +31,7 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 - **Spieler** – jeder Spieler nach **Ø-Position** sortiert (Durchschnitt der gespielten Position; `1` = oben/stärkste Position), mit eigener **LK**. Aufklappen zeigt pro Einsatz: Gegner **inkl. dessen LK**, Position, Satz-Ergebnis und **SIEG/NIEDERL.** Marker **▲ LK-Sieg** = gegen besseren (niedrigeren) LK gewonnen, **▼** = gegen schwächeren LK verloren.
 - **Doppel** – Paarungen separat (Schlüssel = sortierte Nachnamen). Ohne LK, da nuLiga für Doppel keine LK ausweist.
 
-**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Für die **Mixed-Runde** (Gr. 074) sind bislang keine Spielberichte erfasst — die Mannschaft zeigt in der Statistik daher den Leerzustand. Mit Spielberichten gepflegt werden **fünf Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315) und **D00** (Südliga 2 · Gr. 160).
+**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Mit Spielberichten gepflegt werden **sechs Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315), **D00** (Südliga 2 · Gr. 160) und **Mixed** (Spielebene B · Gr. 074, seit 06.08.2026 — läuft noch).
 
 **Code-Landkarte:**
 - `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `aggregatePlayers`, `aggregateDoubles`, `parseLk`.
@@ -62,9 +62,12 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
 - **August/September** sind in `MONTHS`/`MONTH_COLORS` (`src/data/constants.ts`) und in den
   Druckfarben von `src/utils/pdf-export.ts` ergänzt (Violett bzw. Türkis), sonst blieben die
   Monatsköpfe im Spielplan farb- und namenlos.
-- **Stand 05.08.2026:** nur der 1. Spieltag gespielt — Pliening–Kirchheim **4:2**,
-  Feldkirchen–Markt Schwaben **2:4**; Forstern–Haar vom 01.08. auf den **27.09.** verlegt.
-  Spielberichte (Einzel/Doppel) liegen für die Mixed-Runde **noch keine** vor.
+- **Spielbericht-PDFs ohne Meeting-ID:** Die Mixed-Berichte (`nu.Dokument 011d`) nennen im Kopf nur
+  eine gruppeninterne **„Spielbericht (Nr. n)"**, keine Meeting-ID. Schlüssel in
+  `spielberichte.ts` daher **`SB_mx074n<Nr>`** statt `SB_<meetingID>`.
+- **Stand 05.08.2026:** nur der 1. Spieltag gespielt — Pliening–Kirchheim **4:2** (Nr. 1),
+  Feldkirchen–Markt Schwaben **2:4** (Nr. 3), beide **mit Spielbericht** erfasst;
+  Forstern–Haar (Nr. 2) vom 01.08. auf den **27.09.** verlegt.
 
 **Datenstand (19.07.2026): alle fünf Spielbericht-Konkurrenzen auf Saison-Endstand** (PR #26/#28/#30). Gr. 023, Gr. 004 und Gr. 160 lückenlos (jede gespielte Begegnung mit Spielbericht). Ungespielt blieben (offiziell 0:0): Pliening–Finsing (Gr. 023), Oberpframmern–Putzbrunn (Gr. 292), Fideliopark II–Steinhöring und Jahn–Grün-Gold (Gr. 160) sowie Feldkirchen II–Pliening III (Gr. 315, Termin 18.07. — ggf. kommt noch ein Ergebnis nach). Ohne Spielbericht-PDF, aber mit Tabellen-Ergebnis: Haar II–Fideliopark II 9:0 und Markt Schwaben–Forstinning 6:3 (Gr. 315; Forstinning-Begegnungen gelten als gestrichen). Die 8 Ligen ohne Spielberichte stehen auf Stand 29.06.
 
