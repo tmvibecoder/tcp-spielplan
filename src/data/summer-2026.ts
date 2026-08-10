@@ -260,21 +260,21 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Mixed  Spielebene B  Gr. 074 (Südbayern Mixed-Runde) ──
   // Eigener Report "Tabelle und Spielplan" der Gruppe (nu.Dokument 013 vom 05.08.2026),
   // nicht Teil des vereinsweiten ResultReportFOP der Sommerrunde.
-  // Stand 05.08.2026: erst der 1. Spieltag (01.08.) ist gespielt —
-  // Pliening–Kirchheim 4:2 und Feldkirchen–Markt Schwaben 2:4.
+  // Stand 09.08.2026: 1. Spieltag (01.08.) — Pliening–Kirchheim 4:2, Feldkirchen–Markt Schwaben 2:4;
+  // 2. Spieltag (09.08.) — Haar–Pliening 4:2 (Spielbericht Nr. 4).
   // Forstern–Haar (ursprünglich 01.08.) wurde auf den 27.09. verlegt.
   // Kreuztabelle daher aus den Spielplan-Ergebnissen abgeleitet; alles Übrige "0:0".
   {
     teamLabel: "Mixed",
     teamColor: "#a855f7",
     leagueName: "Spielebene B · Gr. 074",
-    ownRank: 2,
+    ownRank: 3,
     entries: [
       { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "9:4", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "4:2"] },
-      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "2:0", matchPoints: "4:2", sets: "8:4", crossResults: ["0:0", "***", "0:0", "0:0", "4:2", "0:0"] },
-      { rank: 3, club: "FC Forstern", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "TSV Haar", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TeG Kirchheim", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:8", crossResults: ["0:0", "2:4", "0:0", "0:0", "***", "0:0"] },
+      { rank: 2, club: "TSV Haar", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "9:5", crossResults: ["0:0", "***", "4:2", "0:0", "0:0", "0:0"] },
+      { rank: 3, club: "TC Pliening", isOwnClub: true , points: "2:2", matchPoints: "6:6", sets: "13:13", crossResults: ["0:0", "2:4", "***", "0:0", "4:2", "0:0"] },
+      { rank: 4, club: "FC Forstern", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "TeG Kirchheim", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:8", crossResults: ["0:0", "0:0", "2:4", "0:0", "***", "0:0"] },
       { rank: 6, club: "TSV Feldkirchen", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:9", crossResults: ["2:4", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
