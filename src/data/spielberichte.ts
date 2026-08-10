@@ -2437,6 +2437,25 @@ const SB_mx074n3: Spielbericht = {
   ],
 };
 
+// TSV Haar 4:2 TC Pliening — echte nuLiga-Daten (Spielbericht Nr. 4)
+const SB_mx074n4: Spielbericht = {
+  league: "Spielebene B · Gr. 074",
+  homeClub: "TSV Haar",
+  awayClub: "TC Pliening",
+  date: "2026-08-09",
+  day: "So",
+  finalHome: 4,
+  finalAway: 2,
+  matches: [
+    m("mx074n4-e1", 1, "singles", "Drousiotis, Andreas CYP (2, LK8,6)", "Volkwein, Samuel (5, LK13,4)", [[6, 2], [6, 4]], "home"),
+    m("mx074n4-e2", 2, "singles", "Voß, Darius (7, LK10,1)", "Miler, Thomas (6, LK13,5)", [[0, 6], [7, 5], [10, 3]], "home"),
+    m("mx074n4-e3", 3, "singles", "Iordanidis, Paulina (16, LK16,9)", "Kaltenberger, Theresa (4, LK16,8)", [[6, 3], [6, 4]], "home"),
+    m("mx074n4-e4", 4, "singles", "Scheuermann, Lea (17, LK16,9)", "Erhard, Martina (6, LK19,0)", [[4, 6], [6, 4], [10, 12]], "away"),
+    m("mx074n4-d1", 7, "doubles", "Drousiotis, Andreas CYP / Iordanidis, Paulina", "Volkwein, Samuel / Kaltenberger, Theresa", [[6, 3], [7, 5]], "home"),
+    m("mx074n4-d2", 8, "doubles", "Voß, Darius / Scheuermann, Lea", "Miler, Thomas / Erhard, Martina", [[2, 6], [3, 6]], "away"),
+  ],
+};
+
 const ALL: Spielbericht[] = [
   SB_12686507,
   SB_12686477,
@@ -2548,6 +2567,7 @@ const ALL: Spielbericht[] = [
   SB_12742446,
   SB_mx074n1,
   SB_mx074n3,
+  SB_mx074n4,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(
