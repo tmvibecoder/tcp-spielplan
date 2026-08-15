@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "crawl:meldelisten": "node scripts/crawl-meldelisten.mjs"
+    "crawl:meldelisten": "node scripts/crawl-meldelisten.mjs",
+    "crawl:spielberichte": "node scripts/crawl-spielberichte.mjs",
+    "gen:spielberichte": "node scripts/generate-spielberichte.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",

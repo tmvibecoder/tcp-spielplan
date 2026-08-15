@@ -19,7 +19,9 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 - **Liga-/Spieldaten nur aus offiziellen BTV-Quellen** übernehmen, **verbatim** — auch wenn die
   BTV-Rangfolge „falsch" aussieht (bei ungleicher Spielzahl sortiert der BTV nach Punkt-Quotient).
   Nichts schätzen, nichts hochrechnen.
-- **`src/data/meldelisten.ts` ist generiert** — nur über `npm run crawl:meldelisten` ändern.
+- **`src/data/meldelisten.ts` und `src/data/spielberichte-crawled.ts` sind generiert** — nur über
+  `npm run crawl:meldelisten` bzw. `npm run crawl:spielberichte && npm run gen:spielberichte` ändern.
+  Nach Datenänderungen `node scripts/check-data.mjs` laufen lassen (Tabellen ↔ Berichte ↔ Meldelisten).
 - **UI-Änderungen im echten Browser prüfen** (headless Chrome gegen `npx vite preview`),
   nicht nur `tsc`/Build. Beispiel-Checks: Tabs, Sektionen, Drilldown-Inhalt, Leerzustände.
 
@@ -27,10 +29,13 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 
 | Zweck | Datei |
 |---|---|
+| Konkurrenzen + groupids (eine Quelle für alle Skripte) | `scripts/groups.mjs` |
 | Tabellen + Kreuztabellen (Sommer) | `src/data/summer-2026.ts` |
-| Spielberichte (Einzel/Doppel je Begegnung) | `src/data/spielberichte.ts` |
-| Meldelisten (alle gemeldeten Spieler) | `src/data/meldelisten.ts` (generiert) |
-| Crawler für Meldelisten | `scripts/crawl-meldelisten.mjs` |
+| Spielberichte (Einzel/Doppel je Begegnung) | `src/data/spielberichte-crawled.ts` (**generiert**) |
+| Lookup drumherum | `src/data/spielberichte.ts` |
+| Meldelisten (alle gemeldeten Spieler) | `src/data/meldelisten.ts` (**generiert**) |
+| Crawler + Generatoren | `scripts/crawl-meldelisten.mjs`, `crawl-spielberichte.mjs`, `parse-spielbericht.mjs`, `generate-spielberichte.mjs`, `generate-standings.mjs` |
+| Prüf-Skripte | `scripts/verify-parser.mjs`, `check-data.mjs`, `check-names.mjs` |
 | Aggregation Spieler/Doppel | `src/data/player-stats.ts` |
 | Spieler-Detailseite | `src/components/TeamStatsDetail.tsx` |
 | Tabellen-Ansicht + Drilldown | `src/components/StandingsView.tsx` |

@@ -26,3 +26,4 @@ dist-ssr
 
 # Zwischenstand des Meldelisten-Crawls
 scripts/.meldelisten-cache.json
+scripts/.spielberichte-cache.json
