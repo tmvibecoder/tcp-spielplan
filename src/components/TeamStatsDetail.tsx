@@ -1,16 +1,21 @@
 import { useState } from "react";
-import type { TeamStats, PlayerAppearance } from "../data/player-stats";
+import type { TeamStats, PlayerAppearance, PlayerAgg } from "../data/player-stats";
 import {
   aggregatePlayers,
   aggregateDoubles,
   parseLk,
+  normalizePlayerName,
 } from "../data/player-stats";
+import type { Meldeliste, MeldelistenEintrag } from "../types";
 
 interface TeamStatsDetailProps {
   team: TeamStats;
   rank?: number;
   accentColor: string;
   onBack: () => void;
+  /** Komplette namentliche Meldeliste (falls vorhanden, z. B. Mixed Gr. 074):
+   *  der Spieler-Tab zeigt dann ALLE gemeldeten Spieler statt nur der eingesetzten. */
+  meldeliste?: Meldeliste;
 }
 
 type StatTab = "spieler" | "doppel";
@@ -105,17 +110,140 @@ function AppearanceRow({
   );
 }
 
+/** Eine Meldelisten-Zeile: Rang vorne, Name + LK, rechts Ø-Position und Bilanz
+ *  (sofern der Spieler schon ein Match in dieser Runde gespielt hat). */
+function RosterRow({
+  entry,
+  agg,
+  accentColor,
+  isOpen,
+  onToggle,
+}: {
+  entry: MeldelistenEintrag;
+  agg?: PlayerAgg;
+  accentColor: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const totalMatches = agg ? agg.matches + agg.doublesMatches : 0;
+  const totalWins = agg ? agg.wins + agg.doublesWins : 0;
+  const totalLosses = agg ? agg.losses + agg.doublesLosses : 0;
+  const played = totalMatches > 0;
+  return (
+    <div
+      className={`overflow-hidden rounded-lg border ${
+        played
+          ? "border-slate-700/50 bg-slate-800/30"
+          : "border-slate-700/30 bg-slate-800/10"
+      }`}
+    >
+      <button
+        onClick={played ? onToggle : undefined}
+        className={`flex w-full items-center gap-2.5 px-3 py-2 text-left ${
+          played ? "hover:bg-slate-700/30" : "cursor-default"
+        }`}
+      >
+        <span
+          className="inline-flex h-6 w-7 flex-none items-center justify-center rounded-md text-[11px] font-extrabold"
+          style={{ backgroundColor: accentColor + "22", color: accentColor }}
+        >
+          {entry.rang}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span
+              className={`truncate text-[13px] font-bold ${
+                played ? "text-slate-100" : "text-slate-400"
+              }`}
+            >
+              {entry.name}
+            </span>
+            <LkPill lk={entry.lk} own={played} />
+            {entry.nation && (
+              <span className="text-[9px] font-bold text-slate-500">
+                {entry.nation}
+              </span>
+            )}
+          </div>
+        </div>
+        {played && agg ? (
+          <>
+            {agg.matches > 0 && (
+              <span
+                className="flex-none rounded-md bg-slate-700/50 px-1.5 py-1 text-[10px] font-extrabold text-slate-200"
+                title="Durchschnittliche Einzel-Position"
+              >
+                Ø&thinsp;{fmtAvg(agg.avgPosition)}
+              </span>
+            )}
+            <div className="flex-none text-right text-[11px] text-slate-400">
+              <span className="font-bold text-emerald-400">{totalWins}</span>
+              <span className="text-slate-500">:</span>
+              <span className="font-bold text-red-400">{totalLosses}</span>
+            </div>
+            <span className="flex-none text-[11px] text-slate-500">
+              {isOpen ? "▲" : "▼"}
+            </span>
+          </>
+        ) : (
+          <span className="flex-none pr-1 text-[10px] text-slate-600">
+            ohne Einsatz
+          </span>
+        )}
+      </button>
+      {isOpen && played && agg && (
+        <div className="px-3 pb-2.5">
+          {agg.singles.map((app, i) => (
+            <AppearanceRow key={i} app={app} ownLk={entry.lk} />
+          ))}
+          {agg.doubles.length > 0 && (
+            <>
+              <p className="mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                Doppel
+              </p>
+              {agg.doubles.map((app, i) => (
+                <AppearanceRow key={`d${i}`} app={app} />
+              ))}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TeamStatsDetail({
   team,
   rank,
   accentColor,
   onBack,
+  meldeliste,
 }: TeamStatsDetailProps) {
   const [tab, setTab] = useState<StatTab>("spieler");
   const [openKey, setOpenKey] = useState<string | null>(null);
 
   const players = aggregatePlayers(team);
   const doubles = aggregateDoubles(team);
+  // Klassische Ansicht (ohne Meldeliste): wie bisher nur Spieler mit Einzel-Einsatz
+  const singlesPlayers = players.filter((p) => p.matches > 0);
+
+  // Meldelisten-Modus: Bilanzen der eingesetzten Spieler über den
+  // normalisierten Namen (ohne Länderkürzel) an die Meldeliste hängen.
+  const aggByName = new Map<string, PlayerAgg>(
+    players.map((p) => [normalizePlayerName(p.name), p])
+  );
+  const rosterCount = meldeliste
+    ? meldeliste.herren.length + meldeliste.damen.length
+    : 0;
+  // Sicherheitsnetz: eingesetzte Spieler, die (noch) nicht in der Meldeliste stehen
+  const rosterNames = new Set(
+    meldeliste
+      ? [...meldeliste.herren, ...meldeliste.damen].map((e) => e.name)
+      : []
+  );
+  const unmatched = meldeliste
+    ? players.filter((p) => !rosterNames.has(normalizePlayerName(p.name)))
+    : [];
 
   const toggle = (key: string) =>
     setOpenKey((cur) => (cur === key ? null : key));
@@ -145,7 +273,7 @@ export default function TeamStatsDetail({
       <div className="mb-2 flex gap-1 px-1">
         {(
           [
-            ["spieler", `Spieler (${players.length})`],
+            ["spieler", `Spieler (${meldeliste ? rosterCount : singlesPlayers.length})`],
             ["doppel", `Doppel (${doubles.length})`],
           ] as [StatTab, string][]
         ).map(([key, label]) => (
@@ -167,15 +295,79 @@ export default function TeamStatsDetail({
         ))}
       </div>
 
-      <p className="mb-2 px-2 text-[10px] text-slate-500">
-        Sortiert nach Ø-Position (1 = oben). <b className="text-slate-400">LK</b>{" "}
-        = Leistungsklasse des Gegners · Quelle: nuLiga-Spielberichte.
-      </p>
+      {meldeliste && tab === "spieler" ? (
+        <p className="mb-2 px-2 text-[10px] text-slate-500">
+          Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>{" "}
+          (= Meldeposition laut nuLiga). <b className="text-slate-400">Ø</b> = durchschnittliche
+          Einzel-Position, Bilanz grün:rot = Siege:Niederlagen — antippen für die einzelnen
+          Matches. Quelle: btv.de-Mannschaftsportrait + nuLiga-Spielberichte.
+        </p>
+      ) : (
+        <p className="mb-2 px-2 text-[10px] text-slate-500">
+          Sortiert nach Ø-Position (1 = oben). <b className="text-slate-400">LK</b>{" "}
+          = Leistungsklasse des Gegners · Quelle: nuLiga-Spielberichte.
+        </p>
+      )}
+
+      {/* ── Spieler-Tab: Meldelisten-Modus (alle gemeldeten Spieler) ── */}
+      {tab === "spieler" && meldeliste && (
+        <div className="space-y-3">
+          {(
+            [
+              ["Herren", meldeliste.herren],
+              ["Damen", meldeliste.damen],
+            ] as [string, MeldelistenEintrag[]][]
+          ).map(([label, entries]) => (
+            <div key={label}>
+              <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                {label} ({entries.length})
+              </p>
+              <div className="space-y-1">
+                {entries.map((e) => {
+                  const key = `m-${label}-${e.rang}`;
+                  return (
+                    <RosterRow
+                      key={key}
+                      entry={e}
+                      agg={aggByName.get(e.name)}
+                      accentColor={accentColor}
+                      isOpen={openKey === key}
+                      onToggle={() => toggle(key)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+          {unmatched.length > 0 && (
+            <div>
+              <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Weitere Einsätze
+              </p>
+              <div className="space-y-1">
+                {unmatched.map((p) => {
+                  const key = `mu-${p.name}`;
+                  return (
+                    <RosterRow
+                      key={key}
+                      entry={{ rang: 0, name: p.name, lk: p.lk, jahrgang: 0 }}
+                      agg={p}
+                      accentColor={accentColor}
+                      isOpen={openKey === key}
+                      onToggle={() => toggle(key)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── Spieler-Tab ── */}
-      {tab === "spieler" && (
+      {tab === "spieler" && !meldeliste && (
         <div className="space-y-1.5">
-          {players.map((p) => {
+          {singlesPlayers.map((p) => {
             const key = `s-${p.name}`;
             const isOpen = openKey === key;
             return (

@@ -94,3 +94,19 @@ export interface WinterMatch extends Match {
 }
 
 export type SubTab = "spielplan" | "tabelle";
+
+// ── Namentliche Meldeliste (z. B. Mixed-Runde Gr. 074) ──
+export interface MeldelistenEintrag {
+  rang: number;     // Meldeposition laut nuLiga (Herren/Damen separat nummeriert)
+  name: string;     // "Nachname, Vorname"
+  lk: string;       // aktuelle LK laut Mannschaftsportrait, z. B. "LK14,3"
+  jahrgang: number;
+  nation?: string;  // nur gesetzt, wenn nicht GER (z. B. "CYP", "UKR*")
+}
+
+export interface Meldeliste {
+  leagueName: string; // exakt wie in SUMMER_STANDINGS
+  club: string;       // exakt wie in SUMMER_STANDINGS
+  herren: MeldelistenEintrag[];
+  damen: MeldelistenEintrag[];
+}

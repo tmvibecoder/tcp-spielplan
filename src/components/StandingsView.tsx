@@ -3,7 +3,8 @@ import type { LeagueStandings, IndividualMatch } from "../types";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 import { getSpielbericht } from "../data/spielberichte";
 import type { SpielberichtMeeting } from "../utils/spielbericht";
-import { getTeamStats } from "../data/player-stats";
+import { getTeamStats, emptyTeamStats } from "../data/player-stats";
+import { getMeldeliste } from "../data/meldelisten";
 import TeamStatsDetail from "./TeamStatsDetail";
 
 interface StandingsViewProps {
@@ -147,16 +148,18 @@ export default function StandingsView({ standings }: StandingsViewProps) {
                 {selectedClub ? (
                   (() => {
                     const stats = getTeamStats(league.leagueName, selectedClub);
+                    const meldeliste = getMeldeliste(league.leagueName, selectedClub);
                     const rank = league.entries.find(
                       (e) => e.club === selectedClub
                     )?.rank;
-                    if (stats) {
+                    if (stats || meldeliste) {
                       return (
                         <TeamStatsDetail
-                          team={stats}
+                          team={stats ?? emptyTeamStats(league.leagueName, selectedClub)}
                           rank={rank}
                           accentColor={league.teamColor}
                           onBack={() => setSelectedClub(null)}
+                          meldeliste={meldeliste}
                         />
                       );
                     }

@@ -23,6 +23,7 @@ export interface PlayerStat {
   name: string;
   lk: string;
   singles: PlayerAppearance[];
+  doubles: PlayerAppearance[]; // Doppel-Einsätze desselben Spielers (voller Name)
 }
 
 export interface DoublesStat {
@@ -84,7 +85,7 @@ export function getTeamStats(
         const opp = parsePlayer(oppRaw);
         let ps = playersMap.get(ours.name);
         if (!ps) {
-          ps = { name: ours.name, lk: ours.lk, singles: [] };
+          ps = { name: ours.name, lk: ours.lk, singles: [], doubles: [] };
           playersMap.set(ours.name, ps);
         }
         if (!ps.lk && ours.lk) ps.lk = ours.lk;
@@ -98,7 +99,8 @@ export function getTeamStats(
           won,
         });
       } else {
-        const ourPair = parseSide(ourRaw).map((p) => surname(p.name));
+        const ourPlayers = parseSide(ourRaw);
+        const ourPair = ourPlayers.map((p) => surname(p.name));
         const oppPair = parseSide(oppRaw).map((p) => surname(p.name));
         const k = [...ourPair].sort().join("|");
         let ds = doublesMap.get(k);
@@ -106,7 +108,7 @@ export function getTeamStats(
           ds = { players: [ourPair[0] ?? "", ourPair[1] ?? ""], appearances: [] };
           doublesMap.set(k, ds);
         }
-        ds.appearances.push({
+        const appearance: PlayerAppearance = {
           opponentClub,
           date: b.date,
           position: im.position,
@@ -114,7 +116,19 @@ export function getTeamStats(
           opponentLk: "",
           score,
           won,
-        });
+        };
+        ds.appearances.push(appearance);
+        // Doppel-Einsatz zusätzlich jedem der beiden Spieler zuordnen
+        // (voller Name; wichtig für die Meldelisten-Ansicht der Mixed-Runde)
+        for (const p of ourPlayers) {
+          if (!p.name || p.name.startsWith("—")) continue; // "— (w.o.)"-Platzhalter
+          let ps = playersMap.get(p.name);
+          if (!ps) {
+            ps = { name: p.name, lk: p.lk, singles: [], doubles: [] };
+            playersMap.set(p.name, ps);
+          }
+          ps.doubles.push(appearance);
+        }
       }
     }
   }
@@ -130,16 +144,32 @@ export function getTeamStats(
   };
 }
 
+/** Leere Team-Statistik — für Mannschaften mit Meldeliste, aber (noch) ohne Spielberichte. */
+export function emptyTeamStats(leagueName: string, club: string): TeamStats {
+  const teamLabel = TEAMS.find((t) => t.league === leagueName)?.label ?? club;
+  return { club, teamLabel, leagueName, players: [], doubles: [] };
+}
+
+/** Spielbericht-Namen auf Meldelisten-Form bringen: Länderkürzel hinter dem
+ *  Namen entfernen ("Drousiotis, Andreas CYP" -> "Drousiotis, Andreas"). */
+export function normalizePlayerName(name: string): string {
+  return name.replace(/\s+[A-Z]{3}\*?$/, "").trim();
+}
+
 // ── Abgeleitete Kennzahlen (Einsätze, Bilanz, Ø-Position; sortiert) ───────────
 
 export interface PlayerAgg {
   name: string;
   lk: string;
-  matches: number;
+  matches: number; // Einzel-Einsätze
   wins: number;
   losses: number;
   avgPosition: number;
   singles: PlayerAppearance[];
+  doublesMatches: number;
+  doublesWins: number;
+  doublesLosses: number;
+  doubles: PlayerAppearance[];
 }
 
 export function aggregatePlayers(team: TeamStats): PlayerAgg[] {
@@ -147,6 +177,8 @@ export function aggregatePlayers(team: TeamStats): PlayerAgg[] {
     .map((p) => {
       const matches = p.singles.length;
       const wins = p.singles.filter((s) => s.won).length;
+      const doublesMatches = p.doubles.length;
+      const doublesWins = p.doubles.filter((d) => d.won).length;
       const avg =
         matches > 0
           ? p.singles.reduce((sum, s) => sum + s.position, 0) / matches
@@ -159,6 +191,13 @@ export function aggregatePlayers(team: TeamStats): PlayerAgg[] {
         losses: matches - wins,
         avgPosition: avg,
         singles: [...p.singles].sort(
+          (a, b) =>
+            a.position - b.position || (a.date ?? "").localeCompare(b.date ?? "")
+        ),
+        doublesMatches,
+        doublesWins,
+        doublesLosses: doublesMatches - doublesWins,
+        doubles: [...p.doubles].sort(
           (a, b) =>
             a.position - b.position || (a.date ?? "").localeCompare(b.date ?? "")
         ),
