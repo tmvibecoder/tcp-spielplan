@@ -17,6 +17,7 @@ export interface PlayerAppearance {
   opponentLk: string; // LK des Gegners (Einzel); Doppel ohne LK (nuLiga weist sie nicht aus)
   score: string;      // Satz-Ergebnis aus eigener Sicht, z.B. "6:3 6:4"
   won: boolean;
+  partner?: string;   // nur Doppel-Einsätze pro Spieler: voller Name des Partners
 }
 
 export interface PlayerStat {
@@ -119,7 +120,7 @@ export function getTeamStats(
         };
         ds.appearances.push(appearance);
         // Doppel-Einsatz zusätzlich jedem der beiden Spieler zuordnen
-        // (voller Name; wichtig für die Meldelisten-Ansicht der Mixed-Runde)
+        // (voller Name + Partner; wichtig für die Meldelisten-Ansicht der Mixed-Runde)
         for (const p of ourPlayers) {
           if (!p.name || p.name.startsWith("—")) continue; // "— (w.o.)"-Platzhalter
           let ps = playersMap.get(p.name);
@@ -127,7 +128,12 @@ export function getTeamStats(
             ps = { name: p.name, lk: p.lk, singles: [], doubles: [] };
             playersMap.set(p.name, ps);
           }
-          ps.doubles.push(appearance);
+          const partnerRaw =
+            ourPlayers.find((q) => q.name !== p.name)?.name ?? "";
+          ps.doubles.push({
+            ...appearance,
+            partner: normalizePlayerName(partnerRaw),
+          });
         }
       }
     }

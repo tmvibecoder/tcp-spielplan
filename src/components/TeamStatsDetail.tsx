@@ -80,9 +80,15 @@ function AppearanceRow({
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="truncate text-[13px] text-slate-200">
-            vs <span className="font-semibold">{app.opponent}</span>
-          </span>
+          {app.partner ? (
+            <span className="truncate text-[13px] text-slate-200">
+              mit <span className="font-semibold">{app.partner}</span>
+            </span>
+          ) : (
+            <span className="truncate text-[13px] text-slate-200">
+              vs <span className="font-semibold">{app.opponent}</span>
+            </span>
+          )}
           <LkPill lk={app.opponentLk} />
           {strongWin && (
             <span
@@ -102,6 +108,11 @@ function AppearanceRow({
           )}
         </div>
         <div className="mt-0.5 text-[11px] text-slate-500">
+          {app.partner && (
+            <>
+              vs {app.opponent} ·{" "}
+            </>
+          )}
           {app.opponentClub} · {app.score}
         </div>
       </div>
@@ -111,24 +122,28 @@ function AppearanceRow({
 }
 
 /** Eine Meldelisten-Zeile: Rang vorne, Name + LK, rechts Ø-Position und Bilanz
- *  (sofern der Spieler schon ein Match in dieser Runde gespielt hat). */
+ *  (sofern der Spieler schon ein Match in dieser Runde gespielt hat).
+ *  mode "einzel" zählt nur Einzel, mode "doppel" nur Doppel-Einsätze. */
 function RosterRow({
   entry,
   agg,
+  mode,
   accentColor,
   isOpen,
   onToggle,
 }: {
   entry: MeldelistenEintrag;
   agg?: PlayerAgg;
+  mode: "einzel" | "doppel";
   accentColor: string;
   isOpen: boolean;
   onToggle: () => void;
 }) {
-  const totalMatches = agg ? agg.matches + agg.doublesMatches : 0;
-  const totalWins = agg ? agg.wins + agg.doublesWins : 0;
-  const totalLosses = agg ? agg.losses + agg.doublesLosses : 0;
-  const played = totalMatches > 0;
+  const isEinzel = mode === "einzel";
+  const shownMatches = agg ? (isEinzel ? agg.matches : agg.doublesMatches) : 0;
+  const shownWins = agg ? (isEinzel ? agg.wins : agg.doublesWins) : 0;
+  const shownLosses = agg ? (isEinzel ? agg.losses : agg.doublesLosses) : 0;
+  const played = shownMatches > 0;
   return (
     <div
       className={`overflow-hidden rounded-lg border ${
@@ -168,7 +183,7 @@ function RosterRow({
         </div>
         {played && agg ? (
           <>
-            {agg.matches > 0 && (
+            {isEinzel && (
               <span
                 className="flex-none rounded-md bg-slate-700/50 px-1.5 py-1 text-[10px] font-extrabold text-slate-200"
                 title="Durchschnittliche Einzel-Position"
@@ -177,9 +192,9 @@ function RosterRow({
               </span>
             )}
             <div className="flex-none text-right text-[11px] text-slate-400">
-              <span className="font-bold text-emerald-400">{totalWins}</span>
+              <span className="font-bold text-emerald-400">{shownWins}</span>
               <span className="text-slate-500">:</span>
-              <span className="font-bold text-red-400">{totalLosses}</span>
+              <span className="font-bold text-red-400">{shownLosses}</span>
             </div>
             <span className="flex-none text-[11px] text-slate-500">
               {isOpen ? "▲" : "▼"}
@@ -187,25 +202,19 @@ function RosterRow({
           </>
         ) : (
           <span className="flex-none pr-1 text-[10px] text-slate-600">
-            ohne Einsatz
+            {isEinzel ? "ohne Einzel" : "ohne Doppel"}
           </span>
         )}
       </button>
       {isOpen && played && agg && (
         <div className="px-3 pb-2.5">
-          {agg.singles.map((app, i) => (
-            <AppearanceRow key={i} app={app} ownLk={entry.lk} />
+          {(isEinzel ? agg.singles : agg.doubles).map((app, i) => (
+            <AppearanceRow
+              key={i}
+              app={app}
+              ownLk={isEinzel ? entry.lk : undefined}
+            />
           ))}
-          {agg.doubles.length > 0 && (
-            <>
-              <p className="mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                Doppel
-              </p>
-              {agg.doubles.map((app, i) => (
-                <AppearanceRow key={`d${i}`} app={app} />
-              ))}
-            </>
-          )}
         </div>
       )}
     </div>
@@ -272,10 +281,15 @@ export default function TeamStatsDetail({
       {/* Tabs */}
       <div className="mb-2 flex gap-1 px-1">
         {(
-          [
-            ["spieler", `Spieler (${meldeliste ? rosterCount : singlesPlayers.length})`],
-            ["doppel", `Doppel (${doubles.length})`],
-          ] as [StatTab, string][]
+          (meldeliste
+            ? [
+                ["spieler", `Einzel (${rosterCount})`],
+                ["doppel", `Doppel (${rosterCount})`],
+              ]
+            : [
+                ["spieler", `Spieler (${singlesPlayers.length})`],
+                ["doppel", `Doppel (${doubles.length})`],
+              ]) as [StatTab, string][]
         ).map(([key, label]) => (
           <button
             key={key}
@@ -295,13 +309,22 @@ export default function TeamStatsDetail({
         ))}
       </div>
 
-      {meldeliste && tab === "spieler" ? (
-        <p className="mb-2 px-2 text-[10px] text-slate-500">
-          Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>{" "}
-          (= Meldeposition laut nuLiga). <b className="text-slate-400">Ø</b> = durchschnittliche
-          Einzel-Position, Bilanz grün:rot = Siege:Niederlagen — antippen für die einzelnen
-          Matches. Quelle: btv.de-Mannschaftsportrait + nuLiga-Spielberichte.
-        </p>
+      {meldeliste ? (
+        tab === "spieler" ? (
+          <p className="mb-2 px-2 text-[10px] text-slate-500">
+            Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>{" "}
+            (= Meldeposition laut nuLiga). <b className="text-slate-400">Ø</b> = durchschnittliche
+            Einzel-Position, Bilanz grün:rot = Einzel-Siege:Niederlagen — antippen für die
+            einzelnen Matches. Quelle: btv.de-Mannschaftsportrait + nuLiga-Spielberichte.
+          </p>
+        ) : (
+          <p className="mb-2 px-2 text-[10px] text-slate-500">
+            Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>.
+            Bilanz grün:rot = Doppel-Siege:Niederlagen der einzelnen Person — antippen
+            zeigt pro Doppel, <b className="text-slate-400">mit wem</b> sie gespielt hat,
+            gegen welches Paar und welche Mannschaft, mit Ergebnis.
+          </p>
+        )
       ) : (
         <p className="mb-2 px-2 text-[10px] text-slate-500">
           Sortiert nach Ø-Position (1 = oben). <b className="text-slate-400">LK</b>{" "}
@@ -309,8 +332,9 @@ export default function TeamStatsDetail({
         </p>
       )}
 
-      {/* ── Spieler-Tab: Meldelisten-Modus (alle gemeldeten Spieler) ── */}
-      {tab === "spieler" && meldeliste && (
+      {/* ── Meldelisten-Modus: beide Tabs zeigen ALLE gemeldeten Spieler —
+            "Einzel" mit Einzel-Bilanz/Ø, "Doppel" mit Doppel-Bilanz + Partner ── */}
+      {meldeliste && (
         <div className="space-y-3">
           {(
             [
@@ -324,12 +348,13 @@ export default function TeamStatsDetail({
               </p>
               <div className="space-y-1">
                 {entries.map((e) => {
-                  const key = `m-${label}-${e.rang}`;
+                  const key = `m-${tab}-${label}-${e.rang}`;
                   return (
                     <RosterRow
                       key={key}
                       entry={e}
                       agg={aggByName.get(e.name)}
+                      mode={tab === "spieler" ? "einzel" : "doppel"}
                       accentColor={accentColor}
                       isOpen={openKey === key}
                       onToggle={() => toggle(key)}
@@ -346,12 +371,13 @@ export default function TeamStatsDetail({
               </p>
               <div className="space-y-1">
                 {unmatched.map((p) => {
-                  const key = `mu-${p.name}`;
+                  const key = `mu-${tab}-${p.name}`;
                   return (
                     <RosterRow
                       key={key}
                       entry={{ rang: 0, name: p.name, lk: p.lk, jahrgang: 0 }}
                       agg={p}
+                      mode={tab === "spieler" ? "einzel" : "doppel"}
                       accentColor={accentColor}
                       isOpen={openKey === key}
                       onToggle={() => toggle(key)}
@@ -420,8 +446,8 @@ export default function TeamStatsDetail({
         </div>
       )}
 
-      {/* ── Doppel-Tab ── */}
-      {tab === "doppel" && (
+      {/* ── Doppel-Tab (klassische Paar-Ansicht, nur ohne Meldeliste) ── */}
+      {tab === "doppel" && !meldeliste && (
         <div className="space-y-1.5">
           {doubles.map((d) => {
             const key = `d-${d.label}`;

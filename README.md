@@ -72,10 +72,12 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
 - **Meldelisten (seit 15.08.2026):** `src/data/meldelisten.ts` enthält die kompletten
   namentlichen Meldelisten **aller sechs Vereine** der Gruppe (Rang, Name, LK, Jahrgang;
   Herren und Damen separat nummeriert — z. B. Markt Schwaben 35 H + 23 D). Im Tabellen-Tab
-  zeigt der Spieler-Tab einer Mixed-Mannschaft damit **alle gemeldeten Spieler** in
-  Rang-Reihenfolge; wer schon gespielt hat, bekommt Ø-Einzel-Position, Sieg/Niederlage-Bilanz
-  (Einzel **und** Doppel, live aus den Spielberichten) und aufklappbare Match-Details, der
-  Rest steht auf „ohne Einsatz". Vereine ohne erfassten Spielbericht (z. B. Forstern) zeigen
+  zeigen bei einer Mixed-Mannschaft **beide Reiter dieselbe komplette Meldeliste** in
+  Rang-Reihenfolge: Reiter **„Einzel"** mit Ø-Einzel-Position und Einzel-Bilanz (Drilldown =
+  die einzelnen Einzel), Reiter **„Doppel"** mit Doppel-Bilanz pro Person (Drilldown = pro
+  Doppel „mit <Partner>", Gegnerpaar, Mannschaft, Ergebnis; die klassische Paar-Ansicht gibt
+  es nur noch in den Ligen ohne Meldeliste). Wer noch nicht gespielt hat, steht auf
+  „ohne Einzel"/„ohne Doppel". Vereine ohne erfassten Spielbericht (z. B. Forstern) zeigen
   statt des Leerzustands ebenfalls die Meldeliste. Aktualisieren: `npm run crawl:meldelisten`
   (Headless-Chrome-Crawl, s. u.) — die Datei wird komplett neu generiert.
 
