@@ -7,7 +7,7 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 - **Spielplan** – kommende/vergangene Begegnungen; springt beim Laden automatisch ans nächste Wochenende.
 - **Konkurrenz-Filter** – einzelne Mannschaften/Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **gespeicherte Auswahl** (seit 2026-06-22) – siehe unten.
 - **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung.
-- **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – siehe unten.
+- **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – Mannschaftszeile antippen. Seit 15.08.2026 mit **kompletter Meldeliste** (alle gemeldeten Spieler mit Rang), getrennt nach **Einzel** und **Doppel** – siehe unten.
 
 ### Konkurrenz-Filter & gespeicherte Auswahl
 
@@ -26,18 +26,53 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 
 ### Spieler-Statistik je Mannschaft
 
-In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es öffnet sich eine Detailseite mit zwei Reitern:
+In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → Detailseite mit zwei Reitern.
+Welche Ansicht erscheint, hängt davon ab, ob für die Mannschaft eine **Meldeliste** vorliegt
+(`src/data/meldelisten.ts`, seit 15.08.2026 für alle sechs Spielbericht-Konkurrenzen):
 
-- **Spieler** – jeder Spieler nach **Ø-Position** sortiert (Durchschnitt der gespielten Position; `1` = oben/stärkste Position), mit eigener **LK**. Aufklappen zeigt pro Einsatz: Gegner **inkl. dessen LK**, Position, Satz-Ergebnis und **SIEG/NIEDERL.** Marker **▲ LK-Sieg** = gegen besseren (niedrigeren) LK gewonnen, **▼** = gegen schwächeren LK verloren.
-- **Doppel** – Paarungen separat (Schlüssel = sortierte Nachnamen). Ohne LK, da nuLiga für Doppel keine LK ausweist.
+**A) Mit Meldeliste — „Einzel" / „Doppel", jeweils die KOMPLETTE Mannschaft** (Normalfall)
 
-**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand (Ausnahme Mixed Gr. 074: dort erscheint stattdessen die komplette Meldeliste, siehe unten). Mit Spielberichten gepflegt werden **sechs Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315), **D00** (Südliga 2 · Gr. 160) und **Mixed** (Spielebene B · Gr. 074, seit 06.08.2026 — läuft noch).
+- Beide Reiter listen **alle gemeldeten Spieler** in **Rang-Reihenfolge** (Rang = Meldeposition laut
+  nuLiga, steht vorne in der Pille), Herren und Damen als eigene Sektionen — leere Sektionen werden
+  ausgeblendet, Herren-Ligen zeigen also keine leere Damen-Liste.
+- **Einzel**: Ø-Einzel-Position + Einzel-Bilanz (grün:rot). Aufklappen → jedes Einzel mit Gegner,
+  dessen LK, Satz-Ergebnis, **SIEG/NIEDERL.**; **▲ LK-Sieg** = gegen besseren (niedrigeren) LK
+  gewonnen, **▼** = gegen schwächeren verloren.
+- **Doppel**: Doppel-Bilanz **pro Person** (nicht pro Paarung). Aufklappen → je Einsatz
+  „mit &lt;Partner&gt;", darunter Gegnerpaar · gegnerische Mannschaft · Ergebnis.
+- Wer noch nicht gespielt hat, steht gedimmt auf **„ohne Einzel"/„ohne Doppel"**.
+- **„Weitere Einsätze"** am Ende = Spieler, die in Berichten auftauchen, aber **nicht auf der
+  Meldeliste dieser Mannschaft** stehen — echte **Ersatzspieler** aus anderen Mannschaften des
+  Vereins (z. B. Schönwetter bei Kümmersbruck). Kein Datenfehler.
+
+**B) Ohne Meldeliste — klassische Ansicht** (Ligen, die nur Spielberichte hätten)
+
+- **Spieler**: nur Spieler **mit** Einzel-Einsatz, nach Ø-Position sortiert.
+- **Doppel**: **Paarungen** als Einheit (Schlüssel = sortierte Nachnamen), ohne LK.
+- Mannschaften ganz ohne Spielbericht **und** ohne Meldeliste zeigen den Hinweis-Leerzustand.
+
+**Datenquelle & Funktionsweise:** Bilanzen werden **live aus den echten nuLiga-Spielberichten**
+(`src/data/spielberichte.ts`) aggregiert – es gibt **keine Beispieldaten**; die Namensliste kommt aus
+`meldelisten.ts`. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch
+Gegner), da jeder Bericht beide Aufstellungen enthält. Mit Spielberichten **und** Meldelisten gepflegt
+werden **sechs Konkurrenzen**: **H00** (Gr. 023), **H30** (Gr. 292), **H40** (Gr. 004), **H40 III**
+(Gr. 315), **D00** (Gr. 160) und **Mixed** (Gr. 074).
 
 **Code-Landkarte:**
-- `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `aggregatePlayers`, `aggregateDoubles`, `parseLk`.
-- `src/components/TeamStatsDetail.tsx` – die Detailseite (Reiter, Drilldown, LK-Pillen).
-- `src/components/StandingsView.tsx` – Tabellenzeile klickbar (`selectedClub`-State); koexistiert mit der Spielbericht-Ansicht der Kreuztabelle.
-- Spieler-Strings haben das Format `"Nachname, Vorname (Meldeposition, LKxx,x)"` und werden von `src/utils/spielbericht.ts` (`parsePlayer`/`parseSide`) geparst. LK-Format `"LK14,3"` (Komma als Dezimaltrenner).
+- `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `emptyTeamStats`,
+  `aggregatePlayers`, `aggregateDoubles`, `parseLk`, `normalizePlayerName`. Doppel-Einsätze werden
+  **zusätzlich jedem der beiden Spieler** zugeordnet (`PlayerStat.doubles`, mit `partner`), damit die
+  Doppel-Ansicht pro Person funktioniert.
+- `src/components/TeamStatsDetail.tsx` – Detailseite; `RosterRow` rendert eine Meldelisten-Zeile im
+  `mode` `einzel`/`doppel`, `AppearanceRow` eine Match-Zeile (bei `partner` „mit …" statt „vs …").
+- `src/components/StandingsView.tsx` – Tabellenzeile klickbar (`selectedClub`), lädt Stats **und**
+  Meldeliste; bei Meldeliste ohne Bericht wird `emptyTeamStats` verwendet.
+- **Namens-Matching Bericht ↔ Meldeliste:** `normalizePlayerName` entfernt Walkover-Vermerk und
+  Länderkürzel (`"Faschang, Michael AUT (w.o.)"` → `"Faschang, Michael"`); Einträge desselben Spielers
+  aus mehreren Schreibweisen werden in `TeamStatsDetail` zusammengeführt. Ohne diese beiden Schritte
+  landen ~100 statt 8 Spieler fälschlich unter „Weitere Einsätze".
+- Spieler-Strings in Berichten: `"Nachname, Vorname (Meldeposition, LKxx,x)"`, geparst von
+  `src/utils/spielbericht.ts` (`parsePlayer`/`parseSide`). LK-Format `"LK14,3"` (Komma!).
 
 ---
 
@@ -71,23 +106,10 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
   Forstern–Haar (Nr. 2) auf den **27.09.** verlegt. Tabelle: Haar 1. (4:0), **Pliening 2.** (4:2).
   Auch die Mixed-Berichte haben inzwischen Meeting-IDs (z. B. Nr. 5 = meeting 12927839) — die
   Druckversion-Links stehen im Spielbericht-Modal des btv.de-Widgets (s. u.).
-- **Meldelisten (seit 15.08.2026):** `src/data/meldelisten.ts` enthält die kompletten
-  namentlichen Meldelisten aller Vereine der Gruppe (Rang, Name, LK, Jahrgang;
-  bei Mixed Herren und Damen separat nummeriert — z. B. Markt Schwaben 35 H + 23 D).
-  Seit 15.08. abends gilt das **auch für die fünf Spielbericht-Konkurrenzen der
-  Sommerrunde** (H00 Gr. 023, D00 Gr. 160, H40 Gr. 004, H40 III Gr. 315, H30 Gr. 292) —
-  die Gruppen stehen in `GROUPS` in `scripts/crawl-meldelisten.mjs` (mit `mode`
-  herren/damen/mixed). Im Tabellen-Tab
-  zeigen bei einer Mixed-Mannschaft **beide Reiter dieselbe komplette Meldeliste** in
-  Rang-Reihenfolge: Reiter **„Einzel"** mit Ø-Einzel-Position und Einzel-Bilanz (Drilldown =
-  die einzelnen Einzel), Reiter **„Doppel"** mit Doppel-Bilanz pro Person (Drilldown = pro
-  Doppel „mit <Partner>", Gegnerpaar, Mannschaft, Ergebnis; die klassische Paar-Ansicht gibt
-  es nur noch in den Ligen ohne Meldeliste). Wer noch nicht gespielt hat, steht auf
-  „ohne Einzel"/„ohne Doppel". Vereine ohne erfassten Spielbericht (z. B. Forstern) zeigen
-  statt des Leerzustands ebenfalls die Meldeliste. Aktualisieren: `npm run crawl:meldelisten`
-  (Headless-Chrome-Crawl, s. u.) — die Datei wird komplett neu generiert.
+- **Meldelisten:** siehe eigenen Abschnitt „Meldelisten" weiter unten — auch die Mixed-Vereine
+  sind dort erfasst (Herren und Damen separat nummeriert, z. B. Markt Schwaben 35 H + 23 D).
 
-**Datenstand (15.08.2026): alle fünf Sommer-Spielbericht-Konkurrenzen wirklich auf Endstand.** Die am 19.07. noch offenen Begegnungen wurden nachgewertet und sind samt Spielbericht erfasst (Gruppen-Reports vom 15.08.): Pliening–Finsing 3:6 (Gr. 023 — Pliening dadurch Rang 6), Putzbrunn–Oberpframmern 0:6 (Gr. 292 — Oberpframmern Rang 1), Jahn–Grün-Gold 5:4 und Steinhöring–Fideliopark II 4:5 (Gr. 160 — Jahn vor Topspin auf Rang 6). Gr. 023, Gr. 004 und Gr. 160 damit lückenlos. Ohne Spielbericht-PDF, aber mit Tabellen-Ergebnis: Haar II–Fideliopark II 9:0 und Markt Schwaben–Forstinning 6:3 (Gr. 315; Forstinning-Begegnungen gelten als gestrichen); Feldkirchen II–Pliening III (Gr. 315) steht offiziell weiter ohne Ergebnis. Die 8 Ligen ohne Spielberichte stehen auf Stand 29.06.
+**Datenstand (15.08.2026): alle fünf Sommer-Spielbericht-Konkurrenzen wirklich auf Endstand.** Die am 19.07. noch offenen Begegnungen wurden nachgewertet und sind samt Spielbericht erfasst (Gruppen-Reports vom 15.08.): Pliening–Finsing 3:6 (Gr. 023 — Pliening dadurch Rang 6), Putzbrunn–Oberpframmern 0:6 (Gr. 292 — Oberpframmern Rang 1), Jahn–Grün-Gold 5:4 und Steinhöring–Fideliopark II 4:5 (Gr. 160 — Jahn vor Topspin auf Rang 6). Gr. 023, Gr. 004 und Gr. 160 damit lückenlos. Ohne Spielbericht-PDF, aber mit Tabellen-Ergebnis: Haar II–Fideliopark II 9:0 und Markt Schwaben–Forstinning 6:3 (Gr. 315; Forstinning-Begegnungen gelten als gestrichen); Feldkirchen II–Pliening III (Gr. 315) steht offiziell weiter ohne Ergebnis. Die 8 Ligen ohne Spielberichte stehen auf Stand 29.06. **Offen ist nur noch die laufende Mixed-Runde** — nächster Spieltag **22.08.** (Kirchheim–Feldkirchen, Forstern–Markt Schwaben), danach 30.08./06.09./19.09./26.09./27.09.
 
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
@@ -107,6 +129,56 @@ Quelle: **je Begegnung** eine PDF, „MeetingReportFOP":
 - `sets`: Liste von `[heim, gast]`-Sätzen; ein 3. Eintrag ist der Match-Tiebreak (z. B. `[10, 6]`). Nicht gespielte Sätze weglassen. **Reiner** Walkover → `(w.o.)` am Spielernamen **und** `sets: []`; bei Aufgabe mitten im Match die im PDF stehenden (Teil-)Sätze verbatim behalten (auch formale wie `1:0`/`3:0`), Sieger = die nicht aufgebende Seite.
 - Tritt ein Team ohne vollständige Aufstellung an, steht im PDF „Spieler/in nicht anwesend k.A.*" → als Platzhalter `"— (w.o.)"` speichern (Doppel: `"— (w.o.) / — (w.o.)"`), `sets: []`.
 
+### Meldelisten (Spielerlisten) → `src/data/meldelisten.ts`
+
+**AUTO-GENERIERT — nicht von Hand editieren.** Neu erzeugen mit:
+
+```bash
+npm run crawl:meldelisten          # alle Gruppen aus GROUPS
+npm run crawl:meldelisten -- 074   # nur passende Gruppe(n) (Filter auf leagueName/groupid)
+```
+
+Der Crawler (`scripts/crawl-meldelisten.mjs`, braucht Google Chrome, Pfad via `CHROME_PATH`
+überschreibbar) holt die Listen aus den **btv.de-Mannschaftsportraits**. Stand 15.08.2026:
+**43 Mannschaften, 1.884 Spieler** in sechs Gruppen (`GROUPS` im Script, je mit `groupid`,
+`leagueName` und `mode`):
+
+| Konkurrenz | leagueName | groupid | mode |
+|---|---|---|---|
+| H00 | Südliga 2 · Gr. 023 | 2215909 | herren |
+| D00 | Südliga 2 · Gr. 160 | 2216042 | damen |
+| H40 | Regionalliga Süd-Ost · Gr. 004 | 2144934 | herren |
+| H40 III | Südliga 2 · Gr. 315 | 2219941 | herren |
+| H30 | Südliga 4 (4er) · Gr. 292 | 2216174 | herren |
+| Mixed | Spielebene B · Gr. 074 | 2244334 | mixed |
+
+**groupid einer beliebigen Mannschaft finden:** auf der [Vereinsseite](https://www.btv.de/de/mein-verein/vereinsseite/tc-pliening.html)
+steckt das Mannschafts-Widget in einem iframe von `btv-prod.burdadigitalsystems.de/btvteams/?clubnr=02467`.
+Dort `window.open` überschreiben und die **„Tabelle/Spielplan [PDF]"**-Elemente klicken → die
+abgefangene URL enthält `group=<id>` (vorher ggf. „MEHR LADEN" klicken). Alle TCP-Gruppen 2026:
+004→2144934, 005→2139346, 043 SU→2165598, 103 SU→2165662, 023→2215909, 160→2216042, 292→2216174,
+315→2219941, 355→2224597, 379→2216258, 404→2224594, 441→2216316, 488→2216367, 596→2216473,
+638→2216513, 686→2216568, 870→2219939, Mixed 074→2244334.
+
+**Stolperfallen (alle im Script behandelt — nicht „wegoptimieren"):**
+
+- **Rang startet nicht bei 1.** Die Meldeliste einer **II./III. Mannschaft** ist ein Ausschnitt der
+  vereinsweiten Liste und beginnt bei dem Rang, ab dem der Verein für diese Mannschaft meldet
+  (Feldkirchen II ab **7**, Aschheim III ab **13**). Nur **Lückenlosigkeit** prüfen, nicht den Start.
+- **Nations-Spalte fehlt** in manchen Portraits komplett (z. B. Gr. 004) → im Zeilen-Regex optional.
+- **ZK-Pager bleibt stehen:** Nach dem Wechsel zur nächsten Mannschaft zeigt das Grid noch die alte
+  Seite → vor dem Auslesen `a.z-paging-first` klicken, bis die erste Zeile passt.
+- **Vereinslinks nur aus der Tabelle** oben holen: im Spielplan darunter stehen auch **Spielort**-Links
+  („TC Kirchheim bei Mü."), die kein Portrait haben und ins Timeout laufen.
+- **Frame wird detached**, sobald etwas schiefgeht → Seite (notfalls Browser) neu aufbauen und den
+  Frame **neu holen**; der alte Handle bleibt sonst für den Rest des Laufs kaputt.
+- **Cache:** Nach jeder Mannschaft wird `scripts/.meldelisten-cache.json` geschrieben (gitignored).
+  Ein Wiederanlauf überspringt fertige Mannschaften — Abbrüche kosten daher fast nichts. Cache löschen
+  = kompletter Neu-Crawl (dauert ~30–40 min für alle sechs Gruppen).
+- **Vereinsnamen müssen exakt** den `club`-Strings in `summer-2026.ts` entsprechen; Abweichungen über
+  `CLUB_ALIASES` im Script abfangen (z. B. „VfB Forstinning" → „VfB Forstinning (zurückgezogen)").
+  Nach dem Crawl gegenprüfen, dass jede Tabellen-Mannschaft eine Meldeliste hat.
+
 ### Workflow
 
 PDF(s) ziehen → **erst prüfen, ob `SB_<meetingID>` schon existiert** (gelieferte Link-Listen enthalten öfter bereits eingetragene oder doppelte Links → überspringen) → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
@@ -119,7 +191,19 @@ PDF(s) ziehen → **erst prüfen, ob `SB_<meetingID>` schon existiert** (geliefe
 
 - ✅ **PDF-Endpoints** (`nuDokument`) sind per `curl` erreichbar: `ResultReportFOP` (Gesamt-Tabellen), `MeetingReportFOP&meeting=<ID>` (Einzelbericht; `etag` optional) und `ScheduleReportFOP&group=<interne-Gruppen-ID>` („Tabelle und Spielplan" einer Gruppe, nu.Dokument 013 — die interne ID steht im `groupid`-Parameter der btv.de-Seite, z. B. 2244334 = Gr. 074). Voller Pfad: `https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE.woa/wa/nuDokument?...` (`-L` nötig, der Redirect hängt das `etag` an).
 - ❌ `btv.liga.nu/...groupPage?...` und alle anderen nuLiga-**HTML**-Seiten leiten generisch auf das btv.de-Portal um.
-- ⚠️ Die btv.de-Seite „Tabelle/Spielplan" (`tabelle-spielplan.html?groupid=<id>`) ist ein iframe auf `widget.btv.de/btvgroup/` (**ZK-Java-App**). Das Widget **direkt** aufzurufen liefert nur ein Fehlerbild, und plain-HTTP/`--dump-dom` bleibt leer (Inhalte kommen per ZK-AJAX). Es geht aber **headless mit Puppeteer über die einbettende btv.de-Seite**: Cookiebot-Banner wegklicken („Alle ablehnen"/„Nur notwendige Cookies" — Texte variieren), im Widget-iframe navigieren (Vereinsname klicken → Mannschaftsportrait mit Spieler-Grid, 15 Zeilen/Seite, blättern über `a.z-paging-next`). Genau das macht `scripts/crawl-meldelisten.mjs`. Auch die „ANZEIGEN"-Spielbericht-Buttons wären so erreichbar, falls mal Meeting-IDs/Berichte fehlen.
+- ✅ **Das btv.de-Widget ist doch scrapbar** (Korrektur der alten Notiz „nicht scrapbar"): Die Seite „Tabelle/Spielplan" (`tabelle-spielplan.html?groupid=<id>`) ist ein iframe auf `widget.btv.de/btvgroup/` (**ZK-Java-App**). Das Widget **direkt** aufzurufen liefert nur ein Fehlerbild, und plain-HTTP/`--dump-dom` bleibt leer (Inhalte kommen per ZK-AJAX). Mit **Puppeteer über die einbettende btv.de-Seite** funktioniert es headless: Cookiebot-Banner wegklicken („Alle ablehnen"/„Nur notwendige Cookies"/„OK" — Texte variieren, im Zweifel alle Kandidaten probieren), dann im `widget.btv.de`-Frame arbeiten.
+
+### Spielberichte selbst crawlen (statt Links liefern zu lassen)
+
+Seit 15.08.2026 müssen **keine MeetingReportFOP-Links mehr geliefert werden** — sie lassen sich aus dem Widget holen (das gilt auch für die Mixed-Runde, deren PDFs im Kopf nur „Spielbericht (Nr. n)" nennen):
+
+1. btv.de-Gruppenseite mit Puppeteer laden, Consent wegklicken, `widget.btv.de`-Frame greifen.
+2. Gespielte Begegnungen erkennt man an **`span.gb-status`** mit Text **„anzeigen"** (CSS macht daraus optisch „ANZEIGEN"; ein Text-Match auf Großschreibung schlägt fehl). Offene Begegnungen haben „OFFEN"/„Blanko-Spielbericht".
+3. Klick darauf öffnet ein **Inline-Modal** (`.z-window`) mit dem **kompletten Spielbericht** — Einzel und Doppel mit Namen, Meldeposition, LK und allen Sätzen. `innerText` des Modals reicht zum Auswerten.
+4. Im Modal `window.open` überschreiben und **„Druckversion [PDF]"** klicken → die abgefangene URL ist der `MeetingReportFOP&meeting=<ID>`-Link; damit bekommt man auch die **Meeting-ID** (und via PDF die offizielle „Spielbericht (Nr. n)").
+5. Modal schließen (ZK-Close-Icon oder `Escape`), nächste Begegnung.
+
+**Vollständigkeits-Check:** alle gecrawlten Meeting-IDs gegen die `SB_<meetingID>`-Konstanten in `spielberichte.ts` diffen — was fehlt, ist wirklich neu (Vorsicht: ein paar alte Begegnungen liegen als Papier-Spielbericht ohne Meeting-ID vor, z. B. Gr. 292 Nr. 6961/6962 — die tauchen im Diff auf, sind aber erfasst).
 
 ---
 
