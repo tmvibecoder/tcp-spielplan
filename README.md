@@ -31,7 +31,7 @@ In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → es 
 - **Spieler** – jeder Spieler nach **Ø-Position** sortiert (Durchschnitt der gespielten Position; `1` = oben/stärkste Position), mit eigener **LK**. Aufklappen zeigt pro Einsatz: Gegner **inkl. dessen LK**, Position, Satz-Ergebnis und **SIEG/NIEDERL.** Marker **▲ LK-Sieg** = gegen besseren (niedrigeren) LK gewonnen, **▼** = gegen schwächeren LK verloren.
 - **Doppel** – Paarungen separat (Schlüssel = sortierte Nachnamen). Ohne LK, da nuLiga für Doppel keine LK ausweist.
 
-**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand. Mit Spielberichten gepflegt werden **sechs Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315), **D00** (Südliga 2 · Gr. 160) und **Mixed** (Spielebene B · Gr. 074, seit 06.08.2026 — läuft noch).
+**Datenquelle & Funktionsweise:** Alles wird **live aus den echten nuLiga-Spielberichten** in `src/data/spielberichte.ts` aggregiert – es gibt **keine Beispieldaten**. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Mannschaften ohne erfassten Spielbericht zeigen einen Hinweis-Leerzustand (Ausnahme Mixed Gr. 074: dort erscheint stattdessen die komplette Meldeliste, siehe unten). Mit Spielberichten gepflegt werden **sechs Konkurrenzen** (Sommer 2026): **H00** (Südliga 2 · Gr. 023), **H30** (Südliga 4 (4er) · Gr. 292), **H40** (Regionalliga Süd-Ost · Gr. 004), **H40 III** (Südliga 2 · Gr. 315), **D00** (Südliga 2 · Gr. 160) und **Mixed** (Spielebene B · Gr. 074, seit 06.08.2026 — läuft noch).
 
 **Code-Landkarte:**
 - `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `aggregatePlayers`, `aggregateDoubles`, `parseLk`.
@@ -69,6 +69,15 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
   Feldkirchen–Markt Schwaben **2:4** (Nr. 3); 2. Spieltag (09.08.) — Haar–Pliening **4:2** (Nr. 4).
   Alle drei **mit Spielbericht** erfasst; Forstern–Haar (Nr. 2) vom 01.08. auf den **27.09.** verlegt.
   Tabelle: Markt Schwaben 1., Haar 2., **Pliening 3.** (2:2 aus 2).
+- **Meldelisten (seit 15.08.2026):** `src/data/meldelisten.ts` enthält die kompletten
+  namentlichen Meldelisten **aller sechs Vereine** der Gruppe (Rang, Name, LK, Jahrgang;
+  Herren und Damen separat nummeriert — z. B. Markt Schwaben 35 H + 23 D). Im Tabellen-Tab
+  zeigt der Spieler-Tab einer Mixed-Mannschaft damit **alle gemeldeten Spieler** in
+  Rang-Reihenfolge; wer schon gespielt hat, bekommt Ø-Einzel-Position, Sieg/Niederlage-Bilanz
+  (Einzel **und** Doppel, live aus den Spielberichten) und aufklappbare Match-Details, der
+  Rest steht auf „ohne Einsatz". Vereine ohne erfassten Spielbericht (z. B. Forstern) zeigen
+  statt des Leerzustands ebenfalls die Meldeliste. Aktualisieren: `npm run crawl:meldelisten`
+  (Headless-Chrome-Crawl, s. u.) — die Datei wird komplett neu generiert.
 
 **Datenstand (19.07.2026): alle fünf Spielbericht-Konkurrenzen auf Saison-Endstand** (PR #26/#28/#30). Gr. 023, Gr. 004 und Gr. 160 lückenlos (jede gespielte Begegnung mit Spielbericht). Ungespielt blieben (offiziell 0:0): Pliening–Finsing (Gr. 023), Oberpframmern–Putzbrunn (Gr. 292), Fideliopark II–Steinhöring und Jahn–Grün-Gold (Gr. 160) sowie Feldkirchen II–Pliening III (Gr. 315, Termin 18.07. — ggf. kommt noch ein Ergebnis nach). Ohne Spielbericht-PDF, aber mit Tabellen-Ergebnis: Haar II–Fideliopark II 9:0 und Markt Schwaben–Forstinning 6:3 (Gr. 315; Forstinning-Begegnungen gelten als gestrichen). Die 8 Ligen ohne Spielberichte stehen auf Stand 29.06.
 
@@ -100,9 +109,9 @@ PDF(s) ziehen → **erst prüfen, ob `SB_<meetingID>` schon existiert** (geliefe
 
 ### nuLiga-Zugriff: Was funktioniert (und was nicht)
 
-- ✅ **Nur die PDF-Endpoints** (`nuDokument`) sind maschinell erreichbar: `ResultReportFOP` (Gesamt-Tabellen) und `MeetingReportFOP&meeting=<ID>` (Einzelbericht; `etag` optional). Per `curl` laden, als PDF lesen.
-- ❌ `btv.liga.nu/...groupPage?...` (HTML-Gruppenseiten) leitet inzwischen generisch auf das btv.de-Portal um — mit beliebigen `championship`-Werten kommt nur die Portal-Startseite.
-- ❌ Die btv.de-Seite „Tabelle/Spielplan" (`tabelle-spielplan.html?groupid=<id>`) ist ein iframe auf `widget.btv.de/btvgroup/` — eine **ZK-Java-App**, die headless nicht bootet (Cookiebot-Consent + ZK-Client rendern nicht). Nicht scrapbar; Meeting-IDs fehlender Begegnungen lassen sich daher nicht automatisch ermitteln → **MeetingReportFOP-Links müssen geliefert werden** (aus dem Browser kopiert).
+- ✅ **PDF-Endpoints** (`nuDokument`) sind per `curl` erreichbar: `ResultReportFOP` (Gesamt-Tabellen), `MeetingReportFOP&meeting=<ID>` (Einzelbericht; `etag` optional) und `ScheduleReportFOP&group=<interne-Gruppen-ID>` („Tabelle und Spielplan" einer Gruppe, nu.Dokument 013 — die interne ID steht im `groupid`-Parameter der btv.de-Seite, z. B. 2244334 = Gr. 074). Voller Pfad: `https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE.woa/wa/nuDokument?...` (`-L` nötig, der Redirect hängt das `etag` an).
+- ❌ `btv.liga.nu/...groupPage?...` und alle anderen nuLiga-**HTML**-Seiten leiten generisch auf das btv.de-Portal um.
+- ⚠️ Die btv.de-Seite „Tabelle/Spielplan" (`tabelle-spielplan.html?groupid=<id>`) ist ein iframe auf `widget.btv.de/btvgroup/` (**ZK-Java-App**). Das Widget **direkt** aufzurufen liefert nur ein Fehlerbild, und plain-HTTP/`--dump-dom` bleibt leer (Inhalte kommen per ZK-AJAX). Es geht aber **headless mit Puppeteer über die einbettende btv.de-Seite**: Cookiebot-Banner wegklicken („Alle ablehnen"/„Nur notwendige Cookies" — Texte variieren), im Widget-iframe navigieren (Vereinsname klicken → Mannschaftsportrait mit Spieler-Grid, 15 Zeilen/Seite, blättern über `a.z-paging-next`). Genau das macht `scripts/crawl-meldelisten.mjs`. Auch die „ANZEIGEN"-Spielbericht-Buttons wären so erreichbar, falls mal Meeting-IDs/Berichte fehlen.
 
 ---
 
