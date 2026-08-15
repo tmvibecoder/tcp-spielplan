@@ -2393,6 +2393,95 @@ const SB_12742446: Spielbericht = {
   ],
 };
 
+// TC Pliening 3:6 TC Finsing — echte nuLiga-Daten (meeting 12686480, Nachwertung:
+// stand bis 19.07. offiziell 0:0, am 15.08. im Report mit Ergebnis)
+const SB_12686480: Spielbericht = {
+  league: "Südliga 2 · Gr. 023",
+  homeClub: "TC Pliening",
+  awayClub: "TC Finsing",
+  date: "2026-06-28",
+  day: "So",
+  finalHome: 3,
+  finalAway: 6,
+  matches: [
+    m("12686480-e1", 1, "singles", "Krug, Max (9, LK8,8)", "Keller, Florian (1, LK4,2)", [[5, 7], [5, 7]], "away"),
+    m("12686480-e2", 2, "singles", "Kerger, Justus (15, LK12,7)", "Keller, Marco (2, LK5,6)", [[6, 4], [4, 6], [14, 16]], "away"),
+    m("12686480-e3", 3, "singles", "Volkwein, Samuel (16, LK13,3)", "Malik, Daniel (3, LK8,9)", [[0, 6], [6, 4], [3, 10]], "away"),
+    m("12686480-e4", 4, "singles", "Miler, Thomas (18, LK14,3)", "Huber, Jonas (7, LK15,1)", [[6, 2], [6, 1]], "home"),
+    m("12686480-e5", 5, "singles", "Muhr, Lino (24, LK19,1)", "Bunk, Michael (9, LK15,9)", [[6, 7], [1, 6]], "away"),
+    m("12686480-e6", 6, "singles", "Hempel, Frederick (25, LK19,7)", "Haun, Andreas (14, LK18,9)", [[6, 4], [6, 0]], "home"),
+    m("12686480-d1", 7, "doubles", "Krug, Max / Kerger, Justus", "Keller, Florian / Keller, Marco", [[3, 6], [4, 6]], "away"),
+    m("12686480-d2", 8, "doubles", "Volkwein, Samuel / Miler, Thomas", "Malik, Daniel / Huber, Jonas", [[6, 2], [6, 3]], "home"),
+    m("12686480-d3", 9, "doubles", "Hempel, Frederick / Davis, Louis", "Bunk, Michael / Weinreich, Matthias", [[4, 6], [7, 5], [6, 10]], "away"),
+  ],
+};
+
+// TC Putzbrunn 0:6 TSV Oberpframmern — echte nuLiga-Daten (meeting 12692774,
+// Nachholspiel vom 30.07., stand bis dahin offiziell 0:0); 4er-Liga: Einzel 1–4, Doppel 7–8
+const SB_12692774: Spielbericht = {
+  league: "Südliga 4 (4er) · Gr. 292",
+  homeClub: "TC Putzbrunn",
+  awayClub: "TSV Oberpframmern",
+  date: "2026-07-30",
+  day: "Do",
+  finalHome: 0,
+  finalAway: 6,
+  matches: [
+    m("12692774-e1", 1, "singles", "Karatasos, Kostantinos GRE (2, LK15,4)", "Putzke, Christian (1, LK9,5)", [[1, 6], [5, 7]], "away"),
+    m("12692774-e2", 2, "singles", "Schnurr, Matthias (4, LK20,4)", "Bauer, Andreas (3, LK14,9)", [[1, 6], [3, 6]], "away"),
+    m("12692774-e3", 3, "singles", "Hierlmeier, Tobias (6, LK21,6)", "Janetschko, Florian (4, LK16,3)", [[5, 7], [6, 3], [3, 10]], "away"),
+    m("12692774-e4", 4, "singles", "Tränkler, Maximilian (11, LK23,6)", "Meßner, Tobias (10, LK19,9)", [[2, 6], [1, 6]], "away"),
+    m("12692774-d1", 7, "doubles", "Karatasos, Kostantinos GRE / Hierlmeier, Tobias", "Putzke, Christian / Janetschko, Florian", [[1, 6], [1, 6]], "away"),
+    m("12692774-d2", 8, "doubles", "Sturm, Kevin / Sohn, Andreas", "Meßner, Tobias / Gleich, Florian", [[3, 6], [4, 6]], "away"),
+  ],
+};
+
+// TS Jahn München 5:4 TC Grün-Gold München — echte nuLiga-Daten (meeting 12689726,
+// Nachzügler vom 19.07., stand bis dahin offiziell 0:0)
+const SB_12689726: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TS Jahn München",
+  awayClub: "TC Grün-Gold München",
+  date: "2026-07-19",
+  day: "So",
+  finalHome: 5,
+  finalAway: 4,
+  matches: [
+    m("12689726-e1", 1, "singles", "Fanta, Julia (1, LK14,7)", "Steffan, Lea (4, LK12,6)", [[2, 6], [4, 6]], "away"),
+    m("12689726-e2", 2, "singles", "Stuhler, Francesca (2, LK15,0)", "Hetzenecker, Julia (10, LK14,0)", [[2, 6], [3, 6]], "away"),
+    m("12689726-e3", 3, "singles", "Riegler, Nicola (4, LK16,9)", "Stadler, Amanda (20, LK19,1)", [[7, 5], [6, 1]], "home"),
+    m("12689726-e4", 4, "singles", "Laumer, Julia Theresa (7, LK19,4)", "Stadler, Mathilda (22, LK20,0)", [[2, 6], [3, 6]], "away"),
+    m("12689726-e5", 5, "singles", "Vogel, Joy (8, LK19,9)", "Gavriilidou, Christina GRE (25, LK21,1)", [[7, 5], [6, 0]], "home"),
+    m("12689726-e6", 6, "singles", "Eichelberg, Jule (9, LK20,0)", "Röth, Carolin (29, LK22,2)", [[6, 2], [6, 0]], "home"),
+    m("12689726-d1", 7, "doubles", "Stuhler, Francesca / Riegler, Nicola", "Hetzenecker, Julia / Stadler, Amanda", [[4, 6], [5, 7]], "away"),
+    m("12689726-d2", 8, "doubles", "Fanta, Julia / Vogel, Joy", "Steffan, Lea / Stadler, Mathilda", [[6, 3], [7, 6]], "home"),
+    m("12689726-d3", 9, "doubles", "Laumer, Julia Theresa / Eichelberg, Jule", "Gavriilidou, Christina GRE / Röth, Carolin", [[6, 1], [6, 1]], "home"),
+  ],
+};
+
+// TC Steinhöring 4:5 WB Fideliopark München II — echte nuLiga-Daten (meeting 12689763,
+// Nachzügler vom 02.08., stand bis dahin offiziell 0:0)
+const SB_12689763: Spielbericht = {
+  league: "Südliga 2 · Gr. 160",
+  homeClub: "TC Steinhöring",
+  awayClub: "WB Fideliopark München II",
+  date: "2026-08-02",
+  day: "So",
+  finalHome: 4,
+  finalAway: 5,
+  matches: [
+    m("12689763-e1", 1, "singles", "Windstetter, Sabrina (8, LK14,1)", "Berghüser, Sophie Marie (9, LK13,9)", [[5, 7], [1, 6]], "away"),
+    m("12689763-e2", 2, "singles", "Kohlen, Franziska (9, LK14,7)", "Chueakam, Pitchaya THA* (12, LK14,9)", [[1, 6], [2, 6]], "away"),
+    m("12689763-e3", 3, "singles", "Herbst, Martina (10, LK17,1)", "Rieff, Cassandra (17, LK15,6)", [[6, 3], [6, 1]], "home"),
+    m("12689763-e4", 4, "singles", "Kreuzer, Franziska (11, LK17,5)", "Fendt, Leonora (27, LK18,2)", [[5, 7], [3, 6]], "away"),
+    m("12689763-e5", 5, "singles", "Scheib, Sophia (12, LK17,6)", "Denkinger, Martha (35, LK20,9)", [[1, 6], [1, 6]], "away"),
+    m("12689763-e6", 6, "singles", "Holzgaßner, Manuela (17, LK20,3)", "Ehlert, Stefanie (43, LK24,5)", [[6, 1], [6, 0]], "home"),
+    m("12689763-d1", 7, "doubles", "Windstetter, Sabrina / Kohlen, Franziska", "Chueakam, Pitchaya THA* / Denkinger, Martha", [[6, 1], [6, 2]], "home"),
+    m("12689763-d2", 8, "doubles", "Herbst, Martina / Kreuzer, Franziska", "Berghüser, Sophie Marie / Ehlert, Stefanie", [[7, 5], [6, 4]], "home"),
+    m("12689763-d3", 9, "doubles", "Scheib, Sophia / Holzgaßner, Manuela", "Rieff, Cassandra / Fendt, Leonora", [[4, 6], [6, 3], [7, 10]], "away"),
+  ],
+};
+
 // ── Mixed-Runde Gr. 074 ──────────────────────────────────────────────────────
 // Die Mixed-Spielberichte kamen als PDF ohne Meeting-ID (nu.Dokument 011d); sie
 // tragen im Kopf nur eine gruppeninterne "Spielbericht (Nr. n)". Schlüssel daher
@@ -2453,6 +2542,25 @@ const SB_mx074n4: Spielbericht = {
     m("mx074n4-e4", 4, "singles", "Scheuermann, Lea (17, LK16,9)", "Erhard, Martina (6, LK19,0)", [[4, 6], [6, 4], [10, 12]], "away"),
     m("mx074n4-d1", 7, "doubles", "Drousiotis, Andreas CYP / Iordanidis, Paulina", "Volkwein, Samuel / Kaltenberger, Theresa", [[6, 3], [7, 5]], "home"),
     m("mx074n4-d2", 8, "doubles", "Voß, Darius / Scheuermann, Lea", "Miler, Thomas / Erhard, Martina", [[2, 6], [3, 6]], "away"),
+  ],
+};
+
+// TF Markt Schwaben 1:5 TSV Haar — echte nuLiga-Daten (Spielbericht Nr. 7, meeting 12927850)
+const SB_mx074n7: Spielbericht = {
+  league: "Spielebene B · Gr. 074",
+  homeClub: "TF Markt Schwaben",
+  awayClub: "TSV Haar",
+  date: "2026-08-15",
+  day: "Sa",
+  finalHome: 1,
+  finalAway: 5,
+  matches: [
+    m("mx074n7-e1", 1, "singles", "Warta, Roland (4, LK9,4)", "Drousiotis, Andreas CYP (2, LK8,6)", [[4, 6], [6, 2], [10, 4]], "home"),
+    m("mx074n7-e2", 2, "singles", "Hesdal, Marco (13, LK16,9)", "Schienagel, Fabio (23, LK14,5)", [[6, 7], [6, 7]], "away"),
+    m("mx074n7-e3", 3, "singles", "Fischer, Franziska (4, LK14,6)", "Poon, Yantung HKG* (9, LK13,2)", [[0, 6], [5, 7]], "away"),
+    m("mx074n7-e4", 4, "singles", "Warta, Annika (5, LK16,0)", "Ehlers, Leni (10, LK13,9)", [[6, 3], [4, 6], [7, 10]], "away"),
+    m("mx074n7-d1", 7, "doubles", "Warta, Roland / Fischer, Franziska", "Schienagel, Fabio / Poon, Yantung", [[2, 6], [5, 7]], "away"),
+    m("mx074n7-d2", 8, "doubles", "Hesdal, Marco / Warta, Annika", "Drousiotis, Andreas / Ehlers, Leni", [[2, 6], [5, 7]], "away"),
   ],
 };
 
@@ -2565,9 +2673,14 @@ const ALL: Spielbericht[] = [
   SB_12742492,
   SB_12742538,
   SB_12742446,
+  SB_12686480,
+  SB_12692774,
+  SB_12689726,
+  SB_12689763,
   SB_mx074n1,
   SB_mx074n3,
   SB_mx074n4,
+  SB_mx074n7,
 ];
 
 const SPIELBERICHTE: Record<string, Spielbericht> = Object.fromEntries(

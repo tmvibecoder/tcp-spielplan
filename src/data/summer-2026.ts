@@ -16,40 +16,40 @@ import type { LeagueStandings } from "../types";
 
 export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Herren Südliga 2  Gr. 023 ──
-  // Endstand (Report vom 19.07.2026), alle 7 Spieltage: Pliening–Finsing (28.06.)
-  // blieb ungespielt und steht auch offiziell mit 0:0.
+  // Endstand (Gruppen-Report vom 15.08.2026): Pliening–Finsing (28.06.) wurde
+  // nachträglich mit 3:6 gewertet (stand bis 19.07. offiziell 0:0) — dadurch
+  // Finsing 8:6 (Rang 4) und Pliening hinter Unterföhring II auf Rang 6.
   {
     teamLabel: "Herren",
     teamColor: "#0ea5e9",
     leagueName: "Südliga 2 · Gr. 023",
-    ownRank: 5,
+    ownRank: 6,
     entries: [
-      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "14:0", matchPoints: "49:14", sets: "102:33", crossResults: ["***", "7:2", "6:3", "7:2", "9:0", "7:2", "6:3", "7:2"] },
-      { rank: 2, club: "TSV Feldkirchen II", isOwnClub: false, points: "12:2", matchPoints: "51:12", sets: "106:30", crossResults: ["2:7", "***", "8:1", "9:0", "9:0", "8:1", "9:0", "6:3"] },
-      { rank: 3, club: "TC Aschheim III", isOwnClub: false, points: "10:4", matchPoints: "42:21", sets: "87:50", crossResults: ["3:6", "1:8", "***", "5:4", "9:0", "8:1", "8:1", "8:1"] },
-      { rank: 4, club: "TC Finsing", isOwnClub: false, points: "6:6", matchPoints: "25:29", sets: "58:62", crossResults: ["2:7", "0:9", "4:5", "***", "0:0", "6:3", "6:3", "7:2"] },
-      { rank: 5, club: "TC Pliening", isOwnClub: true , points: "4:8", matchPoints: "19:35", sets: "43:74", crossResults: ["0:9", "0:9", "0:9", "0:0", "***", "2:7", "8:1", "9:0"] },
-      { rank: 6, club: "TC Unterföhring II", isOwnClub: false, points: "4:10", matchPoints: "26:37", sets: "58:77", crossResults: ["2:7", "1:8", "1:8", "3:6", "7:2", "***", "4:5", "8:1"] },
-      { rank: 7, club: "Polizei SV Haar", isOwnClub: false, points: "2:12", matchPoints: "17:46", sets: "39:97", crossResults: ["3:6", "0:9", "1:8", "3:6", "1:8", "5:4", "***", "4:5"] },
-      { rank: 8, club: "TC Erding II", isOwnClub: false, points: "2:12", matchPoints: "14:49", sets: "35:105", crossResults: ["2:7", "3:6", "1:8", "2:7", "0:9", "1:8", "5:4", "***"] },
+      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "14:0", matchPoints: "49:14", sets: "102:33", crossResults: ["***", "7:2", "6:3", "7:2", "7:2", "9:0", "6:3", "7:2"] },
+      { rank: 2, club: "TSV Feldkirchen II", isOwnClub: false, points: "12:2", matchPoints: "51:12", sets: "106:30", crossResults: ["2:7", "***", "8:1", "9:0", "8:1", "9:0", "9:0", "6:3"] },
+      { rank: 3, club: "TC Aschheim III", isOwnClub: false, points: "10:4", matchPoints: "42:21", sets: "87:50", crossResults: ["3:6", "1:8", "***", "5:4", "8:1", "9:0", "8:1", "8:1"] },
+      { rank: 4, club: "TC Finsing", isOwnClub: false, points: "8:6", matchPoints: "31:32", sets: "70:71", crossResults: ["2:7", "0:9", "4:5", "***", "6:3", "6:3", "6:3", "7:2"] },
+      { rank: 5, club: "TC Unterföhring II", isOwnClub: false, points: "4:10", matchPoints: "26:37", sets: "58:77", crossResults: ["2:7", "1:8", "1:8", "3:6", "***", "7:2", "4:5", "8:1"] },
+      { rank: 6, club: "TC Pliening", isOwnClub: true , points: "4:10", matchPoints: "22:41", sets: "52:86", crossResults: ["0:9", "0:9", "0:9", "3:6", "2:7", "***", "8:1", "9:0"] },
+      { rank: 7, club: "Polizei SV Haar", isOwnClub: false, points: "2:12", matchPoints: "17:46", sets: "39:97", crossResults: ["3:6", "0:9", "1:8", "3:6", "5:4", "1:8", "***", "4:5"] },
+      { rank: 8, club: "TC Erding II", isOwnClub: false, points: "2:12", matchPoints: "14:49", sets: "35:105", crossResults: ["2:7", "3:6", "1:8", "2:7", "1:8", "0:9", "5:4", "***"] },
     ],
   },
   // ── Herren 30 Südliga 4 (4er)  Gr. 292 ──
-  // Endstand (Report vom 19.07.2026): inkl. Nachholspiel Finsing–Philathlos 4:2
-  // (27.06., abgeschlossen 18.07., meeting 12692775); Oberpframmern–Putzbrunn blieb
-  // ungespielt (0:0). Rangfolge verbatim wie offizieller Report (Finsing mit 6:2 aus
-  // 4 Spielen vor Pliening mit 5:3 aus 4 Spielen).
+  // Endstand (Gruppen-Report vom 15.08.2026): Nachholspiel Putzbrunn–Oberpframmern
+  // 0:6 (30.07.) ist gewertet — Saison komplett, Oberpframmern (6:2) jetzt vor
+  // Finsing (6:2) auf Rang 1.
   {
     teamLabel: "Herren 30",
     teamColor: "#22d3ee",
     leagueName: "Südliga 4 (4er) · Gr. 292",
     ownRank: 3,
     entries: [
-      { rank: 1, club: "TC Finsing", isOwnClub: false, points: "6:2", matchPoints: "14:10", sets: "33:24", crossResults: ["***", "4:2", "2:4", "4:2", "4:2"] },
-      { rank: 2, club: "TSV Oberpframmern", isOwnClub: false, points: "4:2", matchPoints: "13:5", sets: "27:11", crossResults: ["2:4", "***", "5:1", "0:0", "6:0"] },
-      { rank: 3, club: "TC Pliening", isOwnClub: true , points: "5:3", matchPoints: "14:10", sets: "29:24", crossResults: ["4:2", "1:5", "***", "6:0", "3:3"] },
-      { rank: 4, club: "TC Putzbrunn", isOwnClub: false, points: "2:4", matchPoints: "6:12", sets: "17:27", crossResults: ["2:4", "0:0", "0:6", "***", "4:2"] },
-      { rank: 5, club: "TC Philathlos München", isOwnClub: false, points: "1:7", matchPoints: "7:17", sets: "16:36", crossResults: ["2:4", "0:6", "3:3", "2:4", "***"] },
+      { rank: 1, club: "TSV Oberpframmern", isOwnClub: false, points: "6:2", matchPoints: "19:5", sets: "39:12", crossResults: ["***", "2:4", "5:1", "6:0", "6:0"] },
+      { rank: 2, club: "TC Finsing", isOwnClub: false, points: "6:2", matchPoints: "14:10", sets: "33:24", crossResults: ["4:2", "***", "2:4", "4:2", "4:2"] },
+      { rank: 3, club: "TC Pliening", isOwnClub: true , points: "5:3", matchPoints: "14:10", sets: "29:24", crossResults: ["1:5", "4:2", "***", "6:0", "3:3"] },
+      { rank: 4, club: "TC Putzbrunn", isOwnClub: false, points: "2:6", matchPoints: "6:18", sets: "18:39", crossResults: ["0:6", "2:4", "0:6", "***", "4:2"] },
+      { rank: 5, club: "TC Philathlos München", isOwnClub: false, points: "1:7", matchPoints: "7:17", sets: "16:36", crossResults: ["0:6", "2:4", "3:3", "2:4", "***"] },
     ],
   },
   // ── Herren 40 Regionalliga Süd-Ost  Gr. 004 ──
@@ -182,22 +182,23 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ],
   },
   // ── Damen Südliga 2  Gr. 160 ──
-  // Endstand (Report vom 19.07.2026): Spieltage 05.07. + 12.07. komplett; ungespielt
-  // blieben Fideliopark II–Steinhöring und Jahn–Grün-Gold (offiziell 0:0).
+  // Endstand (Gruppen-Report vom 15.08.2026): Nachzügler Jahn–Grün-Gold 5:4
+  // (19.07.) und Steinhöring–Fideliopark II 4:5 (02.08.) sind gewertet —
+  // Saison komplett, Jahn (6:8) damit vor Topspin (6:8) auf Rang 6.
   {
     teamLabel: "Damen",
     teamColor: "#f59e0b",
     leagueName: "Südliga 2 · Gr. 160",
     ownRank: 2,
     entries: [
-      { rank: 1, club: "WB Fideliopark München II", isOwnClub: false, points: "10:2", matchPoints: "37:17", sets: "77:44", crossResults: ["***", "7:2", "0:0", "4:5", "5:4", "8:1", "5:4", "8:1"] },
-      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "10:4", matchPoints: "38:25", sets: "80:57", crossResults: ["2:7", "***", "4:5", "6:3", "7:2", "7:2", "6:3", "6:3"] },
-      { rank: 3, club: "TC Steinhöring", isOwnClub: false, points: "8:4", matchPoints: "30:24", sets: "65:51", crossResults: ["0:0", "5:4", "***", "4:5", "3:6", "7:2", "5:4", "6:3"] },
-      { rank: 4, club: "TC Neukeferloh", isOwnClub: false, points: "8:6", matchPoints: "31:32", sets: "68:71", crossResults: ["5:4", "3:6", "5:4", "***", "2:7", "4:5", "6:3", "6:3"] },
-      { rank: 5, club: "TC Unterföhring", isOwnClub: false, points: "6:8", matchPoints: "30:33", sets: "72:73", crossResults: ["4:5", "2:7", "6:3", "7:2", "***", "2:7", "4:5", "5:4"] },
-      { rank: 6, club: "TC Topspin", isOwnClub: false, points: "6:8", matchPoints: "25:38", sets: "57:85", crossResults: ["1:8", "2:7", "2:7", "5:4", "7:2", "***", "3:6", "5:4"] },
-      { rank: 7, club: "TS Jahn München", isOwnClub: false, points: "4:8", matchPoints: "25:29", sets: "57:66", crossResults: ["4:5", "3:6", "4:5", "3:6", "5:4", "6:3", "***", "0:0"] },
-      { rank: 8, club: "TC Grün-Gold München", isOwnClub: false, points: "0:12", matchPoints: "18:36", sets: "48:77", crossResults: ["1:8", "3:6", "3:6", "3:6", "4:5", "4:5", "0:0", "***"] },
+      { rank: 1, club: "WB Fideliopark München II", isOwnClub: false, points: "12:2", matchPoints: "42:21", sets: "87:53", crossResults: ["***", "7:2", "5:4", "4:5", "5:4", "5:4", "8:1", "8:1"] },
+      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "10:4", matchPoints: "38:25", sets: "80:57", crossResults: ["2:7", "***", "4:5", "6:3", "7:2", "6:3", "7:2", "6:3"] },
+      { rank: 3, club: "TC Steinhöring", isOwnClub: false, points: "8:6", matchPoints: "34:29", sets: "74:61", crossResults: ["4:5", "5:4", "***", "4:5", "3:6", "5:4", "7:2", "6:3"] },
+      { rank: 4, club: "TC Neukeferloh", isOwnClub: false, points: "8:6", matchPoints: "31:32", sets: "68:71", crossResults: ["5:4", "3:6", "5:4", "***", "2:7", "6:3", "4:5", "6:3"] },
+      { rank: 5, club: "TC Unterföhring", isOwnClub: false, points: "6:8", matchPoints: "30:33", sets: "72:73", crossResults: ["4:5", "2:7", "6:3", "7:2", "***", "4:5", "2:7", "5:4"] },
+      { rank: 6, club: "TS Jahn München", isOwnClub: false, points: "6:8", matchPoints: "30:33", sets: "67:74", crossResults: ["4:5", "3:6", "4:5", "3:6", "5:4", "***", "6:3", "5:4"] },
+      { rank: 7, club: "TC Topspin", isOwnClub: false, points: "6:8", matchPoints: "25:38", sets: "57:85", crossResults: ["1:8", "2:7", "2:7", "5:4", "7:2", "3:6", "***", "5:4"] },
+      { rank: 8, club: "TC Grün-Gold München", isOwnClub: false, points: "0:14", matchPoints: "22:41", sets: "56:87", crossResults: ["1:8", "3:6", "3:6", "3:6", "4:5", "4:5", "4:5", "***"] },
     ],
   },
   // ── Damen 40  Südliga 1  Gr. 441 ──
@@ -258,24 +259,24 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ],
   },
   // ── Mixed  Spielebene B  Gr. 074 (Südbayern Mixed-Runde) ──
-  // Eigener Report "Tabelle und Spielplan" der Gruppe (nu.Dokument 013 vom 05.08.2026),
+  // Eigener Report "Tabelle und Spielplan" der Gruppe (nu.Dokument 013),
   // nicht Teil des vereinsweiten ResultReportFOP der Sommerrunde.
-  // Stand 09.08.2026: 1. Spieltag (01.08.) — Pliening–Kirchheim 4:2, Feldkirchen–Markt Schwaben 2:4;
-  // 2. Spieltag (09.08.) — Haar–Pliening 4:2 (Spielbericht Nr. 4).
-  // Forstern–Haar (ursprünglich 01.08.) wurde auf den 27.09. verlegt.
-  // Kreuztabelle daher aus den Spielplan-Ergebnissen abgeleitet; alles Übrige "0:0".
+  // Stand 15.08.2026 (Report 15:10): 3. Spieltag (15.08.) — Markt Schwaben–Haar 1:5
+  // (Spielbericht Nr. 7); Pliening–Feldkirchen (15.08., 11:00) noch ohne Ergebnis.
+  // Forstern–Haar (ursprünglich 01.08.) bleibt auf den 27.09. verlegt.
+  // Kreuztabelle aus den Spielplan-Ergebnissen abgeleitet; alles Übrige "0:0".
   {
     teamLabel: "Mixed",
     teamColor: "#a855f7",
     leagueName: "Spielebene B · Gr. 074",
-    ownRank: 3,
+    ownRank: 2,
     entries: [
-      { rank: 1, club: "TF Markt Schwaben", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "9:4", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "4:2"] },
-      { rank: 2, club: "TSV Haar", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "9:5", crossResults: ["0:0", "***", "4:2", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "TC Pliening", isOwnClub: true , points: "2:2", matchPoints: "6:6", sets: "13:13", crossResults: ["0:0", "2:4", "***", "0:0", "4:2", "0:0"] },
-      { rank: 4, club: "FC Forstern", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TeG Kirchheim", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:8", crossResults: ["0:0", "0:0", "2:4", "0:0", "***", "0:0"] },
-      { rank: 6, club: "TSV Feldkirchen", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:9", crossResults: ["2:4", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TSV Haar", isOwnClub: false, points: "4:0", matchPoints: "9:3", sets: "20:8", crossResults: ["***", "4:2", "0:0", "5:1", "0:0", "0:0"] },
+      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "2:2", matchPoints: "6:6", sets: "13:13", crossResults: ["2:4", "***", "0:0", "0:0", "4:2", "0:0"] },
+      { rank: 3, club: "FC Forstern", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "TF Markt Schwaben", isOwnClub: false, points: "2:2", matchPoints: "5:7", sets: "12:15", crossResults: ["1:5", "0:0", "0:0", "***", "0:0", "4:2"] },
+      { rank: 5, club: "TeG Kirchheim", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:8", crossResults: ["0:0", "2:4", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "TSV Feldkirchen", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:9", crossResults: ["0:0", "0:0", "0:0", "2:4", "0:0", "***"] },
     ],
   },
   // ── Juniorinnen 18  Südliga 3  Gr. 686 ──

@@ -65,10 +65,12 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
 - **Spielbericht-PDFs ohne Meeting-ID:** Die Mixed-Berichte (`nu.Dokument 011d`) nennen im Kopf nur
   eine gruppeninterne **„Spielbericht (Nr. n)"**, keine Meeting-ID. Schlüssel in
   `spielberichte.ts` daher **`SB_mx074n<Nr>`** statt `SB_<meetingID>`.
-- **Stand 09.08.2026:** 1. Spieltag (01.08.) — Pliening–Kirchheim **4:2** (Nr. 1),
-  Feldkirchen–Markt Schwaben **2:4** (Nr. 3); 2. Spieltag (09.08.) — Haar–Pliening **4:2** (Nr. 4).
-  Alle drei **mit Spielbericht** erfasst; Forstern–Haar (Nr. 2) vom 01.08. auf den **27.09.** verlegt.
-  Tabelle: Markt Schwaben 1., Haar 2., **Pliening 3.** (2:2 aus 2).
+- **Stand 15.08.2026:** Pliening–Kirchheim **4:2** (Nr. 1), Feldkirchen–Markt Schwaben **2:4**
+  (Nr. 3), Haar–Pliening **4:2** (Nr. 4) und Markt Schwaben–Haar **1:5** (Nr. 7, 15.08.) — alle
+  **mit Spielbericht** erfasst. Pliening–Feldkirchen (15.08., 11:00) noch ohne Ergebnis;
+  Forstern–Haar (Nr. 2) auf den **27.09.** verlegt. Tabelle: Haar 1. (4:0), **Pliening 2.** (2:2).
+  Auch die Mixed-Berichte haben inzwischen Meeting-IDs (Nr. 7 = meeting 12927850) — die
+  Druckversion-Links stehen im Spielbericht-Modal des btv.de-Widgets (s. u.).
 - **Meldelisten (seit 15.08.2026):** `src/data/meldelisten.ts` enthält die kompletten
   namentlichen Meldelisten **aller sechs Vereine** der Gruppe (Rang, Name, LK, Jahrgang;
   Herren und Damen separat nummeriert — z. B. Markt Schwaben 35 H + 23 D). Im Tabellen-Tab
@@ -81,7 +83,7 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
   statt des Leerzustands ebenfalls die Meldeliste. Aktualisieren: `npm run crawl:meldelisten`
   (Headless-Chrome-Crawl, s. u.) — die Datei wird komplett neu generiert.
 
-**Datenstand (19.07.2026): alle fünf Spielbericht-Konkurrenzen auf Saison-Endstand** (PR #26/#28/#30). Gr. 023, Gr. 004 und Gr. 160 lückenlos (jede gespielte Begegnung mit Spielbericht). Ungespielt blieben (offiziell 0:0): Pliening–Finsing (Gr. 023), Oberpframmern–Putzbrunn (Gr. 292), Fideliopark II–Steinhöring und Jahn–Grün-Gold (Gr. 160) sowie Feldkirchen II–Pliening III (Gr. 315, Termin 18.07. — ggf. kommt noch ein Ergebnis nach). Ohne Spielbericht-PDF, aber mit Tabellen-Ergebnis: Haar II–Fideliopark II 9:0 und Markt Schwaben–Forstinning 6:3 (Gr. 315; Forstinning-Begegnungen gelten als gestrichen). Die 8 Ligen ohne Spielberichte stehen auf Stand 29.06.
+**Datenstand (15.08.2026): alle fünf Sommer-Spielbericht-Konkurrenzen wirklich auf Endstand.** Die am 19.07. noch offenen Begegnungen wurden nachgewertet und sind samt Spielbericht erfasst (Gruppen-Reports vom 15.08.): Pliening–Finsing 3:6 (Gr. 023 — Pliening dadurch Rang 6), Putzbrunn–Oberpframmern 0:6 (Gr. 292 — Oberpframmern Rang 1), Jahn–Grün-Gold 5:4 und Steinhöring–Fideliopark II 4:5 (Gr. 160 — Jahn vor Topspin auf Rang 6). Gr. 023, Gr. 004 und Gr. 160 damit lückenlos. Ohne Spielbericht-PDF, aber mit Tabellen-Ergebnis: Haar II–Fideliopark II 9:0 und Markt Schwaben–Forstinning 6:3 (Gr. 315; Forstinning-Begegnungen gelten als gestrichen); Feldkirchen II–Pliening III (Gr. 315) steht offiziell weiter ohne Ergebnis. Die 8 Ligen ohne Spielberichte stehen auf Stand 29.06.
 
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
