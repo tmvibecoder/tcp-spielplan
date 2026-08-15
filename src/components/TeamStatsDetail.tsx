@@ -236,11 +236,35 @@ export default function TeamStatsDetail({
   // Klassische Ansicht (ohne Meldeliste): wie bisher nur Spieler mit Einzel-Einsatz
   const singlesPlayers = players.filter((p) => p.matches > 0);
 
-  // Meldelisten-Modus: Bilanzen der eingesetzten Spieler über den
-  // normalisierten Namen (ohne Länderkürzel) an die Meldeliste hängen.
-  const aggByName = new Map<string, PlayerAgg>(
-    players.map((p) => [normalizePlayerName(p.name), p])
-  );
+  // Meldelisten-Modus: Bilanzen der eingesetzten Spieler über den normalisierten
+  // Namen (ohne Länderkürzel/„(w.o.)") an die Meldeliste hängen. Derselbe Spieler
+  // kann in den Berichten mehrfach auftauchen (mit und ohne Vermerk) — zusammenführen.
+  const aggByName = new Map<string, PlayerAgg>();
+  for (const p of players) {
+    const key = normalizePlayerName(p.name);
+    const prev = aggByName.get(key);
+    if (!prev) {
+      aggByName.set(key, { ...p, name: key });
+      continue;
+    }
+    const singles = [...prev.singles, ...p.singles];
+    const doubles = [...prev.doubles, ...p.doubles];
+    aggByName.set(key, {
+      ...prev,
+      lk: prev.lk || p.lk,
+      matches: singles.length,
+      wins: singles.filter((s) => s.won).length,
+      losses: singles.filter((s) => !s.won).length,
+      avgPosition: singles.length
+        ? singles.reduce((sum, s) => sum + s.position, 0) / singles.length
+        : 99,
+      singles,
+      doublesMatches: doubles.length,
+      doublesWins: doubles.filter((d) => d.won).length,
+      doublesLosses: doubles.filter((d) => !d.won).length,
+      doubles,
+    });
+  }
   const rosterCount = meldeliste
     ? meldeliste.herren.length + meldeliste.damen.length
     : 0;
@@ -250,8 +274,12 @@ export default function TeamStatsDetail({
       ? [...meldeliste.herren, ...meldeliste.damen].map((e) => e.name)
       : []
   );
+  // Eingesetzte Spieler, die nicht auf der Meldeliste stehen (Ersatzspieler aus
+  // anderen Mannschaften des Vereins). "— (w.o.)"-Platzhalter gehören in keine Liste.
   const unmatched = meldeliste
-    ? players.filter((p) => !rosterNames.has(normalizePlayerName(p.name)))
+    ? [...aggByName.entries()]
+        .filter(([key]) => !rosterNames.has(key) && !key.startsWith("—"))
+        .map(([, agg]) => agg)
     : [];
 
   const toggle = (key: string) =>
@@ -341,7 +369,9 @@ export default function TeamStatsDetail({
               ["Herren", meldeliste.herren],
               ["Damen", meldeliste.damen],
             ] as [string, MeldelistenEintrag[]][]
-          ).map(([label, entries]) => (
+          )
+            .filter(([, entries]) => entries.length > 0)
+            .map(([label, entries]) => (
             <div key={label}>
               <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
                 {label} ({entries.length})
