@@ -65,11 +65,11 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
 - **Spielbericht-PDFs ohne Meeting-ID:** Die Mixed-Berichte (`nu.Dokument 011d`) nennen im Kopf nur
   eine gruppeninterne **„Spielbericht (Nr. n)"**, keine Meeting-ID. Schlüssel in
   `spielberichte.ts` daher **`SB_mx074n<Nr>`** statt `SB_<meetingID>`.
-- **Stand 15.08.2026:** Pliening–Kirchheim **4:2** (Nr. 1), Feldkirchen–Markt Schwaben **2:4**
-  (Nr. 3), Haar–Pliening **4:2** (Nr. 4) und Markt Schwaben–Haar **1:5** (Nr. 7, 15.08.) — alle
-  **mit Spielbericht** erfasst. Pliening–Feldkirchen (15.08., 11:00) noch ohne Ergebnis;
-  Forstern–Haar (Nr. 2) auf den **27.09.** verlegt. Tabelle: Haar 1. (4:0), **Pliening 2.** (2:2).
-  Auch die Mixed-Berichte haben inzwischen Meeting-IDs (Nr. 7 = meeting 12927850) — die
+- **Stand 15.08.2026 (abends):** Pliening–Kirchheim **4:2** (Nr. 1), Feldkirchen–Markt Schwaben
+  **2:4** (Nr. 3), Haar–Pliening **4:2** (Nr. 4), Pliening–Feldkirchen **4:2** (Nr. 5, 15.08.)
+  und Markt Schwaben–Haar **1:5** (Nr. 7, 15.08.) — alle **mit Spielbericht** erfasst;
+  Forstern–Haar (Nr. 2) auf den **27.09.** verlegt. Tabelle: Haar 1. (4:0), **Pliening 2.** (4:2).
+  Auch die Mixed-Berichte haben inzwischen Meeting-IDs (z. B. Nr. 5 = meeting 12927839) — die
   Druckversion-Links stehen im Spielbericht-Modal des btv.de-Widgets (s. u.).
 - **Meldelisten (seit 15.08.2026):** `src/data/meldelisten.ts` enthält die kompletten
   namentlichen Meldelisten **aller sechs Vereine** der Gruppe (Rang, Name, LK, Jahrgang;
