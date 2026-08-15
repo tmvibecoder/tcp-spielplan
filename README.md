@@ -72,8 +72,12 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
   Auch die Mixed-Berichte haben inzwischen Meeting-IDs (z. B. Nr. 5 = meeting 12927839) — die
   Druckversion-Links stehen im Spielbericht-Modal des btv.de-Widgets (s. u.).
 - **Meldelisten (seit 15.08.2026):** `src/data/meldelisten.ts` enthält die kompletten
-  namentlichen Meldelisten **aller sechs Vereine** der Gruppe (Rang, Name, LK, Jahrgang;
-  Herren und Damen separat nummeriert — z. B. Markt Schwaben 35 H + 23 D). Im Tabellen-Tab
+  namentlichen Meldelisten aller Vereine der Gruppe (Rang, Name, LK, Jahrgang;
+  bei Mixed Herren und Damen separat nummeriert — z. B. Markt Schwaben 35 H + 23 D).
+  Seit 15.08. abends gilt das **auch für die fünf Spielbericht-Konkurrenzen der
+  Sommerrunde** (H00 Gr. 023, D00 Gr. 160, H40 Gr. 004, H40 III Gr. 315, H30 Gr. 292) —
+  die Gruppen stehen in `GROUPS` in `scripts/crawl-meldelisten.mjs` (mit `mode`
+  herren/damen/mixed). Im Tabellen-Tab
   zeigen bei einer Mixed-Mannschaft **beide Reiter dieselbe komplette Meldeliste** in
   Rang-Reihenfolge: Reiter **„Einzel"** mit Ø-Einzel-Position und Einzel-Bilanz (Drilldown =
   die einzelnen Einzel), Reiter **„Doppel"** mit Doppel-Bilanz pro Person (Drilldown = pro

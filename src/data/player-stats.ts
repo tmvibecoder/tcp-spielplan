@@ -156,10 +156,13 @@ export function emptyTeamStats(leagueName: string, club: string): TeamStats {
   return { club, teamLabel, leagueName, players: [], doubles: [] };
 }
 
-/** Spielbericht-Namen auf Meldelisten-Form bringen: Länderkürzel hinter dem
- *  Namen entfernen ("Drousiotis, Andreas CYP" -> "Drousiotis, Andreas"). */
+/** Spielbericht-Namen auf Meldelisten-Form bringen: Walkover-Vermerk und
+ *  Länderkürzel entfernen ("Faschang, Michael AUT (w.o.)" -> "Faschang, Michael"). */
 export function normalizePlayerName(name: string): string {
-  return name.replace(/\s+[A-Z]{3}\*?$/, "").trim();
+  return name
+    .replace(/\s*\(w\.o\.\)\s*$/i, "")
+    .replace(/\s+[A-Z]{3}\*?$/, "")
+    .trim();
 }
 
 // ── Abgeleitete Kennzahlen (Einsätze, Bilanz, Ø-Position; sortiert) ───────────
