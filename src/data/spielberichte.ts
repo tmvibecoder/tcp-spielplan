@@ -2545,6 +2545,25 @@ const SB_mx074n4: Spielbericht = {
   ],
 };
 
+// TC Pliening 4:2 TSV Feldkirchen — echte nuLiga-Daten (Spielbericht Nr. 5, meeting 12927839)
+const SB_mx074n5: Spielbericht = {
+  league: "Spielebene B · Gr. 074",
+  homeClub: "TC Pliening",
+  awayClub: "TSV Feldkirchen",
+  date: "2026-08-15",
+  day: "Sa",
+  finalHome: 4,
+  finalAway: 2,
+  matches: [
+    m("mx074n5-e1", 1, "singles", "Forchhammer, Sebastian (10, LK16,9)", "Fauth, Felix (3, LK9,0)", [[0, 6], [0, 6]], "away"),
+    m("mx074n5-e2", 2, "singles", "Hempel, Frederick (14, LK19,7)", "Raupach, Carsten (45, LK23,3)", [[6, 1], [6, 0]], "home"),
+    m("mx074n5-e3", 3, "singles", "Bauer, Emma (1, LK12,8)", "Konitz, Kirsten (6, LK16,8)", [[6, 1], [6, 2]], "home"),
+    m("mx074n5-e4", 4, "singles", "Rehberg, Hanna (3, LK14,5)", "Weber, Stephanie (20, LK21,4)", [[6, 1], [6, 2]], "home"),
+    m("mx074n5-d1", 7, "doubles", "Forchhammer, Sebastian / Bauer, Emma", "Fauth, Felix / Weber, Stephanie", [[4, 6], [6, 4], [8, 10]], "away"),
+    m("mx074n5-d2", 8, "doubles", "Hempel, Frederick / Rehberg, Hanna", "Raupach, Carsten / Konitz, Kirsten", [[6, 2], [6, 2]], "home"),
+  ],
+};
+
 // TF Markt Schwaben 1:5 TSV Haar — echte nuLiga-Daten (Spielbericht Nr. 7, meeting 12927850)
 const SB_mx074n7: Spielbericht = {
   league: "Spielebene B · Gr. 074",
@@ -2680,6 +2699,7 @@ const ALL: Spielbericht[] = [
   SB_mx074n1,
   SB_mx074n3,
   SB_mx074n4,
+  SB_mx074n5,
   SB_mx074n7,
 ];
 

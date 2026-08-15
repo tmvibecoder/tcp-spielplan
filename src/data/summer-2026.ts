@@ -261,8 +261,8 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Mixed  Spielebene B  Gr. 074 (Südbayern Mixed-Runde) ──
   // Eigener Report "Tabelle und Spielplan" der Gruppe (nu.Dokument 013),
   // nicht Teil des vereinsweiten ResultReportFOP der Sommerrunde.
-  // Stand 15.08.2026 (Report 15:10): 3. Spieltag (15.08.) — Markt Schwaben–Haar 1:5
-  // (Spielbericht Nr. 7); Pliening–Feldkirchen (15.08., 11:00) noch ohne Ergebnis.
+  // Stand 15.08.2026 (Report 16:09): 3. Spieltag (15.08.) komplett — Markt Schwaben–Haar
+  // 1:5 (Spielbericht Nr. 7) und Pliening–Feldkirchen 4:2 (Spielbericht Nr. 5).
   // Forstern–Haar (ursprünglich 01.08.) bleibt auf den 27.09. verlegt.
   // Kreuztabelle aus den Spielplan-Ergebnissen abgeleitet; alles Übrige "0:0".
   {
@@ -272,11 +272,11 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ownRank: 2,
     entries: [
       { rank: 1, club: "TSV Haar", isOwnClub: false, points: "4:0", matchPoints: "9:3", sets: "20:8", crossResults: ["***", "4:2", "0:0", "5:1", "0:0", "0:0"] },
-      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "2:2", matchPoints: "6:6", sets: "13:13", crossResults: ["2:4", "***", "0:0", "0:0", "4:2", "0:0"] },
+      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "4:2", matchPoints: "10:8", sets: "22:17", crossResults: ["2:4", "***", "0:0", "0:0", "4:2", "4:2"] },
       { rank: 3, club: "FC Forstern", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
       { rank: 4, club: "TF Markt Schwaben", isOwnClub: false, points: "2:2", matchPoints: "5:7", sets: "12:15", crossResults: ["1:5", "0:0", "0:0", "***", "0:0", "4:2"] },
       { rank: 5, club: "TeG Kirchheim", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:8", crossResults: ["0:0", "2:4", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "TSV Feldkirchen", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:9", crossResults: ["0:0", "0:0", "0:0", "2:4", "0:0", "***"] },
+      { rank: 6, club: "TSV Feldkirchen", isOwnClub: false, points: "0:4", matchPoints: "4:8", sets: "8:18", crossResults: ["0:0", "2:4", "0:0", "2:4", "0:0", "***"] },
     ],
   },
   // ── Juniorinnen 18  Südliga 3  Gr. 686 ──
