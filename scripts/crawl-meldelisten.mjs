@@ -26,19 +26,14 @@ const CHROME =
   process.env.CHROME_PATH ??
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
-// mode: "herren" | "damen" | "mixed" (mixed = Rang-Reset trennt Herren/Damen)
-const GROUPS = [
-  { groupid: "2244334", leagueName: "Spielebene B · Gr. 074", mode: "mixed" },
-  { groupid: "2215909", leagueName: "Südliga 2 · Gr. 023", mode: "herren" },
-  { groupid: "2216042", leagueName: "Südliga 2 · Gr. 160", mode: "damen" },
-  { groupid: "2144934", leagueName: "Regionalliga Süd-Ost · Gr. 004", mode: "herren" },
-  { groupid: "2219941", leagueName: "Südliga 2 · Gr. 315", mode: "herren" },
-  { groupid: "2216174", leagueName: "Südliga 4 (4er) · Gr. 292", mode: "herren" },
-];
+import { GROUPS } from "./groups.mjs";
 
-// Vereinsnamen, die im Widget anders heißen als in summer-2026.ts
+// Vereinsnamen, die im Widget anders heißen als in summer-2026.ts — je Liga,
+// denn derselbe Verein kann in einer Liga zurückgezogen sein und in der anderen
+// normal weiterspielen (VfB Forstinning: Gr. 315 zurückgezogen, Gr. 379 nicht).
 const CLUB_ALIASES = {
-  "VfB Forstinning": "VfB Forstinning (zurückgezogen)",
+  "Südliga 2 · Gr. 315": { "VfB Forstinning": "VfB Forstinning (zurückgezogen)" },
+  "Landesliga 2 · Gr. 043 SU": { "TC Pliening II": "TC Pliening II (zurückgezogen)" },
 };
 
 const filter = process.argv[2];
@@ -132,7 +127,7 @@ function clubLinks(frame) {
   });
 }
 
-async function crawlTeam(frame, club, mode) {
+async function crawlTeam(frame, club, mode, leagueName) {
   const ok = await frame.evaluate((name) => {
     const a = [...document.querySelectorAll("a")].find(
       (e) => e.textContent.trim() === name && e.offsetParent !== null
@@ -208,9 +203,13 @@ async function crawlTeam(frame, club, mode) {
     // (z. B. Feldkirchen II ab Rang 7) — also nur lückenlose Folge prüfen.
     // Mixed: fällt der Rang wieder, beginnt die Damen-Liste.
     if (mode === "mixed" && prevRang && rang <= prevRang) section = damen;
+    // Nur aufsteigend prüfen: Ränge dürfen Lücken haben (abgemeldete Spieler,
+    // z. B. Anzing II ohne Rang 20) und beginnen bei II./III. Mannschaften mitten
+    // in der vereinsweiten Liste. Ein Rücksprung dagegen heißt: Seite doppelt
+    // gelesen oder Damen-Liste beginnt.
     const last = section[section.length - 1]?.rang;
-    if (last !== undefined && rang !== last + 1) {
-      throw new Error(`Rang-Lücke ${club}: erwartet ${last + 1}, bekam ${rang} (${name})`);
+    if (last !== undefined && rang <= last) {
+      throw new Error(`Rang-Rücksprung ${club}: nach ${last} kam ${rang} (${name})`);
     }
     section.push({
       rang,
@@ -221,7 +220,8 @@ async function crawlTeam(frame, club, mode) {
     });
     prevRang = rang;
   }
-  return { club: CLUB_ALIASES[club] ?? club, herren, damen };
+  const alias = CLUB_ALIASES[leagueName]?.[club];
+  return { club: alias ?? club, herren, damen };
 }
 
 const result = [];
@@ -239,7 +239,7 @@ for (const g of groups) {
     let team;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        team = await crawlTeam(frame, club, g.mode);
+        team = await crawlTeam(frame, club, g.mode, g.leagueName);
         break;
       } catch (e) {
         console.error(`  ! ${club} (Versuch ${attempt}): ${e.message}`);
@@ -282,7 +282,9 @@ let ts = `import type { Meldeliste } from "../types";
 
 export const MELDELISTEN: Meldeliste[] = [
 `;
-for (const t of result) {
+// Mannschaften ohne jeden Spieler weglassen (z. B. Midcourt U10: nuLiga führt
+// dort keine namentliche Meldeliste) — sonst zeigt die App "Einzel (0)".
+for (const t of result.filter((x) => x.herren.length || x.damen.length)) {
   ts += `  {
     leagueName: ${JSON.stringify(t.leagueName)},
     club: ${JSON.stringify(t.club)},
