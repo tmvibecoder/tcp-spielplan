@@ -60,7 +60,14 @@ async function startBrowser() {
   browser = await puppeteer.launch({
     executablePath: CHROME,
     headless: "new",
-    args: ["--no-first-run", "--disable-gpu", "--lang=de-DE"],
+    // CHROME_ARGS: zusaetzliche Chrome-Flags fuer Container/CI
+    // (z. B. CHROME_ARGS="--no-sandbox", wenn der Crawl als root laeuft).
+    args: [
+      "--no-first-run",
+      "--disable-gpu",
+      "--lang=de-DE",
+      ...(process.env.CHROME_ARGS ? process.env.CHROME_ARGS.split(" ").filter(Boolean) : []),
+    ],
   });
   page = await browser.newPage();
   await page.setViewport({ width: 1400, height: 2400 });

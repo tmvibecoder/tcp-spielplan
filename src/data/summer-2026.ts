@@ -72,29 +72,34 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     ],
   },
   // ── Herren 40 II  Landesliga 2  Gr. 043 SU ──
-  // Endstand (Report vom 19.07.2026): Pliening-II-Begegnungen gestrichen (Rückzug 07.05.);
-  // offen blieben Unterföhring–Anzing und Grün-Gold–Ramersdorf. Werte verbatim (BTV streicht
-  // gewertete Spiele, daher weichen Punkte teils von der Kreuztabelle ab).
+  // Endstand (Gruppen-Report vom 19.08.2026): Saison komplett. Nachgetragen sind
+  // Anzing–Unterföhring 1:8 und Ramersdorf–Grün-Gold 3:6 (19.07.) sowie
+  // Grün-Gold–Schloßberg 7:2 (26.07.) — Letzteres stand vorher als 1:3-Streichung
+  // in der Tabelle und wird vom BTV jetzt voll gewertet. Dadurch Grün-Gold auf
+  // Rang 2 vor Schloßberg und Unterföhring (alle 8:4). Pliening-II-Begegnungen
+  // bleiben gestrichen (Rückzug 07.05.). Werte verbatim.
   {
     teamLabel: "Herren 40 II",
     teamColor: "#67e8f9",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     ownRank: 8,
     entries: [
-      { rank: 1, club: "TSV 1860 Rosenheim", isOwnClub: false, points: "12:0", matchPoints: "33:21", sets: "70:47", crossResults: ["***", "5:4", "6:3", "5:4", "6:3", "5:4", "6:3", "0:0"] },
-      { rank: 2, club: "SV Schloßberg-Stephansk.", isOwnClub: false, points: "8:2", matchPoints: "32:13", sets: "67:29", crossResults: ["4:5", "***", "7:2", "1:3", "5:4", "8:1", "8:1", "0:0"] },
-      { rank: 3, club: "TC Unterföhring", isOwnClub: false, points: "6:4", matchPoints: "24:21", sets: "50:47", crossResults: ["3:6", "2:7", "***", "5:4", "5:4", "9:0", "0:0", "0:0"] },
-      { rank: 4, club: "TC Grün-Gold München", isOwnClub: false, points: "4:4", matchPoints: "23:13", sets: "52:30", crossResults: ["4:5", "3:1", "4:5", "***", "6:3", "0:0", "9:0", "0:0"] },
-      { rank: 5, club: "TSV Marquartstein", isOwnClub: false, points: "4:8", matchPoints: "29:25", sets: "61:55", crossResults: ["3:6", "4:5", "4:5", "3:6", "***", "6:3", "9:0", "0:0"] },
-      { rank: 6, club: "TC Ramersdorf", isOwnClub: false, points: "2:8", matchPoints: "17:28", sets: "40:59", crossResults: ["4:5", "1:8", "0:9", "0:0", "3:6", "***", "9:0", "0:0"] },
-      { rank: 7, club: "TC Anzing", isOwnClub: false, points: "0:10", matchPoints: "4:41", sets: "11:84", crossResults: ["3:6", "1:8", "0:0", "0:9", "0:9", "0:9", "***", "0:0"] },
+      { rank: 1, club: "TSV 1860 Rosenheim", isOwnClub: false, points: "12:0", matchPoints: "33:21", sets: "70:47", crossResults: ["***", "5:4", "5:4", "6:3", "6:3", "5:4", "6:3", "0:0"] },
+      { rank: 2, club: "TC Grün-Gold München", isOwnClub: false, points: "8:4", matchPoints: "36:18", sets: "81:43", crossResults: ["4:5", "***", "7:2", "4:5", "6:3", "6:3", "9:0", "0:0"] },
+      { rank: 3, club: "SV Schloßberg-Stephansk.", isOwnClub: false, points: "8:4", matchPoints: "34:20", sets: "72:44", crossResults: ["4:5", "2:7", "***", "7:2", "5:4", "8:1", "8:1", "0:0"] },
+      { rank: 4, club: "TC Unterföhring", isOwnClub: false, points: "8:4", matchPoints: "32:22", sets: "67:49", crossResults: ["3:6", "5:4", "2:7", "***", "5:4", "9:0", "8:1", "0:0"] },
+      { rank: 5, club: "TSV Marquartstein", isOwnClub: false, points: "4:8", matchPoints: "29:25", sets: "61:55", crossResults: ["3:6", "3:6", "4:5", "4:5", "***", "6:3", "9:0", "0:0"] },
+      { rank: 6, club: "TC Ramersdorf", isOwnClub: false, points: "2:10", matchPoints: "20:34", sets: "48:73", crossResults: ["4:5", "3:6", "1:8", "0:9", "3:6", "***", "9:0", "0:0"] },
+      { rank: 7, club: "TC Anzing", isOwnClub: false, points: "0:12", matchPoints: "5:49", sets: "13:101", crossResults: ["3:6", "0:9", "1:8", "1:8", "0:9", "0:9", "***", "0:0"] },
       { rank: 8, club: "TC Pliening II (zurückgezogen)", isOwnClub: true , points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
   // ── Herren 40 III Südliga 2  Gr. 315 ──
-  // Endstand (Report vom 19.07.2026, 11:12): inkl. Aschheim–Markt Schwaben 8:1 (18.07.).
-  // Feldkirchen II–Pliening III (18.07.) steht offiziell weiter ohne Ergebnis (0:0);
-  // Forstinning-Begegnungen (zurückgezogen 11.05.) bleiben gestrichen.
+  // Endstand (Gruppen-Report vom 19.08.2026): Saison komplett. Nachgetragen sind die
+  // beiden letzten Begegnungen vom 18.07. — Feldkirchen II–Pliening III 0:9 und
+  // Fideliopark II–Grün-Gold II 2:7. Pliening III steht damit auf Rang 3 (8:4).
+  // Forstinning-Begegnungen (zurückgezogen 11.05.) bleiben gestrichen; das
+  // Markt Schwaben–Forstinning 6:3 zählt der BTV nicht mit (bekannte Ausnahme).
   {
     teamLabel: "Herren 40 III",
     teamColor: "#7dd3fc",
@@ -103,11 +108,11 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
     entries: [
       { rank: 1, club: "TC Aschheim", isOwnClub: false, points: "10:2", matchPoints: "36:18", sets: "82:45", crossResults: ["***", "6:3", "2:7", "6:3", "6:3", "8:1", "8:1", "0:0"] },
       { rank: 2, club: "TSV Haar II", isOwnClub: false, points: "10:2", matchPoints: "36:18", sets: "77:47", crossResults: ["3:6", "***", "8:1", "6:3", "5:4", "5:4", "9:0", "0:0"] },
-      { rank: 3, club: "TC Pliening III", isOwnClub: true , points: "6:4", matchPoints: "24:21", sets: "55:53", crossResults: ["7:2", "1:8", "***", "4:5", "0:0", "5:4", "7:2", "0:0"] },
-      { rank: 4, club: "TC Grün-Gold München II", isOwnClub: false, points: "6:4", matchPoints: "22:23", sets: "50:51", crossResults: ["3:6", "3:6", "5:4", "***", "5:4", "6:3", "0:0", "0:0"] },
-      { rank: 5, club: "TSV Feldkirchen II", isOwnClub: false, points: "4:6", matchPoints: "23:22", sets: "55:48", crossResults: ["3:6", "4:5", "0:0", "4:5", "***", "5:4", "7:2", "0:0"] },
+      { rank: 3, club: "TC Pliening III", isOwnClub: true , points: "8:4", matchPoints: "33:21", sets: "73:55", crossResults: ["7:2", "1:8", "***", "4:5", "9:0", "5:4", "7:2", "0:0"] },
+      { rank: 4, club: "TC Grün-Gold München II", isOwnClub: false, points: "8:4", matchPoints: "29:25", sets: "64:55", crossResults: ["3:6", "3:6", "5:4", "***", "5:4", "6:3", "7:2", "0:0"] },
+      { rank: 5, club: "TSV Feldkirchen II", isOwnClub: false, points: "4:8", matchPoints: "23:31", sets: "57:66", crossResults: ["3:6", "4:5", "0:9", "4:5", "***", "5:4", "7:2", "0:0"] },
       { rank: 6, club: "TF Markt Schwaben", isOwnClub: false, points: "2:10", matchPoints: "23:31", sets: "54:71", crossResults: ["1:8", "4:5", "4:5", "3:6", "4:5", "***", "7:2", "6:3"] },
-      { rank: 7, club: "WB Fideliopark München II", isOwnClub: false, points: "0:10", matchPoints: "7:38", sets: "20:78", crossResults: ["1:8", "0:9", "2:7", "0:0", "2:7", "2:7", "***", "0:0"] },
+      { rank: 7, club: "WB Fideliopark München II", isOwnClub: false, points: "0:12", matchPoints: "9:45", sets: "24:92", crossResults: ["1:8", "0:9", "2:7", "2:7", "2:7", "2:7", "***", "0:0"] },
       { rank: 8, club: "VfB Forstinning (zurückgezogen)", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "3:6", "0:0", "***"] },
     ],
   },
