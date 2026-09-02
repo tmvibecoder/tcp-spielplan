@@ -93,8 +93,12 @@ for (const [league, data] of Object.entries(cache)) {
 }
 
 if (write && changed) {
+  // Anzeigedatum "BTV-Stand" in der App auf heute setzen
+  const d = new Date();
+  const stand = `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`;
+  src = src.replace(/export const SUMMER_STANDINGS_STAND = "[^"]*";/, `export const SUMMER_STANDINGS_STAND = "${stand}";`);
   fs.writeFileSync(FILE, src);
-  console.log(`\n${changed} Ligen in summer-2026.ts geschrieben.`);
+  console.log(`\n${changed} Ligen in summer-2026.ts geschrieben (SUMMER_STANDINGS_STAND = ${stand}).`);
 } else {
   console.log(`\n${changed} Ligen würden sich ändern (mit --write schreiben).`);
 }

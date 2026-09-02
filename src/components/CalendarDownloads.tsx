@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Match, Team, SeasonId } from "../types";
 import { CATEGORIES } from "../data/constants";
 import { TEAMS } from "../data/teams";
@@ -15,6 +16,7 @@ export default function CalendarDownloads({ season }: CalendarDownloadsProps) {
   const matchList: Match[] = isSummer ? MATCHES : WINTER_MATCHES;
   const categories = isSummer ? CATEGORIES : WINTER_CATEGORIES;
 
+  const [open, setOpen] = useState(false);
   const teamMap = new Map<string, Team>(teamList.map((t) => [t.id, t]));
 
   const matchesByTeam = new Map<string, Match[]>();
@@ -32,14 +34,24 @@ export default function CalendarDownloads({ season }: CalendarDownloadsProps) {
   };
 
   return (
-    <div id="kalender-downloads" className="mt-12 border-t border-slate-700/50 pt-8">
-      <h2 className="text-lg font-extrabold text-slate-100 mb-1">
-        Kalender-Downloads
-      </h2>
-      <p className="text-xs text-slate-400 mb-5">
-        ICS-Dateien für jede Mannschaft — importierbar in Apple Kalender, Google Kalender, Outlook etc.
-      </p>
+    <div id="kalender-downloads" className="mt-12 border-t border-slate-700/50 pt-6">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between gap-3 rounded-xl border border-slate-700/50 bg-slate-800/30 px-4 py-3 text-left hover:bg-slate-800/50 transition-colors"
+      >
+        <span>
+          <span className="block text-sm font-extrabold text-slate-100">📆 Spielplan in den Kalender übernehmen</span>
+          <span className="block text-[11px] text-slate-400 mt-0.5">
+            ICS-Datei je Mannschaft für Apple Kalender, Google Kalender, Outlook
+          </span>
+        </span>
+        <span className="text-slate-500 text-xs">{open ? "▲" : "▼"}</span>
+      </button>
 
+      {open && (
+      <div className="mt-4 animate-fadeIn">
       <div className="space-y-5">
         {categories.map((cat) => (
           <div key={cat.label}>
@@ -80,6 +92,8 @@ export default function CalendarDownloads({ season }: CalendarDownloadsProps) {
           Google Kalender: calendar.google.com, dann Einstellungen, Importieren & Exportieren, .ics-Datei hochladen.
         </p>
       </div>
+      </div>
+      )}
     </div>
   );
 }

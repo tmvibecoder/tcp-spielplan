@@ -30,7 +30,9 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 | Zweck | Datei |
 |---|---|
 | Konkurrenzen + groupids (eine Quelle für alle Skripte) | `scripts/groups.mjs` |
-| Tabellen + Kreuztabellen (Sommer) | `src/data/summer-2026.ts` |
+| Tabellen + Kreuztabellen (Sommer) + `SUMMER_STANDINGS_STAND` (Anzeige „BTV-Stand") | `src/data/summer-2026.ts` |
+| Spielplan-Termine (bei Verlegung: Datum aus dem Spielbericht) | `src/data/matches.ts` |
+| Ergebnis je Spielplan-Begegnung aus der Kreuztabelle ableiten | `src/data/results.ts` |
 | Spielberichte (Einzel/Doppel je Begegnung) | `src/data/spielberichte-crawled.ts` (**generiert**) |
 | Lookup drumherum | `src/data/spielberichte.ts` |
 | Meldelisten (alle gemeldeten Spieler) | `src/data/meldelisten.ts` (**generiert**) |
@@ -38,7 +40,8 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 | Prüf-Skripte | `scripts/verify-parser.mjs`, `check-data.mjs`, `check-names.mjs` |
 | Aggregation Spieler/Doppel | `src/data/player-stats.ts` |
 | Spieler-Detailseite | `src/components/TeamStatsDetail.tsx` |
-| Tabellen-Ansicht + Drilldown | `src/components/StandingsView.tsx` |
+| Tabellen-Ansicht + Drilldown (lazy geladen) | `src/components/StandingsView.tsx` |
+| Spielplan (Sommer und Winter, eine Komponente) | `src/components/TimelineView.tsx`, `MatchRow.tsx`, `MatchDetail.tsx` |
 
 ## Datenpflege in Kürze
 
@@ -46,4 +49,5 @@ Neue Ergebnisse: Gruppen-Report `ScheduleReportFOP&group=<groupid>` per `curl -L
 (Tabelle **und** Spielplan), Spielberichte per Puppeteer aus dem btv.de-Widget holen
 (README-Abschnitt „Spielberichte selbst crawlen") und beides eintragen. Sanity-Checks:
 Summe der Einzel-/Doppel-Siege = Endergebnis der Begegnung, Kreuztabellen-Zelle =
-Matchpunkte, Tabellen-Delta = Sätze/Spiele des neuen Berichts.
+Matchpunkte, Tabellen-Delta = Sätze/Spiele des neuen Berichts. Danach `SUMMER_STANDINGS_STAND`
+prüfen (Generator setzt es, Hand-Änderungen nicht) und verlegte Termine in `matches.ts` nachziehen.

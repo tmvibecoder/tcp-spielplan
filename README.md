@@ -4,7 +4,7 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 
 ## Features
 
-- **Spielplan** – kommende/vergangene Begegnungen; springt beim Laden automatisch ans nächste Wochenende.
+- **Spielplan** – alle Begegnungen mit **offiziellem Endergebnis** (grün/rot/gelb aus Sicht des TC Pliening, „gestrichen" bei zurückgezogenen Mannschaften); springt beim Laden automatisch ans nächste Wochenende („Nächstes"-Marke). Spiel antippen → Endergebnis, Spielort mit Google-Maps-Link und **Spielbericht (Einzel/Doppel)**. Die Ergebnisse kommen ohne Extra-Daten aus den Kreuztabellen (`src/data/results.ts`), Winter-Begegnungen bringen sie direkt mit.
 - **Konkurrenz-Filter** – einzelne Mannschaften/Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **gespeicherte Auswahl** (seit 2026-06-22) – siehe unten.
 - **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung.
 - **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – Mannschaftszeile antippen. Seit 15.08.2026 mit **kompletter Meldeliste** (alle gemeldeten Spieler mit Rang), getrennt nach **Einzel** und **Doppel** – siehe unten.
@@ -16,12 +16,12 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 - **`Alle aus` / `Alle an`** – ein Toggle-Button, der sich nach dem Zustand richtet: solange **noch eine** Konkurrenz aktiv ist, heißt er `Alle aus` (Klick → alle ab); ist **keine** aktiv, heißt er `Alle an` (Klick → alle ein). Wirkt nur auf die **gerade angezeigte Saison** (Sommer **oder** Winter), nicht auf beide.
 - **`Nur Heim`** – blendet Auswärtsbegegnungen aus (saisonübergreifender Schalter).
 
-**Auswahl speichern:** Im **⋯-Menü** (oben rechts, neben „PDF exportieren") liegt **`Auswahl speichern`**. Das schreibt die aktuelle Auswahl **explizit** (nicht automatisch) in `localStorage` und zeigt kurz „✓ Gespeichert". Beim nächsten Seitenaufruf wird sie automatisch geladen – ohne erneutes Einstellen.
+**Auswahl speichern:** Unten im **„Konkurrenzen"-Panel** liegt **`Auswahl speichern`**. Das schreibt die aktuelle Auswahl **explizit** (nicht automatisch) in `localStorage` und zeigt kurz „✓ Gespeichert". Beim nächsten Seitenaufruf wird sie automatisch geladen – ohne erneutes Einstellen.
 
 **Code-Landkarte:**
 - `src/components/TeamFilter.tsx` – Filter-UI; `Alle aus`/`Alle an` leitet sich aus `anyActive` über alle Kategorie-IDs ab und ruft den Prop `setAllTeams(on)`.
 - `src/App.tsx` – Quelle der Wahrheit: getrennte Sets `activeSummerTeams` / `activeWinterTeams` (+ `homeOnly`). `setAllTeams` wirkt auf die aktive Saison. **Persistenz**: `loadPrefs()` einmalig beim Mount (initialisiert die State-Sets), `savePrefs()` schreibt auf Knopfdruck.
-- `src/components/Header.tsx` – Menüpunkt `Auswahl speichern` (Prop `onSavePrefs`) inkl. „✓ Gespeichert"-Flash.
+- `src/components/TeamFilterDropdown.tsx` – Button `Auswahl speichern` (Prop `onSavePrefs`) inkl. „✓ Gespeichert"-Flash.
 - `localStorage`-Key **`tcp-filter-prefs`**, Format `{ "summer": string[], "winter": string[], "homeOnly": boolean }` (Team-IDs der **aktiven** Konkurrenzen, beide Saisons in einem Eintrag). Liegt neben dem separaten Favoriten-Key `tcp-favorites` aus `src/hooks/useFavorites.ts`.
 
 ### Spieler-Statistik je Mannschaft
@@ -129,6 +129,12 @@ Spieltag **22.08.** (Kirchheim–Feldkirchen, Forstern–Markt Schwaben), danach
 
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
+**`SUMMER_STANDINGS_STAND`** (bzw. `WINTER_STANDINGS_STAND` in `winter-2526.ts`) ist das Datum des
+letzten BTV-Abgleichs und wird in der App über den Tabellen als „BTV-Stand" angezeigt.
+`generate-standings.mjs --write` setzt es automatisch auf das Tagesdatum; bei Hand-Änderungen mitpflegen.
+Verlegte Begegnungen im Spielplan (`matches.ts`) auf das tatsächliche Spieldatum aus dem
+Spielbericht setzen, sonst steht das Ergebnis am falschen Wochenende.
+
 Quelle: **eine** PDF mit allen Ligen, „Ergebnistabellen gesamt":
 `https://btv.liga.nu/.../nuDokument?dokument=ResultReportFOP&type=full&club=22844&season=18103`
 
@@ -230,79 +236,12 @@ Seit 15.08.2026 müssen **keine MeetingReportFOP-Links mehr geliefert werden** �
 
 ---
 
-## Tooling (Vite-Template-Notizen)
+## Tooling
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Vite + React 19 + TypeScript + Tailwind 4. `npm run dev` (Entwicklung), `npm run build`
+(`tsc -b` + `vite build`), `npm run lint`, `npm run preview`. Die Tabellen-Ansicht und die
+Spielbericht-Daten werden per `React.lazy` als eigene Chunks nachgeladen, damit der Spielplan
+schnell startet.
 
 ## Deployment
 

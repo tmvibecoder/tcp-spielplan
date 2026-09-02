@@ -1,13 +1,17 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, lazy, Suspense } from "react";
 import { TEAMS } from "./data/teams";
 import { MATCHES } from "./data/matches";
 import { SEASONS, DEFAULT_SEASON } from "./data/seasons";
-import { SUMMER_STANDINGS } from "./data/summer-2026";
+import { MONTHS, MONTH_COLORS } from "./data/constants";
+import { SUMMER_STANDINGS, SUMMER_STANDINGS_STAND } from "./data/summer-2026";
 import {
   WINTER_STANDINGS,
+  WINTER_STANDINGS_STAND,
   WINTER_TEAMS,
   WINTER_MATCHES,
   WINTER_CATEGORIES,
+  WINTER_MONTHS,
+  WINTER_MONTH_COLORS,
 } from "./data/winter-2526";
 import type { Team, SeasonId, SubTab } from "./types";
 import { generatePrintHTML } from "./utils/pdf-export";
@@ -15,13 +19,16 @@ import Header from "./components/Header";
 import SeasonDropdown from "./components/SeasonTabs";
 import TeamFilterDropdown from "./components/TeamFilterDropdown";
 import TimelineView from "./components/TimelineView";
-import WinterTimelineView from "./components/WinterTimelineView";
-import StandingsView from "./components/StandingsView";
 import CalendarDownloads from "./components/CalendarDownloads";
 import Footer from "./components/Footer";
 import { Impressum, Datenschutz } from "./components/LegalPages";
 import { useLiveScores } from "./hooks/useLiveScores";
 import { useFavorites } from "./hooks/useFavorites";
+
+// Die Tabellen-Ansicht zieht die großen Spielbericht- und Meldelisten-Daten mit.
+// Sie wird erst geladen, wenn jemand den Reiter „Tabelle“ öffnet — der Spielplan
+// startet dadurch deutlich schneller.
+const StandingsView = lazy(() => import("./components/StandingsView"));
 
 type Page = "spielplan" | "impressum" | "datenschutz";
 
@@ -68,7 +75,7 @@ function App() {
   const [page, setPage] = useState<Page>("spielplan");
 
   const isSummer = season === "sommer-26";
-
+  const seasonInfo = SEASONS.find((s) => s.id === season) ?? DEFAULT_SEASON;
 
   const navigateToLegal = useCallback((p: "impressum" | "datenschutz") => {
     setPage(p);
@@ -178,6 +185,10 @@ function App() {
   if (page === "impressum") return <Impressum onBack={backToSpielplan} />;
   if (page === "datenschutz") return <Datenschutz onBack={backToSpielplan} />;
 
+  const standingsFallback = (
+    <div className="py-12 text-center text-sm text-slate-500">Tabellen werden geladen …</div>
+  );
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <Header
@@ -224,40 +235,49 @@ function App() {
       />
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        {isSummer ? (
+        {subTab === "spielplan" ? (
           <>
-            {subTab === "spielplan" ? (
-              <>
-                {/* Main View */}
-                <TimelineView matches={filteredSummerMatches} teamMap={summerTeamMap} scores={scores} onSaveScore={saveScores} allMatches={MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
-
-                {/* Calendar Downloads */}
-                <CalendarDownloads season="sommer-26" />
-              </>
+            {isSummer ? (
+              <TimelineView
+                matches={filteredSummerMatches}
+                teamMap={summerTeamMap}
+                standings={SUMMER_STANDINGS}
+                months={MONTHS}
+                monthColors={MONTH_COLORS}
+                scores={scores}
+                onSaveScore={saveScores}
+                allMatches={MATCHES}
+                favorites={favorites}
+                toggleFavorite={toggleFavorite}
+                provisionalTimesUntil={seasonInfo.provisionalTimesUntil}
+              />
             ) : (
-              /* Summer Standings */
-              <StandingsView standings={filteredSummerStandings} />
+              <TimelineView
+                matches={filteredWinterMatches}
+                teamMap={winterTeamMap}
+                standings={WINTER_STANDINGS}
+                months={WINTER_MONTHS}
+                monthColors={WINTER_MONTH_COLORS}
+                scores={scores}
+                onSaveScore={saveScores}
+                allMatches={WINTER_MATCHES}
+                favorites={favorites}
+                toggleFavorite={toggleFavorite}
+              />
             )}
+            <CalendarDownloads season={season} />
           </>
         ) : (
-          <>
-            {subTab === "spielplan" ? (
-              <>
-                {/* Winter View */}
-                <WinterTimelineView matches={filteredWinterMatches} teamMap={winterTeamMap} scores={scores} onSaveScore={saveScores} allMatches={WINTER_MATCHES} favorites={favorites} toggleFavorite={toggleFavorite} />
-
-                {/* Calendar Downloads */}
-                <CalendarDownloads season="winter-2526" />
-              </>
-            ) : (
-              /* Winter Standings */
-              <StandingsView standings={filteredWinterStandings} />
-            )}
-          </>
+          <Suspense fallback={standingsFallback}>
+            <StandingsView
+              standings={isSummer ? filteredSummerStandings : filteredWinterStandings}
+              seasonLabel={seasonInfo.label}
+              stand={isSummer ? SUMMER_STANDINGS_STAND : WINTER_STANDINGS_STAND}
+            />
+          </Suspense>
         )}
 
-        {/* Footer */}
-        <Footer onNavigate={navigateToLegal} />
+        <Footer onNavigate={navigateToLegal} provisionalTimesUntil={seasonInfo.provisionalTimesUntil} />
       </main>
     </div>
   );

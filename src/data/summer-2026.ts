@@ -14,6 +14,11 @@ import type { LeagueStandings } from "../types";
 // Ausnahme Mixed (Gr. 074): eigene Südbayern Mixed-Runde im August/September mit
 // eigenem Gruppen-Report ("Tabelle und Spielplan", Stand 05.08.2026) — läuft noch.
 
+// Datum des letzten Abgleichs mit dem BTV (wird in der App über den Tabellen angezeigt).
+// scripts/generate-standings.mjs --write setzt es automatisch auf das Tagesdatum;
+// bei Hand-Änderungen bitte mitpflegen.
+export const SUMMER_STANDINGS_STAND = "19.08.2026";
+
 export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Herren Südliga 2  Gr. 023 ──
   // Endstand (Gruppen-Report vom 15.08.2026): Pliening–Finsing (28.06.) wurde

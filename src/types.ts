@@ -39,6 +39,9 @@ export interface Season {
   label: string;
   shortLabel: string;
   icon: string;
+  /** Bis zu diesem Datum (YYYY-MM-DD) gelten die Beginnzeiten laut BTV als vorläufig;
+   *  danach verschwindet der Hinweis automatisch. */
+  provisionalTimesUntil?: string;
 }
 
 export interface StandingsEntry {

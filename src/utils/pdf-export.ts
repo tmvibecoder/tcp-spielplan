@@ -114,7 +114,7 @@ export function generatePrintHTML(matches: Match[], activeTeamIds: Set<string>):
     html += `<div class="month">`;
     html += `<div class="month-header" style="background:${colors.headerBg};color:${colors.accent};border-left:4px solid ${colors.border};">
       <span>${monthName} 2026</span>
-      <span class="count">${month.matchCount} Spiele</span>
+      <span class="count">${month.matchCount} ${month.matchCount === 1 ? "Spiel" : "Spiele"}</span>
     </div>`;
 
     for (const week of month.weeks) {

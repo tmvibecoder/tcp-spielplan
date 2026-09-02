@@ -9,7 +9,10 @@ import TeamStatsDetail from "./TeamStatsDetail";
 
 interface StandingsViewProps {
   standings: LeagueStandings[];
-  activeTeamIds?: Set<string>;
+  /** z. B. "Sommer 2026" */
+  seasonLabel?: string;
+  /** Datum des letzten BTV-Abgleichs, z. B. "19.08.2026" */
+  stand?: string;
 }
 
 interface SelectedMeeting {
@@ -57,7 +60,7 @@ function rankMedal(rank: number): string {
   }
 }
 
-export default function StandingsView({ standings }: StandingsViewProps) {
+export default function StandingsView({ standings, seasonLabel, stand }: StandingsViewProps) {
   const [expandedLeague, setExpandedLeague] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectedMeeting | null>(null);
   const [selectedClub, setSelectedClub] = useState<string | null>(null);
@@ -87,13 +90,20 @@ export default function StandingsView({ standings }: StandingsViewProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-extrabold text-slate-200 flex items-center gap-2">
-        <span className="text-base">📊</span> Tabellen
-      </h2>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 px-1">
+        <h2 className="text-base font-extrabold text-slate-200 whitespace-nowrap">
+          Tabellen{seasonLabel ? <span className="font-semibold text-slate-400"> {seasonLabel}</span> : null}
+        </h2>
+        {stand && (
+          <span className="text-[11px] text-slate-500 whitespace-nowrap" title="Datum des letzten Abgleichs mit den offiziellen BTV-Tabellen">
+            BTV-Stand {stand}
+          </span>
+        )}
+      </div>
 
       {standings.length === 0 && (
         <div className="rounded-xl border border-slate-700/50 bg-slate-800/30 px-4 py-8 text-center text-sm text-slate-400">
-          Keine Konkurrenz ausgewählt — oben über „Konkurrenzen" mindestens eine aktivieren.
+          Keine Konkurrenz ausgewählt. Oben über „Konkurrenzen“ mindestens eine Mannschaft einschalten.
         </div>
       )}
 
@@ -110,17 +120,18 @@ export default function StandingsView({ standings }: StandingsViewProps) {
               backgroundColor: league.teamColor + "08",
             }}
           >
-            {/* League Header */}
+            {/* League Header: Zeile 1 Mannschaft · Platz · Pfeil, Zeile 2 Liga */}
             <button
               onClick={() => {
                 setExpandedLeague(isExpanded ? null : league.leagueName);
                 setSelectedClub(null);
               }}
-              className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
+              aria-expanded={isExpanded}
+              className="w-full px-4 py-2.5 text-left hover:bg-white/[0.02] transition-colors"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <span
-                  className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border"
+                  className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border whitespace-nowrap"
                   style={{
                     backgroundColor: league.teamColor + "18",
                     borderColor: league.teamColor + "40",
@@ -129,17 +140,17 @@ export default function StandingsView({ standings }: StandingsViewProps) {
                 >
                   {league.teamLabel}
                 </span>
-                <span className="text-sm text-slate-400">{league.leagueName}</span>
-              </div>
-              <div className="flex items-center gap-3">
+                <span className="flex-1" />
                 {ownEntry && (
-                  <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full border ${rankBadge(ownEntry.rank)}`}>
+                  <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${rankBadge(ownEntry.rank)}`}>
                     {rankMedal(ownEntry.rank) && <span aria-hidden="true">{rankMedal(ownEntry.rank)}</span>}
                     Platz {ownEntry.rank}
+                    <span className="font-normal text-slate-500">/{league.entries.length}</span>
                   </span>
                 )}
-                <span className="text-slate-500 text-xs">{isExpanded ? "▲" : "▼"}</span>
+                <span className="text-slate-500 text-xs w-4 text-center">{isExpanded ? "▲" : "▼"}</span>
               </div>
+              <div className="mt-1 text-xs text-slate-400 truncate">{league.leagueName}</div>
             </button>
 
             {/* Standings Table */}
@@ -307,13 +318,6 @@ export default function StandingsView({ standings }: StandingsViewProps) {
           </div>
         );
       })}
-
-      {standings.length === 0 && (
-        <div className="text-center py-8 text-slate-500">
-          <p className="text-sm">Noch keine Tabellen verfügbar.</p>
-          <p className="text-xs mt-1">Ergebnisse werden eingetragen sobald die Saison läuft.</p>
-        </div>
-      )}
 
       <SpielberichtDrawer
         open={selected !== null}

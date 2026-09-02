@@ -230,6 +230,7 @@ export default function TeamStatsDetail({
 }: TeamStatsDetailProps) {
   const [tab, setTab] = useState<StatTab>("spieler");
   const [openKey, setOpenKey] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
 
   const players = aggregatePlayers(team);
   const doubles = aggregateDoubles(team);
@@ -268,6 +269,9 @@ export default function TeamStatsDetail({
   const rosterCount = meldeliste
     ? meldeliste.herren.length + meldeliste.damen.length
     : 0;
+  // Für die Reiter-Beschriftung: wie viele Personen tatsächlich Einzel bzw. Doppel gespielt haben
+  const withSingles = [...aggByName.values()].filter((a) => a.matches > 0).length;
+  const withDoubles = [...aggByName.values()].filter((a) => a.doublesMatches > 0).length;
   // Sicherheitsnetz: eingesetzte Spieler, die (noch) nicht in der Meldeliste stehen
   const rosterNames = new Set(
     meldeliste
@@ -302,6 +306,7 @@ export default function TeamStatsDetail({
           <div className="truncate text-[11px] text-slate-400">
             {team.teamLabel} · {team.leagueName}
             {rank ? ` · Platz ${rank}` : ""}
+            {meldeliste ? ` · ${rosterCount} gemeldet` : ""}
           </div>
         </div>
       </div>
@@ -311,8 +316,8 @@ export default function TeamStatsDetail({
         {(
           (meldeliste
             ? [
-                ["spieler", `Einzel (${rosterCount})`],
-                ["doppel", `Doppel (${rosterCount})`],
+                ["spieler", `Einzel · ${withSingles} im Einsatz`],
+                ["doppel", `Doppel · ${withDoubles} im Einsatz`],
               ]
             : [
                 ["spieler", `Spieler (${singlesPlayers.length})`],
@@ -337,28 +342,40 @@ export default function TeamStatsDetail({
         ))}
       </div>
 
-      {meldeliste ? (
-        tab === "spieler" ? (
-          <p className="mb-2 px-2 text-[10px] text-slate-500">
-            Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>{" "}
-            (= Meldeposition laut nuLiga). <b className="text-slate-400">Ø</b> = durchschnittliche
-            Einzel-Position, Bilanz grün:rot = Einzel-Siege:Niederlagen — antippen für die
-            einzelnen Matches. Quelle: btv.de-Mannschaftsportrait + nuLiga-Spielberichte.
-          </p>
-        ) : (
-          <p className="mb-2 px-2 text-[10px] text-slate-500">
-            Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>.
-            Bilanz grün:rot = Doppel-Siege:Niederlagen der einzelnen Person — antippen
-            zeigt pro Doppel, <b className="text-slate-400">mit wem</b> sie gespielt hat,
-            gegen welches Paar und welche Mannschaft, mit Ergebnis.
-          </p>
-        )
-      ) : (
-        <p className="mb-2 px-2 text-[10px] text-slate-500">
-          Sortiert nach Ø-Position (1 = oben). <b className="text-slate-400">LK</b>{" "}
-          = Leistungsklasse des Gegners · Quelle: nuLiga-Spielberichte.
-        </p>
-      )}
+      {/* Erklärung der Spalten — eingeklappt, damit die Liste sofort sichtbar ist */}
+      <div className="mb-2 px-1">
+        <button
+          type="button"
+          onClick={() => setShowHelp((v) => !v)}
+          className="text-[11px] text-slate-500 hover:text-slate-300"
+        >
+          ⓘ {showHelp ? "Erklärung ausblenden" : "Was bedeuten die Werte?"}
+        </button>
+        {showHelp && (
+          meldeliste ? (
+            tab === "spieler" ? (
+              <p className="mt-1 px-1 text-[11px] text-slate-500">
+                Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>{" "}
+                (= Meldeposition laut nuLiga). <b className="text-slate-400">Ø</b> = durchschnittliche
+                Einzel-Position, Bilanz grün:rot = Einzel-Siege:Niederlagen — antippen für die
+                einzelnen Matches. Quelle: btv.de-Mannschaftsportrait + nuLiga-Spielberichte.
+              </p>
+            ) : (
+              <p className="mt-1 px-1 text-[11px] text-slate-500">
+                Komplette Meldeliste, sortiert nach <b className="text-slate-400">Rang</b>.
+                Bilanz grün:rot = Doppel-Siege:Niederlagen der einzelnen Person — antippen
+                zeigt pro Doppel, <b className="text-slate-400">mit wem</b> sie gespielt hat,
+                gegen welches Paar und welche Mannschaft, mit Ergebnis.
+              </p>
+            )
+          ) : (
+            <p className="mt-1 px-1 text-[11px] text-slate-500">
+              Sortiert nach Ø-Position (1 = oben). <b className="text-slate-400">LK</b>{" "}
+              = Leistungsklasse des Gegners · Quelle: nuLiga-Spielberichte.
+            </p>
+          )
+        )}
+      </div>
 
       {/* ── Meldelisten-Modus: beide Tabs zeigen ALLE gemeldeten Spieler —
             "Einzel" mit Einzel-Bilanz/Ø, "Doppel" mit Doppel-Bilanz + Partner ── */}
