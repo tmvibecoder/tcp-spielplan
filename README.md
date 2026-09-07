@@ -101,21 +101,20 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
 - **Spielbericht-PDFs ohne Meeting-ID:** Die Mixed-Berichte (`nu.Dokument 011d`) nennen im Kopf nur
   eine gruppeninterne **„Spielbericht (Nr. n)"**, keine Meeting-ID. Schlüssel in
   `spielberichte.ts` daher **`SB_mx074n<Nr>`** statt `SB_<meetingID>`.
-- **Stand 19.08.2026 (letzter Abgleich):** Pliening–Kirchheim **4:2** (Nr. 1), Feldkirchen–Markt Schwaben
-  **2:4** (Nr. 3), Haar–Pliening **4:2** (Nr. 4), Pliening–Feldkirchen **4:2** (Nr. 5, 15.08.)
-  und Markt Schwaben–Haar **1:5** (Nr. 7, 15.08.) — alle **mit Spielbericht** erfasst;
-  Forstern–Haar (Nr. 2) auf den **27.09.** verlegt. Tabelle: Haar 1. (4:0), **Pliening 2.** (4:2).
-  **Noch nicht nachgezogen:** die Plieninger Begegnungen vom **30.08.** (Forstern, H) und **06.09.**
-  (Markt Schwaben, A) — sie stehen in der Kreuztabelle als `"0:0"` und in der App als „offen".
-  Auch die Mixed-Berichte haben inzwischen Meeting-IDs (z. B. Nr. 5 = meeting 12927839) — die
+- **Stand 07.09.2026 (letzter Abgleich):** Alle **zehn** bisher gespielten Begegnungen der Gruppe sind
+  **mit Spielbericht** erfasst. TC Pliening hat seine **fünf** Begegnungen komplett: Kirchheim **4:2**,
+  Haar **2:4** (A), Feldkirchen **4:2**, **Forstern 6:0** (30.08., H) und **Markt Schwaben 5:1**
+  (06.09., A) — damit **Pliening 1.** (8:2, 21:9) vor Haar (7:1). Offen bleiben nur noch Begegnungen
+  **ohne Pliening** (12.09.–27.09., mehrfach verlegt); sie stehen in der Kreuztabelle als `"0:0"`.
+  Die Mixed-Berichte haben inzwischen Meeting-IDs (z. B. Nr. 5 = meeting 12927839) — die
   Druckversion-Links stehen im Spielbericht-Modal des btv.de-Widgets (s. u.).
 - **Meldelisten:** siehe eigenen Abschnitt „Meldelisten" weiter unten — auch die Mixed-Vereine
   sind dort erfasst (Herren und Damen separat nummeriert, z. B. Markt Schwaben 35 H + 23 D).
 
-**Datenstand (Tabellen-Abgleich 19.08.2026): Sommer 2026 vollständig.** Alle 18 Konkurrenzen sind mit
-Tabelle, Kreuztabelle, Spielberichten und Meldelisten erfasst — 402 Berichte, 3.168 Einzel/Doppel,
-132 Meldelisten mit 4.238 Spielern. `node scripts/check-data.mjs` meldet: von 806
-Kreuztabellen-Zellen mit Ergebnis haben **804 einen passenden Spielbericht**, 0 Abweichungen. Die
+**Datenstand (Tabellen-Abgleich 07.09.2026): Sommer 2026 vollständig.** Alle 18 Konkurrenzen sind mit
+Tabelle, Kreuztabelle, Spielberichten und Meldelisten erfasst — 407 Berichte, 3.198 Einzel/Doppel,
+132 Meldelisten mit 4.238 Spielern. `node scripts/check-data.mjs` meldet: von 816
+Kreuztabellen-Zellen mit Ergebnis haben **814 einen passenden Spielbericht**, 0 Abweichungen. Die
 zwei Ausnahmen sind bekannt und korrekt so:
 
 - **Gr. 315 Markt Schwaben–Forstinning 6:3** (2 Zellen): Forstinning ist zurückgezogen, nuLiga liefert
@@ -126,10 +125,11 @@ gegen gespielte 2:7) besteht nicht mehr — der BTV führt inzwischen 2:7, `chec
 Abweichungen.
 
 Ebenfalls erwartbar: **Midcourt U10 (Gr. 870)** hat keine Meldelisten (s. o.), und rund 0,5 % der
-Spieler-Nennungen (42 von 8.189) stehen nicht auf der Meldeliste ihrer Mannschaft — das sind
+Spieler-Nennungen (43 von 8.269) stehen nicht auf der Meldeliste ihrer Mannschaft — das sind
 Ersatzspieler aus anderen Mannschaften des Vereins und erscheinen unter „Weitere Einsätze"
-(`node scripts/check-names.mjs`). **Offen ist nur noch die Mixed-Runde**: seit dem letzten Abgleich
-(19.08.2026) sind die Spieltage 30.08., 06.09. und die restlichen bis 27.09. nicht nachgezogen.
+(`node scripts/check-names.mjs`). **Für den TC Pliening ist die Saison damit komplett** — auch die
+Mixed-Runde. In Gr. 074 laufen nur noch Begegnungen ohne Pliening (12.09.–27.09.), die beim
+nächsten Abgleich in die Kreuztabelle der Gruppe nachrücken.
 
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
@@ -146,7 +146,7 @@ Pro Liga ein `LeagueStandings`-Objekt; `entries` in **Rang-Reihenfolge**. `cross
 
 ### Spielberichte (Kreuztabellen-Detailansicht) → `src/data/spielberichte-crawled.ts`
 
-**AUTO-GENERIERT — nicht von Hand editieren.** Seit 16.08.2026 sind **alle** Begegnungen aller 18 Konkurrenzen erfasst (**402 Berichte, 3.168 Einzel/Doppel**); `src/data/spielberichte.ts` ist nur noch der Lookup drumherum (`getSpielbericht`, `getAllSpielberichte`). Die früher handgepflegten Berichte sind entfallen — der Crawl deckt sie alle ab (117/117 identisch bis auf Länderkürzel-Schreibweise und zwei Namen, die nuLiga inzwischen korrigiert hat).
+**AUTO-GENERIERT — nicht von Hand editieren.** Seit 16.08.2026 sind **alle** Begegnungen aller 18 Konkurrenzen erfasst (Stand 07.09.2026: **407 Berichte, 3.198 Einzel/Doppel**); `src/data/spielberichte.ts` ist nur noch der Lookup drumherum (`getSpielbericht`, `getAllSpielberichte`). Die früher handgepflegten Berichte sind entfallen — der Crawl deckt sie alle ab (117/117 identisch bis auf Länderkürzel-Schreibweise und zwei Namen, die nuLiga inzwischen korrigiert hat).
 
 ```bash
 npm run crawl:spielberichte          # alle Gruppen (~45 min) -> scripts/.spielberichte-cache.json

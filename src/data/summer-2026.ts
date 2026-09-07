@@ -12,12 +12,13 @@ import type { LeagueStandings } from "../types";
 // Kreuztabelle ab (BTV streicht gewertete Spiele aus der Tabelle) — Werte verbatim wie offiziell.
 // crossResults: "***" = Diagonale, "0:0" = noch nicht gespielt (zeigt "n.a.").
 // Ausnahme Mixed (Gr. 074): eigene Südbayern Mixed-Runde im August/September mit
-// eigenem Gruppen-Report ("Tabelle und Spielplan", Stand 05.08.2026) — läuft noch.
+// eigenem Gruppen-Report ("Tabelle und Spielplan", Stand 07.09.2026) — die Gruppe
+// läuft noch bis 27.09., TC Pliening hat seine fünf Begegnungen aber komplett.
 
 // Datum des letzten Abgleichs mit dem BTV (wird in der App über den Tabellen angezeigt).
 // scripts/generate-standings.mjs --write setzt es automatisch auf das Tagesdatum;
 // bei Hand-Änderungen bitte mitpflegen.
-export const SUMMER_STANDINGS_STAND = "19.08.2026";
+export const SUMMER_STANDINGS_STAND = "07.09.2026";
 
 export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Herren Südliga 2  Gr. 023 ──
@@ -271,22 +272,24 @@ export const SUMMER_STANDINGS: LeagueStandings[] = [
   // ── Mixed  Spielebene B  Gr. 074 (Südbayern Mixed-Runde) ──
   // Eigener Report "Tabelle und Spielplan" der Gruppe (nu.Dokument 013),
   // nicht Teil des vereinsweiten ResultReportFOP der Sommerrunde.
-  // Stand 15.08.2026 (Report 16:09): 3. Spieltag (15.08.) komplett — Markt Schwaben–Haar
-  // 1:5 (Spielbericht Nr. 7) und Pliening–Feldkirchen 4:2 (Spielbericht Nr. 5).
-  // Forstern–Haar (ursprünglich 01.08.) bleibt auf den 27.09. verlegt.
+  // Stand 07.09.2026 (Report 22:28): Spieltage 30.08. und 06.09. gewertet — Pliening–Forstern
+  // 6:0 und Markt Schwaben–Pliening 1:5 (beide mit Spielbericht) sowie die Fremdbegegnungen
+  // Feldkirchen–Haar 3:3, Haar–Kirchheim 6:0 und Feldkirchen–Forstern 3:3.
+  // TC Pliening beendet seine fünf Begegnungen mit 8:2 Punkten auf Rang 1.
+  // Offen bleiben nur Begegnungen ohne Pliening (12.09.–27.09., mehrfach verlegt).
   // Kreuztabelle aus den Spielplan-Ergebnissen abgeleitet; alles Übrige "0:0".
   {
     teamLabel: "Mixed",
     teamColor: "#a855f7",
     leagueName: "Spielebene B · Gr. 074",
-    ownRank: 2,
+    ownRank: 1,
     entries: [
-      { rank: 1, club: "TSV Haar", isOwnClub: false, points: "4:0", matchPoints: "9:3", sets: "20:8", crossResults: ["***", "4:2", "0:0", "5:1", "0:0", "0:0"] },
-      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "4:2", matchPoints: "10:8", sets: "22:17", crossResults: ["2:4", "***", "0:0", "0:0", "4:2", "4:2"] },
-      { rank: 3, club: "FC Forstern", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "TF Markt Schwaben", isOwnClub: false, points: "2:2", matchPoints: "5:7", sets: "12:15", crossResults: ["1:5", "0:0", "0:0", "***", "0:0", "4:2"] },
-      { rank: 5, club: "TeG Kirchheim", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:8", crossResults: ["0:0", "2:4", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "TSV Feldkirchen", isOwnClub: false, points: "0:4", matchPoints: "4:8", sets: "8:18", crossResults: ["0:0", "2:4", "0:0", "2:4", "0:0", "***"] },
+      { rank: 1, club: "TC Pliening", isOwnClub: true , points: "8:2", matchPoints: "21:9", sets: "45:20", crossResults: ["***", "2:4", "5:1", "6:0", "4:2", "4:2"] },
+      { rank: 2, club: "TSV Haar", isOwnClub: false, points: "7:1", matchPoints: "18:6", sets: "40:14", crossResults: ["4:2", "***", "5:1", "0:0", "3:3", "6:0"] },
+      { rank: 3, club: "TF Markt Schwaben", isOwnClub: false, points: "2:4", matchPoints: "6:12", sets: "14:26", crossResults: ["1:5", "1:5", "***", "0:0", "4:2", "0:0"] },
+      { rank: 4, club: "FC Forstern", isOwnClub: false, points: "1:3", matchPoints: "3:9", sets: "7:18", crossResults: ["0:6", "0:0", "0:0", "***", "3:3", "0:0"] },
+      { rank: 5, club: "TSV Feldkirchen", isOwnClub: false, points: "2:6", matchPoints: "10:14", sets: "20:32", crossResults: ["2:4", "3:3", "2:4", "3:3", "***", "0:0"] },
+      { rank: 6, club: "TeG Kirchheim", isOwnClub: false, points: "0:4", matchPoints: "2:10", sets: "4:20", crossResults: ["2:4", "0:6", "0:0", "0:0", "0:0", "***"] },
     ],
   },
   // ── Juniorinnen 18  Südliga 3  Gr. 686 ──
