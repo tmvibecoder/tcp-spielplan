@@ -303,7 +303,7 @@ export default function TeamStatsDetail({
           <div className="truncate text-base font-extrabold text-slate-100">
             {team.club}
           </div>
-          <div className="truncate text-[11px] text-slate-400">
+          <div className="text-[11px] leading-snug text-slate-400">
             {team.teamLabel} · {team.leagueName}
             {rank ? ` · Platz ${rank}` : ""}
             {meldeliste ? ` · ${rosterCount} gemeldet` : ""}

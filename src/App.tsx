@@ -73,9 +73,17 @@ function App() {
 
   const [homeOnly, setHomeOnly] = useState(() => savedPrefs?.homeOnly ?? false);
   const [page, setPage] = useState<Page>("spielplan");
+  // Kalender-Downloads liegen im ⋯-Menü und öffnen ein Overlay
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const isSummer = season === "sommer-26";
   const seasonInfo = SEASONS.find((s) => s.id === season) ?? DEFAULT_SEASON;
+
+  // Reiter- und Saisonwechsel schließen ein offenes Overlay mit
+  const changeSubTab = useCallback((tab: SubTab) => {
+    setSubTab(tab);
+    setCalendarOpen(false);
+  }, []);
 
   const navigateToLegal = useCallback((p: "impressum" | "datenschutz") => {
     setPage(p);
@@ -193,9 +201,10 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <Header
         onPdf={handlePdf}
+        onCalendar={() => setCalendarOpen(true)}
         isSummer={isSummer}
         subTab={subTab}
-        setSubTab={setSubTab}
+        setSubTab={changeSubTab}
         showSpielplanControls={subTab === "spielplan"}
         seasonDropdown={
           <SeasonDropdown
@@ -204,6 +213,7 @@ function App() {
             onChange={(id) => {
               setSeason(id);
               setSubTab("spielplan");
+              setCalendarOpen(false);
             }}
           />
         }
@@ -265,7 +275,11 @@ function App() {
                 toggleFavorite={toggleFavorite}
               />
             )}
-            <CalendarDownloads season={season} />
+            <CalendarDownloads
+              season={season}
+              open={calendarOpen}
+              onClose={() => setCalendarOpen(false)}
+            />
           </>
         ) : (
           <Suspense fallback={standingsFallback}>

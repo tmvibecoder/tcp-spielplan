@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useEffect } from "react";
+import { Fragment, useMemo, useState, useRef, useEffect } from "react";
 import type { Match, Team, MatchScore, IndividualMatch, LeagueStandings, MonthColor } from "../types";
 import { resolveMatchResult } from "../data/results";
 import {
@@ -146,6 +146,10 @@ export default function TimelineView({
     return lastKey;
   }, [grouped, todayStr]);
 
+  // Erstes Wochenende der gesamten Liste: davor wird keine „Heute"-Linie gesetzt,
+  // sonst stünde sie über dem allerersten Eintrag im Nichts.
+  const firstWeekKey = grouped.months[0]?.weeks[0]?.key ?? null;
+
   // Einmalig beim ersten Laden zum Ziel-Wochenende scrollen
   // (nicht bei Filterwechseln, damit die Ansicht dann nicht wegspringt).
   const targetWeekRef = useRef<HTMLDivElement>(null);
@@ -249,9 +253,22 @@ export default function TimelineView({
             <div className="space-y-5">
               {month.weeks.map((week, weekIdx) => {
                 const isTarget = week.key === targetWeekKey;
+                const isUpcoming = week.dates[week.dates.length - 1] >= todayStr;
+                // Trennlinie genau einmal: vor dem ersten Wochenende, das noch aussteht.
+                const showTodayLine = isTarget && isUpcoming && week.key !== firstWeekKey;
                 return (
+                  <Fragment key={week.key}>
+                  {showTodayLine && (
+                    <div
+                      className="flex items-center gap-3 px-1 text-[10px] font-bold uppercase tracking-wider text-sky-300"
+                      aria-hidden="true"
+                    >
+                      <span className="h-px flex-1 bg-sky-500/40" />
+                      Heute · {weekendLabel([todayStr])}
+                      <span className="h-px flex-1 bg-sky-500/40" />
+                    </div>
+                  )}
                   <div
-                    key={week.key}
                     ref={isTarget ? targetWeekRef : undefined}
                     className="rounded-xl border overflow-hidden scroll-mt-24"
                     style={{
@@ -265,7 +282,7 @@ export default function TimelineView({
                     >
                       <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
                         📅 {weekendLabel(week.dates)}
-                        {isTarget && week.dates[week.dates.length - 1] >= todayStr && (
+                        {isTarget && isUpcoming && (
                           <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300">
                             nächstes
                           </span>
@@ -306,6 +323,7 @@ export default function TimelineView({
                       ))}
                     </div>
                   </div>
+                  </Fragment>
                 );
               })}
             </div>

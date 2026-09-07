@@ -79,7 +79,9 @@ export default function MatchRow({
         {match.isHome ? "H" : "A"}
       </span>
 
-      <span className="text-sm text-slate-200 truncate min-w-0 flex-1">
+      {/* Kein truncate: lange Vereinsnamen brechen lieber um, als abgeschnitten zu
+          werden — neben dem Ergebnis-Badge bleibt sonst zu wenig Platz. */}
+      <span className="text-sm text-slate-200 min-w-0 flex-1 leading-snug break-words">
         {opponent}
       </span>
 
