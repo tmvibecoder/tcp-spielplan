@@ -180,7 +180,6 @@ Neue groupid finden: Vereinsseite btv.de → iframe `btvteams/?clubnr=02467` →
 
 - Gr. 315: Markt Schwaben–Forstinning 6:3 **ohne Bericht** (Forstinning
   zurückgezogen, nuLiga liefert den Bericht nicht mehr).
-- Gr. 043 SU: Schloßberg–Grün-Gold Tabelle **1:3**, gespielt 2:7 (BTV-Streichung).
 - Midcourt U10 (Gr. 870): keine Meldelisten → klassische Spieler-Ansicht.
 - ~40 Spieler-Nennungen ohne Meldelisten-Eintrag = **Ersatzspieler** aus anderen
   Mannschaften des Vereins → erscheinen unter „Weitere Einsätze".
@@ -189,10 +188,14 @@ Neue groupid finden: Vereinsseite btv.de → iframe `btvteams/?clubnr=02467` →
 
 - Repo: `tmvibecoder/tcp-spielplan`, live https://tcp-spielplan.de,
   Deploy = GitHub Actions bei Push auf `main`, ausgelöst durch PR-Squash-Merge.
+  **Stehende Freigabe (07.09.2026): ohne Rückfrage mergen und live nehmen**, danach das
+  ausgelieferte Bundle verifizieren (Tabellen-Texte stecken in lazy geladenen Chunks —
+  dafür die Live-Seite im Browser prüfen).
 - Immer in einem **frischen Worktree von `origin/main`** arbeiten (der lokale
   Haupt-Checkout hängt oft zurück und hat lokale Änderungen).
 - Browser-Crawls brauchen Google Chrome
   (`/Applications/Google Chrome.app/...`, überschreibbar via `CHROME_PATH`)
   und `puppeteer-core` (devDependency, `npm install` reicht).
 - Ausführliche Doku im Repo: **README** („Daten pflegen", „Meldelisten",
-  „Spielberichte selbst crawlen", „nuLiga-Zugriff", „Deployment") und **CLAUDE.md**.
+  „Spielberichte selbst crawlen", „nuLiga-Zugriff", „Deployment") und **AGENTS.md**
+  (`CLAUDE.md` ist seit #46 nur noch ein Import darauf).

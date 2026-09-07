@@ -2,7 +2,7 @@
 
 ## Gemeinsame Arbeitsweise für Claude Code und Codex
 
-Diese Regeln gelten ergänzend zu den projektspezifischen Anweisungen. Der aktuelle Nutzerauftrag bestimmt den Umfang; diese Datei erteilt keine zusätzliche Merge- oder Deployment-Freigabe.
+Diese Regeln gelten ergänzend zu den projektspezifischen Anweisungen. Der aktuelle Nutzerauftrag bestimmt den Umfang. Für das Ausliefern gilt die **stehende Freigabe des Auftraggebers vom 07.09.2026**: fertige, geprüfte Änderungen werden ohne Rückfrage gemergt und live genommen (siehe „Harte Regeln"). Sie ersetzt keine der Prüfpflichten unten und erlaubt keine Arbeiten außerhalb des Auftrags.
 
 - Zu Beginn und bei jedem Modellwechsel den tatsächlichen Git-Stand prüfen: Repository-Root und Remote-Zuordnung, Branch, HEAD, `git status --short --branch`, ungestagten und gestagten Diff, letzte Commits und vorhandenen Upstream. Gecachte Remote-Refs nicht als frisch abgeglichen ausgeben.
 - Bestehende Änderungen, ungetrackte Dateien und andere Worktrees erhalten. Kein automatisches Stash, Reset, Clean oder Branchwechsel, um einen vermeintlich sauberen Start herzustellen; nur eigene auftragsbezogene Dateien aufnehmen.
@@ -30,8 +30,11 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 
 ## Harte Regeln
 
+- **Fertige Arbeit wird ausgeliefert.** Stehende Freigabe vom 07.09.2026: geprüfte Änderungen ohne
+  Rückfrage mergen, deployen und live nehmen — das gilt für alle Repositories von Thomas.
+  Rückfragepflichtig bleiben Datenverlust und Eingriffe in fremde Systeme.
 - **Nie direkt auf `main` pushen.** Änderungen: Branch → PR → `gh pr merge --squash`
-  (der Merge löst den Deploy aus). Nach dem Deploy den **live ausgelieferten Bundle-Hash**
+  (der Merge löst den Deploy aus). Reine Doku-Commits mit `[skip ci]`. Nach dem Deploy den **live ausgelieferten Bundle-Hash**
   prüfen (`curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`) und im
   Bundle nach einem neuen Datenschnipsel greppen — „grüner Workflow" allein reicht nicht.
 - **Kein Bauen ohne Supabase-Env.** `.env` ist gitignored und existiert nur im Haupt-Checkout;
