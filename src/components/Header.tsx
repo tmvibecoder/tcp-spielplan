@@ -4,6 +4,8 @@ import type { SubTab } from "../types";
 
 interface HeaderProps {
   onPdf: () => void;
+  /** Öffnet die Kalender-Downloads (Overlay) */
+  onCalendar: () => void;
   isSummer: boolean;
   seasonDropdown: ReactNode;
   // Konkurrenz-Auswahl (Button + Overlay), gilt für Spielplan UND Tabelle
@@ -15,6 +17,7 @@ interface HeaderProps {
 
 export default function Header({
   onPdf,
+  onCalendar,
   isSummer,
   seasonDropdown,
   teamFilter,
@@ -55,8 +58,8 @@ export default function Header({
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* ⋯ Menu (nur Sommer-Spielplan: PDF-Export) */}
-        {showSpielplanControls && isSummer && (
+        {/* ⋯ Menü im Spielplan: Kalender-Downloads (beide Saisons), PDF nur Sommer */}
+        {showSpielplanControls && (
           <div className="relative shrink-0" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
@@ -70,13 +73,21 @@ export default function Header({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl py-1 min-w-[160px] z-50">
+              <div className="absolute right-0 top-full mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl py-1 min-w-[190px] z-50">
                 <button
-                  onClick={() => { onPdf(); setMenuOpen(false); }}
-                  className="w-full text-left px-3 py-1.5 text-[11px] font-semibold text-purple-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  onClick={() => { onCalendar(); setMenuOpen(false); }}
+                  className="w-full text-left px-3 py-1.5 text-[11px] font-semibold text-sky-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
                 >
-                  PDF exportieren
+                  📆 Kalender-Downloads
                 </button>
+                {isSummer && (
+                  <button
+                    onClick={() => { onPdf(); setMenuOpen(false); }}
+                    className="w-full text-left px-3 py-1.5 text-[11px] font-semibold text-purple-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  >
+                    PDF exportieren
+                  </button>
+                )}
               </div>
             )}
           </div>

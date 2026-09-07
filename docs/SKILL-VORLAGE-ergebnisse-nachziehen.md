@@ -41,7 +41,7 @@ Meldelisten — bis hin zum Live-Deploy).
 3. **Tabellen nachziehen**:
    ```
    node scripts/generate-standings.mjs            # Diff ansehen
-   node scripts/generate-standings.mjs --write    # schreiben
+   node scripts/generate-standings.mjs --write    # schreiben (setzt auch SUMMER_STANDINGS_STAND)
    ```
    Achtung: Gr. 043 SU und Gr. 315 stehen in `KEEP` und bleiben handgepflegt
    (zurückgezogene Mannschaften, offizielle Tabelle weicht bewusst ab).
@@ -127,7 +127,10 @@ Neue groupid finden: Vereinsseite btv.de → iframe `btvteams/?clubnr=02467` →
 - `src/data/spielberichte-crawled.ts` — **generiert**, alle 402 Berichte. Nie von Hand editieren.
 - `src/data/spielberichte.ts` — nur noch Lookup (`getSpielbericht`, `getAllSpielberichte`).
 - `src/data/meldelisten.ts` — **generiert**, 132 Mannschaften / 4.238 Spieler.
-- `src/data/summer-2026.ts` — Tabellen + Kreuztabellen (per `generate-standings.mjs` aktualisierbar).
+- `src/data/summer-2026.ts` — Tabellen + Kreuztabellen (per `generate-standings.mjs` aktualisierbar) und
+  `SUMMER_STANDINGS_STAND` (Anzeige „BTV-Stand" in der App; bei Hand-Änderungen selbst setzen).
+- `src/data/matches.ts` — Spielplan-Termine; liefert zusammen mit der Kreuztabelle die Ergebnisse im
+  Spielplan. Verlegte Begegnungen auf das Datum aus dem Spielbericht setzen.
 - `scripts/groups.mjs` — zentrale Gruppenliste für alle Skripte.
 - Caches (gitignored): `scripts/.spielberichte-cache.json`, `scripts/.meldelisten-cache.json`.
 

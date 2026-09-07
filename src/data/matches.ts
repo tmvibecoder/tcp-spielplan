@@ -1,5 +1,7 @@
 import type { Match } from "../types";
 
+// Termine laut BTV-Spielplan. Verlegte Begegnungen stehen mit dem tatsächlichen
+// Spieldatum aus dem nuLiga-Spielbericht (Abgleich 02.09.2026, 9 Verlegungen).
 export const MATCHES: Match[] = [
   // Herren (7)
   { teamId: "herren", date: "2026-05-10", time: "09:00", day: "So", home: "TSV Feldkirchen II", away: "TC Pliening", isHome: false },
@@ -58,7 +60,7 @@ export const MATCHES: Match[] = [
   { teamId: "herren50iii", date: "2026-05-02", time: "14:00", day: "Sa", home: "TC Pliening III", away: "TS Jahn München", isHome: true },
   { teamId: "herren50iii", date: "2026-05-09", time: "14:00", day: "Sa", home: "VfB Forstinning", away: "TC Pliening III", isHome: false },
   { teamId: "herren50iii", date: "2026-05-16", time: "14:00", day: "Sa", home: "TC Finsing", away: "TC Pliening III", isHome: false },
-  { teamId: "herren50iii", date: "2026-06-13", time: "09:00", day: "Sa", home: "TC Pliening III", away: "TC Neuperlach-Kail München", isHome: true },
+  { teamId: "herren50iii", date: "2026-06-13", time: "09:00", day: "Sa", home: "TC Pliening III", away: "TC Neuperlach-Kail München II", isHome: true },
   { teamId: "herren50iii", date: "2026-06-20", time: "09:00", day: "Sa", home: "TC Pliening III", away: "TSV Oberpframmern", isHome: true },
   { teamId: "herren50iii", date: "2026-07-18", time: "14:00", day: "Sa", home: "TF Markt Schwaben", away: "TC Pliening III", isHome: false },
   // Herren 60 (6)
@@ -89,7 +91,7 @@ export const MATCHES: Match[] = [
   { teamId: "damen50", date: "2026-05-17", time: "10:00", day: "So", home: "TC Pliening", away: "TC Gernlinden II", isHome: true },
   { teamId: "damen50", date: "2026-06-14", time: "10:00", day: "So", home: "TC Pliening", away: "TC Karlsfeld am See", isHome: true },
   { teamId: "damen50", date: "2026-06-20", time: "14:00", day: "Sa", home: "TC Steinhöring", away: "TC Pliening", isHome: false },
-  { teamId: "damen50", date: "2026-06-27", time: "14:00", day: "Sa", home: "TC Pliening", away: "TSV Moosach München", isHome: true },
+  { teamId: "damen50", date: "2026-06-28", time: "14:00", day: "So", home: "TC Pliening", away: "TSV Moosach München", isHome: true },
   { teamId: "damen50", date: "2026-07-04", time: "14:00", day: "Sa", home: "TC Hofkirchen", away: "TC Pliening", isHome: false },
   { teamId: "damen50", date: "2026-07-11", time: "14:00", day: "Sa", home: "TSV Eintracht Karlsfeld", away: "TC Pliening", isHome: false },
   // Damen 50 II (7)
@@ -108,7 +110,7 @@ export const MATCHES: Match[] = [
   { teamId: "mixed", date: "2026-09-06", time: "11:00", day: "So", home: "TF Markt Schwaben", away: "TC Pliening", isHome: false },
   // Juniorinnen 18 (5)
   { teamId: "juniorinnen18", date: "2026-05-02", time: "09:00", day: "Sa", home: "TC Pliening", away: "TC Ottobrunn", isHome: true },
-  { teamId: "juniorinnen18", date: "2026-05-09", time: "09:00", day: "Sa", home: "TC Unterföhring II", away: "TC Pliening", isHome: false },
+  { teamId: "juniorinnen18", date: "2026-07-24", time: "09:00", day: "Fr", home: "TC Unterföhring II", away: "TC Pliening", isHome: false },
   { teamId: "juniorinnen18", date: "2026-06-27", time: "09:00", day: "Sa", home: "TC Pliening", away: "TSV Haar II", isHome: true },
   { teamId: "juniorinnen18", date: "2026-07-04", time: "09:00", day: "Sa", home: "TC Pliening", away: "1.Deisenhofer Kinder-TC", isHome: true },
   { teamId: "juniorinnen18", date: "2026-07-18", time: "09:00", day: "Sa", home: "TS Jahn München", away: "TC Pliening", isHome: false },
@@ -116,21 +118,21 @@ export const MATCHES: Match[] = [
   { teamId: "knaben15", date: "2026-05-15", time: "15:00", day: "Fr", home: "TC Anzing II", away: "TC Pliening", isHome: false },
   { teamId: "knaben15", date: "2026-06-12", time: "15:00", day: "Fr", home: "TC Pliening", away: "TSV Haar II", isHome: true },
   { teamId: "knaben15", date: "2026-06-19", time: "15:00", day: "Fr", home: "TC Pliening", away: "TF Markt Schwaben", isHome: true },
-  { teamId: "knaben15", date: "2026-06-26", time: "15:00", day: "Fr", home: "TC Putzbrunn", away: "TC Pliening", isHome: false },
+  { teamId: "knaben15", date: "2026-07-11", time: "15:00", day: "Sa", home: "TC Putzbrunn", away: "TC Pliening", isHome: false },
   { teamId: "knaben15", date: "2026-07-03", time: "15:00", day: "Fr", home: "TC Pliening", away: "ATSV Kirchseeon", isHome: true },
   { teamId: "knaben15", date: "2026-07-10", time: "15:00", day: "Fr", home: "SC Baldham-Vaterstetten", away: "TC Pliening", isHome: false },
   // Knaben 15 II (7)
-  { teamId: "knaben15ii", date: "2026-05-01", time: "09:00", day: "Fr", home: "TC Pliening II", away: "TC Haag", isHome: true },
+  { teamId: "knaben15ii", date: "2026-07-09", time: "09:00", day: "Do", home: "TC Pliening II", away: "TC Haag", isHome: true },
   { teamId: "knaben15ii", date: "2026-05-08", time: "15:00", day: "Fr", home: "TC Pliening II", away: "FC Forstern", isHome: true },
   { teamId: "knaben15ii", date: "2026-05-15", time: "15:00", day: "Fr", home: "TC Pliening II", away: "TF Markt Schwaben II", isHome: true },
-  { teamId: "knaben15ii", date: "2026-06-26", time: "15:00", day: "Fr", home: "TC Pliening II", away: "TC Isen", isHome: true },
-  { teamId: "knaben15ii", date: "2026-07-03", time: "15:00", day: "Fr", home: "TeG Wasserburg-Reitmehring", away: "TC Pliening II", isHome: false },
+  { teamId: "knaben15ii", date: "2026-07-24", time: "15:00", day: "Fr", home: "TC Pliening II", away: "TC Isen", isHome: true },
+  { teamId: "knaben15ii", date: "2026-06-07", time: "15:00", day: "So", home: "TeG Wasserburg-Reitmehring III", away: "TC Pliening II", isHome: false },
   { teamId: "knaben15ii", date: "2026-07-10", time: "15:00", day: "Fr", home: "TC Rot-Weiß Poing II", away: "TC Pliening II", isHome: false },
-  { teamId: "knaben15ii", date: "2026-07-18", time: "09:00", day: "Sa", home: "SV Walpertskirchen", away: "TC Pliening II", isHome: false },
+  { teamId: "knaben15ii", date: "2026-07-19", time: "09:00", day: "So", home: "SV Walpertskirchen", away: "TC Pliening II", isHome: false },
   // Midcourt U10 (5)
   { teamId: "midcourt", date: "2026-05-10", time: "15:00", day: "So", home: "TC Aschheim II", away: "TC Pliening", isHome: false },
   { teamId: "midcourt", date: "2026-05-17", time: "15:00", day: "So", home: "STK Garching", away: "TC Pliening", isHome: false },
   { teamId: "midcourt", date: "2026-06-14", time: "15:00", day: "So", home: "TC Pliening", away: "TC Sport Scheck", isHome: true },
-  { teamId: "midcourt", date: "2026-06-21", time: "15:00", day: "So", home: "TC Cosima München", away: "TC Pliening", isHome: false },
-  { teamId: "midcourt", date: "2026-06-28", time: "15:00", day: "So", home: "TC Pliening", away: "SC Freimann", isHome: true },
+  { teamId: "midcourt", date: "2026-07-05", time: "15:00", day: "So", home: "TC Cosima München", away: "TC Pliening", isHome: false },
+  { teamId: "midcourt", date: "2026-07-12", time: "15:00", day: "So", home: "TC Pliening", away: "SC Freimann", isHome: true },
 ];

@@ -18,6 +18,9 @@ export const WINTER_CATEGORIES = [
 
 // ── Tabellen / Standings ──
 
+// Endstand der Winterrunde 2025/26 (letzter Abgleich mit dem BTV).
+export const WINTER_STANDINGS_STAND = "29.03.2026";
+
 export const WINTER_STANDINGS: LeagueStandings[] = [
   // ── Herren 40 Bayernliga Gr. 022 SU ──
   {
