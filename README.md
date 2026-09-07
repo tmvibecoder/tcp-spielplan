@@ -4,10 +4,11 @@ React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Sa
 
 ## Features
 
-- **Spielplan** – alle Begegnungen mit **offiziellem Endergebnis** (grün/rot/gelb aus Sicht des TC Pliening, „gestrichen" bei zurückgezogenen Mannschaften); springt beim Laden automatisch ans nächste Wochenende („Nächstes"-Marke). Spiel antippen → Endergebnis, Spielort mit Google-Maps-Link und **Spielbericht (Einzel/Doppel)**. Die Ergebnisse kommen ohne Extra-Daten aus den Kreuztabellen (`src/data/results.ts`), Winter-Begegnungen bringen sie direkt mit.
+- **Spielplan** – alle Begegnungen mit **offiziellem Endergebnis** (grün/rot/gelb aus Sicht des TC Pliening, „gestrichen" bei zurückgezogenen Mannschaften); springt beim Laden automatisch ans nächste Wochenende („Nächstes"-Marke), davor eine Trennlinie **„Heute · &lt;Datum&gt;"** (alles darüber ist gespielt, alles darunter steht aus; erscheint nicht über dem ersten Wochenende der Saison und nicht mehr nach Rundenende). Vergangene Begegnungen ohne Ergebnis stehen gedimmt auf „offen". Spiel antippen → Endergebnis, Spielort mit Google-Maps-Link und **Spielbericht (Einzel/Doppel)**; die Zeile hat keinen Aufklapp-Pfeil mehr, dafür brechen lange Gegnernamen um statt abgeschnitten zu werden. Die Ergebnisse kommen ohne Extra-Daten aus den Kreuztabellen (`src/data/results.ts`), Winter-Begegnungen bringen sie direkt mit.
 - **Konkurrenz-Filter** – einzelne Mannschaften/Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **gespeicherte Auswahl** (seit 2026-06-22) – siehe unten.
+- **Kalender-Downloads** – im **⋯-Menü** (Spielplan-Reiter, beide Saisons) → Overlay mit einer ICS-Datei je Mannschaft. Bis 07.09.2026 stand der Block dauerhaft aufgeklappt unter dem Spielplan. `PDF exportieren` steht im selben Menü, aber nur in der Sommer-Saison.
 - **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung.
-- **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – Mannschaftszeile antippen. Seit 15.08.2026 mit **kompletter Meldeliste** (alle gemeldeten Spieler mit Rang), getrennt nach **Einzel** und **Doppel** – siehe unten.
+- **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – Mannschaftszeile antippen. Seit 15.08.2026 mit **kompletter Meldeliste** (alle gemeldeten Spieler mit Rang), getrennt nach **Einzel** und **Doppel**; die Reiter nennen die Zahl der Personen **im Einsatz** (nicht die Meldelistengröße), die Spaltenerklärung liegt hinter **„ⓘ Was bedeuten die Werte?"** – siehe unten.
 
 ### Konkurrenz-Filter & gespeicherte Auswahl
 
@@ -100,32 +101,35 @@ aufgenommen. Sie gehört zur **Südbayern Mixed-Runde**, die **nach** der Sommer
 - **Spielbericht-PDFs ohne Meeting-ID:** Die Mixed-Berichte (`nu.Dokument 011d`) nennen im Kopf nur
   eine gruppeninterne **„Spielbericht (Nr. n)"**, keine Meeting-ID. Schlüssel in
   `spielberichte.ts` daher **`SB_mx074n<Nr>`** statt `SB_<meetingID>`.
-- **Stand 15.08.2026 (abends):** Pliening–Kirchheim **4:2** (Nr. 1), Feldkirchen–Markt Schwaben
+- **Stand 19.08.2026 (letzter Abgleich):** Pliening–Kirchheim **4:2** (Nr. 1), Feldkirchen–Markt Schwaben
   **2:4** (Nr. 3), Haar–Pliening **4:2** (Nr. 4), Pliening–Feldkirchen **4:2** (Nr. 5, 15.08.)
   und Markt Schwaben–Haar **1:5** (Nr. 7, 15.08.) — alle **mit Spielbericht** erfasst;
   Forstern–Haar (Nr. 2) auf den **27.09.** verlegt. Tabelle: Haar 1. (4:0), **Pliening 2.** (4:2).
+  **Noch nicht nachgezogen:** die Plieninger Begegnungen vom **30.08.** (Forstern, H) und **06.09.**
+  (Markt Schwaben, A) — sie stehen in der Kreuztabelle als `"0:0"` und in der App als „offen".
   Auch die Mixed-Berichte haben inzwischen Meeting-IDs (z. B. Nr. 5 = meeting 12927839) — die
   Druckversion-Links stehen im Spielbericht-Modal des btv.de-Widgets (s. u.).
 - **Meldelisten:** siehe eigenen Abschnitt „Meldelisten" weiter unten — auch die Mixed-Vereine
   sind dort erfasst (Herren und Damen separat nummeriert, z. B. Markt Schwaben 35 H + 23 D).
 
-**Datenstand (16.08.2026): Sommer 2026 vollständig.** Alle 18 Konkurrenzen sind mit Tabelle,
-Kreuztabelle, Spielberichten und Meldelisten erfasst — 402 Berichte, 3.168 Einzel/Doppel,
-132 Meldelisten mit 4.238 Spielern. `node scripts/check-data.mjs` bestätigt: von 798
-Kreuztabellen-Zellen mit Ergebnis haben **794 einen passenden Spielbericht**. Die vier Ausnahmen
-sind bekannt und korrekt so:
+**Datenstand (Tabellen-Abgleich 19.08.2026): Sommer 2026 vollständig.** Alle 18 Konkurrenzen sind mit
+Tabelle, Kreuztabelle, Spielberichten und Meldelisten erfasst — 402 Berichte, 3.168 Einzel/Doppel,
+132 Meldelisten mit 4.238 Spielern. `node scripts/check-data.mjs` meldet: von 806
+Kreuztabellen-Zellen mit Ergebnis haben **804 einen passenden Spielbericht**, 0 Abweichungen. Die
+zwei Ausnahmen sind bekannt und korrekt so:
 
 - **Gr. 315 Markt Schwaben–Forstinning 6:3** (2 Zellen): Forstinning ist zurückgezogen, nuLiga liefert
   den Bericht nicht mehr aus — das Tabellen-Ergebnis bleibt.
-- **Gr. 043 SU Schloßberg–Grün-Gold**: Tabelle zeigt **1:3**, gespielt wurde 2:7 (BTV streicht bei
-  zurückgezogenen Mannschaften Teile der Wertung). Tabelle verbatim, Bericht wie gespielt.
+
+Erledigt: Die früher hier dokumentierte Abweichung **Gr. 043 SU Schloßberg–Grün-Gold** (Tabelle 1:3
+gegen gespielte 2:7) besteht nicht mehr — der BTV führt inzwischen 2:7, `check-data` meldet 0
+Abweichungen.
 
 Ebenfalls erwartbar: **Midcourt U10 (Gr. 870)** hat keine Meldelisten (s. o.), und rund 0,5 % der
 Spieler-Nennungen (42 von 8.189) stehen nicht auf der Meldeliste ihrer Mannschaft — das sind
 Ersatzspieler aus anderen Mannschaften des Vereins und erscheinen unter „Weitere Einsätze"
-(`node scripts/check-names.mjs`). **Offen ist nur noch die laufende Mixed-Runde** — nächster
-Spieltag **22.08.** (Kirchheim–Feldkirchen, Forstern–Markt Schwaben), danach
-30.08./06.09./19.09./26.09./27.09.
+(`node scripts/check-names.mjs`). **Offen ist nur noch die Mixed-Runde**: seit dem letzten Abgleich
+(19.08.2026) sind die Spieltage 30.08., 06.09. und die restlichen bis 27.09. nicht nachgezogen.
 
 ### Tabellen → `src/data/summer-2026.ts` (`SUMMER_STANDINGS`)
 
@@ -210,7 +214,7 @@ abgefangene URL enthält `group=<id>` (vorher ggf. „MEHR LADEN" klicken). Alle
 
 ### Workflow
 
-PDF(s) ziehen → **erst prüfen, ob `SB_<meetingID>` schon existiert** (gelieferte Link-Listen enthalten öfter bereits eingetragene oder doppelte Links → überspringen) → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge`** (löst Deploy aus). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
+PDF(s) ziehen → **erst prüfen, ob `SB_<meetingID>` schon existiert** (gelieferte Link-Listen enthalten öfter bereits eingetragene oder doppelte Links → überspringen) → Daten eintragen → `npm run build` (`tsc -b` + `vite`) → **PR + `gh pr merge --squash`** (löst Deploy aus; seit 07.09.2026 **ohne Rückfrage**, siehe „Deployment"). Sanity-Checks: Summe der gewonnenen Einzel/Doppel = Endstand der Begegnung; Kreuztabellen-Wert = Mannschafts-Matchpunkte. Nach dem Deploy den live ausgelieferten Bundle-Hash prüfen (siehe „Stolperfalle" unten).
 
 **Fehlende Spiele finden:** aktuellen Gesamt-Report (ResultReportFOP) ziehen und dessen Kreuztabellen gegen `SUMMER_STANDINGS` diffen — Zellen, die bei uns `"0:0"` sind und offiziell ein Ergebnis haben, fehlen. Die **Spieltage** von Fremd-Begegnungen stehen nicht im Gesamt-Report; sie folgen aber eindeutig aus der Rundenlogik (jede Paarung genau 1×, pro Spieltag jedes Team genau 1×) — Vorsicht bei **Nachholspielen** (Beispiel Gr. 292: Finsing–Philathlos, Termin 27.06., erst am 18.07. „abgeschlossen" und damit lange ohne Ergebnis im Report). Der Spielbericht-PDF-Kopf nennt immer den echten Termin.
 
@@ -251,6 +255,9 @@ Push auf `main` → SSH zu Server web01 → Repo synchronisieren + `npm ci` + `n
 - Statische Site: nginx serviert `/var/www/tcp-spielplan.de/dist`, kein pm2/Server-Prozess.
 - Repo-Secrets: `SERVER_IP`, `SERVER_USER`, `SSH_PRIVATE_KEY` (gemeinsamer Deploy-Key auf web01).
 - Deploy nur via **PR-Merge** auf `main` (kein Direkt-Push).
+- **Stehende Freigabe (07.09.2026):** Fertige, geprüfte Änderungen werden **ohne Rückfrage** gemergt
+  und live genommen — vorher die Prüfungen des Repos laufen lassen, danach das ausgelieferte Bundle
+  verifizieren (s. u.). Das gilt für alle Repositories von Thomas.
 - Doku-Commits, die NICHT deployen sollen, mit `[skip ci]` in der Commit-Message versehen.
 
 ### ⚠️ Stolperfalle „grüner Deploy, aber alter Code" (behoben 2026-06-18)
@@ -271,9 +278,13 @@ trotzdem **success**. Folge: PR #8 (Spieler-Statistik) war gemergt, CI grün –
 **Lehre:** Grüner Deploy ≠ neuer Code live. Nach einem Deploy den live ausgelieferten
 Bundle-Hash prüfen, z. B.:
 ```bash
-curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[A-Za-z0-9_]+\.js'
+curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # Hash kann - und _ enthalten
 curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c <feature-string>
 ```
+Dabei beachten: **Tabellen- und Spielbericht-Texte stehen nicht im Startbundle**, sondern in den
+lazy geladenen Chunks (`StandingsView-*.js`, `SpielberichtDrawer-*.js`). Ein `grep` nach „BTV-Stand"
+oder „im Einsatz" im Startbundle schlägt deshalb korrekt fehl — für diese Teile die Live-Seite im
+Browser aufrufen und den Tabellen-Reiter öffnen.
 
 ### ⚠️ Stolperfalle „leere Seite im git-worktree" (lokales Testen)
 
@@ -307,6 +318,6 @@ Ergebnis zuerst den Bundle-Hash prüfen (s. o.) und den Test einfach wiederholen
 **Mobil mitprüfen (die App ist mobil-erst).** Geräte emulieren statt nur Desktop-Viewport:
 `page.setUserAgent(<iPhone-UA>)` + `page.setViewport({ width, height, isMobile: true, hasTouch: true })`
 und mit **`elementHandle.tap()` statt `.click()`** interagieren (echte Touch-Events; deckt z. B.
-das ⋯-Menü-Öffnen ab). Sinnvolle Viewports: iPhone 13 `390×844` und iPhone SE `375×667`
-(kleinster gängiger Screen). Zusätzlich auf **horizontalen Overflow** prüfen
+das ⋯-Menü-Öffnen ab). Sinnvolle Viewports: **iPhone Air `420×912`** (das Gerät, auf dem die Seite
+tatsächlich gelesen wird), iPhone 13 `390×844` und iPhone SE `375×667` (kleinster gängiger Screen). Zusätzlich auf **horizontalen Overflow** prüfen
 (`document.documentElement.scrollWidth > clientWidth` muss `false` sein).
