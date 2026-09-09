@@ -14,6 +14,15 @@ export const TEAM_FORMAT: Record<string, TeamFormat> = {
   damen40: "6er",
   damen50: "6er",
   damen50ii: "6er",
+  // Winterrunde 2026/27: laut Blanko-Spielbericht (nu.Dokument 011d) hat dort JEDE
+  // Begegnung 4 Einzel + 2 Doppel — von der Bayernliga bis zur Südliga.
+  "w27-herren40": "4er",
+  "w27-herren50": "4er",
+  "w27-herren30": "4er",
+  "w27-herren30ii": "4er",
+  "w27-damen": "4er",
+  "w27-damen40": "4er",
+  "w27-damen50": "4er",
   // Winter Mannschaften
   "w-herren40": "6er",
   "w-herren50": "6er",

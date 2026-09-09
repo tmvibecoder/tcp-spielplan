@@ -1,18 +1,7 @@
 import { useState, useMemo, useCallback, lazy, Suspense } from "react";
-import { TEAMS } from "./data/teams";
 import { MATCHES } from "./data/matches";
 import { SEASONS, DEFAULT_SEASON } from "./data/seasons";
-import { MONTHS, MONTH_COLORS } from "./data/constants";
-import { SUMMER_STANDINGS, SUMMER_STANDINGS_STAND } from "./data/summer-2026";
-import {
-  WINTER_STANDINGS,
-  WINTER_STANDINGS_STAND,
-  WINTER_TEAMS,
-  WINTER_MATCHES,
-  WINTER_CATEGORIES,
-  WINTER_MONTHS,
-  WINTER_MONTH_COLORS,
-} from "./data/winter-2526";
+import { SEASON_DATA, getSeasonData } from "./data/season-data";
 import type { Team, SeasonId, SubTab } from "./types";
 import { generatePrintHTML } from "./utils/pdf-export";
 import Header from "./components/Header";
@@ -36,10 +25,19 @@ type Page = "spielplan" | "impressum" | "datenschutz";
 // Wird nur per "Auswahl speichern" im Menü geschrieben und beim Laden angewandt.
 const PREFS_KEY = "tcp-filter-prefs";
 
+/** Aktive Konkurrenzen je Saison. Die alte Fassung kannte nur `summer`/`winter` —
+ *  solche Einträge werden beim Laden auf die Saison-Ids übersetzt. */
 interface FilterPrefs {
-  summer: string[];
-  winter: string[];
+  teams?: Partial<Record<SeasonId, string[]>>;
+  summer?: string[];
+  winter?: string[];
   homeOnly: boolean;
+}
+
+type TeamSelection = Record<SeasonId, Set<string>>;
+
+function allTeamsOf(id: SeasonId): Set<string> {
+  return new Set(SEASON_DATA[id].teams.map((t) => t.id));
 }
 
 function loadPrefs(): FilterPrefs | null {
@@ -52,6 +50,20 @@ function loadPrefs(): FilterPrefs | null {
   return null;
 }
 
+/** Startauswahl je Saison: gespeicherte Auswahl, sonst alle Konkurrenzen an. */
+function initialSelection(prefs: FilterPrefs | null): TeamSelection {
+  const legacy: Partial<Record<SeasonId, string[]>> = {
+    "sommer-26": prefs?.summer,
+    "winter-2526": prefs?.winter,
+  };
+  const sel = {} as TeamSelection;
+  for (const s of SEASONS) {
+    const saved = prefs?.teams?.[s.id] ?? legacy[s.id];
+    sel[s.id] = saved ? new Set(saved) : allTeamsOf(s.id);
+  }
+  return sel;
+}
+
 function App() {
   // Gespeicherte Auswahl einmalig beim Mount lesen
   const savedPrefs = useMemo(() => loadPrefs(), []);
@@ -59,25 +71,17 @@ function App() {
   const [season, setSeason] = useState<SeasonId>(DEFAULT_SEASON.id);
   const [subTab, setSubTab] = useState<SubTab>("spielplan");
 
-  // Summer team state
-  const allSummerTeamIds = useMemo(() => new Set(TEAMS.map((t) => t.id)), []);
-  const [activeSummerTeams, setActiveSummerTeams] = useState<Set<string>>(
-    () => (savedPrefs ? new Set(savedPrefs.summer) : new Set(allSummerTeamIds))
-  );
-
-  // Winter team state
-  const allWinterTeamIds = useMemo(() => new Set(WINTER_TEAMS.map((t) => t.id)), []);
-  const [activeWinterTeams, setActiveWinterTeams] = useState<Set<string>>(
-    () => (savedPrefs ? new Set(savedPrefs.winter) : new Set(allWinterTeamIds))
-  );
+  // Aktive Konkurrenzen je Saison (jede Saison hat eigene Konkurrenz-Ids)
+  const [activeTeams, setActiveTeams] = useState<TeamSelection>(() => initialSelection(savedPrefs));
 
   const [homeOnly, setHomeOnly] = useState(() => savedPrefs?.homeOnly ?? false);
   const [page, setPage] = useState<Page>("spielplan");
   // Kalender-Downloads liegen im ⋯-Menü und öffnen ein Overlay
   const [calendarOpen, setCalendarOpen] = useState(false);
 
-  const isSummer = season === "sommer-26";
-  const seasonInfo = SEASONS.find((s) => s.id === season) ?? DEFAULT_SEASON;
+  const data = getSeasonData(season);
+  const seasonInfo = data.season;
+  const activeSeasonTeams = activeTeams[season];
 
   // Reiter- und Saisonwechsel schließen ein offenes Overlay mit
   const changeSubTab = useCallback((tab: SubTab) => {
@@ -95,61 +99,47 @@ function App() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Team maps
-  const summerTeamMap = useMemo(
-    () => new Map<string, Team>(TEAMS.map((t) => [t.id, t])),
-    []
-  );
-  const winterTeamMap = useMemo(
-    () => new Map<string, Team>(WINTER_TEAMS.map((t) => [t.id, t as Team])),
-    []
+  const teamMap = useMemo(
+    () => new Map<string, Team>(data.teams.map((t) => [t.id, t])),
+    [data.teams]
   );
 
-  // Filtered matches
-  const filteredSummerMatches = useMemo(
-    () => MATCHES.filter((m) => activeSummerTeams.has(m.teamId) && (!homeOnly || m.isHome)),
-    [activeSummerTeams, homeOnly]
-  );
-
-  const filteredWinterMatches = useMemo(
-    () => WINTER_MATCHES.filter((m) => activeWinterTeams.has(m.teamId) && (!homeOnly || m.isHome)),
-    [activeWinterTeams, homeOnly]
+  const filteredMatches = useMemo(
+    () => data.matches.filter((m) => activeSeasonTeams.has(m.teamId) && (!homeOnly || m.isHome)),
+    [data.matches, activeSeasonTeams, homeOnly]
   );
 
   // Der Konkurrenz-Filter gilt auch für die Tabellen: Standings sind über
   // teamLabel (1:1 zu Team.label) den Konkurrenz-Ids zugeordnet.
-  const summerLabelToId = useMemo(
-    () => new Map(TEAMS.map((t) => [t.label, t.id])),
-    []
-  );
-  const winterLabelToId = useMemo(
-    () => new Map(WINTER_TEAMS.map((t) => [t.label, t.id])),
-    []
+  const labelToId = useMemo(
+    () => new Map(data.teams.map((t) => [t.label, t.id])),
+    [data.teams]
   );
 
-  const filteredSummerStandings = useMemo(
-    () => SUMMER_STANDINGS.filter((s) => activeSummerTeams.has(summerLabelToId.get(s.teamLabel) ?? "")),
-    [activeSummerTeams, summerLabelToId]
+  const filteredStandings = useMemo(
+    () => data.standings.filter((s) => activeSeasonTeams.has(labelToId.get(s.teamLabel) ?? "")),
+    [data.standings, activeSeasonTeams, labelToId]
   );
 
-  const filteredWinterStandings = useMemo(
-    () => WINTER_STANDINGS.filter((s) => activeWinterTeams.has(winterLabelToId.get(s.teamLabel) ?? "")),
-    [activeWinterTeams, winterLabelToId]
+  /** Auswahl der aktiven Saison ändern, andere Saisons bleiben unberührt. */
+  const updateSelection = useCallback(
+    (fn: (prev: Set<string>) => Set<string>) => {
+      setActiveTeams((prev) => ({ ...prev, [season]: fn(prev[season]) }));
+    },
+    [season]
   );
 
   const toggleTeam = useCallback((id: string) => {
-    const setter = isSummer ? setActiveSummerTeams : setActiveWinterTeams;
-    setter((prev) => {
+    updateSelection((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
-  }, [isSummer]);
+  }, [updateSelection]);
 
   const toggleCategory = useCallback((ids: string[]) => {
-    const setter = isSummer ? setActiveSummerTeams : setActiveWinterTeams;
-    setter((prev) => {
+    updateSelection((prev) => {
       const next = new Set(prev);
       const allOn = ids.every((id) => next.has(id));
       for (const id of ids) {
@@ -158,37 +148,31 @@ function App() {
       }
       return next;
     });
-  }, [isSummer]);
+  }, [updateSelection]);
 
   // Alle Konkurrenzen der aktiven Saison ein- (on=true) oder ausschalten (on=false)
   const setAllTeams = useCallback((on: boolean) => {
-    const setter = isSummer ? setActiveSummerTeams : setActiveWinterTeams;
-    const allIds = isSummer ? allSummerTeamIds : allWinterTeamIds;
-    setter(on ? new Set(allIds) : new Set());
-  }, [isSummer, allSummerTeamIds, allWinterTeamIds]);
+    updateSelection(() => (on ? allTeamsOf(season) : new Set<string>()));
+  }, [updateSelection, season]);
 
   // Aktuelle Filter-Auswahl dauerhaft im Browser speichern
   const savePrefs = useCallback(() => {
     try {
-      localStorage.setItem(
-        PREFS_KEY,
-        JSON.stringify({
-          summer: [...activeSummerTeams],
-          winter: [...activeWinterTeams],
-          homeOnly,
-        })
-      );
+      const teams = Object.fromEntries(
+        SEASONS.map((s) => [s.id, [...activeTeams[s.id]]])
+      ) as Record<SeasonId, string[]>;
+      localStorage.setItem(PREFS_KEY, JSON.stringify({ teams, homeOnly }));
     } catch {
       // ignore
     }
-  }, [activeSummerTeams, activeWinterTeams, homeOnly]);
+  }, [activeTeams, homeOnly]);
 
   const { scores, saveScores } = useLiveScores();
   const { favorites, toggleFavorite } = useFavorites();
 
   const handlePdf = useCallback(() => {
-    generatePrintHTML(MATCHES, activeSummerTeams);
-  }, [activeSummerTeams]);
+    generatePrintHTML(MATCHES, activeTeams["sommer-26"]);
+  }, [activeTeams]);
 
   if (page === "impressum") return <Impressum onBack={backToSpielplan} />;
   if (page === "datenschutz") return <Datenschutz onBack={backToSpielplan} />;
@@ -202,7 +186,7 @@ function App() {
       <Header
         onPdf={handlePdf}
         onCalendar={() => setCalendarOpen(true)}
-        isSummer={isSummer}
+        showPdf={data.supportsPdf}
         subTab={subTab}
         setSubTab={changeSubTab}
         showSpielplanControls={subTab === "spielplan"}
@@ -218,63 +202,36 @@ function App() {
           />
         }
         teamFilter={
-          isSummer ? (
-            <TeamFilterDropdown
-              activeTeams={activeSummerTeams}
-              toggleTeam={toggleTeam}
-              toggleCategory={toggleCategory}
-              setAllTeams={setAllTeams}
-              homeOnly={homeOnly}
-              setHomeOnly={setHomeOnly}
-              onSavePrefs={savePrefs}
-            />
-          ) : (
-            <TeamFilterDropdown
-              activeTeams={activeWinterTeams}
-              toggleTeam={toggleTeam}
-              toggleCategory={toggleCategory}
-              setAllTeams={setAllTeams}
-              categories={WINTER_CATEGORIES}
-              teams={WINTER_TEAMS as Team[]}
-              homeOnly={homeOnly}
-              setHomeOnly={setHomeOnly}
-              onSavePrefs={savePrefs}
-            />
-          )
+          <TeamFilterDropdown
+            activeTeams={activeSeasonTeams}
+            toggleTeam={toggleTeam}
+            toggleCategory={toggleCategory}
+            setAllTeams={setAllTeams}
+            categories={data.categories}
+            teams={data.teams}
+            homeOnly={homeOnly}
+            setHomeOnly={setHomeOnly}
+            onSavePrefs={savePrefs}
+          />
         }
       />
 
       <main className="max-w-5xl mx-auto px-4 py-6">
         {subTab === "spielplan" ? (
           <>
-            {isSummer ? (
-              <TimelineView
-                matches={filteredSummerMatches}
-                teamMap={summerTeamMap}
-                standings={SUMMER_STANDINGS}
-                months={MONTHS}
-                monthColors={MONTH_COLORS}
-                scores={scores}
-                onSaveScore={saveScores}
-                allMatches={MATCHES}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-                provisionalTimesUntil={seasonInfo.provisionalTimesUntil}
-              />
-            ) : (
-              <TimelineView
-                matches={filteredWinterMatches}
-                teamMap={winterTeamMap}
-                standings={WINTER_STANDINGS}
-                months={WINTER_MONTHS}
-                monthColors={WINTER_MONTH_COLORS}
-                scores={scores}
-                onSaveScore={saveScores}
-                allMatches={WINTER_MATCHES}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-              />
-            )}
+            <TimelineView
+              matches={filteredMatches}
+              teamMap={teamMap}
+              standings={data.standings}
+              months={data.months}
+              monthColors={data.monthColors}
+              scores={scores}
+              onSaveScore={saveScores}
+              allMatches={data.matches}
+              favorites={favorites}
+              toggleFavorite={toggleFavorite}
+              provisionalTimesUntil={seasonInfo.provisionalTimesUntil}
+            />
             <CalendarDownloads
               season={season}
               open={calendarOpen}
@@ -284,9 +241,9 @@ function App() {
         ) : (
           <Suspense fallback={standingsFallback}>
             <StandingsView
-              standings={isSummer ? filteredSummerStandings : filteredWinterStandings}
+              standings={filteredStandings}
               seasonLabel={seasonInfo.label}
-              stand={isSummer ? SUMMER_STANDINGS_STAND : WINTER_STANDINGS_STAND}
+              stand={data.standingsStand}
             />
           </Suspense>
         )}

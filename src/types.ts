@@ -32,7 +32,7 @@ export interface MonthColor {
 
 export type TeamFormat = "6er" | "4er";
 
-export type SeasonId = "winter-2526" | "sommer-26";
+export type SeasonId = "winter-2627" | "sommer-26" | "winter-2526";
 
 export interface Season {
   id: SeasonId;

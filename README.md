@@ -1,29 +1,34 @@
 # TC Pliening – Spielplan & Tabellen
 
-React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening (Sommer-Saison 2026). Live: https://tcp-spielplan.de
+React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening. Live: https://tcp-spielplan.de
+
+**Saisons** stehen im Dropdown oben links; die laufende Runde ist die Vorauswahl (`SEASONS[0]` in
+`src/data/seasons.ts`). Aktuell: **Winter 2026/27** (7 Mannschaften, 34 Begegnungen), Sommer 2026
+(18 Konkurrenzen) und Winter 2025/26 als Archiv. Welche Daten eine Saison zieht, steht an **einer**
+Stelle — der Registry `src/data/season-data.ts`; siehe „Eine Saison anlegen" weiter unten.
 
 ## Features
 
 - **Spielplan** – alle Begegnungen mit **offiziellem Endergebnis** (grün/rot/gelb aus Sicht des TC Pliening, „gestrichen" bei zurückgezogenen Mannschaften); springt beim Laden automatisch ans nächste Wochenende („Nächstes"-Marke), davor eine Trennlinie **„Heute · &lt;Datum&gt;"** (alles darüber ist gespielt, alles darunter steht aus; erscheint nicht über dem ersten Wochenende der Saison und nicht mehr nach Rundenende). Vergangene Begegnungen ohne Ergebnis stehen gedimmt auf „offen". Spiel antippen → Endergebnis, Spielort mit Google-Maps-Link und **Spielbericht (Einzel/Doppel)**; die Zeile hat keinen Aufklapp-Pfeil mehr, dafür brechen lange Gegnernamen um statt abgeschnitten zu werden. Die Ergebnisse kommen ohne Extra-Daten aus den Kreuztabellen (`src/data/results.ts`), Winter-Begegnungen bringen sie direkt mit.
 - **Konkurrenz-Filter** – einzelne Mannschaften/Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **gespeicherte Auswahl** (seit 2026-06-22) – siehe unten.
-- **Kalender-Downloads** – im **⋯-Menü** (Spielplan-Reiter, beide Saisons) → Overlay mit einer ICS-Datei je Mannschaft. Bis 07.09.2026 stand der Block dauerhaft aufgeklappt unter dem Spielplan. `PDF exportieren` steht im selben Menü, aber nur in der Sommer-Saison.
-- **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung.
+- **Kalender-Downloads** – im **⋯-Menü** (Spielplan-Reiter, jede Saison) → Overlay mit einer ICS-Datei je Mannschaft. Bis 07.09.2026 stand der Block dauerhaft aufgeklappt unter dem Spielplan. `PDF exportieren` steht im selben Menü, aber nur in Saisons mit Druck-Spielplan (`supportsPdf` in der Registry — derzeit nur die Sommerrunde).
+- **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung. Solange eine Runde **noch nicht begonnen** hat (alle Punkte 0:0), zeigt der Kopf „*n* Mannschaften" statt „Platz *x*" und die Medaillen bleiben weg — die Reihenfolge ist dort nur die Setzliste des BTV.
 - **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – Mannschaftszeile antippen. Seit 15.08.2026 mit **kompletter Meldeliste** (alle gemeldeten Spieler mit Rang), getrennt nach **Einzel** und **Doppel**; die Reiter nennen die Zahl der Personen **im Einsatz** (nicht die Meldelistengröße), die Spaltenerklärung liegt hinter **„ⓘ Was bedeuten die Werte?"** – siehe unten.
 
 ### Konkurrenz-Filter & gespeicherte Auswahl
 
 Über dem Spielplan stehen die Konkurrenzen nach Kategorie (HERREN/DAMEN/MIXED/JUGEND); ein Klick blendet eine Mannschaft ein/aus, ein Klick auf die Kategorie-Überschrift schaltet die ganze Kategorie um. In der unteren Zeile:
 
-- **`Alle aus` / `Alle an`** – ein Toggle-Button, der sich nach dem Zustand richtet: solange **noch eine** Konkurrenz aktiv ist, heißt er `Alle aus` (Klick → alle ab); ist **keine** aktiv, heißt er `Alle an` (Klick → alle ein). Wirkt nur auf die **gerade angezeigte Saison** (Sommer **oder** Winter), nicht auf beide.
+- **`Alle aus` / `Alle an`** – ein Toggle-Button, der sich nach dem Zustand richtet: solange **noch eine** Konkurrenz aktiv ist, heißt er `Alle aus` (Klick → alle ab); ist **keine** aktiv, heißt er `Alle an` (Klick → alle ein). Wirkt nur auf die **gerade angezeigte Saison**, nicht auf die anderen.
 - **`Nur Heim`** – blendet Auswärtsbegegnungen aus (saisonübergreifender Schalter).
 
 **Auswahl speichern:** Unten im **„Konkurrenzen"-Panel** liegt **`Auswahl speichern`**. Das schreibt die aktuelle Auswahl **explizit** (nicht automatisch) in `localStorage` und zeigt kurz „✓ Gespeichert". Beim nächsten Seitenaufruf wird sie automatisch geladen – ohne erneutes Einstellen.
 
 **Code-Landkarte:**
 - `src/components/TeamFilter.tsx` – Filter-UI; `Alle aus`/`Alle an` leitet sich aus `anyActive` über alle Kategorie-IDs ab und ruft den Prop `setAllTeams(on)`.
-- `src/App.tsx` – Quelle der Wahrheit: getrennte Sets `activeSummerTeams` / `activeWinterTeams` (+ `homeOnly`). `setAllTeams` wirkt auf die aktive Saison. **Persistenz**: `loadPrefs()` einmalig beim Mount (initialisiert die State-Sets), `savePrefs()` schreibt auf Knopfdruck.
+- `src/App.tsx` – Quelle der Wahrheit: `activeTeams` als ein Set **je Saison** (+ `homeOnly`). `setAllTeams` und die Toggles wirken über `updateSelection` nur auf die aktive Saison. **Persistenz**: `loadPrefs()`/`initialSelection()` einmalig beim Mount, `savePrefs()` schreibt auf Knopfdruck.
 - `src/components/TeamFilterDropdown.tsx` – Button `Auswahl speichern` (Prop `onSavePrefs`) inkl. „✓ Gespeichert"-Flash.
-- `localStorage`-Key **`tcp-filter-prefs`**, Format `{ "summer": string[], "winter": string[], "homeOnly": boolean }` (Team-IDs der **aktiven** Konkurrenzen, beide Saisons in einem Eintrag). Liegt neben dem separaten Favoriten-Key `tcp-favorites` aus `src/hooks/useFavorites.ts`.
+- `localStorage`-Key **`tcp-filter-prefs`**, Format `{ "teams": { "<seasonId>": string[] }, "homeOnly": boolean }` (Team-IDs der **aktiven** Konkurrenzen, alle Saisons in einem Eintrag). Die alte Fassung `{ "summer": [...], "winter": [...] }` wird beim Laden weiterhin übernommen. Liegt neben dem separaten Favoriten-Key `tcp-favorites` aus `src/hooks/useFavorites.ts`.
 
 ### Spieler-Statistik je Mannschaft
 
@@ -82,6 +87,61 @@ Konkurrenzen** der Sommer-Saison komplett erfasst: 402 Spielberichte (3.168 Einz
 Alle Liga-/Spieldaten stammen aus offiziellen **BTV-nuLiga-PDFs** und liegen in zwei Dateien. `club=22844` = TC Pliening; Saison Sommer 2026 = `season=18103` (wechselt je Saison — aktuellen Link von der [Vereinsseite](https://www.btv.de/de/mein-verein/vereinsseite/tc-pliening.html) holen).
 
 > **Zuordnung passiert automatisch aus dem PDF.** Jedes Spielbericht-PDF (MeetingReportFOP) nennt im Kopf **Liga/Gruppe, Termin, beide Mannschaften und Endergebnis** — daraus folgt eindeutig die Ziel-Liga und -Begegnung. Es genügt also, die **PDF-Links zu liefern** (die Konkurrenz muss nicht dazugeschrieben werden). Auch Begegnungen **ohne TC Pliening** werden eingetragen (sie füllen die Kreuztabelle der jeweiligen Liga). Den **Gesamt-Tabellen-Report** (ResultReportFOP, s. u.) holt man sich selbst dazu — er steckt NICHT im einzelnen Spielbericht.
+
+### Winterrunde 2026/27 → `src/data/winter-2627.ts`
+
+Angelegt am **09.09.2026**, als der BTV die Spieltage veröffentlicht hatte. **Sieben Mannschaften,
+34 Begegnungen, Spieltage 10.10.2026 – 20.03.2027.** Alles steht auf `status: "open"`, die Tabellen
+auf `0:0` — die Reihenfolge dort ist die **Setzliste** des BTV, kein erspielter Platz (die App zeigt
+deshalb „*n* Mannschaften" statt „Platz *x*", solange alle Punkte 0:0 sind).
+
+| Mannschaft | Liga | `groupid` |
+| --- | --- | --- |
+| Herren 40 | Bayernliga · Gr. 022 SU | 2253303 |
+| Herren 50 | Bayernliga · Gr. 029 SU | 2253304 |
+| Herren 30 | Südliga 1 · Gr. 119 | 2257785 |
+| Herren 30 II | Südliga 2 · Gr. 129 | 2257803 |
+| Damen | Südliga 1 · Gr. 082 | 2257743 |
+| Damen 40 | Südliga 2 · Gr. 200 | 2257871 |
+| Damen 50 | Landesliga 1 · Gr. 054 SU | 2253322 |
+
+Quellen und Fallstricke:
+
+- **Spielplan + Teilnehmer:** je Gruppe der Report „Tabelle und Spielplan" (nu.Dokument 013),
+  `nuDokument?dokument=ScheduleReportFOP&group=<groupid>` — per `curl -L` erreichbar.
+  In diesem PDF sind die **Hallennamen abgeschnitten** („TC Grün-Weiß Gräfe…"); die vollen Namen
+  stehen im btv.de-Widget zwischen den Ergebnis-Spalten und dem Gastverein.
+- Der Spielort kann **wörtlich der Heimverein** sein (Gräfelfing spielt in Gräfelfing). Beim Parsen
+  des Widgets deshalb erst den **Gast aus dem PDF** festhalten und den Spielort als „die andere
+  Zeile" bestimmen — sonst vertauschen sich beide.
+- **Der vereinsweite `ResultReportFOP` deckt die Winterrunde nicht ab.** Ein Durchprobieren der
+  `season`-IDs (18106–18420) fand nur Sommer-2026-Reports; die Winter-Saison-ID ist auf diesem Weg
+  nicht zu finden. Die sieben Gruppen-Reports oben sind die Datenbasis.
+- **Format: 4 Einzel + 2 Doppel** in *allen* Winter-Ligen, von der Bayernliga bis zur Südliga
+  (geprüft am Blanko-Spielbericht, nu.Dokument 011d). In `team-format.ts` sind die `w27-*`-Ids
+  darum durchgängig `"4er"`. *(Die alten `w-*`-Ids aus Winter 2025/26 stehen dort noch auf `"6er"`
+  — folgenlos, weil in jener Saison jede Begegnung ein Endergebnis hat und „Ergebnis eintragen"
+  deshalb gar nicht erscheint.)*
+- **Neue `groupid` finden:** siehe „Meldelisten" weiter unten — im Widget
+  `btv-prod.burdadigitalsystems.de/btvteams/?clubnr=02467` zuerst so oft **„MEHR LADEN"** klicken,
+  bis der Button verschwindet (sonst fehlen Mannschaften), dann `window.open` überschreiben und die
+  **„Tabelle/Spielplan [PDF]"**-Elemente klicken.
+
+### Eine Saison anlegen
+
+1. Datendatei `src/data/<saison>.ts` mit Teams, Kategorien, Standings, Matches, Monaten und
+   Monatsfarben (Vorlage: `winter-2627.ts`).
+2. `SeasonId` in `src/types.ts` erweitern und die Saison in `src/data/seasons.ts` eintragen —
+   **die laufende Runde nach vorn**, `SEASONS[0]` ist die Vorauswahl.
+3. Eintrag in der Registry `src/data/season-data.ts` (`supportsPdf` nur für die Sommerrunde, weil
+   `pdf-export.ts` deren Monatsfarben kennt).
+4. `team-format.ts` um die neuen Konkurrenz-Ids ergänzen, sonst gilt still `"6er"`.
+
+App-Komponenten müssen dafür **nicht** angefasst werden: `App.tsx` und `CalendarDownloads.tsx`
+lesen alles aus der Registry. Die gespeicherte Filter-Auswahl liegt seit Winter 2026/27 als
+`{ teams: { <seasonId>: [...] }, homeOnly }` im `localStorage`; die alte Fassung mit
+`summer`/`winter` wird beim Laden weiterhin übernommen, neue Saisons starten mit allen
+Konkurrenzen an.
 
 ### Mixed-Runde (Gr. 074) — Sonderfall
 
