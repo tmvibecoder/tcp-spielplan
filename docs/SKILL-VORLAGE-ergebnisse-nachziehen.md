@@ -17,6 +17,10 @@ Meldelisten — bis hin zum Live-Deploy).
 > Meldelisten, prüfe die Konsistenz, baue, verifiziere im Browser und deploye
 > per PR + Squash-Merge. Verifiziere danach das Live-Bundle.
 
+**Erst klären, welche Saison gemeint ist.** Die Schritte 1–7 unten beschreiben die **Sommerrunde**.
+Läuft gerade die **Winterrunde** (10.10.2026 – 20.03.2027), gilt der eigene Abschnitt
+„Winterrunde 2026/27" weiter unten: andere Gruppen, andere Zieldatei, **kein Generator**.
+
 ## Ablauf Schritt für Schritt
 
 1. **Schnell-Check, ob es überhaupt Neues gibt** (billig, ohne Browser):
@@ -28,7 +32,9 @@ Meldelisten — bis hin zum Live-Deploy).
    Ergebnis. Neue Ergebnisse = Zellen, die im Repo (`src/data/summer-2026.ts`)
    noch `"0:0"` sind. `-L` ist Pflicht (Redirect hängt das `etag` an).
    Während der Sommerpause ändert sich nur noch die **Mixed-Runde (Gr. 074)**:
-   Spieltage 22.08., 30.08., 06.09., 19.09., 26.09., 27.09.2026.
+   Spieltage 22.08., 30.08., 06.09., 19.09., 26.09., 27.09.2026 — für den TC Pliening seit dem
+   06.09.2026 durch, offen bleiben nur Begegnungen **ohne** Pliening. **Nach dem 27.09.2026 ist die
+   Sommerrunde fertig**; ab dem 10.10.2026 gilt der Winter-Abschnitt weiter unten.
 
 2. **Spielberichte crawlen** (nur nötig, wenn Schritt 1 Neues zeigt):
    ```
@@ -120,18 +126,71 @@ Basis-Pfad der PDFs: `https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE
 | Midcourt U10 | Südliga 1 · Gr. 870 | 2219939 | 6, KEINE Meldelisten in nuLiga |
 
 Neue groupid finden: Vereinsseite btv.de → iframe `btvteams/?clubnr=02467` →
+**so oft „MEHR LADEN" klicken, bis der Button verschwindet** (sonst fehlen Mannschaften) →
 `window.open` überschreiben → „Tabelle/Spielplan [PDF]" klicken → URL enthält `group=<id>`.
+
+## Winterrunde 2026/27 — der Ablauf ist ein anderer
+
+**Ab dem 10.10.2026 laufen die Winter-Spiele** (bis 20.03.2027). Die Sommer-Werkzeuge greifen dort
+**nicht**: `GROUPS`, `generate-standings.mjs` und `check-data.mjs` zielen alle auf die Sommer-Saison.
+Für den Winter gilt:
+
+| Konkurrenz | leagueName (exakt!) | groupid | teamId |
+|---|---|---|---|
+| H40 | Bayernliga · Gr. 022 SU | 2253303 | `w27-herren40` |
+| H50 | Bayernliga · Gr. 029 SU | 2253304 | `w27-herren50` |
+| H30 | Südliga 1 · Gr. 119 | 2257785 | `w27-herren30` |
+| H30 II | Südliga 2 · Gr. 129 | 2257803 | `w27-herren30ii` |
+| D00 | Südliga 1 · Gr. 082 | 2257743 | `w27-damen` |
+| D40 | Südliga 2 · Gr. 200 | 2257871 | `w27-damen40` |
+| D50 | Landesliga 1 · Gr. 054 SU | 2253322 | `w27-damen50` |
+
+Dieselbe Liste steht als `WINTER_2627_GROUPS` in `scripts/groups.mjs` — **bewusst getrennt von
+`GROUPS`**, weil `gen:spielberichte` die Sommer-Datei komplett aus dem Cache neu schreibt.
+
+1. **Schnell-Check** wie im Sommer: `ScheduleReportFOP&group=<groupid>` per `curl -L` ziehen,
+   `pdftotext -layout` und gegen `src/data/winter-2627.ts` vergleichen.
+2. **Eintragen von Hand** — für den Winter gibt es **keinen Generator**. Zwei Stellen je Begegnung:
+   - in `WINTER_2627_MATCHES` das betroffene Match: `mp`, `sets`, `games` (alle **Heim:Gast**) füllen
+     und `status` von `"open"` auf `"played"` setzen. Bei Verlegung `date`/`time`/`day` mitziehen.
+   - in `WINTER_2627_STANDINGS` die Liga: `points`/`matchPoints`/`sets` je Zeile und die beiden
+     Spiegel-Zellen der Kreuztabelle (`crossResults`) — Rangfolge **verbatim** aus dem PDF.
+   - `WINTER_2627_STANDINGS_STAND` auf das Abgleich-Datum setzen (kein Skript tut das).
+3. **Format 4 Einzel + 2 Doppel** in allen Winter-Ligen (Blanko-Spielbericht, nu.Dokument 011d):
+   höchstens `6:0` Matchpunkte und `12:0` Sätze. Ein `9:0` wäre ein Lesefehler.
+4. **Spielberichte**: `spielberichte-crawled.ts` enthält nur die Sommer-Saison. Winter-Berichte
+   müssten erst dazugecrawlt werden — der Generator würde die Datei sonst überschreiben. Solange das
+   nicht eingerichtet ist, bleibt der Winter **ohne** Einzel-/Doppel-Ansicht; die Kreuztabelle zeigt
+   die Ergebnisse, der Drilldown ist leer. Das ist kein Fehler.
+5. **Tabellen-Optik vor dem ersten Spieltag**: Steht in einer Liga überall `0:0`, zeigt
+   `StandingsView` „*n* Mannschaften" statt „Platz *x*" und lässt die Medaillen weg (die
+   BTV-Reihenfolge ist dann nur die Setzliste). Sobald die ersten Punkte eingetragen sind, erscheint
+   die normale Darstellung von selbst — nichts umzustellen.
+6. **Spielorte**: im PDF sind die Hallennamen abgeschnitten („TC Grün-Weiß Gräfe…"). Vollständig
+   stehen sie im btv.de-Widget zwischen den Ergebnis-Spalten und dem Gastverein. Achtung: der
+   Spielort kann **wörtlich der Heimverein** sein (Gräfelfing spielt in Gräfelfing) — deshalb den
+   Gast aus dem PDF vorgeben und den Spielort als „die andere Zeile" bestimmen, sonst vertauschen
+   sich beide.
+7. **`check-data.mjs` prüft den Winter nicht** — die Zahlen dort (816/814/0, 407 Berichte) dürfen
+   sich durch Winter-Änderungen **nicht** bewegen. Tun sie es doch, wurde versehentlich an den
+   Sommer-Daten gedreht.
 
 ## Wo die Daten liegen
 
-- `src/data/spielberichte-crawled.ts` — **generiert**, alle 402 Berichte. Nie von Hand editieren.
+- `src/data/spielberichte-crawled.ts` — **generiert**, alle 407 Berichte (nur Sommer). Nie von Hand editieren.
 - `src/data/spielberichte.ts` — nur noch Lookup (`getSpielbericht`, `getAllSpielberichte`).
-- `src/data/meldelisten.ts` — **generiert**, 132 Mannschaften / 4.238 Spieler.
+- `src/data/meldelisten.ts` — **generiert**, 132 Mannschaften / 4.238 Spieler (nur Sommer).
 - `src/data/summer-2026.ts` — Tabellen + Kreuztabellen (per `generate-standings.mjs` aktualisierbar) und
   `SUMMER_STANDINGS_STAND` (Anzeige „BTV-Stand" in der App; bei Hand-Änderungen selbst setzen).
-- `src/data/matches.ts` — Spielplan-Termine; liefert zusammen mit der Kreuztabelle die Ergebnisse im
-  Spielplan. Verlegte Begegnungen auf das Datum aus dem Spielbericht setzen.
-- `scripts/groups.mjs` — zentrale Gruppenliste für alle Skripte.
+- `src/data/matches.ts` — Spielplan-Termine **Sommer**; liefert zusammen mit der Kreuztabelle die
+  Ergebnisse im Spielplan. Verlegte Begegnungen auf das Datum aus dem Spielbericht setzen.
+- `src/data/winter-2627.ts` — die **laufende Winterrunde** komplett in einer Datei: Teams, Kategorien,
+  Spielplan (mit `venue`/`status`), Tabellen, `WINTER_2627_STANDINGS_STAND`, Monatsfarben.
+  **Handgepflegt**, siehe Winter-Abschnitt oben. `winter-2526.ts` ist derselbe Aufbau als Archiv.
+- `src/data/season-data.ts` — die **Saison-Registry**: welche Saison welche Teams, Matches, Standings,
+  Monate und `supportsPdf` zieht. `App.tsx`/`CalendarDownloads.tsx` lesen nur daraus. Eine neue Saison
+  braucht hier einen Eintrag (plus `types.ts`, `seasons.ts`, `team-format.ts`) — Komponenten nicht.
+- `scripts/groups.mjs` — zentrale Gruppenliste: `GROUPS` (Sommer) und `WINTER_2627_GROUPS` (Winter).
 - Caches (gitignored): `scripts/.spielberichte-cache.json`, `scripts/.meldelisten-cache.json`.
 
 ## Crawler-Stolperfallen (alle in den Skripten gelöst — nicht „wegoptimieren")
@@ -191,8 +250,14 @@ Neue groupid finden: Vereinsseite btv.de → iframe `btvteams/?clubnr=02467` →
   **Stehende Freigabe (07.09.2026): ohne Rückfrage mergen und live nehmen**, danach das
   ausgelieferte Bundle verifizieren (Tabellen-Texte stecken in lazy geladenen Chunks —
   dafür die Live-Seite im Browser prüfen).
-- Immer in einem **frischen Worktree von `origin/main`** arbeiten (der lokale
-  Haupt-Checkout hängt oft zurück und hat lokale Änderungen).
+- Immer in einem **frischen Worktree von `origin/main`** arbeiten und `git fetch` vorschalten.
+  Der Haupt-Checkout wurde am 09.09.2026 auf `origin/main` nachgezogen; er hing 61 Commits zurück und
+  trug einen uncommitteten WIP-Stand vom April 2026, der jeden Pull blockierte. Der Stand liegt
+  gesichert auf `wip/score-entry-april-2026` (überholt, nicht zum Mergen). Läuft der Checkout wieder
+  voll, **nichts verwerfen** — erst auf einem Branch sichern, dann `git merge --ff-only origin/main`.
+- Im Worktree fehlt `node_modules` → einmal `npm install` (der Haupt-Checkout hat kein
+  `puppeteer-core`, Browser-Crawls scheitern dort sonst mit `ERR_MODULE_NOT_FOUND`). Eigene
+  Hilfsskripte müssen **im Repo** liegen, sonst finden sie `node_modules` nicht.
 - Browser-Crawls brauchen Google Chrome
   (`/Applications/Google Chrome.app/...`, überschreibbar via `CHROME_PATH`)
   und `puppeteer-core` (devDependency, `npm install` reicht).
