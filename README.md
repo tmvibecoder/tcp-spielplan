@@ -2,6 +2,19 @@
 
 React/Vite-App für Spielplan, Tabellen und Statistik des TC Pliening. Live: https://tcp-spielplan.de
 
+> ### 📖 Diese Datei ist das Nachschlagewerk — nicht der Einstieg
+>
+> Wer das Projekt **zum ersten Mal** sieht (Mensch oder KI-Agent), liest in dieser
+> Reihenfolge:
+>
+> 1. **[AGENTS.md](AGENTS.md)** — Regeln, Befehle, Wo-was-liegt · **zuerst lesen**
+> 2. **[docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md)** — Aufbau, Datenfluss, Datenmodell, Registries, Deploy
+> 3. **[docs/GLOSSAR.md](docs/GLOSSAR.md)** — die Fachsprache: Konkurrenz, Kreuztabelle, Matchpunkte, Meldeliste, LK …
+> 4. **[docs/AUFGABEN.md](docs/AUFGABEN.md)** — Rezepte: „Ich soll X ändern — was genau tue ich?"
+>
+> **Dieses README** beschreibt danach jedes Feature, jede Datenquelle und jede
+> Stolperfalle im Detail. Es ist zum **Nachschlagen** gedacht, nicht zum Lesen am Stück.
+
 **Saisons** stehen im Dropdown oben links; die laufende Runde ist die Vorauswahl (`SEASONS[0]` in
 `src/data/seasons.ts`). Aktuell: **Winter 2026/27** (7 Mannschaften, 34 Begegnungen), Sommer 2026
 (18 Konkurrenzen) und Winter 2025/26 als Archiv. Welche Daten eine Saison zieht, steht an **einer**
@@ -14,6 +27,7 @@ Stelle — der Registry `src/data/season-data.ts`; siehe „Eine Saison anlegen"
 - **Kalender-Downloads** – im **⋯-Menü** (Spielplan-Reiter, jede Saison) → Overlay mit einer ICS-Datei je Mannschaft. Bis 07.09.2026 stand der Block dauerhaft aufgeklappt unter dem Spielplan. `PDF exportieren` steht im selben Menü, aber nur in Saisons mit Druck-Spielplan (`supportsPdf` in der Registry — derzeit nur die Sommerrunde).
 - **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung. Solange eine Runde **noch nicht begonnen** hat (alle Punkte 0:0), zeigt der Kopf „*n* Mannschaften" statt „Platz *x*" und die Medaillen bleiben weg — die Reihenfolge ist dort nur die Setzliste des BTV.
 - **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – Mannschaftszeile antippen. Seit 15.08.2026 mit **kompletter Meldeliste** (alle gemeldeten Spieler mit Rang), getrennt nach **Einzel** und **Doppel**; die Reiter nennen die Zahl der Personen **im Einsatz** (nicht die Meldelistengröße), die Spaltenerklärung liegt hinter **„ⓘ Was bedeuten die Werte?"** – siehe unten.
+- **Live-Zwischenstände** – im aufgeklappten Spiel lässt sich während einer laufenden Begegnung jedes Einzel/Doppel eintragen; die Stände liegen in Supabase und aktualisieren sich bei allen Betrachtern per Realtime. Der **einzige** Teil der App mit Laufzeit-Daten – siehe unten.
 
 ### Konkurrenz-Filter & gespeicherte Auswahl
 
@@ -79,6 +93,34 @@ Konkurrenzen** der Sommer-Saison komplett erfasst: 402 Spielberichte (3.168 Einz
   landen ~100 statt 8 Spieler fälschlich unter „Weitere Einsätze".
 - Spieler-Strings in Berichten: `"Nachname, Vorname (Meldeposition, LKxx,x)"`, geparst von
   `src/utils/spielbericht.ts` (`parsePlayer`/`parseSide`). LK-Format `"LK14,3"` (Komma!).
+
+### Live-Zwischenstände (Supabase) — der einzige dynamische Teil
+
+Während eine Begegnung läuft, kann **jeder Besucher** im aufgeklappten Spiel die
+einzelnen Einzel und Doppel eintragen. Diese Stände sind **unabhängig** von den
+offiziellen BTV-Ergebnissen und werden später von ihnen abgelöst.
+
+- **Schema:** `supabase-setup.sql` — `match_scores` (eine Begegnung, eindeutig über
+  `team_id + match_date + match_time`) und `individual_matches` (ein Einzel/Doppel je
+  Position, per `match_score_id` verknüpft, `ON DELETE CASCADE`).
+- **Kein Login.** Die RLS-Policies erlauben der Rolle `anon` ausdrücklich Lesen,
+  Einfügen und Ändern — bewusst so für eine Vereins-App ohne Benutzerkonten.
+- **Code-Landkarte:** `src/hooks/useLiveScores.ts` (Initial-Load beider Tabellen +
+  Realtime-Abo + `saveScores`), `src/components/LiveScorePanel.tsx` (Anzeige und
+  Bearbeiten-Umschaltung, eingebunden aus `MatchDetail.tsx`),
+  `src/components/ScoreEntry.tsx` (Eingabemaske),
+  `src/utils/score-helpers.ts` (`computeWinner`, `needsThirdSet`,
+  `isRegularSetComplete`, `isChampionsTiebreakComplete`),
+  `src/components/ScoreBadge.tsx` (Kurzstand in der Spielplan-Zeile).
+- Wie viele Positionen eine Begegnung hat, kommt aus `src/data/team-format.ts`
+  (`getSinglesCount`/`getDoublesCount`) — steht eine Konkurrenz dort nicht drin, zeigt
+  die Eingabemaske still **6 Einzel + 3 Doppel** statt 4 + 2.
+
+⚠️ **Daran hängt die häufigste Build-Falle des Projekts:** `src/lib/supabase.ts` ruft
+`createClient(...)` schon beim Modul-Import auf. Ohne `VITE_SUPABASE_URL` /
+`VITE_SUPABASE_ANON_KEY` wirft das beim Laden und die App rendert eine **komplett leere
+Seite** — nicht etwa nur ohne Live-Scores. Details unter „Stolperfalle ‚leere Seite im
+git-worktree'" weiter unten.
 
 ---
 
@@ -346,6 +388,12 @@ Vite + React 19 + TypeScript + Tailwind 4. `npm run dev` (Entwicklung), `npm run
 (`tsc -b` + `vite build`), `npm run lint`, `npm run preview`. Die Tabellen-Ansicht und die
 Spielbericht-Daten werden per `React.lazy` als eigene Chunks nachgeladen, damit der Spielplan
 schnell startet.
+
+**Es gibt keine automatisierten Tests** (kein Vitest/Jest, keine `*.test.ts`). Die Rolle der
+Testsuite übernehmen vier andere Ebenen — Typen/Build (`npm run build`), Lint
+(`npm run lint`), der **Daten-Konsistenzcheck** (`npm run check`, `-- --all` für alle
+Saisons) und der **Browser-Smoke-Test** (headless Chrome, mobil). Was das im Einzelnen
+prüft, steht in [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md) („Prüfen statt testen").
 
 ## Deployment
 
