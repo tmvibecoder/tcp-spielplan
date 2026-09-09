@@ -61,6 +61,12 @@ const REGIONS = (arg("regions") ?? (isMixed ? "Südbayern" : isWinter ? "BTV-Lig
   .split(",").map((s) => s.trim());
 const BEREICHE = (arg("bereiche") ?? (isMixed ? "MIXED" : "DAMEN/HERREN,DA/HE 30 UND ÄLTER")).split(",").map((s) => s.trim());
 if (argv.includes("--jugend") && !BEREICHE.includes("JUGEND")) BEREICHE.unshift("JUGEND");
+// Altersklassen: Standard sind die, in denen der TC Pliening Mannschaften stellt —
+// spart die Hälfte der Klicks. `--klassen alle` nimmt alles, `--klassen "Herren 40,Damen"` gezielt.
+const KLASSEN_ARG = arg("klassen");
+const KLASSEN = KLASSEN_ARG === "alle" ? null
+  : (KLASSEN_ARG ?? "Herren,Damen,Herren 30,Herren 40,Herren 50,Herren 60,Damen 30,Damen 40,Damen 50,Mixed 00 A,Mixed 00 B,Mixed 30 A,Mixed 40 A,Mixed 50 A")
+      .split(",").map((k) => k.trim().toLowerCase());
 const OUTFILE = path.join(ROOT, `scripts/.discover-${SEASON.replace(/[^a-z0-9]+/gi, "_")}.json`);
 const log = (...a) => console.error(...a);
 // Fehlersuche: --only "<Bereich>::<Klasse>" beschränkt den Lauf auf eine Klasse
@@ -98,26 +104,48 @@ const grow = () => page.evaluate(() => {
 });
 const bodyText = async () => frame().evaluate(() => document.body.innerText);
 
-/** Widget frisch laden: btv.de-Seite, Consent weg, iframe auf die Region umbiegen. */
+/** Widget frisch laden: btv.de-Seite (nur bis DOM, die Werbung muss nicht
+ *  fertig sein), Consent weg, iframe auf die Region umbiegen. */
 async function fresh(region) {
-  await page.goto(EMBED, { waitUntil: "networkidle2", timeout: 90000 });
+  await page.goto(EMBED, { waitUntil: "domcontentloaded", timeout: 90000 });
+  await sleep(1500);
   await dismissConsent(page);
   for (const f of page.frames()) await dismissConsent(f);
   await page.evaluate((r) => {
     const ifr = [...document.querySelectorAll("iframe")].find((i) => i.src.includes("btvgrpsearch"));
     ifr.src = `https://widget.btv.de/btvgrpsearch/?region=${encodeURIComponent(r)}`;
   }, region);
-  for (let i = 0; i < 20; i++) {
-    await sleep(1000);
+  for (let i = 0; i < 25; i++) {
+    await sleep(800);
     const f = frame();
-    if (f && /Altersbereich|Saison/i.test(await f.evaluate(() => document.body.innerText).catch(() => ""))) break;
+    if (f && /Altersbereich/i.test(await f.evaluate(() => document.body.innerText).catch(() => ""))) break;
   }
-  await sleep(1500);
+  await sleep(800);
   await grow();
 }
 
+/** Zurück zur Bereichswahl OHNE Neuladen: die Saison im „Archiv"-Menü erneut
+ *  wählen setzt die Auswahl zurück. Klappt das nicht, frisch laden. */
+async function reset(region) {
+  try {
+    const toggles = await frame().$$(".dropdown-toggle");
+    const box = await toggles[2]?.boundingBox();
+    if (box) {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      await sleep(900);
+      if (await clickText(SEASON, ".z-menuitem-text, .z-menuitem", 1500)) {
+        const b = await choices("In welchem Altersbereich");
+        if (b.length) return true;
+      }
+    }
+  } catch { /* Frame weg o. ä. — dann neu laden */ }
+  await fresh(region);
+  return pickSeason();
+}
+
 /** Sichtbares Element mit exakt diesem Text per Maus klicken (kleinstes zuerst). */
-async function clickText(text, sel = "button, a, li, div, span, td, .z-menuitem-text", wait = 2600) {
+async function clickText(text, sel = "button, a, li, div, span, td, .z-menuitem-text", wait = 1800) {
   await grow();
   // Nach einem Gruppenklick scrollt die btv.de-Seite nach unten; dann liegen
   // die Knöpfe hinter der festen Kopfleiste der Seite und Klicks gehen ins
@@ -151,7 +179,7 @@ async function clickText(text, sel = "button, a, li, div, span, td, .z-menuitem-
     const bb = btn && (await btn.boundingBox());
     if (!bb) break;
     await page.mouse.click(bb.x + bb.width / 2, bb.y + bb.height / 2);
-    await sleep(1200);
+    await sleep(700);
     for (const c of cands) c.box = await c.el.boundingBox();
     usable = cands.filter(inView);
     if (ONLY) log(`  geblättert (${dir}): ` + cands.map((c) => (c.box ? [c.box.x, c.box.y].map(Math.round).join(",") : "-")).join(" | "));
@@ -251,13 +279,14 @@ for (const region of REGIONS) {
   for (const bereich of BEREICHE) {
     if (ONLY_BEREICH && bereich.toLowerCase() !== ONLY_BEREICH.toLowerCase()) continue;
     if (!bereiche.some((b) => b.toLowerCase() === bereich.toLowerCase())) continue;
-    await fresh(region); await pickSeason();
+    await reset(region);
     if (!(await clickText(bereich))) { log(`  ${bereich}: nicht klickbar`); continue; }
     const klassen = await choices("In welcher Altersklasse");
-    log(`  ${bereich}: ${klassen.join(", ")}`);
-    for (const klasse of klassen) {
+    const wanted = klassen.filter((k) => !KLASSEN || KLASSEN.includes(k.toLowerCase()));
+    log(`  ${bereich}: ${klassen.join(", ")}${KLASSEN ? ` → geprüft: ${wanted.join(", ") || "keine"}` : ""}`);
+    for (const klasse of wanted) {
       if (ONLY_KLASSE && klasse.toLowerCase() !== ONLY_KLASSE.toLowerCase()) continue;
-      await fresh(region); await pickSeason();
+      await reset(region);
       await dump("nach Saison");
       if (!(await clickText(bereich))) { log(`    ${klasse}: Bereich nicht klickbar`); continue; }
       await dump("nach Bereich");
