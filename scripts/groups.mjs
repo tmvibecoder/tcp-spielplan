@@ -27,3 +27,19 @@ export const GROUPS = [
   { groupid: "2216513", leagueName: "Südliga 5 · Gr. 638", mode: "herren", teamSize: 6 },            // Knaben 15 II
   { groupid: "2219939", leagueName: "Südliga 1 · Gr. 870", mode: "mixed", teamSize: 6 },             // Midcourt U10
 ];
+
+// Winterrunde 2026/27 (Spieltage 10.10.2026 – 20.03.2027). Bewusst eine eigene
+// Liste: die Crawler oben laufen weiter auf der Sommer-Saison, und
+// `gen:spielberichte` schreibt src/data/spielberichte-crawled.ts komplett aus dem
+// Cache — GROUPS zu erweitern würde also die Sommer-Berichte mitziehen.
+// Ab dem ersten Winter-Spieltag hier ansetzen (dann auch den Ziel-Datensatz klären).
+// teamSize 6 = 4 Einzel + 2 Doppel, laut Blanko-Spielbericht in allen Winter-Ligen so.
+export const WINTER_2627_GROUPS = [
+  { groupid: "2253303", leagueName: "Bayernliga · Gr. 022 SU",   mode: "herren", teamSize: 6 }, // H40
+  { groupid: "2253304", leagueName: "Bayernliga · Gr. 029 SU",   mode: "herren", teamSize: 6 }, // H50
+  { groupid: "2257785", leagueName: "Südliga 1 · Gr. 119",       mode: "herren", teamSize: 6 }, // H30
+  { groupid: "2257803", leagueName: "Südliga 2 · Gr. 129",       mode: "herren", teamSize: 6 }, // H30 II
+  { groupid: "2257743", leagueName: "Südliga 1 · Gr. 082",       mode: "damen",  teamSize: 6 }, // D00
+  { groupid: "2257871", leagueName: "Südliga 2 · Gr. 200",       mode: "damen",  teamSize: 6 }, // D40
+  { groupid: "2253322", leagueName: "Landesliga 1 · Gr. 054 SU", mode: "damen",  teamSize: 6 }, // D50
+];

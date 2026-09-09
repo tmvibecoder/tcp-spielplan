@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { Match, Team, SeasonId } from "../types";
-import { CATEGORIES } from "../data/constants";
-import { TEAMS } from "../data/teams";
-import { MATCHES } from "../data/matches";
-import { WINTER_TEAMS, WINTER_CATEGORIES, WINTER_MATCHES } from "../data/winter-2526";
+import { getSeasonData } from "../data/season-data";
 import { downloadICS } from "../utils/ics-export";
 
 interface CalendarDownloadsProps {
@@ -18,10 +15,7 @@ interface CalendarDownloadsProps {
 // Das Panel hängt per Portal an <body>, damit der sticky Header (backdrop-blur) die
 // Positionierung nicht einschränkt.
 export default function CalendarDownloads({ season, open, onClose }: CalendarDownloadsProps) {
-  const isSummer = season === "sommer-26";
-  const teamList = isSummer ? TEAMS : (WINTER_TEAMS as Team[]);
-  const matchList: Match[] = isSummer ? MATCHES : WINTER_MATCHES;
-  const categories = isSummer ? CATEGORIES : WINTER_CATEGORIES;
+  const { teams: teamList, matches: matchList, categories } = getSeasonData(season);
 
   // ESC schließt das Panel
   useEffect(() => {

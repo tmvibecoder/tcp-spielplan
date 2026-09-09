@@ -53,9 +53,13 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 
 | Zweck | Datei |
 |---|---|
-| Konkurrenzen + groupids (eine Quelle für alle Skripte) | `scripts/groups.mjs` |
+| Konkurrenzen + groupids (eine Quelle für alle Skripte; Winter 26/27 als eigene Liste `WINTER_2627_GROUPS`) | `scripts/groups.mjs` |
+| **Welche Daten eine Saison zieht** (Teams, Matches, Standings, Monate, `supportsPdf`) | `src/data/season-data.ts` |
+| Saison-Liste + Vorauswahl (`SEASONS[0]`) | `src/data/seasons.ts` |
 | Tabellen + Kreuztabellen (Sommer) + `SUMMER_STANDINGS_STAND` (Anzeige „BTV-Stand") | `src/data/summer-2026.ts` |
-| Spielplan-Termine (bei Verlegung: Datum aus dem Spielbericht) | `src/data/matches.ts` |
+| Winterrunde 2026/27 komplett (Teams, Spielplan, Tabellen, Monatsfarben) | `src/data/winter-2627.ts` |
+| Winterrunde 2025/26 (Archiv) | `src/data/winter-2526.ts` |
+| Spielplan-Termine Sommer (bei Verlegung: Datum aus dem Spielbericht) | `src/data/matches.ts` |
 | Ergebnis je Spielplan-Begegnung aus der Kreuztabelle ableiten | `src/data/results.ts` |
 | Spielberichte (Einzel/Doppel je Begegnung) | `src/data/spielberichte-crawled.ts` (**generiert**) |
 | Lookup drumherum | `src/data/spielberichte.ts` |
@@ -69,6 +73,9 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 | Kalender-Downloads (Overlay aus dem ⋯-Menü) | `src/components/CalendarDownloads.tsx` |
 
 ## Datenpflege in Kürze
+
+**Neue Saison anlegen:** siehe README-Abschnitt „Eine Saison anlegen" — Datendatei, `SeasonId`,
+`seasons.ts`, Registry `season-data.ts`, `team-format.ts`. App-Komponenten bleiben unangetastet.
 
 Neue Ergebnisse: Gruppen-Report `ScheduleReportFOP&group=<groupid>` per `curl -L` ziehen
 (Tabelle **und** Spielplan), Spielberichte per Puppeteer aus dem btv.de-Widget holen

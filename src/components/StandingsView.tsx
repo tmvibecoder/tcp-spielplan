@@ -60,6 +60,13 @@ function rankMedal(rank: number): string {
   }
 }
 
+/** Vor dem ersten Spieltag steht in der BTV-Tabelle überall 0:0 — die Reihenfolge
+ *  ist dann die Setzliste, kein erspielter Platz. Medaille und „Platz x“ wären
+ *  dort schlicht falsch. */
+function notStarted(league: LeagueStandings): boolean {
+  return league.entries.every((e) => e.points === "0:0");
+}
+
 export default function StandingsView({ standings, seasonLabel, stand }: StandingsViewProps) {
   const [expandedLeague, setExpandedLeague] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectedMeeting | null>(null);
@@ -110,6 +117,7 @@ export default function StandingsView({ standings, seasonLabel, stand }: Standin
       {standings.map((league) => {
         const isExpanded = expandedLeague === league.leagueName;
         const ownEntry = league.entries.find((e) => e.isOwnClub);
+        const fresh = notStarted(league);
 
         return (
           <div
@@ -142,11 +150,17 @@ export default function StandingsView({ standings, seasonLabel, stand }: Standin
                 </span>
                 <span className="flex-1" />
                 {ownEntry && (
-                  <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${rankBadge(ownEntry.rank)}`}>
-                    {rankMedal(ownEntry.rank) && <span aria-hidden="true">{rankMedal(ownEntry.rank)}</span>}
-                    Platz {ownEntry.rank}
-                    <span className="font-normal text-slate-500">/{league.entries.length}</span>
-                  </span>
+                  fresh ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap bg-slate-800/50 text-slate-400 border-slate-600/30">
+                      {league.entries.length} Mannschaften
+                    </span>
+                  ) : (
+                    <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${rankBadge(ownEntry.rank)}`}>
+                      {rankMedal(ownEntry.rank) && <span aria-hidden="true">{rankMedal(ownEntry.rank)}</span>}
+                      Platz {ownEntry.rank}
+                      <span className="font-normal text-slate-500">/{league.entries.length}</span>
+                    </span>
+                  )
                 )}
                 <span className="text-slate-500 text-xs w-4 text-center">{isExpanded ? "▲" : "▼"}</span>
               </div>
@@ -200,6 +214,12 @@ export default function StandingsView({ standings, seasonLabel, stand }: Standin
                   })()
                 ) : (
                   <>
+                {fresh && (
+                  <p className="mb-2 px-1 text-[11px] text-slate-500">
+                    Die Runde hat noch nicht begonnen — die Reihenfolge ist die Setzliste des BTV,
+                    noch kein erspielter Platz.
+                  </p>
+                )}
                 {/* Main standings */}
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -224,12 +244,12 @@ export default function StandingsView({ standings, seasonLabel, stand }: Standin
                         >
                           <td className="py-2 px-2">
                             <span className="inline-flex items-center gap-1.5">
-                              {rankMedal(entry.rank) && (
+                              {!fresh && rankMedal(entry.rank) && (
                                 <span className="text-[15px] leading-none" aria-hidden="true">
                                   {rankMedal(entry.rank)}
                                 </span>
                               )}
-                              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold border ${rankBadge(entry.rank)}`}>
+                              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold border ${fresh ? rankBadge(0) : rankBadge(entry.rank)}`}>
                                 {entry.rank}
                               </span>
                             </span>

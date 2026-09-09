@@ -6,7 +6,8 @@ interface HeaderProps {
   onPdf: () => void;
   /** Öffnet die Kalender-Downloads (Overlay) */
   onCalendar: () => void;
-  isSummer: boolean;
+  /** Den PDF-Export gibt es nur für Saisons mit Druck-Spielplan (Sommerrunde). */
+  showPdf: boolean;
   seasonDropdown: ReactNode;
   // Konkurrenz-Auswahl (Button + Overlay), gilt für Spielplan UND Tabelle
   teamFilter: ReactNode;
@@ -18,7 +19,7 @@ interface HeaderProps {
 export default function Header({
   onPdf,
   onCalendar,
-  isSummer,
+  showPdf,
   seasonDropdown,
   teamFilter,
   subTab,
@@ -80,7 +81,7 @@ export default function Header({
                 >
                   📆 Kalender-Downloads
                 </button>
-                {isSummer && (
+                {showPdf && (
                   <button
                     onClick={() => { onPdf(); setMenuOpen(false); }}
                     className="w-full text-left px-3 py-1.5 text-[11px] font-semibold text-purple-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
