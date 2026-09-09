@@ -454,8 +454,9 @@ Neu dazu kommt ein abgeleiteter Index (Arbeitsname `src/data/player-history.ts`)
   Mannschaftsbezug.
 - **Mannschafts-Index je Gruppe:** je Mannschaft die gespielten Begegnungen mit Aufstellung
   (Positionen → Namen), Einsatzzähler je Spieler, Doppelpaare, Begegnungsergebnisse.
-- **Datenstand je Gruppe und Saison** (`dataStand: { [groupid]: ISO-Zeitstempel }`), geschrieben
-  vom Crawl, angezeigt im Briefing.
+- **Datenstand je Gruppe und Saison** (`dataStand: { [groupid]: ISO-Zeitstempel }`) plus der
+  **nächste geplante Lauf**, geschrieben vom Crawl, angezeigt im **⋯-Menü des Headers** — nicht
+  im Briefing (Entscheidung des Auftraggebers vom 09.09.2026).
 
 Die Suche braucht eine flache Liste aller Namen (Spieler) und aller Mannschaften in TCP-Gruppen;
 beides ist aus dem Index ableitbar. Alles bleibt eingecheckter TypeScript-Code — **kein Backend**,
@@ -468,12 +469,13 @@ Diese Daten gehören wie heute in **lazy geladene Chunks** (Muster `Spielbericht
 ### 13.2 Oberfläche: drei neue Einstiege, kein Router
 
 ```
-Header ── 🔍 (neu) ──► SearchOverlay ──► Spieler  ──► PlayerHistory (neu, lazy)
-                                     └─► Mannschaft ──► TeamStatsDetail (bestehend, Meldeliste)
-TimelineView ► MatchRow ► MatchDetail ──► OpponentBriefing (neu, lazy)
-                                            ├─ Meldeliste   (RosterRow + Einsatzhäufigkeit)
-                                            ├─ Aufstellungen (Gegner + „Unsere Aufstellungen")
-                                            └─ Ergebnisse   (Gegnerbilanz + direkte Duelle)
+Header ── „🔍 Suche" (neu) ──► SearchOverlay ──► Spieler  ──► PlayerHistory (neu, lazy)
+       │                                     └─► Mannschaft ──► TeamStatsDetail (bestehend)
+       └─ ⋯-Menü ── Kalender-Downloads · PDF (Sommer) · Datenstand + nächster Lauf (neu)
+TimelineView ► MatchRow ► MatchDetail ──► OpponentBriefing (neu, lazy, nur laufende Saison)
+                                            ├─ Meldeliste    (RosterRow + LK + Einsatzhäufigkeit)
+                                            ├─ Aufstellungen (Nachname + LK; Gegner + „Unsere")
+                                            └─ Ergebnisse    (Begegnungen des Gegners, Gegnersicht)
 ```
 
 - Overlay- und Seitenzustand liegen wie `calendarOpen` und `page` in `App.tsx`; ein
@@ -483,18 +485,22 @@ TimelineView ► MatchRow ► MatchDetail ──► OpponentBriefing (neu, lazy)
 - **Saisonneutral bleiben** (Regel aus AUFGABEN.md, Abschnitt 1): das Briefing findet die Gruppe
   des Gegners über `Team.league` + Saison, nie über eine Saison-Fallunterscheidung.
 
-### 13.3 Farblogik als Modus, nicht als neue Farben
+### 13.3 Farblogik: die betrachtete Seite bestimmt die Farbe
 
-`sideOutcome(side, won, tcpSide)` in `src/utils/spielbericht.ts` deckt heute TCP-Sicht und
-Fremdpaarung ab. Für die Spielerhistorie kommt ein dritter Modus **„Spielersicht"** dazu:
-gewonnen = grün, verloren = rot aus Sicht des geöffneten Spielers. Die Regel lautet:
+`sideOutcome(side, won, tcpSide)` in `src/utils/spielbericht.ts` färbt heute aus TCP-Sicht
+(`tcpWin` grün, `oppWin` rot) oder neutral bei Fremdpaarungen. Für Profile und Briefing wird
+der feste `tcpSide` durch einen Parameter **„betrachtete Seite"** ersetzt — die Mannschaft oder
+der Spieler, dessen Seite gerade offen ist. Entscheidung vom 09.09.2026:
 
-| Kontext | Sicht | grün bedeutet |
+| Kontext | betrachtete Seite | grün bedeutet |
 |---|---|---|
-| Gegnerbriefing, Spielbericht einer TCP-Begegnung, direkte Duelle | TCP | positiv für Pliening |
-| Zeile in einer Spielerhistorie **gegen TC Pliening** (auch im Profil eines Gegners) | TCP | positiv für Pliening (+ „TCP"-Marke) |
-| Zeile in einer Spielerhistorie gegen Dritte, Saisonbilanz einer Gegnermannschaft | Spieler/Mannschaft | Sieg des Spielers bzw. der Mannschaft |
+| Spielerhistorie (eigener oder gegnerischer Spieler), auch Zeilen gegen Pliening | der Spieler | der Spieler hat gewonnen |
+| Meldeliste / Ergebnisse / Aufstellungen des Gegners im Briefing | der Gegner | der Gegner hat gewonnen |
+| „Unsere Aufstellungen" im Briefing | TC Pliening | Pliening hat gewonnen |
+| Spielbericht einer TCP-Begegnung (Spielplan, Kreuztabelle) — **unverändert** | TC Pliening | Pliening hat gewonnen |
+| Spielbericht einer Fremdpaarung — **unverändert** | keine | Heim sky / Gast amber wie heute |
 
+Kein Farbwechsel innerhalb einer Liste; Zeilen gegen Pliening tragen nur eine „TCP"-Marke.
 Satzfelder folgen derselben Entscheidung über `setCellClass`. Neue Farbwerte gibt es nicht.
 
 ### 13.4 Auto-Aktualisierung: Wecker statt Terminplan
@@ -517,7 +523,7 @@ seasons.mjs → Termine der laufenden Saison
 
 Spielverlegungen brauchen keine Sonderbehandlung: Der Wecker rechnet die Abstände jeden Tag aus
 den **aktuellen** Terminen neu. Fällt ein Lauf aus (BTV nicht erreichbar, Chrome-Absturz), bleibt
-der alte Datenstand sichtbar — deshalb zeigt das Briefing ihn an. Die Regeln aus Abschnitt 11
+der alte Datenstand sichtbar — deshalb zeigt das ⋯-Menü ihn samt nächstem Lauf an. Die Regeln aus Abschnitt 11
 (Bundle-Hash prüfen, `[skip ci]` nur für Doku) gelten für Bot-Commits unverändert; ein Bot-Commit
 ist **kein** Doku-Commit und muss deployen.
 
