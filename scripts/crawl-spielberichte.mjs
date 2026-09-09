@@ -19,20 +19,31 @@ import puppeteer from "puppeteer-core";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { GROUPS } from "./groups.mjs";
+import { resolveSeason, describe, cacheFile } from "./seasons.mjs";
 
 const CHROME =
   process.env.CHROME_PATH ??
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const CACHE = path.join(ROOT, "scripts/.spielberichte-cache.json");
 
 const args = process.argv.slice(2);
 const force = args.includes("--force");
-const filter = args.find((a) => !a.startsWith("--"));
+// Saison automatisch erkennen (oder --season <id>); jede Saison hat einen
+// eigenen Cache, damit ein Winter-Crawl die Sommer-Berichte nicht überschreibt.
+const seasonRes = resolveSeason(args);
+const season = seasonRes.season;
+console.log(describe(seasonRes));
+const CACHE = cacheFile(season);
+if (!season.groups.length) {
+  console.error(`\nFür ${season.label} sind keine Gruppen hinterlegt (scripts/seasons.mjs).`);
+  process.exit(1);
+}
+// Positionsargument = Filter auf leagueName/groupid; der Wert hinter --season nicht.
+const seasonIdx = args.indexOf("--season");
+const filter = args.find((a, i) => !a.startsWith("--") && i !== seasonIdx + 1);
 const groups = filter
-  ? GROUPS.filter((g) => g.leagueName.includes(filter) || g.groupid === filter)
-  : GROUPS;
+  ? season.groups.filter((g) => g.leagueName.includes(filter) || g.groupid === filter)
+  : season.groups;
 
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 

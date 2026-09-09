@@ -129,19 +129,58 @@ Quellen und Fallstricke:
 
 ### Eine Saison anlegen
 
-1. Datendatei `src/data/<saison>.ts` mit Teams, Kategorien, Standings, Matches, Monaten und
-   Monatsfarben (Vorlage: `winter-2627.ts`).
-2. `SeasonId` in `src/types.ts` erweitern und die Saison in `src/data/seasons.ts` eintragen —
-   **die laufende Runde nach vorn**, `SEASONS[0]` ist die Vorauswahl.
-3. Eintrag in der Registry `src/data/season-data.ts` (`supportsPdf` nur für die Sommerrunde, weil
-   `pdf-export.ts` deren Monatsfarben kennt).
-4. `team-format.ts` um die neuen Konkurrenz-Ids ergänzen, sonst gilt still `"6er"`.
+Sobald der BTV die Termine der nächsten Runde veröffentlicht hat, macht das Skript die Arbeit:
 
-App-Komponenten müssen dafür **nicht** angefasst werden: `App.tsx` und `CalendarDownloads.tsx`
+```bash
+npm run season:new -- --discover-only                                  # nur ansehen, was gelistet ist
+npm run season:new -- --id sommer-27 --label "Sommer 2027" --layout summer
+```
+
+Es öffnet das Vereins-Widget (klickt „MEHR LADEN" bis zum Ende), fängt die groupids ab, zieht je
+Gruppe den Spielplan-Report, ergänzt die Spielorte aus dem Widget — im PDF sind die Hallennamen
+abgeschnitten — und schreibt eine fertige `src/data/<id>.ts`: Teams, Kategorien, Tabellen auf 0:0,
+Begegnungen auf `"open"`, Monate und Monatsfarben. Am Ende druckt es die Schnipsel für die fünf
+Stellen, die es nicht selbst setzen kann:
+
+1. `scripts/seasons.mjs` — Saison-Block **nach vorn** (fertig ausgegeben, inkl. groupids).
+2. `SeasonId` in `src/types.ts` erweitern.
+3. `src/data/seasons.ts` — **die laufende Runde nach vorn**, `SEASONS[0]` ist die Vorauswahl.
+4. Eintrag in der Registry `src/data/season-data.ts` (`supportsPdf` nur für die Sommerrunde, weil
+   `pdf-export.ts` deren Monatsfarben kennt).
+5. `team-format.ts` um die neuen Konkurrenz-Ids ergänzen, sonst gilt still `"6er"`.
+
+Danach `npm run season` — steht die neue Runde vorn, ziehen Crawler, Generator und Prüfskript ab
+sofort auf sie. **Gegenlesen**, was das Skript nicht wissen kann: Das Widget nennt zweite
+Mannschaften oft nur „Herren 30"; die römische Ziffer leitet das Skript aus dem Vereinsnamen ab
+(„TC Pliening II") und meldet, wenn ein Name doppelt bleibt. Auch `layout` (Sommer = Ergebnisse nur
+in der Kreuztabelle) und `teamSize` je Gruppe gegen den Blanko-Spielbericht prüfen.
+
+App-Komponenten müssen **nicht** angefasst werden: `App.tsx` und `CalendarDownloads.tsx`
 lesen alles aus der Registry. Die gespeicherte Filter-Auswahl liegt seit Winter 2026/27 als
 `{ teams: { <seasonId>: [...] }, homeOnly }` im `localStorage`; die alte Fassung mit
 `summer`/`winter` wird beim Laden weiterhin übernommen, neue Saisons starten mit allen
 Konkurrenzen an.
+
+### Welche Saison ziehen die Skripte?
+
+Keines der Werkzeuge fragt danach — `scripts/seasons.mjs` liest die eingetragenen Spieltermine und
+wählt die Runde, in deren Zeitraum das heutige Datum fällt (bzw. die in weniger als 60 Tagen
+beginnt oder zuletzt endete). Im Übergang zwischen zwei Runden nennt es die zweite Kandidatin dazu.
+
+```
+$ npm run season
+→ winter-2627   Winter 2026/27   2026-10-10 – 2027-03-20  ( 34 Begegnungen)  7 Gruppen, Layout winter
+  sommer-26     Sommer 2026      2026-05-02 – 2026-09-06  (114 Begegnungen)  18 Gruppen, Layout summer
+  winter-2526   Winter 2025/26   2025-10-04 – 2026-03-28  ( 27 Begegnungen)  0 Gruppen, Layout winter
+
+Saison: Winter 2026/27 (winter-2627) — startet in 31 Tagen; 2026-10-10 – 2027-03-20, 34 Begegnungen
+        Hinweis: Sommer 2026 endete vor 3 Tagen — Nachlese mit --season sommer-26
+```
+
+Jedes Skript nennt beim Start die Saison, auf die es wirkt, und lässt sich mit `--season <id>`
+umlenken. `layout` entscheidet, wie Ergebnisse gespeichert sind: `"summer"` nur in der
+Kreuztabelle (der Spielplan `matches.ts` kennt bloß Termine), `"winter"` zusätzlich an jeder
+Begegnung (`mp`/`sets`/`games`/`status`) — `gen:standings` schreibt beides, `check` vergleicht sie.
 
 ### Mixed-Runde (Gr. 074) — Sonderfall
 
@@ -231,15 +270,16 @@ Crawl und Parsing sind getrennt: am Parser (`scripts/parse-spielbericht.mjs`) ka
 **AUTO-GENERIERT — nicht von Hand editieren.** Neu erzeugen mit:
 
 ```bash
-npm run crawl:meldelisten          # alle Gruppen aus GROUPS
-npm run crawl:meldelisten -- 074   # nur passende Gruppe(n) (Filter auf leagueName/groupid)
+npm run crawl:meldelisten                      # alle Gruppen der laufenden Saison
+npm run crawl:meldelisten -- 074               # nur passende Gruppe(n) (Filter auf leagueName/groupid)
+npm run crawl:meldelisten -- --season sommer-26   # andere Saison
 ```
 
 Der Crawler (`scripts/crawl-meldelisten.mjs`, braucht Google Chrome, Pfad via `CHROME_PATH`
 überschreibbar) holt die Listen aus den **btv.de-Mannschaftsportraits**. Stand 16.08.2026:
 **132 Mannschaften, 4.238 Spieler** — alle 18 Konkurrenzen der Sommer-Saison. Die Gruppen stehen
-zentral in **`scripts/groups.mjs`** (`groupid`, `leagueName`, `mode` herren/damen/mixed,
-`teamSize` 9 oder 6); dieselbe Liste nutzt auch der Spielbericht-Crawler.
+je Saison in **`scripts/seasons.mjs`** (`groupid`, `leagueName`, `mode` herren/damen/mixed,
+`teamSize` 9 oder 6); dieselbe Registry nutzen Spielbericht-Crawler, Generator und Prüfskript.
 
 Ausnahme: **Midcourt U10 (Gr. 870)** hat in nuLiga keine namentliche Meldeliste (keine LK in dieser
 Altersklasse) — die sechs Mannschaften stehen deshalb nicht in `meldelisten.ts` und zeigen in der App

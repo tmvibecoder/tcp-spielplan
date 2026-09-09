@@ -24,9 +24,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Zwischenstand des Meldelisten-Crawls
+# Zwischenstand der Crawls (je Saison eine eigene Cache-Datei)
 scripts/.meldelisten-cache.json
-scripts/.spielberichte-cache.json
+scripts/.spielberichte-cache*.json
+scripts/.tmp-*.pdf
 
 # Arbeits-Worktrees (EnterWorktree legt sie hier an) — stehen sonst dauerhaft
 # als untracked im Status des Haupt-Checkouts

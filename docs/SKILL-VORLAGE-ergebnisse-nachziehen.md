@@ -12,14 +12,33 @@ Meldelisten — bis hin zum Live-Deploy).
 
 > Arbeite im Repo `tmvibecoder/tcp-spielplan`
 > (lokal `/Users/thomasmiler/Claude/Projects/tcp-spielplan`, in einem frischen
-> Worktree von `origin/main`). Prüfe alle Gruppen aus `scripts/groups.mjs` auf
-> neue Ergebnisse, crawle fehlende Spielberichte, aktualisiere Tabellen und ggf.
+> Worktree von `origin/main`). Prüfe die Gruppen der **laufenden Saison** auf neue
+> Ergebnisse, crawle fehlende Spielberichte, aktualisiere Tabellen und ggf.
 > Meldelisten, prüfe die Konsistenz, baue, verifiziere im Browser und deploye
 > per PR + Squash-Merge. Verifiziere danach das Live-Bundle.
 
-**Erst klären, welche Saison gemeint ist.** Die Schritte 1–7 unten beschreiben die **Sommerrunde**.
-Läuft gerade die **Winterrunde** (10.10.2026 – 20.03.2027), gilt der eigene Abschnitt
-„Winterrunde 2026/27" weiter unten: andere Gruppen, andere Zieldatei, **kein Generator**.
+**Die Saison muss niemand angeben.** Alle Skripte erkennen sie selbst: `scripts/seasons.mjs`
+liest die eingetragenen Spieltermine und wählt die Runde, in deren Zeitraum das heutige Datum
+fällt (bzw. die in weniger als 60 Tagen beginnt oder zuletzt endete). Trägt jemand im April 2027
+die Sommer-27-Termine ein, zieht ab dann alles automatisch die Sommerrunde 2027.
+
+```
+npm run season          # zeigt alle Saisons und welche gerade dran ist
+```
+
+Ausgabe am 09.09.2026:
+
+```
+→ winter-2627   Winter 2026/27   2026-10-10 – 2027-03-20  ( 34 Begegnungen)  7 Gruppen, Layout winter
+  sommer-26     Sommer 2026      2026-05-02 – 2026-09-06  (114 Begegnungen)  18 Gruppen, Layout summer
+  winter-2526   Winter 2025/26   2025-10-04 – 2026-03-28  ( 27 Begegnungen)  0 Gruppen, Layout winter
+
+Saison: Winter 2026/27 (winter-2627) — startet in 31 Tagen; 2026-10-10 – 2027-03-20, 34 Begegnungen
+        Hinweis: Sommer 2026 endete vor 3 Tagen — Nachlese mit --season sommer-26
+```
+
+Jedes Skript nennt beim Start die Saison, auf die es wirkt, und lässt sich mit
+`--season <id>` umlenken (für Nachlesen der alten Runde im Übergang).
 
 ## Ablauf Schritt für Schritt
 
@@ -29,28 +48,31 @@ Läuft gerade die **Winterrunde** (10.10.2026 – 20.03.2027), gilt der eigene A
    curl -sL -A "Mozilla/5.0" "https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE.woa/wa/nuDokument?dokument=ScheduleReportFOP&group=<groupid>"
    ```
    Das PDF („Tabelle und Spielplan", nu.Dokument 013) zeigt jede Begegnung mit
-   Ergebnis. Neue Ergebnisse = Zellen, die im Repo (`src/data/summer-2026.ts`)
-   noch `"0:0"` sind. `-L` ist Pflicht (Redirect hängt das `etag` an).
-   Während der Sommerpause ändert sich nur noch die **Mixed-Runde (Gr. 074)**:
-   Spieltage 22.08., 30.08., 06.09., 19.09., 26.09., 27.09.2026 — für den TC Pliening seit dem
-   06.09.2026 durch, offen bleiben nur Begegnungen **ohne** Pliening. **Nach dem 27.09.2026 ist die
-   Sommerrunde fertig**; ab dem 10.10.2026 gilt der Winter-Abschnitt weiter unten.
+   Ergebnis. Neue Ergebnisse = Zellen, die in der Datendatei der Saison noch
+   `"0:0"` sind. `-L` ist Pflicht (Redirect hängt das `etag` an). Die groupids der
+   laufenden Saison stehen in `scripts/seasons.mjs` (`npm run season` zeigt sie).
 
 2. **Spielberichte crawlen** (nur nötig, wenn Schritt 1 Neues zeigt):
    ```
    npm run crawl:spielberichte -- <groupid> --force   # nur die betroffene Gruppe
-   npm run gen:spielberichte                          # Cache -> src/data/spielberichte-crawled.ts
+   npm run gen:spielberichte                          # Caches -> src/data/spielberichte-crawled.ts
    ```
    `--force` verwirft den Cache der Gruppe (sonst kommt der alte Stand zurück).
-   Kompletter Neu-Crawl aller 18 Gruppen dauert ~45 min; eine Gruppe wenige Minuten.
+   Jede Saison hat einen **eigenen** Cache (`scripts/.spielberichte-cache-<id>.json`);
+   `gen:spielberichte` führt alle vorhandenen zusammen und **bricht ab**, wenn dabei
+   Ligen verlorengingen, die schon in der Datei stehen — dann erst die fehlende Saison
+   nachcrawlen. Kompletter Neu-Crawl aller 18 Sommer-Gruppen dauert ~45 min.
 
-3. **Tabellen nachziehen**:
+3. **Tabellen und Ergebnisse nachziehen**:
    ```
-   node scripts/generate-standings.mjs            # Diff ansehen
-   node scripts/generate-standings.mjs --write    # schreiben (setzt auch SUMMER_STANDINGS_STAND)
+   npm run gen:standings              # Diff der laufenden Saison ansehen
+   npm run gen:standings -- --write   # schreiben (setzt auch <PREFIX>_STANDINGS_STAND)
    ```
-   Achtung: Gr. 043 SU und Gr. 315 stehen in `KEEP` und bleiben handgepflegt
-   (zurückgezogene Mannschaften, offizielle Tabelle weicht bewusst ab).
+   Im **Winter-Layout** schreibt derselbe Lauf zusätzlich jede Begegnung selbst
+   (`mp`/`sets`/`games`, `status` auf `"played"`) und zieht verlegte Termine nach —
+   dort hängen Sätze und Spiele am Match, nicht nur in der Kreuztabelle.
+   Achtung: Ligen aus `keepLeagues` (Sommer: Gr. 043 SU und Gr. 315) bleiben
+   handgepflegt — zurückgezogene Mannschaften, die offizielle Tabelle weicht bewusst ab.
    Rangfolge immer **verbatim** übernehmen — der BTV sortiert bei ungleicher
    Spielzahl nach Punkt-**Quotient**, „falsch" aussehende Reihenfolgen sind korrekt.
 
@@ -63,10 +85,14 @@ Läuft gerade die **Winterrunde** (10.10.2026 – 20.03.2027), gilt der eigene A
 
 5. **Konsistenz prüfen** (Pflicht vor jedem Commit):
    ```
-   node scripts/check-data.mjs    # Tabellen <-> Berichte <-> Meldelisten
+   npm run check                  # laufende Saison
+   npm run check -- --all         # alle Saisons nacheinander
    node scripts/check-names.mjs   # Berichts-Spieler <-> Meldelisten
    ```
-   Bekannte, KORREKTE Ausnahmen (nicht „fixen"): siehe unten.
+   Im Winter-Layout prüft `check` zusätzlich, dass **Begegnung und Kreuztabelle
+   dasselbe Ergebnis tragen** (zwei Quellen, die auseinanderlaufen können) und dass
+   Matchpunkte/Sätze zum Format der Runde passen (6 Matches → höchstens 6:0 und
+   18 Sätze). Bekannte, KORREKTE Ausnahmen (nicht „fixen"): siehe unten.
 
 6. **Bauen + im Browser prüfen** (nicht nur tsc!):
    ```
@@ -102,7 +128,7 @@ Läuft gerade die **Winterrunde** (10.10.2026 – 20.03.2027), gilt der eigene A
 
 Basis-Pfad der PDFs: `https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE.woa/wa/nuDokument?...`
 
-## Alle Gruppen (Sommer 2026) — auch in `scripts/groups.mjs`
+## Alle Gruppen (Sommer 2026) — auch in `scripts/seasons.mjs`
 
 | Konkurrenz | leagueName (exakt!) | groupid | Format |
 |---|---|---|---|
@@ -125,15 +151,20 @@ Basis-Pfad der PDFs: `https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE
 | Knaben 15 II | Südliga 5 · Gr. 638 | 2216513 | 6 |
 | Midcourt U10 | Südliga 1 · Gr. 870 | 2219939 | 6, KEINE Meldelisten in nuLiga |
 
-Neue groupid finden: Vereinsseite btv.de → iframe `btvteams/?clubnr=02467` →
-**so oft „MEHR LADEN" klicken, bis der Button verschwindet** (sonst fehlen Mannschaften) →
-`window.open` überschreiben → „Tabelle/Spielplan [PDF]" klicken → URL enthält `group=<id>`.
+Neue groupids muss niemand mehr suchen:
 
-## Winterrunde 2026/27 — der Ablauf ist ein anderer
+```
+npm run season:new -- --discover-only
+```
 
-**Ab dem 10.10.2026 laufen die Winter-Spiele** (bis 20.03.2027). Die Sommer-Werkzeuge greifen dort
-**nicht**: `GROUPS`, `generate-standings.mjs` und `check-data.mjs` zielen alle auf die Sommer-Saison.
-Für den Winter gilt:
+holt sie aus dem Vereins-Widget (klickt „MEHR LADEN" bis zum Ende, fängt die
+`window.open`-URLs der „Tabelle/Spielplan [PDF]"-Elemente ab) und listet Mannschaft
+für Mannschaft mit `groupid`.
+
+## Winterrunde 2026/27 (die aktuell laufende Saison)
+
+Spieltage **10.10.2026 – 20.03.2027**, sieben Mannschaften. Die Gruppen stehen in
+`scripts/seasons.mjs`; die Werkzeuge oben greifen ohne Zutun auf diese Saison zu.
 
 | Konkurrenz | leagueName (exakt!) | groupid | teamId |
 |---|---|---|---|
@@ -145,35 +176,53 @@ Für den Winter gilt:
 | D40 | Südliga 2 · Gr. 200 | 2257871 | `w27-damen40` |
 | D50 | Landesliga 1 · Gr. 054 SU | 2253322 | `w27-damen50` |
 
-Dieselbe Liste steht als `WINTER_2627_GROUPS` in `scripts/groups.mjs` — **bewusst getrennt von
-`GROUPS`**, weil `gen:spielberichte` die Sommer-Datei komplett aus dem Cache neu schreibt.
+Besonderheiten gegenüber der Sommerrunde:
 
-1. **Schnell-Check** wie im Sommer: `ScheduleReportFOP&group=<groupid>` per `curl -L` ziehen,
-   `pdftotext -layout` und gegen `src/data/winter-2627.ts` vergleichen.
-2. **Eintragen von Hand** — für den Winter gibt es **keinen Generator**. Zwei Stellen je Begegnung:
-   - in `WINTER_2627_MATCHES` das betroffene Match: `mp`, `sets`, `games` (alle **Heim:Gast**) füllen
-     und `status` von `"open"` auf `"played"` setzen. Bei Verlegung `date`/`time`/`day` mitziehen.
-   - in `WINTER_2627_STANDINGS` die Liga: `points`/`matchPoints`/`sets` je Zeile und die beiden
-     Spiegel-Zellen der Kreuztabelle (`crossResults`) — Rangfolge **verbatim** aus dem PDF.
-   - `WINTER_2627_STANDINGS_STAND` auf das Abgleich-Datum setzen (kein Skript tut das).
-3. **Format 4 Einzel + 2 Doppel** in allen Winter-Ligen (Blanko-Spielbericht, nu.Dokument 011d):
-   höchstens `6:0` Matchpunkte und `12:0` Sätze. Ein `9:0` wäre ein Lesefehler.
-4. **Spielberichte**: `spielberichte-crawled.ts` enthält nur die Sommer-Saison. Winter-Berichte
-   müssten erst dazugecrawlt werden — der Generator würde die Datei sonst überschreiben. Solange das
-   nicht eingerichtet ist, bleibt der Winter **ohne** Einzel-/Doppel-Ansicht; die Kreuztabelle zeigt
-   die Ergebnisse, der Drilldown ist leer. Das ist kein Fehler.
-5. **Tabellen-Optik vor dem ersten Spieltag**: Steht in einer Liga überall `0:0`, zeigt
+1. **Layout `winter`**: Jede Begegnung trägt ihr Ergebnis selbst (`mp`/`sets`/`games`, `status`)
+   **und** steht in der Kreuztabelle. `gen:standings` schreibt beides und meldet Abweichungen;
+   `npm run check` vergleicht die zwei Quellen.
+2. **Format 4 Einzel + 2 Doppel** in allen Winter-Ligen (Blanko-Spielbericht, nu.Dokument 011d):
+   höchstens `6:0` Matchpunkte und 18 Sätze. Ein `9:0` wäre ein Lesefehler — `check` schlägt an.
+3. **Spielberichte** sind für den Winter noch nicht gecrawlt: die Kreuztabelle zeigt die
+   Ergebnisse, der Einzel-/Doppel-Drilldown bleibt leer. Kein Fehler. Wer sie will, crawlt sie
+   nach — `gen:spielberichte` führt die Saison-Caches zusammen und schützt die Sommer-Berichte.
+4. **Tabellen-Optik vor dem ersten Spieltag**: Steht in einer Liga überall `0:0`, zeigt
    `StandingsView` „*n* Mannschaften" statt „Platz *x*" und lässt die Medaillen weg (die
-   BTV-Reihenfolge ist dann nur die Setzliste). Sobald die ersten Punkte eingetragen sind, erscheint
-   die normale Darstellung von selbst — nichts umzustellen.
-6. **Spielorte**: im PDF sind die Hallennamen abgeschnitten („TC Grün-Weiß Gräfe…"). Vollständig
+   BTV-Reihenfolge ist dann nur die Setzliste). Sobald Punkte da sind, kommt die normale
+   Darstellung von selbst zurück — nichts umzustellen.
+5. **Spielorte**: im PDF sind die Hallennamen abgeschnitten („TC Grün-Weiß Gräfe…"). Vollständig
    stehen sie im btv.de-Widget zwischen den Ergebnis-Spalten und dem Gastverein. Achtung: der
    Spielort kann **wörtlich der Heimverein** sein (Gräfelfing spielt in Gräfelfing) — deshalb den
    Gast aus dem PDF vorgeben und den Spielort als „die andere Zeile" bestimmen, sonst vertauschen
-   sich beide.
-7. **`check-data.mjs` prüft den Winter nicht** — die Zahlen dort (816/814/0, 407 Berichte) dürfen
-   sich durch Winter-Änderungen **nicht** bewegen. Tun sie es doch, wurde versehentlich an den
-   Sommer-Daten gedreht.
+   sich beide. (`new-season.mjs` macht das bereits richtig.)
+
+## Eine neue Saison anlegen
+
+Sobald der BTV die Termine der nächsten Runde veröffentlicht — etwa im April 2027 die Sommerrunde:
+
+```
+npm run season:new -- --discover-only                                  # erst ansehen, was gelistet ist
+npm run season:new -- --id sommer-27 --label "Sommer 2027" --layout summer
+```
+
+Das Skript holt Mannschaften und groupids aus dem Vereins-Widget, zieht je Gruppe den
+Spielplan-Report, ergänzt die Spielorte aus dem Widget und schreibt eine fertige
+`src/data/<id>.ts` (Teams, Kategorien, Tabellen auf 0:0, Begegnungen auf `"open"`,
+Monate und Monatsfarben). Am Ende druckt es die Schnipsel für die fünf Stellen, die
+noch von Hand dazukommen:
+
+1. `scripts/seasons.mjs` — Saison-Block **nach vorn** (fertig ausgegeben, inkl. groupids)
+2. `src/types.ts` — `SeasonId` erweitern
+3. `src/data/seasons.ts` — Eintrag nach vorn (`SEASONS[0]` ist die Vorauswahl der App)
+4. `src/data/season-data.ts` — Registry-Eintrag mit den `<PREFIX>_*`-Konstanten
+5. `src/data/team-format.ts` — Format je Konkurrenz (Winterrunde: durchgehend `"4er"`)
+
+Danach `npm run season` — steht die neue Runde vorn und wird als aktiv erkannt, greifen
+Crawler, Generator und Prüfskript ab sofort auf sie zu. **Prüfen**, was das Skript nicht
+wissen kann: Das Widget nennt zweite Mannschaften oft nur „Herren 30" — das Skript leitet
+die römische Ziffer aus dem Vereinsnamen ab („TC Pliening II") und meldet, wenn ein Name
+doppelt bleibt. Ebenso `layout` (Sommer = Ergebnisse nur in der Kreuztabelle) und
+`teamSize`/`mode` je Gruppe gegen den Blanko-Spielbericht gegenlesen.
 
 ## Wo die Daten liegen
 
@@ -190,8 +239,13 @@ Dieselbe Liste steht als `WINTER_2627_GROUPS` in `scripts/groups.mjs` — **bewu
 - `src/data/season-data.ts` — die **Saison-Registry**: welche Saison welche Teams, Matches, Standings,
   Monate und `supportsPdf` zieht. `App.tsx`/`CalendarDownloads.tsx` lesen nur daraus. Eine neue Saison
   braucht hier einen Eintrag (plus `types.ts`, `seasons.ts`, `team-format.ts`) — Komponenten nicht.
-- `scripts/groups.mjs` — zentrale Gruppenliste: `GROUPS` (Sommer) und `WINTER_2627_GROUPS` (Winter).
-- Caches (gitignored): `scripts/.spielberichte-cache.json`, `scripts/.meldelisten-cache.json`.
+- `scripts/seasons.mjs` — **Saison-Registry der Skripte**: je Saison Layout, Datendatei,
+  Konstanten-Präfix, Gruppen und `keepLeagues`, dazu die automatische Erkennung der laufenden
+  Runde (`resolveSeason`). Löste `scripts/groups.mjs` ab. Neue Saison = ein Block mehr.
+- `scripts/new-season.mjs` — legt eine Saison komplett an (Mannschaften, groupids, Spielplan,
+  Spielorte) und nennt die Handgriffe, die danach bleiben.
+- Caches (gitignored): `scripts/.spielberichte-cache-<saison>.json` (je Saison eine),
+  `scripts/.meldelisten-cache.json`.
 
 ## Crawler-Stolperfallen (alle in den Skripten gelöst — nicht „wegoptimieren")
 

@@ -61,7 +61,8 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 
 | Zweck | Datei |
 |---|---|
-| Konkurrenzen + groupids (eine Quelle für alle Skripte; Winter 26/27 als eigene Liste `WINTER_2627_GROUPS`) | `scripts/groups.mjs` |
+| **Saison-Registry der Skripte** (Gruppen, Layout, Datendatei je Saison) + Erkennung der laufenden Runde | `scripts/seasons.mjs` |
+| Neue Saison komplett anlegen (Mannschaften, groupids, Spielplan, Spielorte) | `scripts/new-season.mjs` |
 | **Welche Daten eine Saison zieht** (Teams, Matches, Standings, Monate, `supportsPdf`) | `src/data/season-data.ts` |
 | Saison-Liste + Vorauswahl (`SEASONS[0]`) | `src/data/seasons.ts` |
 | Tabellen + Kreuztabellen (Sommer) + `SUMMER_STANDINGS_STAND` (Anzeige „BTV-Stand") | `src/data/summer-2026.ts` |
@@ -82,12 +83,23 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 
 ## Datenpflege in Kürze
 
-**Neue Saison anlegen:** siehe README-Abschnitt „Eine Saison anlegen" — Datendatei, `SeasonId`,
-`seasons.ts`, Registry `season-data.ts`, `team-format.ts`. App-Komponenten bleiben unangetastet.
+**Die Saison gibt niemand an.** Alle Skripte erkennen sie aus den eingetragenen Spielterminen
+(`scripts/seasons.mjs`) und nennen beim Start, worauf sie wirken; `--season <id>` lenkt um.
 
-Neue Ergebnisse: Gruppen-Report `ScheduleReportFOP&group=<groupid>` per `curl -L` ziehen
-(Tabelle **und** Spielplan), Spielberichte per Puppeteer aus dem btv.de-Widget holen
-(README-Abschnitt „Spielberichte selbst crawlen") und beides eintragen. Sanity-Checks:
+```bash
+npm run season                     # welche Saison ist dran? (alle Runden im Überblick)
+npm run gen:standings -- --write   # Ergebnisse der laufenden Saison nachziehen
+npm run check                      # Konsistenz (--all für alle Saisons)
+npm run season:new -- --discover-only   # Mannschaften + groupids einer neuen Runde
+```
+
+**Neue Saison anlegen:** `npm run season:new -- --id <id> --label "<Name>" --layout winter|summer`
+schreibt die Datendatei aus den BTV-Quellen und nennt die fünf Handgriffe danach
+(`scripts/seasons.mjs`, `types.ts`, `seasons.ts`, `season-data.ts`, `team-format.ts`).
+App-Komponenten bleiben unangetastet — Details im README („Eine Saison anlegen").
+
+Neue Ergebnisse: `npm run gen:standings` zieht Tabellen **und** (im Winter-Layout) die
+Begegnungen selbst aus dem Crawl-Cache; verlegte Termine kommen mit. Sanity-Checks:
 Summe der Einzel-/Doppel-Siege = Endergebnis der Begegnung, Kreuztabellen-Zelle =
-Matchpunkte, Tabellen-Delta = Sätze/Spiele des neuen Berichts. Danach `SUMMER_STANDINGS_STAND`
-prüfen (Generator setzt es, Hand-Änderungen nicht) und verlegte Termine in `matches.ts` nachziehen.
+Matchpunkte, Tabellen-Delta = Sätze/Spiele des neuen Berichts. Das `_STANDINGS_STAND`
+der Saison setzt der Generator; bei Hand-Änderungen selbst nachziehen.

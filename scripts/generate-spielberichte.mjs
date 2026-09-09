@@ -1,8 +1,14 @@
-// Erzeugt src/data/spielberichte-crawled.ts aus scripts/.spielberichte-cache.json
-// (siehe scripts/crawl-spielberichte.mjs) und meldet, wo gecrawlte und
-// handgepflegte Berichte inhaltlich auseinandergehen.
+// Erzeugt src/data/spielberichte-crawled.ts aus ALLEN Saison-Caches
+// (scripts/.spielberichte-cache-<saison>.json, siehe crawl-spielberichte.mjs)
+// und meldet, wo gecrawlte und handgepflegte Berichte auseinandergehen.
 //
 //   npm run gen:spielberichte
+//   npm run gen:spielberichte -- --force   # Verlust bewusst in Kauf nehmen
+//
+// Die Datei wird komplett neu geschrieben. Fehlt der Cache einer Saison, deren
+// Berichte schon in der Datei stehen, GINGEN SIE VERLOREN — deshalb bricht das
+// Skript dann ab und nennt die betroffenen Ligen. Erst die fehlende Saison
+// nachcrawlen (oder --force setzen, wenn der Verlust gewollt ist).
 //
 // Die handgepflegte src/data/spielberichte.ts bleibt unangetastet; sie hat für
 // eine Begegnung Vorrang NUR, wenn die Begegnung im Crawl fehlt (z. B.
@@ -12,19 +18,56 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseModal } from "./parse-spielbericht.mjs";
-import { GROUPS } from "./groups.mjs";
+import { SEASONS, cacheFile } from "./seasons.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const CACHE = path.join(ROOT, "scripts/.spielberichte-cache.json");
 const OUT = path.join(ROOT, "src/data/spielberichte-crawled.ts");
+const force = process.argv.includes("--force");
 
-const cache = JSON.parse(fs.readFileSync(CACHE, "utf8"));
+// Alle Saison-Caches zusammenführen. Die leagueNames der Saisons überschneiden
+// sich nicht (andere Gruppennummern), der Lookup bleibt also eindeutig.
+const cache = {};
+const teamSizeByLeague = new Map();
+for (const season of SEASONS) {
+  const f = cacheFile(season);
+  if (!fs.existsSync(f)) continue;
+  const part = JSON.parse(fs.readFileSync(f, "utf8"));
+  const n = Object.keys(part).length;
+  console.log(`Cache ${season.id}: ${n} Ligen`);
+  Object.assign(cache, part);
+  for (const g of season.groups) teamSizeByLeague.set(g.leagueName, g.teamSize);
+}
+if (!Object.keys(cache).length) {
+  console.error("Kein Saison-Cache gefunden — erst `npm run crawl:spielberichte` laufen lassen.");
+  process.exit(1);
+}
+
+// Schutz vor stillem Verlust: Ligen, die in der bestehenden Datei stehen, aber
+// in keinem Cache — die würden beim Neuschreiben verschwinden.
+if (fs.existsSync(OUT)) {
+  const existing = new Set(
+    [...fs.readFileSync(OUT, "utf8").matchAll(/league: "([^"]+)"/g)].map((m) => m[1])
+  );
+  const lost = [...existing].filter((l) => !(l in cache));
+  if (lost.length) {
+    console.error(
+      `\nABBRUCH: ${lost.length} Ligen stehen in ${path.relative(ROOT, OUT)}, aber in keinem Cache —\n` +
+      `sie gingen beim Neuschreiben verloren:\n` +
+      lost.map((l) => `  - ${l}`).join("\n") +
+      `\n\nErst die fehlende Saison crawlen (npm run crawl:spielberichte -- --season <id>),\n` +
+      `oder --force setzen, wenn der Verlust gewollt ist.`
+    );
+    if (!force) process.exit(1);
+    console.error("--force gesetzt: wird trotzdem geschrieben.\n");
+  }
+}
+
 const DAYS = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
 const out = [];
 let failed = 0;
 for (const [league, data] of Object.entries(cache)) {
-  const teamSize = GROUPS.find((g) => g.leagueName === league)?.teamSize ?? 9;
+  const teamSize = teamSizeByLeague.get(league) ?? 9;
   for (const r of data.reports) {
     const idBase = r.meetingId ? `m${r.meetingId}` : `${r.home}_${r.away}`.replace(/\W+/g, "");
     let parsed;
