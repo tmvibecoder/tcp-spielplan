@@ -126,124 +126,144 @@ git-worktree'" weiter unten.
 
 ## Vorhaben: Suche, Spielerhistorie und Gegnerbriefing (Spezifikation, Stand 09.09.2026)
 
-> **Status: nur dokumentiert, nichts davon ist gebaut.** Auftrag vom 09.09.2026. Umsetzung der
-> App-Teile **und** der Automatik erst nach **ausdrücklicher Freigabe** des Auftraggebers — vorher
-> sind die offenen Fragen unten zu klären und die klickbaren Mobile-Mockups abzunehmen
-> (Artefakt „TCP Gegnerbriefing Mockups", Link am Ende des Abschnitts). Die stehende Freigabe
-> „fertige Arbeit ausliefern" gilt für dieses Vorhaben **nicht**, solange die Freigabe fehlt.
-> Rezept und Gate: [docs/AUFGABEN.md, Abschnitt 9](docs/AUFGABEN.md); Auswirkungen auf den
-> Aufbau: [docs/ARCHITEKTUR.md, Abschnitt 13](docs/ARCHITEKTUR.md); Begriffe im
-> [Glossar](docs/GLOSSAR.md) („Vorhaben Gegnerbriefing").
+> **Status: nur dokumentiert, nichts davon ist gebaut.** Auftrag vom 09.09.2026, erste
+> Rückmeldung des Auftraggebers vom selben Abend eingearbeitet (Suche-Knopf, Datenstand im
+> ⋯-Menü, LK an jedem Namen, Farblogik aus Sicht der betrachteten Mannschaft, F1–F4 und F8
+> entschieden). Umsetzung der App-Teile **und** der Automatik erst nach **ausdrücklicher
+> Freigabe** — vorher sind die noch offenen Fragen F5–F7 zu klären und die Mockups abzunehmen.
+> Die stehende Freigabe „fertige Arbeit ausliefern" gilt für dieses Vorhaben **nicht**, solange
+> die Freigabe fehlt. Rezept und Gate: [docs/AUFGABEN.md, Abschnitt 9](docs/AUFGABEN.md);
+> Auswirkungen auf den Aufbau: [docs/ARCHITEKTUR.md, Abschnitt 13](docs/ARCHITEKTUR.md);
+> Begriffe im [Glossar](docs/GLOSSAR.md) („Vorhaben Gegnerbriefing").
 
 ### 1. Suche oben
 
-- Ein **🔍-Knopf in der Kopfzeile** (Zeile 1, neben dem ⋯-Menü) öffnet ein Such-Overlay mit einem
-  Eingabefeld; Treffer erscheinen ab dem zweiten Zeichen in zwei Gruppen: **Spieler** und
-  **Mannschaften**.
-- **Spieler:** eigene **und** gegnerische — alle Namen aus Meldelisten und Spielberichten aller
-  erfassten Saisons. Treffer zeigen Name, Verein/Mannschaft, aktuelle LK und die Saisons, in denen
-  der Spieler vorkommt. Antippen → **Spielerhistorie** (Punkt 2).
+- In der Kopfzeile (Zeile 1, links vom ⋯-Menü) steht ein **beschrifteter Knopf „🔍 Suche"** —
+  deutlich größer als die übrigen Pillen, damit er als Einstieg erkennbar ist. Er öffnet ein
+  Such-Overlay; Treffer erscheinen ab dem zweiten Zeichen in zwei Gruppen: **Mannschaften** und
+  **Spieler**.
+- **Suche über alle erfassten Saisons** (entschieden, F1); jeder Treffer nennt die Saisons, in
+  denen er vorkommt.
+- **Spieler:** eigene **und** gegnerische — alle Namen aus Meldelisten und Spielberichten. Treffer
+  zeigen Name, Verein/Mannschaft, aktuelle LK und Saisons. Antippen → **Spielerhistorie**.
 - **Mannschaften:** ausschließlich Mannschaften, die **mit einer TCP-Konkurrenz in derselben Gruppe**
-  spielen — nicht der ganze Verein (vom TC Gauting also nur „Herren 40 · Bayernliga Gr. 022 SU",
-  nicht dessen übrige Mannschaften). Antippen → **vollständige Meldeliste** in der bestehenden
-  Meldelisten-Darstellung (`TeamStatsDetail`, Reiter Einzel/Doppel).
+  spielen — nicht der ganze Verein (vom TC Gauting also nur „Herren 40 · Bayernliga Gr. 022 SU").
+  Antippen → **vollständige Meldeliste** in der bestehenden Darstellung (`TeamStatsDetail`).
 - Kein Router: das Overlay ist Zustand in `App.tsx` wie `calendarOpen`; Zurück schließt es.
 
 ### 2. Spielerhistorie ab Winter 2024/25
 
 - Eine Spielerseite je Person mit **allen Einzeln und Doppeln ab der Winterrunde 2024/25**, nach
   **Sommer-/Wintersaisons getrennt, neueste zuerst**. Je Einsatz: Datum, Einsatzposition (E1–E6,
-  D1–D3), Gegner (Einzel) bzw. Gegnerpaar **und Doppelpartner** (Doppel), Sieg/Niederlage und die
-  Satzergebnisse als Satzfelder (wie in `MatchCard`).
-- Filter **„Nur gegen TC Pliening"** blendet alles aus, was nicht gegen eine TCP-Mannschaft war.
+  D1–D3), Gegner mit LK (Einzel) bzw. Gegnerpaar **und Doppelpartner** (Doppel), Sieg/Niederlage
+  und die Satzergebnisse als Satzfelder (wie in `MatchCard`).
+- Filter **„Nur gegen TC Pliening"** blendet alles aus, was nicht gegen eine TCP-Mannschaft war;
+  Zeilen gegen Pliening tragen eine kleine **„TCP"-Marke** (nur Kennzeichnung, keine andere Farbe).
 - **Fehlende Saisons sind zu ergänzen** — heute liegen Spielberichte nur für Sommer 2026 vor
   (Winter 2025/26: nur Tabellen, keine Berichte, groupids nicht mehr hinterlegt; Winter 2024/25 und
-  Sommer 2025 gar nicht im Projekt). Was sich nicht mehr beschaffen lässt, wird als **Datenlücke**
-  in der Historie **ausgewiesen** („Winter 2025/26 — Spielberichte beim BTV nicht mehr verfügbar"),
-  nicht stillschweigend weggelassen.
-- Spieler-Identität über Saisons: Schlüssel ist der **normalisierte Name** (`normalizePlayerName`,
-  ohne Länderkürzel und `(w.o.)`) **plus Verein**. Ein Vereinswechsel ergibt zwei Einträge; das
-  ist als Grenze zu dokumentieren, nicht zu „heilen" (offene Frage F3).
+  Sommer 2025 gar nicht im Projekt). **Erster Schritt der Umsetzung ist die Prüfung, was der BTV
+  noch liefert** (entschieden, F2). Was sich nicht mehr beschaffen lässt, wird als **Datenlücke**
+  in der Historie **ausgewiesen**, nicht stillschweigend weggelassen.
+- Spieler-Identität: normalisierter Name (`normalizePlayerName`) **plus Verein**. **Vereinswechsel
+  ergibt zwei getrennte Einträge** (entschieden, F3); die Historie nennt den Verein je Saison.
 
 ### 3. Gegnerbriefing je TCP-Begegnung
 
 - Sitzt **direkt in der aufgeklappten Begegnung im Spielplan** (`MatchDetail`), unter Endergebnis/
-  Termin/Spielort, als eigener Block **„Gegnerbriefing"** mit drei Reitern:
-  1. **Meldeliste** des Gegners (kompakt, bestehende `RosterRow`-Optik) — je Spieler
-     **Einsatzhäufigkeit** in der laufenden Runde (z. B. „3× Einzel · Pos 1–2 · 2× Doppel"),
-     bisherige Doppelpartner, Bilanz.
+  Termin/Spielort, als Block **„Gegnerbriefing"** mit drei Reitern. **Alles darin stammt aus der
+  laufenden Saison** (entschieden, F4) — keine saisonübergreifenden Duelle im Briefing; ältere
+  Begegnungen findet man über die Spielerhistorie.
+  1. **Meldeliste** des Gegners (kompakt, `RosterRow`-Optik) — je Spieler Rang, Name, **LK**,
+     **Einsatzhäufigkeit** („3× E1 · 2× Doppel mit Reiter"), Bilanz.
   2. **Aufstellungen** — die **tatsächlichen** Aufstellungen jeder bisher gespielten Begegnung des
-     Gegners in dieser Runde (E1…D2 mit Namen) **und** darunter **„Unsere Aufstellungen"** für die
-     eigene TCP-Konkurrenz, gleiche Darstellung, damit nachvollziehbar ist, wer bei uns wo gespielt hat.
-  3. **Ergebnisse** — die bisherigen Begegnungsergebnisse des Gegners in dieser Runde (aus dessen
-     Sicht gefärbt) und darunter **direkte Duelle** TCP–Gegner aus allen erfassten Saisons (aus
-     TCP-Sicht gefärbt) mit Link in den Spielbericht.
-- **Keine Aufstellungsprognosen.** Es werden nur **belegte Einsätze** aus Spielberichten gezeigt;
-  Formulierungen wie „voraussichtlich" oder „wahrscheinliche Aufstellung" kommen nicht vor.
-- Jeder Block trägt den **Datenstand** (Datum + Uhrzeit des letzten Einlesens der BTV-Berichte
-  dieser Gruppe), damit klar ist, ob die zwischenzeitlichen Gegnerspiele schon drin sind.
-- Vor dem ersten Spieltag zeigt das Briefing nur die Meldeliste und die direkten Duelle früherer
-  Saisons; Aufstellungen/Ergebnisse haben dann einen Leerzustand („noch keine Begegnung gespielt").
+     Gegners (E1…D2 als **Nachname + LK**, z. B. „Gautsch 6,4") **und** darunter **„Unsere
+     Aufstellungen"** der eigenen TCP-Konkurrenz in derselben Darstellung.
+  3. **Ergebnisse** — die Begegnungsergebnisse des Gegners in dieser Runde.
+- **Keine Aufstellungsprognosen.** Nur **belegte Einsätze** aus Spielberichten; Wörter wie
+  „voraussichtlich" kommen nicht vor.
+- **Datenstand nicht im Briefing.** Datum + Uhrzeit des letzten Einlesens und der **nächste
+  geplante Lauf** stehen im **⋯-Menü** oben rechts (unter „Kalender-Downloads"), damit das
+  Briefing selbst schlank bleibt.
+- Vor dem ersten Spieltag zeigt das Briefing nur die Meldeliste; Aufstellungen/Ergebnisse haben
+  dann einen Leerzustand („noch keine Begegnung gespielt").
 
 ### 4. Automatische Aktualisierung (nicht aktiviert)
 
 - **Zeitpunkte je TCP-Begegnung:** erstmals **7 Tage vorher**, erneut **4 Tage vorher** und **am
-  Spieltag um 01:00 Uhr deutscher Zeit** (Europe/Berlin, also 23:00 bzw. 00:00 UTC je nach
-  Sommer-/Winterzeit — nicht fest in UTC verdrahten).
-- **Vorgehen je Lauf:** (1) Spielplan-Reports (`ScheduleReportFOP`) der betroffenen Gruppen ziehen —
-  dadurch sind **Spielverlegungen** bekannt, bevor das Briefing entsteht; (2) neue/korrigierte
-  **Spielberichte** der Gruppe crawlen (`crawl:spielberichte -- <groupid> --force`), damit die
-  zwischenzeitlichen Gegnerspiele enthalten sind; (3) Meldelisten der Gruppe nachziehen (Nachmeldungen);
-  (4) `gen:spielberichte`, `gen:standings -- --write`, `npm run check`; (5) Datenstand je Gruppe
-  schreiben; (6) Commit → Deploy. Ergebnisse, Tabellen und Spielberichte werden im selben Lauf
-  aktuell — nicht nur das Briefing.
-- **Empfohlener Mechanismus (Entscheidung offen, F5):** ein **täglicher Wecker um 01:00 Uhr
-  Berlin** (GitHub-Actions-Cron), der die Spieltermine der laufenden Saison liest und **nur dann**
-  den vollen Lauf startet, wenn eine TCP-Begegnung in genau 7, 4 oder 0 Tagen liegt. Verlegt der BTV
-  einen Termin, greifen die neuen Abstände beim nächsten Wecker von selbst — es muss nichts
-  umgeplant werden. Der GitHub-Runner bringt Chrome mit; auf dem Hetzner-Server gibt es kein
-  Puppeteer.
-- **Konflikt mit der Regel „Nie direkt auf `main` pushen":** ein Automat müsste Daten committen.
-  Zu entscheiden (F6): Bot-PR mit Auto-Merge (Regel bleibt), oder ausdrücklich dokumentierte
-  Ausnahme für reine Daten-Commits eines Bots. Bis dahin **bleibt die Automatik aus**.
+  Spieltag um 01:00 Uhr deutscher Zeit** (Europe/Berlin — nicht fest in UTC verdrahten).
+- **Vorgehen je Lauf:** (1) Spielplan-Reports (`ScheduleReportFOP`) der betroffenen Gruppen ziehen
+  — so sind **Spielverlegungen** bekannt, bevor das Briefing entsteht; (2) neue/korrigierte
+  **Spielberichte** der Gruppe crawlen, damit die zwischenzeitlichen Gegnerspiele enthalten sind;
+  (3) Meldelisten der Gruppe nachziehen; (4) `gen:spielberichte`, `gen:standings -- --write`,
+  `npm run check`; (5) Datenstand und nächsten Lauf schreiben; (6) Commit → Deploy. Ergebnisse,
+  Tabellen und Spielberichte werden im selben Lauf aktuell.
+- **Empfohlener Mechanismus (F5 offen):** ein **täglicher Wecker um 01:00 Uhr Berlin**, der die
+  Spieltermine liest und **nur dann** den vollen Lauf startet, wenn eine TCP-Begegnung in genau 7,
+  4 oder 0 Tagen liegt. Verlegt der BTV einen Termin, greifen die neuen Abstände beim nächsten
+  Wecker von selbst.
+- **F5–F7 in einfachen Worten** (die Fragen, die noch zu entscheiden sind):
+  - **F5 — Wo läuft der Automat?** Er braucht einen Rechner mit Chrome, der nachts läuft.
+    *Option A: GitHub* — dort liegt der Code ohnehin, und GitHub stellt für jeden Lauf kostenlos
+    einen frischen Rechner mit Chrome; nichts zu installieren, nichts zu warten. *Option B: unser
+    Hetzner-Server* — läuft zwar rund um die Uhr, hat aber keinen Chrome; der müsste installiert
+    und gepflegt werden und frisst Arbeitsspeicher, den die anderen Apps dort brauchen.
+    **Empfehlung: A.**
+  - **F6 — Wie speichert der Automat seine Daten?** Heute gilt: niemand schreibt direkt in den
+    Hauptstand (`main`); jede Änderung ist ein Pull Request, der gemergt wird. Ein Automat, der
+    nachts neue Daten holt, muss sie ebenfalls ablegen. *Option A:* er legt selbst einen Pull
+    Request an und mergt ihn sofort — die Regel bleibt, und jeder nächtliche Lauf ist später in
+    der PR-Liste nachlesbar. *Option B:* der Automat darf als einzige Ausnahme direkt schreiben —
+    einfacher, aber die Regel bekommt ein Loch. Für dich sieht beides gleich aus (Daten sind
+    morgens live). **Empfehlung: A.**
+  - **F7 — Was, wenn ein Lauf scheitert** (BTV nicht erreichbar, Chrome stürzt ab)? Dann bleibt
+    der alte Datenstand stehen, und das ⋯-Menü zeigt das Alter. *Zusätzlich* kann GitHub dir bei
+    jedem gescheiterten Lauf automatisch eine E-Mail schicken. **Empfehlung: ja, E-Mail an.**
 
 ### 5. Mobile first, bestehendes Design
 
-- Bestehende Bausteine **wiederverwenden**, keine neue Optik: Kopfzeile/Segment-Leiste aus `Header`,
+- Bestehende Bausteine **wiederverwenden**: Kopfzeile/Segment-Leiste aus `Header`,
   Mannschaftsfarben (`Team.color`), kompakte Meldelisten (`RosterRow`, `LkPill`, `ResultBadge`),
   Satzfelder und Namenszeilen aus `MatchCard`/`SideLine`, Bottom-Sheet aus `SpielberichtDrawer`.
 - Viewport **420×912** (iPhone Air) ist der Maßstab; Tap-Ziele mindestens 44 px hoch; **kein
-  horizontales Scrollen** (Satzfelder bleiben 7×7-Kacheln, lange Namen brechen um oder werden in
-  ihrem Container gekürzt).
+  horizontales Scrollen**.
 
-### 6. Farblogik
+### 6. Farblogik: immer aus Sicht dessen, den man gerade anschaut
 
-- **Konkrete TCP-Begegnung** (Gegnerbriefing, Spielbericht, direkte Duelle, und **jede Zeile einer
-  Spielerhistorie, die gegen TC Pliening war** — unabhängig davon, wessen Profil offen ist):
-  **Grün = positiv für Pliening, Rot = positiv für den Gegner.** Gewonnene Satzfelder werden in
-  derselben Logik dezent gefärbt (`setCellClass` mit `tcpWin`/`oppWin`, wie heute im Spielbericht).
-  Solche Zeilen tragen zusätzlich eine kleine **„TCP"-Marke**, damit der Farbwechsel innerhalb einer
-  Liste erklärbar bleibt.
-- **Allgemeine Bilanzen aus Spielersicht** (Historie eines Gegners gegen Dritte, Saisonbilanz einer
-  Gegnermannschaft): **Siege grün, Niederlagen rot** aus Sicht des geöffneten Spielers bzw. der
-  Mannschaft — wie heute in `TeamStatsDetail`.
-- Technisch ist das eine Erweiterung von `TcpSide`/`sideOutcome` in `src/utils/spielbericht.ts` um
-  einen „Spielersicht"-Modus; neue Farbwerte gibt es nicht.
+Entschieden am 09.09.2026 (ersetzt die erste Fassung „Grün = positiv für Pliening" für
+Profile und Briefing):
 
-### Offene Fragen (vor der Umsetzung zu klären)
+- **Betrachtete Mannschaft / betrachteter Spieler bestimmt die Farbe.** Öffnet man den TC
+  Gauting oder einen Gautinger Spieler, heißt **Grün: Gauting hat gewonnen, Rot: Gauting hat
+  verloren — auch gegen den TC Pliening.** Es gibt keinen Farbwechsel innerhalb einer Liste;
+  die „TCP"-Marke kennzeichnet nur, dass die Zeile gegen Pliening war.
+- **Gegnerbriefing:** Ergebnisse und Aufstellungen des Gegners aus **Gegnersicht**, der Block
+  „Unsere Aufstellungen" aus **Pliening-Sicht** — jeweils die Mannschaft, die dort gezeigt wird.
+- **Spielbericht einer TCP-Begegnung** (aus Spielplan oder Kreuztabelle geöffnet) bleibt wie
+  heute aus **Pliening-Sicht** (`tcpWin`/`oppWin`) — dort ist Pliening die betrachtete Mannschaft.
+- Gewonnene Satzfelder werden in derselben Sicht dezent gefärbt (`setCellClass`). Technisch ist
+  das ein Parameter „Sicht = betrachtete Seite" für `sideOutcome` in `src/utils/spielbericht.ts`;
+  neue Farbwerte gibt es nicht.
+
+### Entschieden (09.09.2026)
+
+| # | Frage | Entscheidung |
+|---|---|---|
+| F1 | Suche über alle Saisons? | **Ja**, alle erfassten Saisons; Treffer nennen die Saisons. |
+| F2 | Sind die BTV-Berichte von Winter 2024/25 und Sommer 2025 noch abrufbar? | **Erst prüfen** (eine Gruppe testen); was fehlt, wird Datenlücke. |
+| F3 | Vereinswechsel eines Spielers? | **Zwei getrennte Einträge.** |
+| F4 | Briefing-Reichweite? | **Nur laufende Saison** — Meldeliste, Aufstellungen, Ergebnisse. |
+| F8 | Farblogik in Profilen? | **Immer aus Sicht der betrachteten Mannschaft/des Spielers**, auch gegen Pliening. |
+
+### Offen (vor der Umsetzung zu klären)
 
 | # | Frage | Vorschlag |
 |---|---|---|
-| F1 | Umfasst die **Suche** alle erfassten Saisons oder nur die im Dropdown gewählte? | Alle Saisons; Treffer nennen die Saisons. |
-| F2 | Sind die **BTV-Berichte der Saisons Winter 2024/25 und Sommer 2025** überhaupt noch abrufbar (Widget/`MeetingReportFOP`)? | Vor der Umsetzung mit einer Gruppe prüfen; was fehlt, wird Datenlücke. |
-| F3 | **Vereinswechsel** eines Spielers: zwei getrennte Einträge oder zusammenführen? | Getrennt lassen, Historie nennt den Verein je Saison. |
-| F4 | **Briefing-Reichweite:** Einsätze nur aus der laufenden Runde, direkte Duelle aus allen Saisons? | Ja, genau so. |
-| F5 | **Wo läuft die Automatik** — GitHub Actions (Chrome vorhanden) oder Hetzner-Cron (kein Puppeteer)? | GitHub Actions, täglicher Wecker 01:00 Berlin. |
-| F6 | **Commit-Weg des Bots:** Bot-PR mit Auto-Merge oder dokumentierte Ausnahme von „nie direkt auf main"? | Bot-PR + Auto-Merge; Regel bleibt unverändert. |
-| F7 | Soll ein Briefing-Lauf **fehlschlagen dürfen**, ohne dass jemand es merkt? | Nein — bei Fehlschlag Hinweis per E-Mail/GitHub-Issue; Datenstand im Briefing zeigt das Alter. |
-| F8 | **Farblogik in der Historie eines Gegners:** Zeilen gegen TCP aus TCP-Sicht färben (Mischung in einer Liste, mit „TCP"-Marke) — so gewollt? | Ja, gemäß Auftrag; Marke macht den Wechsel lesbar. |
+| F5 | Wo läuft der Automat — GitHub oder Hetzner-Server? (Erklärung oben, Punkt 4) | GitHub. |
+| F6 | Wie speichert der Automat — eigener Pull Request oder direkt? (Erklärung oben) | Eigener Pull Request mit sofortigem Merge. |
+| F7 | E-Mail bei gescheitertem Lauf? | Ja. |
 
-**Mockups:** Artefakt „TCP Gegnerbriefing Mockups" — <https://claude.ai/code/artifact/5e357869-f7e8-468b-81c6-147cc6c190e5> (Beispieldaten; Stationen 1–6, im Handy antippbar)
+**Mockups:** Artefakt „TCP Gegnerbriefing Mockups" — <https://claude.ai/code/artifact/5e357869-f7e8-468b-81c6-147cc6c190e5> (Beispieldaten; Stationen 1–6, im
+Handy antippbar; Stand nach der Rückmeldung vom 09.09.2026)
 
 ---
 
