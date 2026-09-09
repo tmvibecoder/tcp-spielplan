@@ -167,9 +167,10 @@ export default function ScoreEntry({
   team: _team,
   existingMatches,
   onSave,
-  onCancel,
+  onCancel: _onCancel,
 }: ScoreEntryProps) {
   void _team;
+  void _onCancel;
   const isHome = match.isHome;
   const [positions, setPositions] = useState<PositionData[]>(() =>
     initPositions(match.teamId, existingMatches, isHome)
@@ -275,17 +276,23 @@ export default function ScoreEntry({
 
   return (
     <div className="space-y-4">
-      {/* Header with team names and live score */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-slate-100">Ergebnis eintragen</h3>
+      {/* Save button + error — sticky at top */}
+      <div className="sticky top-0 z-10 bg-slate-950 pt-1 pb-2">
+        {error && (
+          <p className="text-sm text-red-400 bg-red-900/20 rounded-lg px-4 py-2 mb-2">
+            {error}
+          </p>
+        )}
         <button
-          onClick={onCancel}
-          className="text-sm text-slate-400 hover:text-slate-200 transition-colors px-2 py-1"
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full py-3 bg-emerald-600/80 hover:bg-emerald-600 text-white text-base font-semibold rounded-lg transition-colors disabled:opacity-50"
         >
-          &#10005;
+          {saving ? "Speichern..." : "Speichern"}
         </button>
       </div>
 
+      {/* Live team score */}
       <div className="flex items-center justify-center gap-3 py-2 bg-slate-900/60 rounded-lg border border-slate-700/30">
         <span className="text-sm font-bold text-slate-200">TC Pliening</span>
         <span className="text-xl font-extrabold text-slate-100 tabular-nums">
@@ -415,21 +422,6 @@ export default function ScoreEntry({
         )}
       </div>
 
-      {/* Error */}
-      {error && (
-        <p className="text-sm text-red-400 bg-red-900/20 rounded-lg px-4 py-3">
-          {error}
-        </p>
-      )}
-
-      {/* Save */}
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="w-full py-3 bg-emerald-600/80 hover:bg-emerald-600 text-white text-base font-semibold rounded-lg transition-colors disabled:opacity-50"
-      >
-        {saving ? "Speichern..." : "Speichern"}
-      </button>
     </div>
   );
 }

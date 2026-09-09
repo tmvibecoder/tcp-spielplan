@@ -13,48 +13,51 @@ export function useLiveScores() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchAllScores = useCallback(async () => {
+    try {
+      const { data: matchScores, error: msError } = await supabase
+        .from("match_scores")
+        .select("*");
+
+      if (msError) throw msError;
+      if (!matchScores || matchScores.length === 0) {
+        setScores(new Map());
+        return;
+      }
+
+      const { data: individuals, error: imError } = await supabase
+        .from("individual_matches")
+        .select("*");
+
+      if (imError) throw imError;
+
+      const map: ScoresMap = new Map();
+      for (const ms of matchScores) {
+        const key = makeKey(ms.team_id, ms.match_date, ms.match_time);
+        const ims = (individuals || []).filter(
+          (im: IndividualMatch) => im.match_score_id === ms.id
+        );
+        map.set(key, {
+          ...ms,
+          individual_matches: ims,
+        });
+      }
+      setScores(map);
+      setError(null);
+    } catch (e) {
+      console.error("Failed to load scores:", e);
+      setError(e instanceof Error ? e.message : "Unknown error");
+    }
+  }, []);
+
   // Initial fetch
   useEffect(() => {
     async function load() {
-      try {
-        const { data: matchScores, error: msError } = await supabase
-          .from("match_scores")
-          .select("*");
-
-        if (msError) throw msError;
-        if (!matchScores || matchScores.length === 0) {
-          setLoading(false);
-          return;
-        }
-
-        const { data: individuals, error: imError } = await supabase
-          .from("individual_matches")
-          .select("*");
-
-        if (imError) throw imError;
-
-        const map: ScoresMap = new Map();
-        for (const ms of matchScores) {
-          const key = makeKey(ms.team_id, ms.match_date, ms.match_time);
-          const ims = (individuals || []).filter(
-            (im: IndividualMatch) => im.match_score_id === ms.id
-          );
-          map.set(key, {
-            ...ms,
-            individual_matches: ims,
-          });
-        }
-        setScores(map);
-      } catch (e) {
-        console.error("Failed to load scores:", e);
-        setError(e instanceof Error ? e.message : "Unknown error");
-      } finally {
-        setLoading(false);
-      }
+      await fetchAllScores();
+      setLoading(false);
     }
-
     load();
-  }, []);
+  }, [fetchAllScores]);
 
   // Real-time subscription
   useEffect(() => {
@@ -189,5 +192,5 @@ export function useLiveScores() {
     []
   );
 
-  return { scores, loading, error, saveScores };
+  return { scores, loading, error, saveScores, refreshScores: fetchAllScores };
 }

@@ -4,6 +4,7 @@ import type { SubTab } from "../types";
 
 interface HeaderProps {
   onPdf: () => void;
+  onRefresh: () => Promise<void>;
   isSummer: boolean;
   seasonDropdown: ReactNode;
   subTab: SubTab;
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export default function Header({
   onPdf,
+  onRefresh,
   isSummer,
   seasonDropdown,
   subTab,
@@ -20,6 +22,8 @@ export default function Header({
   showSpielplanControls,
 }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshDone, setRefreshDone] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
@@ -71,6 +75,41 @@ export default function Header({
 
         {/* Spacer */}
         <div className="flex-1" />
+
+        {/* Refresh button */}
+        {showSpielplanControls && (
+          <button
+            onClick={async () => {
+              setRefreshing(true);
+              setRefreshDone(false);
+              await onRefresh();
+              setRefreshing(false);
+              setRefreshDone(true);
+              setTimeout(() => setRefreshDone(false), 2000);
+            }}
+            disabled={refreshing}
+            className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-md border transition-colors ${
+              refreshDone
+                ? "bg-emerald-900/30 border-emerald-500/30 text-emerald-400"
+                : "bg-slate-800 border-slate-600 text-sky-400 hover:bg-slate-700 hover:text-sky-300"
+            } disabled:opacity-50`}
+            title="Spielstände aktualisieren"
+          >
+            <svg
+              className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              {refreshDone ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 9a9 9 0 0115.36-5.36M20 15a9 9 0 01-15.36 5.36" />
+              )}
+            </svg>
+          </button>
+        )}
 
         {/* ⋯ Menu (only when Spielplan tab is active) */}
         {showSpielplanControls && (

@@ -100,7 +100,7 @@ function App() {
     });
   }, [isSummer]);
 
-  const { scores, saveScores } = useLiveScores();
+  const { scores, saveScores, refreshScores } = useLiveScores();
   const { favorites, toggleFavorite } = useFavorites();
 
   const handlePdf = useCallback(() => {
@@ -114,6 +114,7 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <Header
         onPdf={handlePdf}
+        onRefresh={refreshScores}
         isSummer={isSummer}
         subTab={subTab}
         setSubTab={setSubTab}

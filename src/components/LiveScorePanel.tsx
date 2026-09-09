@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 import type { Match, Team, MatchScore, IndividualMatch } from "../types";
 import { getSinglesCount } from "../data/team-format";
 import { computeTeamScore, isRegularSetComplete, isChampionsTiebreakComplete } from "../utils/score-helpers";
-import ScoreEntry from "./ScoreEntry";
 
 interface LiveScorePanelProps {
   match: Match;
@@ -47,11 +46,8 @@ function setDisplayColor(tcpScore: number | null, oppScore: number | null, isTie
 
 export default function LiveScorePanel({
   match,
-  team,
   score,
-  onSave,
 }: LiveScorePanelProps) {
-  const [editing, setEditing] = useState(false);
   const [showLineup, setShowLineup] = useState(false);
   const isHome = match.isHome;
   const opponent = isHome ? match.away : match.home;
@@ -66,29 +62,10 @@ export default function LiveScorePanel({
   const tcpWins = isHome ? teamScore.home : teamScore.away;
   const oppWins = isHome ? teamScore.away : teamScore.home;
 
-  const handleSave = useCallback(
-    async (ims: Omit<IndividualMatch, "id" | "match_score_id">[]) => {
-      const result = await onSave(match.teamId, match.date, match.time, ims);
-      if (result.success) setEditing(false);
-      return result;
-    },
-    [onSave, match]
-  );
-
-  // Editing mode
-  if (editing) {
-    return (
-      <div className="mt-3 border-t border-slate-700/50 pt-3">
-        <ScoreEntry
-          match={match}
-          team={team}
-          existingMatches={individualMatches}
-          onSave={handleSave}
-          onCancel={() => setEditing(false)}
-        />
-      </div>
-    );
-  }
+  const openScorePopup = useCallback(() => {
+    const url = `${window.location.origin}${window.location.pathname}?score=1&team=${encodeURIComponent(match.teamId)}&date=${encodeURIComponent(match.date)}&time=${encodeURIComponent(match.time)}`;
+    window.open(url, `score-${match.teamId}-${match.date}`, "width=420,height=700,scrollbars=yes,resizable=yes");
+  }, [match]);
 
   // Helper: get TCP/Opp scores from IndividualMatch
   const tcpScore = (im: IndividualMatch, setNum: 1 | 2 | 3): number | null => {
@@ -244,14 +221,14 @@ export default function LiveScorePanel({
       <div className="flex gap-2">
         {!hasScores ? (
           <button
-            onClick={() => setEditing(true)}
+            onClick={openScorePopup}
             className="flex-1 py-2 bg-sky-600/20 hover:bg-sky-600/30 text-sky-300 border border-sky-500/30 text-xs font-semibold rounded-lg transition-colors"
           >
             Ergebnis eintragen
           </button>
         ) : (
           <button
-            onClick={() => setEditing(true)}
+            onClick={openScorePopup}
             className="flex-1 py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-semibold rounded-lg transition-colors"
           >
             Korrektur
