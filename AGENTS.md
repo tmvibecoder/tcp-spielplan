@@ -40,6 +40,14 @@ Die inhaltliche Doku steht im **[README](README.md)** — dort nachlesen statt r
 - **Kein Bauen ohne Supabase-Env.** `.env` ist gitignored und existiert nur im Haupt-Checkout;
   im Worktree Dummy-Werte setzen, sonst weiße Seite („supabaseUrl is required"):
   `VITE_SUPABASE_URL=https://stub.supabase.co VITE_SUPABASE_ANON_KEY=stub npm run build`
+  Im Worktree fehlt außerdem `node_modules` → einmal `npm install`; der Haupt-Checkout hat kein
+  `puppeteer-core`, Browser-Crawls scheitern dort mit `ERR_MODULE_NOT_FOUND`. Eigene Hilfsskripte
+  müssen **im Repo** liegen (sonst finden sie `node_modules` nicht) und danach wieder weg.
+- **Uncommittete Fremdstände nie verwerfen.** Der Haupt-Checkout wurde am 09.09.2026 auf
+  `origin/main` nachgezogen (hing 61 Commits zurück, blockiert von einem WIP-Stand vom April 2026;
+  gesichert auf `wip/score-entry-april-2026`, überholt). Findet sich der Checkout wieder so vor:
+  erst auf einem Branch committen und pushen, dann `git merge --ff-only origin/main` — kein Reset,
+  kein blindes Stash, und die sieben alten Worktrees unter `.claude/worktrees/` in Ruhe lassen.
 - **Liga-/Spieldaten nur aus offiziellen BTV-Quellen** übernehmen, **verbatim** — auch wenn die
   BTV-Rangfolge „falsch" aussieht (bei ungleicher Spielzahl sortiert der BTV nach Punkt-Quotient).
   Nichts schätzen, nichts hochrechnen.
