@@ -7,6 +7,11 @@
 > **[Glossar](GLOSSAR.md)**, den Aufbau des Projekts die
 > **[Architektur](ARCHITEKTUR.md)**.
 
+> **Ausblick (09.09.2026):** Der geplante automatische Briefing-Lauf (README „Vorhaben: Suche,
+> Spielerhistorie und Gegnerbriefing", Punkt 4) soll genau die Schritte 1–3 dieses Ablaufs
+> übernehmen — gruppenweise, vor jeder TCP-Begegnung. Er ist **nicht aktiviert**; solange die
+> Freigabe fehlt, bleibt dieser Skill der einzige Weg, Ergebnisse nachzuziehen.
+
 Diese Datei fasst alle Erkenntnisse aus der Session vom 15./16.08.2026 zusammen
 (PRs #37–#43). Sie ist als Grundlage gedacht, um in der Claude-App einen Skill zu
 bauen, der auf Zuruf **alle Mannschaften aller Konkurrenzen auf neue Ergebnisse
