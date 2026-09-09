@@ -155,7 +155,12 @@ function parseGroupText(text) {
           j++;
         }
         const clubs = new Set(table.map((t) => t.club));
-        const away = between.find((b) => clubs.has(b)) ?? between[between.length - 1] ?? "";
+        // Zwischen den Ergebnis-Spalten und dem Gast steht der Spielort — und der
+        // kann wörtlich der Heimverein sein (HC Wacker München spielt bei HC Wacker
+        // München). Der Gast ist deshalb der LETZTE Vereinsname im Block, der nicht
+        // der Heimverein ist; der Spielort steht davor.
+        const guests = between.filter((b) => clubs.has(b) && b !== home);
+        const away = guests[guests.length - 1] ?? between[between.length - 1] ?? "";
         const statuses = [];
         while (j < lines.length && STATUS.test(lines[j])) {
           statuses.push(lines[j]);

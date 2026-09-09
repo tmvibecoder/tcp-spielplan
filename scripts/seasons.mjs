@@ -111,6 +111,9 @@ export const SEASONS = [
     teamSize: 6,
     // groupids am 09.09.2026 über discover-groups.mjs aus dem btv.de-Archiv geholt
     groups: [
+      { groupid: "2114538", leagueName: "Bayernliga · Gr. 022 SU",   teamLabel: "Herren 40", mode: "herren", teamSize: 6 },
+      { groupid: "2115145", leagueName: "Südliga 1 · Gr. 109",       teamLabel: "Herren 30", mode: "herren", teamSize: 6 },
+      { groupid: "2114563", leagueName: "Landesliga 2 · Gr. 056 SU", teamLabel: "Damen 50",  mode: "damen",  teamSize: 6 },
       // DISCOVER:winter-2526
     ],
   },
