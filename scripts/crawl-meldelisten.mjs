@@ -26,7 +26,7 @@ const CHROME =
   process.env.CHROME_PATH ??
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
-import { GROUPS } from "./groups.mjs";
+import { resolveSeason, describe } from "./seasons.mjs";
 
 // Vereinsnamen, die im Widget anders heißen als in summer-2026.ts — je Liga,
 // denn derselbe Verein kann in einer Liga zurückgezogen sein und in der anderen
@@ -36,10 +36,20 @@ const CLUB_ALIASES = {
   "Landesliga 2 · Gr. 043 SU": { "TC Pliening II": "TC Pliening II (zurückgezogen)" },
 };
 
-const filter = process.argv[2];
+// Saison automatisch erkennen (oder --season <id>)
+const args = process.argv.slice(2);
+const seasonRes = resolveSeason(args);
+const season = seasonRes.season;
+console.log(describe(seasonRes));
+if (!season.groups.length) {
+  console.error(`\nFür ${season.label} sind keine Gruppen hinterlegt (scripts/seasons.mjs).`);
+  process.exit(1);
+}
+const seasonIdx = args.indexOf("--season");
+const filter = args.find((a, i) => !a.startsWith("--") && i !== seasonIdx + 1);
 const groups = filter
-  ? GROUPS.filter((g) => g.leagueName.includes(filter) || g.groupid === filter)
-  : GROUPS;
+  ? season.groups.filter((g) => g.leagueName.includes(filter) || g.groupid === filter)
+  : season.groups;
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(ROOT, "src/data/meldelisten.ts");

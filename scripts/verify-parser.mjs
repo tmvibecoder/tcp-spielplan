@@ -8,10 +8,22 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseModal } from "./parse-spielbericht.mjs";
-import { GROUPS } from "./groups.mjs";
+import { SEASONS, cacheFile } from "./seasons.mjs";
+
+// teamSize je Liga über alle Saisons (die leagueNames überschneiden sich nicht)
+const TEAM_SIZE = new Map(SEASONS.flatMap((s) => s.groups.map((g) => [g.leagueName, g.teamSize])));
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const cache = JSON.parse(fs.readFileSync(path.join(ROOT, "scripts/.spielberichte-cache.json"), "utf8"));
+// Alle vorhandenen Saison-Caches zusammenziehen
+const cache = {};
+for (const season of SEASONS) {
+  const f = cacheFile(season);
+  if (fs.existsSync(f)) Object.assign(cache, JSON.parse(fs.readFileSync(f, "utf8")));
+}
+if (!Object.keys(cache).length) {
+  console.error("Kein Saison-Cache gefunden — erst `npm run crawl:spielberichte` laufen lassen.");
+  process.exit(1);
+}
 const src = fs.readFileSync(path.join(ROOT, "src/data/spielberichte.ts"), "utf8");
 const filter = process.argv[2];
 
@@ -40,7 +52,7 @@ let checked = 0, ok = 0;
 const diffs = [];
 for (const [league, data] of Object.entries(cache)) {
   if (filter && !league.includes(filter)) continue;
-  const teamSize = GROUPS.find((g) => g.leagueName === league)?.teamSize ?? 9;
+  const teamSize = TEAM_SIZE.get(league) ?? 9;
   for (const r of data.reports) {
     const key = `${league}::${r.home}::${r.away}`;
     const h = hand.get(key);

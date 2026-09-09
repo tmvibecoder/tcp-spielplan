@@ -8,9 +8,13 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "season": "node scripts/seasons.mjs",
+    "season:new": "node scripts/new-season.mjs",
     "crawl:meldelisten": "node scripts/crawl-meldelisten.mjs",
     "crawl:spielberichte": "node scripts/crawl-spielberichte.mjs",
-    "gen:spielberichte": "node scripts/generate-spielberichte.mjs"
+    "gen:spielberichte": "node scripts/generate-spielberichte.mjs",
+    "gen:standings": "node scripts/generate-standings.mjs",
+    "check": "node scripts/check-data.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",
