@@ -128,9 +128,9 @@ git-worktree'" weiter unten.
 
 > **Status: nur dokumentiert, nichts davon ist gebaut.** Auftrag vom 09.09.2026, erste
 > Rückmeldung des Auftraggebers vom selben Abend eingearbeitet (Suche-Knopf, Datenstand im
-> ⋯-Menü, LK an jedem Namen, Farblogik aus Sicht der betrachteten Mannschaft, F1–F4 und F8
-> entschieden). Umsetzung der App-Teile **und** der Automatik erst nach **ausdrücklicher
-> Freigabe** — vorher sind die noch offenen Fragen F5–F7 zu klären und die Mockups abzunehmen.
+> ⋯-Menü, LK an jedem Namen, Farblogik aus Sicht der betrachteten Mannschaft) und zweite
+> Rückmeldung (F5–F7). **Alle Fragen F1–F8 sind entschieden.** Umsetzung der App-Teile **und**
+> der Automatik erst nach **ausdrücklicher Freigabe** — die Mockups sind vorher abzunehmen.
 > Die stehende Freigabe „fertige Arbeit ausliefern" gilt für dieses Vorhaben **nicht**, solange
 > die Freigabe fehlt. Rezept und Gate: [docs/AUFGABEN.md, Abschnitt 9](docs/AUFGABEN.md);
 > Auswirkungen auf den Aufbau: [docs/ARCHITEKTUR.md, Abschnitt 13](docs/ARCHITEKTUR.md);
@@ -197,27 +197,30 @@ git-worktree'" weiter unten.
   (3) Meldelisten der Gruppe nachziehen; (4) `gen:spielberichte`, `gen:standings -- --write`,
   `npm run check`; (5) Datenstand und nächsten Lauf schreiben; (6) Commit → Deploy. Ergebnisse,
   Tabellen und Spielberichte werden im selben Lauf aktuell.
-- **Empfohlener Mechanismus (F5 offen):** ein **täglicher Wecker um 01:00 Uhr Berlin**, der die
-  Spieltermine liest und **nur dann** den vollen Lauf startet, wenn eine TCP-Begegnung in genau 7,
-  4 oder 0 Tagen liegt. Verlegt der BTV einen Termin, greifen die neuen Abstände beim nächsten
-  Wecker von selbst.
-- **F5–F7 in einfachen Worten** (die Fragen, die noch zu entscheiden sind):
+- **Mechanismus (F5 entschieden: GitHub):** ein **täglicher Wecker um 01:00 Uhr Berlin** als
+  GitHub-Actions-Cron, der die Spieltermine liest und **nur dann** den vollen Lauf startet, wenn
+  eine TCP-Begegnung in genau 7, 4 oder 0 Tagen liegt. Verlegt der BTV einen Termin, greifen die
+  neuen Abstände beim nächsten Wecker von selbst. Der Lauf legt seine Daten als **eigenen Pull
+  Request** ab und mergt ihn sofort (F6 entschieden) — die Regel „nie direkt auf `main`" bleibt
+  unverändert, jeder nächtliche Lauf ist in der PR-Liste nachlesbar. Scheitert ein Lauf, geht
+  eine **E-Mail** an den Auftraggeber (F7 entschieden; GitHub-Benachrichtigung bei rotem Workflow).
+- **F5–F7 in einfachen Worten** (Hintergrund der Entscheidungen vom 09.09.2026):
   - **F5 — Wo läuft der Automat?** Er braucht einen Rechner mit Chrome, der nachts läuft.
     *Option A: GitHub* — dort liegt der Code ohnehin, und GitHub stellt für jeden Lauf kostenlos
     einen frischen Rechner mit Chrome; nichts zu installieren, nichts zu warten. *Option B: unser
     Hetzner-Server* — läuft zwar rund um die Uhr, hat aber keinen Chrome; der müsste installiert
     und gepflegt werden und frisst Arbeitsspeicher, den die anderen Apps dort brauchen.
-    **Empfehlung: A.**
+    **Entschieden: A.**
   - **F6 — Wie speichert der Automat seine Daten?** Heute gilt: niemand schreibt direkt in den
     Hauptstand (`main`); jede Änderung ist ein Pull Request, der gemergt wird. Ein Automat, der
     nachts neue Daten holt, muss sie ebenfalls ablegen. *Option A:* er legt selbst einen Pull
     Request an und mergt ihn sofort — die Regel bleibt, und jeder nächtliche Lauf ist später in
     der PR-Liste nachlesbar. *Option B:* der Automat darf als einzige Ausnahme direkt schreiben —
     einfacher, aber die Regel bekommt ein Loch. Für dich sieht beides gleich aus (Daten sind
-    morgens live). **Empfehlung: A.**
+    morgens live). **Entschieden: A.**
   - **F7 — Was, wenn ein Lauf scheitert** (BTV nicht erreichbar, Chrome stürzt ab)? Dann bleibt
     der alte Datenstand stehen, und das ⋯-Menü zeigt das Alter. *Zusätzlich* kann GitHub dir bei
-    jedem gescheiterten Lauf automatisch eine E-Mail schicken. **Empfehlung: ja, E-Mail an.**
+    jedem gescheiterten Lauf automatisch eine E-Mail schicken. **Entschieden: ja, E-Mail an.**
 
 ### 5. Mobile first, bestehendes Design
 
@@ -252,15 +255,15 @@ Profile und Briefing):
 | F2 | Sind die BTV-Berichte von Winter 2024/25 und Sommer 2025 noch abrufbar? | **Erst prüfen** (eine Gruppe testen); was fehlt, wird Datenlücke. |
 | F3 | Vereinswechsel eines Spielers? | **Zwei getrennte Einträge.** |
 | F4 | Briefing-Reichweite? | **Nur laufende Saison** — Meldeliste, Aufstellungen, Ergebnisse. |
+| F5 | Wo läuft der Automat? | **GitHub Actions** (Runner mit Chrome), nicht der Hetzner-Server. |
+| F6 | Wie speichert der Automat? | **Eigener Pull Request mit sofortigem Merge**; „nie direkt auf `main`" bleibt. |
+| F7 | E-Mail bei gescheitertem Lauf? | **Ja.** |
 | F8 | Farblogik in Profilen? | **Immer aus Sicht der betrachteten Mannschaft/des Spielers**, auch gegen Pliening. |
 
-### Offen (vor der Umsetzung zu klären)
+### Offen
 
-| # | Frage | Vorschlag |
-|---|---|---|
-| F5 | Wo läuft der Automat — GitHub oder Hetzner-Server? (Erklärung oben, Punkt 4) | GitHub. |
-| F6 | Wie speichert der Automat — eigener Pull Request oder direkt? (Erklärung oben) | Eigener Pull Request mit sofortigem Merge. |
-| F7 | E-Mail bei gescheitertem Lauf? | Ja. |
+Keine fachlichen Fragen mehr. Es fehlen nur noch die **Abnahme der Mockups** und die
+**ausdrückliche Freigabe** — getrennt für (a) die Anwendung und (b) die Automatik.
 
 **Mockups:** Artefakt „TCP Gegnerbriefing Mockups" — <https://claude.ai/code/artifact/5e357869-f7e8-468b-81c6-147cc6c190e5> (Beispieldaten; Stationen 1–6, im
 Handy antippbar; Stand nach der Rückmeldung vom 09.09.2026)

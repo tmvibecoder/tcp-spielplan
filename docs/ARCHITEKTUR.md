@@ -505,8 +505,9 @@ Satzfelder folgen derselben Entscheidung über `setCellClass`. Neue Farbwerte gi
 
 ### 13.4 Auto-Aktualisierung: Wecker statt Terminplan
 
-Empfohlene Form (Entscheidung F5/F6 im README offen): ein **täglicher Cron um 01:00 Uhr
-Europe/Berlin** in GitHub Actions. Weil Actions-Cron in UTC läuft, zwei Cron-Zeilen (23:00 und
+Entschieden am 09.09.2026 (F5–F7 im README): ein **täglicher Cron um 01:00 Uhr
+Europe/Berlin** in GitHub Actions, Daten per **Bot-PR mit sofortigem Merge**, E-Mail bei rotem
+Lauf. Weil Actions-Cron in UTC läuft, zwei Cron-Zeilen (23:00 und
 00:00 UTC) und ein Skript, das die lokale Stunde prüft und sonst sofort beendet. Der Lauf:
 
 ```
@@ -518,7 +519,8 @@ seasons.mjs → Termine der laufenden Saison
    crawl:meldelisten -- <groupid>              (Nachmeldungen)
    gen:spielberichte · gen:standings --write · check
    Datenstand je Gruppe schreiben
-   Commit → Bot-PR → Auto-Merge → Deploy (F6)   oder   Ausnahme „Bot darf Daten auf main"
+   Commit → Bot-PR → Auto-Merge → Deploy        (F6: kein Direkt-Commit des Bots)
+   bei Fehler: Workflow rot → E-Mail an den Auftraggeber (F7)
 ```
 
 Spielverlegungen brauchen keine Sonderbehandlung: Der Wecker rechnet die Abstände jeden Tag aus
