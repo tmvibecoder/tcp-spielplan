@@ -8,8 +8,17 @@
 //
 //   node scripts/seasons.mjs            # zeigt, welche Saison gerade aktiv ist
 //
-// Eine neue Saison eintragen: Block unten ergänzen (groupids liefert
-// `node scripts/discover-groups.mjs`) — mehr braucht keines der Skripte.
+// Eine neue Saison eintragen: Block unten ergänzen — groupids liefert
+// `npm run season:new -- --discover-only` (laufende Runde) bzw.
+// `node scripts/discover-groups.mjs --season "<BTV-Name>"` (jede Runde,
+// auch vergangene). Mehr braucht keines der Skripte.
+//
+// Zwei Arten von Saisons:
+//   - mit Spielplan/Tabellen (dataFile gesetzt): erscheinen in der App im
+//     Saison-Dropdown, Ergebnisse zieht generate-standings.mjs nach.
+//   - nur Historie (dataFile null, historyOnly true): es gibt für sie
+//     ausschließlich Spielberichte und Meldelisten — für die Spielerhistorie und
+//     die Suche. Die App zeigt keinen Spielplan dafür.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -17,79 +26,126 @@ import { fileURLToPath } from "node:url";
 
 export const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+// Gemeinsame Ablage der gecrawlten Berichte und Meldelisten (alle Saisons in
+// EINER Datei, jeder Eintrag trägt seine Saison).
+const REPORTS_FILE = "src/data/spielberichte-crawled.ts";
+const ROSTERS_FILE = "src/data/meldelisten.ts";
+
 // layout: "summer" = Ergebnisse stehen nur in der Kreuztabelle, der Spielplan
 //                    (matches.ts) kennt nur Termine.
 //         "winter" = jede Begegnung trägt ihr Ergebnis selbst (mp/sets/games/
 //                    status) UND steht in der Kreuztabelle.
 // prefix: Präfix der Konstanten in der Datendatei (z. B. WINTER_2627_STANDINGS).
-// reports/rosters: Dateien mit Spielberichten/Meldelisten, oder null wenn für
-//                  diese Saison keine erfasst sind.
+// btvLabel: Name der Saison im btv.de-Gruppen-Such-Widget (für discover-groups).
+// groups: je Gruppe groupid, leagueName (exakt wie in der Datendatei), teamLabel
+//         (Konkurrenz des TC Pliening), mode (herren/damen/mixed für die
+//         Meldelisten-Nummerierung) und teamSize (9 = 6 Einzel + 3 Doppel,
+//         6 = 4 Einzel + 2 Doppel bzw. Mixed).
 export const SEASONS = [
   {
     id: "winter-2627",
     label: "Winter 2026/27",
+    btvLabel: "Winter 2026/2027",
     layout: "winter",
     prefix: "WINTER_2627",
     dataFile: "src/data/winter-2627.ts",
     matchesFile: "src/data/winter-2627.ts",
-    reports: null,
-    rosters: null,
+    reports: REPORTS_FILE,
+    rosters: ROSTERS_FILE,
     teamSize: 6, // 4 Einzel + 2 Doppel
     groups: [
-      { groupid: "2253303", leagueName: "Bayernliga · Gr. 022 SU",   mode: "herren", teamSize: 6 }, // H40
-      { groupid: "2253304", leagueName: "Bayernliga · Gr. 029 SU",   mode: "herren", teamSize: 6 }, // H50
-      { groupid: "2257785", leagueName: "Südliga 1 · Gr. 119",       mode: "herren", teamSize: 6 }, // H30
-      { groupid: "2257803", leagueName: "Südliga 2 · Gr. 129",       mode: "herren", teamSize: 6 }, // H30 II
-      { groupid: "2257743", leagueName: "Südliga 1 · Gr. 082",       mode: "damen",  teamSize: 6 }, // D00
-      { groupid: "2257871", leagueName: "Südliga 2 · Gr. 200",       mode: "damen",  teamSize: 6 }, // D40
-      { groupid: "2253322", leagueName: "Landesliga 1 · Gr. 054 SU", mode: "damen",  teamSize: 6 }, // D50
+      { groupid: "2253303", leagueName: "Bayernliga · Gr. 022 SU",   teamLabel: "Herren 40",    mode: "herren", teamSize: 6 },
+      { groupid: "2253304", leagueName: "Bayernliga · Gr. 029 SU",   teamLabel: "Herren 50",    mode: "herren", teamSize: 6 },
+      { groupid: "2257785", leagueName: "Südliga 1 · Gr. 119",       teamLabel: "Herren 30",    mode: "herren", teamSize: 6 },
+      { groupid: "2257803", leagueName: "Südliga 2 · Gr. 129",       teamLabel: "Herren 30 II", mode: "herren", teamSize: 6 },
+      { groupid: "2257743", leagueName: "Südliga 1 · Gr. 082",       teamLabel: "Damen",        mode: "damen",  teamSize: 6 },
+      { groupid: "2257871", leagueName: "Südliga 2 · Gr. 200",       teamLabel: "Damen 40",     mode: "damen",  teamSize: 6 },
+      { groupid: "2253322", leagueName: "Landesliga 1 · Gr. 054 SU", teamLabel: "Damen 50",     mode: "damen",  teamSize: 6 },
     ],
   },
   {
     id: "sommer-26",
     label: "Sommer 2026",
+    btvLabel: "Sommer 2026",
     layout: "summer",
     prefix: "SUMMER",
     dataFile: "src/data/summer-2026.ts",
     matchesFile: "src/data/matches.ts",
-    reports: "src/data/spielberichte-crawled.ts",
-    rosters: "src/data/meldelisten.ts",
+    reports: REPORTS_FILE,
+    rosters: ROSTERS_FILE,
     teamSize: 9,
     // Ligen mit zurückgezogenen Mannschaften: die offizielle Tabelle weicht
     // bewusst von den Spielplan-Ergebnissen ab, deshalb handgepflegt lassen.
     keepLeagues: ["Landesliga 2 · Gr. 043 SU", "Südliga 2 · Gr. 315"],
     groups: [
-      { groupid: "2215909", leagueName: "Südliga 2 · Gr. 023", mode: "herren", teamSize: 9 },            // H00
-      { groupid: "2216174", leagueName: "Südliga 4 (4er) · Gr. 292", mode: "herren", teamSize: 6 },      // H30
-      { groupid: "2144934", leagueName: "Regionalliga Süd-Ost · Gr. 004", mode: "herren", teamSize: 9 }, // H40
-      { groupid: "2165598", leagueName: "Landesliga 2 · Gr. 043 SU", mode: "herren", teamSize: 9 },      // H40 II
-      { groupid: "2219941", leagueName: "Südliga 2 · Gr. 315", mode: "herren", teamSize: 9 },            // H40 III
-      { groupid: "2139346", leagueName: "Regionalliga Süd-Ost · Gr. 005", mode: "herren", teamSize: 9 }, // H50
-      { groupid: "2224597", leagueName: "Südliga 1 · Gr. 355", mode: "herren", teamSize: 9 },            // H50 II
-      { groupid: "2216258", leagueName: "Südliga 3 · Gr. 379", mode: "herren", teamSize: 9 },            // H50 III
-      { groupid: "2224594", leagueName: "Südliga 1 · Gr. 404", mode: "herren", teamSize: 9 },            // H60
-      { groupid: "2216042", leagueName: "Südliga 2 · Gr. 160", mode: "damen", teamSize: 9 },             // D00
-      { groupid: "2216316", leagueName: "Südliga 1 · Gr. 441", mode: "damen", teamSize: 9 },             // D40
-      { groupid: "2165662", leagueName: "Landesliga 1 (4er) · Gr. 103 SU", mode: "damen", teamSize: 6 }, // D50
-      { groupid: "2216367", leagueName: "Südliga 2 (4er) · Gr. 488", mode: "damen", teamSize: 6 },       // D50 II
-      { groupid: "2244334", leagueName: "Spielebene B · Gr. 074", mode: "mixed", teamSize: 6 },          // Mixed
-      { groupid: "2216568", leagueName: "Südliga 3 · Gr. 686", mode: "damen", teamSize: 6 },             // Juniorinnen 18
-      { groupid: "2216473", leagueName: "Südliga 4 · Gr. 596", mode: "herren", teamSize: 6 },            // Knaben 15
-      { groupid: "2216513", leagueName: "Südliga 5 · Gr. 638", mode: "herren", teamSize: 6 },            // Knaben 15 II
-      { groupid: "2219939", leagueName: "Südliga 1 · Gr. 870", mode: "mixed", teamSize: 6 },             // Midcourt U10
+      { groupid: "2215909", leagueName: "Südliga 2 · Gr. 023",               teamLabel: "Herren",         mode: "herren", teamSize: 9 },
+      { groupid: "2216174", leagueName: "Südliga 4 (4er) · Gr. 292",         teamLabel: "Herren 30",      mode: "herren", teamSize: 6 },
+      { groupid: "2144934", leagueName: "Regionalliga Süd-Ost · Gr. 004",    teamLabel: "Herren 40",      mode: "herren", teamSize: 9 },
+      { groupid: "2165598", leagueName: "Landesliga 2 · Gr. 043 SU",         teamLabel: "Herren 40 II",   mode: "herren", teamSize: 9 },
+      { groupid: "2219941", leagueName: "Südliga 2 · Gr. 315",               teamLabel: "Herren 40 III",  mode: "herren", teamSize: 9 },
+      { groupid: "2139346", leagueName: "Regionalliga Süd-Ost · Gr. 005",    teamLabel: "Herren 50",      mode: "herren", teamSize: 9 },
+      { groupid: "2224597", leagueName: "Südliga 1 · Gr. 355",               teamLabel: "Herren 50 II",   mode: "herren", teamSize: 9 },
+      { groupid: "2216258", leagueName: "Südliga 3 · Gr. 379",               teamLabel: "Herren 50 III",  mode: "herren", teamSize: 9 },
+      { groupid: "2224594", leagueName: "Südliga 1 · Gr. 404",               teamLabel: "Herren 60",      mode: "herren", teamSize: 9 },
+      { groupid: "2216042", leagueName: "Südliga 2 · Gr. 160",               teamLabel: "Damen",          mode: "damen",  teamSize: 9 },
+      { groupid: "2216316", leagueName: "Südliga 1 · Gr. 441",               teamLabel: "Damen 40",       mode: "damen",  teamSize: 9 },
+      { groupid: "2165662", leagueName: "Landesliga 1 (4er) · Gr. 103 SU",   teamLabel: "Damen 50",       mode: "damen",  teamSize: 6 },
+      { groupid: "2216367", leagueName: "Südliga 2 (4er) · Gr. 488",         teamLabel: "Damen 50 II",    mode: "damen",  teamSize: 6 },
+      { groupid: "2244334", leagueName: "Spielebene B · Gr. 074",            teamLabel: "Mixed",          mode: "mixed",  teamSize: 6 },
+      { groupid: "2216568", leagueName: "Südliga 3 · Gr. 686",               teamLabel: "Juniorinnen 18", mode: "damen",  teamSize: 6 },
+      { groupid: "2216473", leagueName: "Südliga 4 · Gr. 596",               teamLabel: "Knaben 15",      mode: "herren", teamSize: 6 },
+      { groupid: "2216513", leagueName: "Südliga 5 · Gr. 638",               teamLabel: "Knaben 15 II",   mode: "herren", teamSize: 6 },
+      { groupid: "2219939", leagueName: "Südliga 1 · Gr. 870",               teamLabel: "Midcourt U10",   mode: "mixed",  teamSize: 6 },
     ],
   },
   {
     id: "winter-2526",
     label: "Winter 2025/26",
+    btvLabel: "Winter 2025/2026",
     layout: "winter",
     prefix: "WINTER",
     dataFile: "src/data/winter-2526.ts",
     matchesFile: "src/data/winter-2526.ts",
-    reports: null,
-    rosters: null,
+    reports: REPORTS_FILE,
+    rosters: ROSTERS_FILE,
     teamSize: 6,
-    groups: [], // Archiv — die groupids der Saison sind nicht mehr hinterlegt
+    // groupids am 09.09.2026 über discover-groups.mjs aus dem btv.de-Archiv geholt
+    groups: [
+      // DISCOVER:winter-2526
+    ],
+  },
+  // ── Nur Historie (Spielberichte + Meldelisten für Spielerhistorie und Suche) ──
+  {
+    id: "sommer-25",
+    label: "Sommer 2025",
+    btvLabel: "Sommer 2025",
+    layout: "summer",
+    prefix: null,
+    historyOnly: true,
+    dataFile: null,
+    matchesFile: null,
+    reports: REPORTS_FILE,
+    rosters: ROSTERS_FILE,
+    teamSize: 9,
+    groups: [
+      // DISCOVER:sommer-25
+    ],
+  },
+  {
+    id: "winter-2425",
+    label: "Winter 2024/25",
+    btvLabel: "Winter 2024/2025",
+    layout: "winter",
+    prefix: null,
+    historyOnly: true,
+    dataFile: null,
+    matchesFile: null,
+    reports: REPORTS_FILE,
+    rosters: ROSTERS_FILE,
+    teamSize: 6,
+    groups: [
+      // DISCOVER:winter-2425
+    ],
   },
 ];
 
@@ -107,13 +163,20 @@ export function cacheFile(season) {
   return path.join(ROOT, `scripts/.spielberichte-cache-${season.id}.json`);
 }
 
+/** Cache-Datei des Meldelisten-Crawls, ebenfalls je Saison. */
+export function rosterCacheFile(season) {
+  return path.join(ROOT, `scripts/.meldelisten-cache-${season.id}.json`);
+}
+
 export function readFileIfExists(rel) {
+  if (!rel) return null;
   const p = path.join(ROOT, rel);
   return fs.existsSync(p) ? fs.readFileSync(p, "utf8") : null;
 }
 
 /** Alle Spieltermine einer Saison aus ihrer Datendatei (nur die Daten, nach
- *  Datum sortiert). Reicht, um den Zeitraum der Saison zu bestimmen. */
+ *  Datum sortiert). Reicht, um den Zeitraum der Saison zu bestimmen.
+ *  Saisons ohne Datendatei (nur Historie) haben keine Termine. */
 export function seasonDates(season) {
   const src = readFileIfExists(season.matchesFile);
   if (!src) return [];
@@ -139,6 +202,9 @@ function todayStr(d = new Date()) {
  *  2. Sonst die Saison, die als nächstes beginnt — ab 60 Tagen vor dem ersten
  *     Spieltag, damit Terminverlegungen vor dem Start schon gezogen werden.
  *  3. Sonst die zuletzt beendete (Nachlese nach Rundenende).
+ *
+ * Saisons ohne Termine (nur Historie) kommen nie automatisch dran — nur per
+ * `--season <id>`.
  *
  * Rückgabe: { season, reason, window, today }
  */
@@ -202,7 +268,7 @@ export function resolveSeason(argv = process.argv.slice(2)) {
 /** Einzeiler fürs Log, damit in jedem Skriptlauf sichtbar ist, worauf er wirkt. */
 export function describe(res) {
   const w = res.window;
-  const range = w ? `${w.from} – ${w.to}, ${w.count} Begegnungen` : "keine Termine";
+  const range = w ? `${w.from} – ${w.to}, ${w.count} Begegnungen` : (res.season.historyOnly ? "nur Historie, keine Termine" : "keine Termine");
   let s = `Saison: ${res.season.label} (${res.season.id}) — ${res.reason}; ${range}`;
   if (res.alsoRelevant) s += `\n        Hinweis: ${res.alsoRelevant}`;
   return s;
@@ -215,7 +281,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   for (const s of SEASONS) {
     const w = seasonWindow(s);
     const mark = s.id === active.season.id ? "→" : " ";
-    const range = w ? `${w.from} – ${w.to}  (${String(w.count).padStart(3)} Begegnungen)` : "(keine Termine)";
+    const range = w ? `${w.from} – ${w.to}  (${String(w.count).padStart(3)} Begegnungen)` : (s.historyOnly ? "(nur Historie)                     " : "(keine Termine)                    ");
     console.log(`${mark} ${s.id.padEnd(13)} ${s.label.padEnd(16)} ${range}  ${s.groups.length} Gruppen, Layout ${s.layout}`);
   }
   console.log(`\n${describe(active)}`);

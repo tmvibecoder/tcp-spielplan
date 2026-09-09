@@ -1,7 +1,6 @@
-import type { IndividualMatch } from "../types";
+import type { IndividualMatch, SeasonId } from "../types";
 import { getAllSpielberichte } from "./spielberichte";
 import { parsePlayer, parseSide } from "../utils/spielbericht";
-import { TEAMS } from "./teams";
 
 // ── Spieler-Statistik pro Mannschaft ──────────────────────────────────────────
 // Wird LIVE aus den echten Spielberichten (src/data/spielberichte.ts) berechnet:
@@ -59,10 +58,11 @@ function scoreFromSide(im: IndividualMatch, side: "home" | "away"): string {
 
 /** Baut die Spieler-Statistik einer Mannschaft aus allen Spielberichten der Konkurrenz. */
 export function getTeamStats(
+  season: SeasonId,
   leagueName: string,
   club: string
 ): TeamStats | undefined {
-  const reports = getAllSpielberichte().filter(
+  const reports = getAllSpielberichte(season).filter(
     (b) => b.league === leagueName && (b.homeClub === club || b.awayClub === club)
   );
   if (reports.length === 0) return undefined;
@@ -139,7 +139,7 @@ export function getTeamStats(
     }
   }
 
-  const teamLabel = TEAMS.find((t) => t.league === leagueName)?.label ?? club;
+  const teamLabel = reports.find((b) => b.teamLabel)?.teamLabel ?? club;
 
   return {
     club,
@@ -151,8 +151,7 @@ export function getTeamStats(
 }
 
 /** Leere Team-Statistik — für Mannschaften mit Meldeliste, aber (noch) ohne Spielberichte. */
-export function emptyTeamStats(leagueName: string, club: string): TeamStats {
-  const teamLabel = TEAMS.find((t) => t.league === leagueName)?.label ?? club;
+export function emptyTeamStats(leagueName: string, club: string, teamLabel = club): TeamStats {
   return { club, teamLabel, leagueName, players: [], doubles: [] };
 }
 

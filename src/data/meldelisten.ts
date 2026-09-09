@@ -1,16 +1,19 @@
-import type { Meldeliste } from "../types";
+import type { Meldeliste, SeasonId } from "../types";
 
-// ── Namentliche Meldelisten (Sommer 2026 + Mixed-Runde) ──────────────────────
-// AUTO-GENERIERT von scripts/crawl-meldelisten.mjs (npm run crawl:meldelisten),
-// Stand 16.08.2026. Quelle: btv.de Mannschaftsportraits der jeweiligen Gruppe.
+// ── Namentliche Meldelisten ──────────────────────────────────────────────────
+// AUTO-GENERIERT von scripts/generate-meldelisten.mjs (npm run gen:meldelisten)
+// aus den Caches von scripts/crawl-meldelisten.mjs — NICHT von Hand editieren.
+// Stand 09.09.2026. Quelle: btv.de Mannschaftsportraits der jeweiligen Gruppe.
+// Saisons: Sommer 2026 (126).
 // Rang = Meldeposition wie in nuLiga (bei Mixed sind Herren und Damen separat
-// nummeriert); LK = aktuelle Leistungsklasse laut Portrait (kann von der LK im
-// Spielbericht-PDF abweichen, die den Stand am Spieltag zeigt). nation nur,
+// nummeriert); LK = Leistungsklasse laut Portrait (kann von der LK im
+// Spielbericht abweichen, die den Stand am Spieltag zeigt). nation nur,
 // wenn nicht GER. Bilanzen stehen NICHT hier — sie kommen live aus den
 // Spielberichten (src/data/spielberichte.ts).
 
 export const MELDELISTEN: Meldeliste[] = [
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "TF Markt Schwaben",
     herren: [
@@ -71,6 +74,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "TSV Feldkirchen II",
     herren: [
@@ -142,6 +146,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "TC Aschheim III",
     herren: [
@@ -185,6 +190,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "TC Finsing",
     herren: [
@@ -236,6 +242,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "TC Unterföhring II",
     herren: [
@@ -317,6 +324,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "TC Pliening",
     herren: [
@@ -362,6 +370,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "Polizei SV Haar",
     herren: [
@@ -418,6 +427,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 023",
     club: "TC Erding II",
     herren: [
@@ -491,6 +501,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 (4er) · Gr. 292",
     club: "TSV Oberpframmern",
     herren: [
@@ -523,6 +534,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 (4er) · Gr. 292",
     club: "TC Finsing",
     herren: [
@@ -552,6 +564,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 (4er) · Gr. 292",
     club: "TC Pliening",
     herren: [
@@ -603,6 +616,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 (4er) · Gr. 292",
     club: "TC Putzbrunn",
     herren: [
@@ -629,6 +643,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 (4er) · Gr. 292",
     club: "TC Philathlos München",
     herren: [
@@ -679,6 +694,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "MTTC Iphitos München",
     herren: [
@@ -715,6 +731,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "Bad WH Dresden",
     herren: [
@@ -737,6 +754,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "TC Grün-Weiß Gräfelfing",
     herren: [
@@ -775,6 +793,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "TC Kümmersbruck",
     herren: [
@@ -822,6 +841,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "TC Pliening",
     herren: [
@@ -868,6 +888,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "TC Herzogenaurach",
     herren: [
@@ -898,6 +919,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "TSV Kottern",
     herren: [
@@ -921,6 +943,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 004",
     club: "SpVgg Zolling",
     herren: [
@@ -960,6 +983,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "TSV 1860 Rosenheim",
     herren: [
@@ -1037,6 +1061,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "TC Grün-Gold München",
     herren: [
@@ -1107,6 +1132,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "SV Schloßberg-Stephansk.",
     herren: [
@@ -1169,6 +1195,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "TC Unterföhring",
     herren: [
@@ -1227,6 +1254,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "TSV Marquartstein",
     herren: [
@@ -1267,6 +1295,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "TC Ramersdorf",
     herren: [
@@ -1329,6 +1358,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "TC Anzing",
     herren: [
@@ -1372,6 +1402,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 2 · Gr. 043 SU",
     club: "TC Pliening II (zurückgezogen)",
     herren: [
@@ -1464,6 +1495,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "TC Aschheim",
     herren: [
@@ -1517,6 +1549,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "TSV Haar II",
     herren: [
@@ -1575,6 +1608,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "TC Pliening III",
     herren: [
@@ -1661,6 +1695,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "TC Grün-Gold München II",
     herren: [
@@ -1725,6 +1760,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "TSV Feldkirchen II",
     herren: [
@@ -1774,6 +1810,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "TF Markt Schwaben",
     herren: [
@@ -1812,6 +1849,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "WB Fideliopark München II",
     herren: [
@@ -1862,6 +1900,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 315",
     club: "VfB Forstinning (zurückgezogen)",
     herren: [
@@ -1893,6 +1932,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "1. Regensburger Tennis-Klub",
     herren: [
@@ -1923,6 +1963,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "TSV Burgfarrnbach",
     herren: [
@@ -1952,6 +1993,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "TC Pliening",
     herren: [
@@ -1983,6 +2025,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "MTTC Iphitos München",
     herren: [
@@ -2061,6 +2104,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "TC Grün-Weiß Gräfelfing",
     herren: [
@@ -2130,6 +2174,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "SpVgg Zolling",
     herren: [
@@ -2162,6 +2207,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "TSV Altenfurt",
     herren: [
@@ -2195,6 +2241,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Regionalliga Süd-Ost · Gr. 005",
     club: "TC Bamberg",
     herren: [
@@ -2238,6 +2285,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "TC Pliening II",
     herren: [
@@ -2296,6 +2344,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "TeG Mühldorf",
     herren: [
@@ -2349,6 +2398,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "TSV Altfraunhofen",
     herren: [
@@ -2378,6 +2428,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "VfL Waldkraiburg",
     herren: [
@@ -2401,6 +2452,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "TC Taufkirchen",
     herren: [
@@ -2444,6 +2496,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "TC Au",
     herren: [
@@ -2476,6 +2529,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "TC Rot-Weiß Freising",
     herren: [
@@ -2524,6 +2578,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 355",
     club: "TC Weiss-Blau Landshut",
     herren: [
@@ -2564,6 +2619,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 379",
     club: "TF Markt Schwaben",
     herren: [
@@ -2594,6 +2650,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 379",
     club: "TC Finsing",
     herren: [
@@ -2621,6 +2678,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 379",
     club: "TC Pliening III",
     herren: [
@@ -2673,6 +2731,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 379",
     club: "VfB Forstinning",
     herren: [
@@ -2698,6 +2757,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 379",
     club: "TS Jahn München",
     herren: [
@@ -2725,6 +2785,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 379",
     club: "TC Neuperlach-Kail München II",
     herren: [
@@ -2769,6 +2830,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 379",
     club: "TSV Oberpframmern",
     herren: [
@@ -2797,6 +2859,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 404",
     club: "TeG Mühldorf",
     herren: [
@@ -2830,6 +2893,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 404",
     club: "SV Hörlkofen",
     herren: [
@@ -2862,6 +2926,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 404",
     club: "TSV Rottenburg",
     herren: [
@@ -2891,6 +2956,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 404",
     club: "TC Marzling",
     herren: [
@@ -2912,6 +2978,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 404",
     club: "FC Langengeisling",
     herren: [
@@ -2938,6 +3005,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 404",
     club: "TF Eitting",
     herren: [
@@ -2956,6 +3024,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 404",
     club: "TC Pliening",
     herren: [
@@ -2979,6 +3048,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "WB Fideliopark München II",
     herren: [
@@ -3040,6 +3110,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "TC Pliening",
     herren: [
@@ -3083,6 +3154,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "TC Steinhöring",
     herren: [
@@ -3128,6 +3200,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "TC Neukeferloh",
     herren: [
@@ -3163,6 +3236,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "TC Unterföhring",
     herren: [
@@ -3226,6 +3300,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "TS Jahn München",
     herren: [
@@ -3273,6 +3348,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "TC Topspin",
     herren: [
@@ -3310,6 +3386,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 · Gr. 160",
     club: "TC Grün-Gold München",
     herren: [
@@ -3375,6 +3452,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "VfB Hallbergmoos",
     herren: [
@@ -3406,6 +3484,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "Weißblau Allianz München",
     herren: [
@@ -3450,6 +3529,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "ESV München Sportpark",
     herren: [
@@ -3506,6 +3586,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "SC Baldham-Vaterstetten",
     herren: [
@@ -3543,6 +3624,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "TSV Rudelzhausen",
     herren: [
@@ -3570,6 +3652,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "TC Pliening",
     herren: [
@@ -3608,6 +3691,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "TC Pfaffenhofen/Ilm II",
     herren: [
@@ -3651,6 +3735,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 1 · Gr. 441",
     club: "WB Fideliopark München",
     herren: [
@@ -3686,6 +3771,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TC Hofkirchen",
     herren: [
@@ -3712,6 +3798,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TC Steinhöring",
     herren: [
@@ -3751,6 +3838,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TC Pliening",
     herren: [
@@ -3787,6 +3875,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TSV Unterhaching II",
     herren: [
@@ -3830,6 +3919,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TSV Eintracht Karlsfeld",
     herren: [
@@ -3875,6 +3965,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TC Karlsfeld am See",
     herren: [
@@ -3896,6 +3987,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TSV Moosach München",
     herren: [
@@ -3918,6 +4010,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Landesliga 1 (4er) · Gr. 103 SU",
     club: "TC Gernlinden II",
     herren: [
@@ -3961,6 +4054,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "TC Rot-Weiß Poing",
     herren: [
@@ -3991,6 +4085,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "TC Pliening II",
     herren: [
@@ -4023,6 +4118,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "TC Steinhöring II",
     herren: [
@@ -4058,6 +4154,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "TeG Kirchheim",
     herren: [
@@ -4087,6 +4184,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "SV Walpertskirchen",
     herren: [
@@ -4108,6 +4206,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "FC Forstern",
     herren: [
@@ -4133,6 +4232,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "TC Anzing",
     herren: [
@@ -4150,6 +4250,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 2 (4er) · Gr. 488",
     club: "SpVgg Altenerding",
     herren: [
@@ -4177,6 +4278,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Spielebene B · Gr. 074",
     club: "TSV Haar",
     herren: [
@@ -4342,6 +4444,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Spielebene B · Gr. 074",
     club: "TC Pliening",
     herren: [
@@ -4383,6 +4486,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Spielebene B · Gr. 074",
     club: "FC Forstern",
     herren: [
@@ -4475,6 +4579,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Spielebene B · Gr. 074",
     club: "TF Markt Schwaben",
     herren: [
@@ -4541,6 +4646,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Spielebene B · Gr. 074",
     club: "TeG Kirchheim",
     herren: [
@@ -4566,6 +4672,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Spielebene B · Gr. 074",
     club: "TSV Feldkirchen",
     herren: [
@@ -4668,6 +4775,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 686",
     club: "TC Unterföhring II",
     herren: [
@@ -4701,6 +4809,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 686",
     club: "TC Pliening",
     herren: [
@@ -4722,6 +4831,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 686",
     club: "1.Deisenhofer Kinder-TC",
     herren: [
@@ -4766,6 +4876,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 686",
     club: "TS Jahn München",
     herren: [
@@ -4795,6 +4906,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 686",
     club: "TSV Haar II",
     herren: [
@@ -4834,6 +4946,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 3 · Gr. 686",
     club: "TC Ottobrunn",
     herren: [
@@ -4882,6 +4995,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 · Gr. 596",
     club: "TC Pliening",
     herren: [
@@ -4907,6 +5021,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 · Gr. 596",
     club: "SC Baldham-Vaterstetten",
     herren: [
@@ -4931,6 +5046,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 · Gr. 596",
     club: "TF Markt Schwaben",
     herren: [
@@ -4982,6 +5098,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 · Gr. 596",
     club: "ATSV Kirchseeon",
     herren: [
@@ -5016,6 +5133,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 · Gr. 596",
     club: "TC Putzbrunn",
     herren: [
@@ -5054,6 +5172,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 · Gr. 596",
     club: "TC Anzing II",
     herren: [
@@ -5093,6 +5212,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 4 · Gr. 596",
     club: "TSV Haar II",
     herren: [
@@ -5122,6 +5242,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "TC Rot-Weiß Poing II",
     herren: [
@@ -5162,6 +5283,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "FC Forstern",
     herren: [
@@ -5195,6 +5317,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "TeG Wasserburg-Reitmehring III",
     herren: [
@@ -5233,6 +5356,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "TC Haag",
     herren: [
@@ -5252,6 +5376,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "TC Isen",
     herren: [
@@ -5276,6 +5401,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "TF Markt Schwaben II",
     herren: [
@@ -5323,6 +5449,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "SV Walpertskirchen",
     herren: [
@@ -5356,6 +5483,7 @@ export const MELDELISTEN: Meldeliste[] = [
     ],
   },
   {
+    season: "sommer-26",
     leagueName: "Südliga 5 · Gr. 638",
     club: "TC Pliening II",
     herren: [
@@ -5378,12 +5506,13 @@ export const MELDELISTEN: Meldeliste[] = [
   },
 ];
 
-/** Meldeliste einer Mannschaft (exakte league/club-Strings wie in SUMMER_STANDINGS). */
+/** Meldeliste einer Mannschaft (exakte league/club-Strings wie in den Tabellen der Saison). */
 export function getMeldeliste(
+  season: SeasonId,
   leagueName: string,
   club: string
 ): Meldeliste | undefined {
   return MELDELISTEN.find(
-    (m) => m.leagueName === leagueName && m.club === club
+    (m) => m.season === season && m.leagueName === leagueName && m.club === club
   );
 }

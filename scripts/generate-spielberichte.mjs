@@ -3,12 +3,15 @@
 // und meldet, wo gecrawlte und handgepflegte Berichte auseinandergehen.
 //
 //   npm run gen:spielberichte
-//   npm run gen:spielberichte -- --force   # Verlust bewusst in Kauf nehmen
 //
-// Die Datei wird komplett neu geschrieben. Fehlt der Cache einer Saison, deren
-// Berichte schon in der Datei stehen, GINGEN SIE VERLOREN — deshalb bricht das
-// Skript dann ab und nennt die betroffenen Ligen. Erst die fehlende Saison
-// nachcrawlen (oder --force setzen, wenn der Verlust gewollt ist).
+// Die Datei wird komplett neu geschrieben. Ligen, für die KEIN Cache vorliegt,
+// werden aus der bestehenden Datei übernommen (siehe unten) — ein Teil-Crawl
+// oder ein Rechner ohne Caches (GitHub-Runner) verliert also nichts.
+//
+// Jeder Bericht trägt seine Saison (`season`). Das ist nötig, weil sich
+// Gruppennummern über die Jahre wiederholen („Bayernliga · Gr. 022 SU" gab es
+// in der Winterrunde 2025/26 UND 2026/27) — der Lookup läuft deshalb immer
+// über Saison + Liga + beide Vereine.
 //
 // Die handgepflegte src/data/spielberichte.ts bleibt unangetastet; sie hat für
 // eine Begegnung Vorrang NUR, wenn die Begegnung im Crawl fehlt (z. B.
@@ -22,59 +25,54 @@ import { SEASONS, cacheFile } from "./seasons.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(ROOT, "src/data/spielberichte-crawled.ts");
-const force = process.argv.includes("--force");
 
-// Alle Saison-Caches zusammenführen. Die leagueNames der Saisons überschneiden
-// sich nicht (andere Gruppennummern), der Lookup bleibt also eindeutig.
-const cache = {};
-const teamSizeByLeague = new Map();
+// Alle Saison-Caches zusammenführen, Schlüssel = Saison + Liga.
+const entries = []; // { season, league, teamLabel, teamSize, data }
+const seasonsWithCache = [];
 for (const season of SEASONS) {
   const f = cacheFile(season);
   if (!fs.existsSync(f)) continue;
   const part = JSON.parse(fs.readFileSync(f, "utf8"));
   const n = Object.keys(part).length;
   console.log(`Cache ${season.id}: ${n} Ligen`);
-  Object.assign(cache, part);
-  for (const g of season.groups) teamSizeByLeague.set(g.leagueName, g.teamSize);
-}
-if (!Object.keys(cache).length) {
-  console.error("Kein Saison-Cache gefunden — erst `npm run crawl:spielberichte` laufen lassen.");
-  process.exit(1);
-}
-
-// Schutz vor stillem Verlust: Ligen, die in der bestehenden Datei stehen, aber
-// in keinem Cache — die würden beim Neuschreiben verschwinden.
-if (fs.existsSync(OUT)) {
-  const existing = new Set(
-    [...fs.readFileSync(OUT, "utf8").matchAll(/league: "([^"]+)"/g)].map((m) => m[1])
-  );
-  const lost = [...existing].filter((l) => !(l in cache));
-  if (lost.length) {
-    console.error(
-      `\nABBRUCH: ${lost.length} Ligen stehen in ${path.relative(ROOT, OUT)}, aber in keinem Cache —\n` +
-      `sie gingen beim Neuschreiben verloren:\n` +
-      lost.map((l) => `  - ${l}`).join("\n") +
-      `\n\nErst die fehlende Saison crawlen (npm run crawl:spielberichte -- --season <id>),\n` +
-      `oder --force setzen, wenn der Verlust gewollt ist.`
-    );
-    if (!force) process.exit(1);
-    console.error("--force gesetzt: wird trotzdem geschrieben.\n");
+  seasonsWithCache.push(season);
+  for (const [league, data] of Object.entries(part)) {
+    const g = season.groups.find((x) => x.leagueName === league);
+    entries.push({ season: season.id, league, teamLabel: g?.teamLabel ?? "", teamSize: g?.teamSize ?? season.teamSize ?? 9, data });
   }
+}
+if (!entries.length) console.log("Kein Saison-Cache vorhanden — die Datei wird aus dem Bestand neu geschrieben.");
+
+// Ligen ohne Cache (z. B. auf dem GitHub-Runner, wo die gitignorierten Caches
+// fehlen, oder nach einem Rechnerwechsel) werden aus dem BESTAND übernommen:
+// die bestehende Datendatei wird per Node-Typ-Stripping importiert und alles,
+// was kein Cache abdeckt, unverändert wieder herausgeschrieben. So löscht ein
+// Teil-Crawl nie andere Ligen oder Saisons.
+const covered = new Set(entries.map((e) => `${e.season}::${e.league}`));
+const carried = [];
+if (fs.existsSync(OUT)) {
+  const mod = await import(OUT);
+  for (const b of mod.CRAWLED_SPIELBERICHTE) {
+    const season = b.season ?? SEASONS.find((s) => s.groups.some((g) => g.leagueName === b.league))?.id;
+    if (!season || covered.has(`${season}::${b.league}`)) continue;
+    carried.push({ ...b, season });
+  }
+  const carriedLeagues = new Set(carried.map((b) => `${b.season}::${b.league}`));
+  if (carriedLeagues.size) console.log(`Aus Bestand übernommen (kein Cache): ${carriedLeagues.size} Ligen, ${carried.length} Berichte`);
 }
 
 const DAYS = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
 const out = [];
 let failed = 0;
-for (const [league, data] of Object.entries(cache)) {
-  const teamSize = teamSizeByLeague.get(league) ?? 9;
+for (const { season, league, teamLabel, teamSize, data } of entries) {
   for (const r of data.reports) {
-    const idBase = r.meetingId ? `m${r.meetingId}` : `${r.home}_${r.away}`.replace(/\W+/g, "");
+    const idBase = r.meetingId ? `m${r.meetingId}` : `${season}_${r.home}_${r.away}`.replace(/\W+/g, "");
     let parsed;
     try {
       parsed = parseModal(r.modal, { keyPrefix: idBase, teamSize });
     } catch (e) {
-      console.error(`FEHLER ${league} | ${r.home} – ${r.away}: ${e.message}`);
+      console.error(`FEHLER ${season} ${league} | ${r.home} – ${r.away}: ${e.message}`);
       failed++;
       continue;
     }
@@ -85,7 +83,7 @@ for (const [league, data] of Object.entries(cache)) {
     const officialUsed = Number.isFinite(mpH) && Number.isFinite(mpA);
     if (officialUsed && (parsed.finalHome !== mpH || parsed.finalAway !== mpA)) {
       console.warn(
-        `HINWEIS ${league} | ${r.home} – ${r.away}: Matchsiege ${parsed.finalHome}:${parsed.finalAway}, offiziell ${r.mp} (Strafwertung?) — offizielles Ergebnis übernommen`
+        `HINWEIS ${season} ${league} | ${r.home} – ${r.away}: Matchsiege ${parsed.finalHome}:${parsed.finalAway}, offiziell ${r.mp} (Strafwertung?) — offizielles Ergebnis übernommen`
       );
     }
     if (officialUsed) {
@@ -94,7 +92,9 @@ for (const [league, data] of Object.entries(cache)) {
     }
     const date = r.date ?? parsed.completedDate;
     out.push({
+      season,
       league,
+      teamLabel,
       homeClub: r.home,
       awayClub: r.away,
       date,
@@ -106,6 +106,34 @@ for (const [league, data] of Object.entries(cache)) {
     });
   }
 }
+
+// Bestand ohne Cache anhängen — Sätze aus dem IndividualMatch-Format zurückholen
+for (const b of carried) {
+  out.push({
+    season: b.season,
+    league: b.league,
+    teamLabel: b.teamLabel ?? "",
+    homeClub: b.homeClub,
+    awayClub: b.awayClub,
+    date: b.date,
+    day: b.day,
+    finalHome: b.finalHome,
+    finalAway: b.finalAway,
+    meetingId: null,
+    matches: b.matches.map((im) => ({
+      id: im.id,
+      position: im.position,
+      type: im.match_type,
+      home: im.home_player,
+      away: im.away_player,
+      sets: [[im.set1_home, im.set1_away], [im.set2_home, im.set2_away], [im.set3_home, im.set3_away]].filter(([h, a]) => h != null && a != null),
+      winner: im.winner,
+    })),
+  });
+}
+// Neueste Saison zuerst, innerhalb der Saison stabile Reihenfolge
+const order = new Map(SEASONS.map((s, i) => [s.id, i]));
+out.sort((a, b) => (order.get(a.season) ?? 99) - (order.get(b.season) ?? 99));
 
 // ── Abgleich mit den Handdaten (nur Report, kein Eingriff) ───────────────────
 const src = fs.readFileSync(path.join(ROOT, "src/data/spielberichte.ts"), "utf8");
@@ -121,6 +149,11 @@ const crawledKeys = new Set(out.map((b) => `${b.league}::${b.homeClub}::${b.away
 const onlyHand = [...handKeys].filter((k) => !crawledKeys.has(k));
 const overlap = [...crawledKeys].filter((k) => handKeys.has(k));
 
+const perSeason = SEASONS.filter((s) => out.some((b) => b.season === s.id)).map((s) => {
+  const n = out.filter((b) => b.season === s.id).length;
+  return `${s.label} (${n})`;
+}).join(", ");
+
 const esc = (s) => JSON.stringify(s);
 let ts = `import type { IndividualMatch } from "../types";
 import type { Spielbericht } from "../utils/spielbericht";
@@ -129,10 +162,11 @@ import type { Spielbericht } from "../utils/spielbericht";
 // AUTO-GENERIERT von scripts/generate-spielberichte.mjs (npm run gen:spielberichte)
 // auf Basis von scripts/crawl-spielberichte.mjs — NICHT von Hand editieren.
 // Stand: ${new Date().toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}.
-// Enthält alle in nuLiga sichtbaren Begegnungen der Sommer-Saison 2026
-// (${out.length} Berichte). Handgepflegte Berichte in spielberichte.ts greifen nur
-// noch für Begegnungen, die hier fehlen (z. B. gestrichene Spiele zurückgezogener
-// Mannschaften).
+// Enthält alle in nuLiga sichtbaren Begegnungen der Saisons ${perSeason}
+// — ${out.length} Berichte. Jeder Bericht trägt seine Saison, weil sich
+// Gruppennummern über die Jahre wiederholen. Handgepflegte Berichte in
+// spielberichte.ts greifen nur für Begegnungen, die hier fehlen (z. B.
+// gestrichene Spiele zurückgezogener Mannschaften).
 
 function m(
   id: string,
@@ -164,7 +198,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
 `;
 for (const b of out) {
   ts += `  {
+    season: ${esc(b.season)},
     league: ${esc(b.league)},
+    teamLabel: ${esc(b.teamLabel)},
     homeClub: ${esc(b.homeClub)},
     awayClub: ${esc(b.awayClub)},
     date: ${esc(b.date)},
@@ -190,6 +226,6 @@ fs.writeFileSync(OUT, ts);
 
 const matchCount = out.reduce((s, b) => s + b.matches.length, 0);
 console.log(`geschrieben: ${OUT}`);
-console.log(`  ${out.length} Berichte, ${matchCount} Einzel/Doppel, ${failed} fehlgeschlagen`);
+console.log(`  ${out.length} Berichte, ${matchCount} Einzel/Doppel, ${failed} fehlgeschlagen — ${perSeason}`);
 console.log(`  Überschneidung mit Handdaten: ${overlap.length}; nur in Handdaten: ${onlyHand.length}`);
 for (const k of onlyHand) console.log(`    nur Hand: ${k}`);

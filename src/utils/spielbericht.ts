@@ -1,4 +1,4 @@
-import type { IndividualMatch } from "../types";
+import type { IndividualMatch, SeasonId } from "../types";
 
 // Spielbericht-Datenmodell + Parse-/Farb-Helfer für die Kreuztabellen-Detailansicht (Variante B).
 // Spieler-Strings im nuLiga-Format: "Nachname, Vorname (Meldeposition, LKxx,x)" — Doppel mit " / ".
@@ -14,6 +14,10 @@ export interface SpielberichtMeeting {
 }
 
 export interface Spielbericht extends SpielberichtMeeting {
+  /** Saison des Berichts — Gruppennummern wiederholen sich über die Jahre */
+  season: SeasonId;
+  /** Konkurrenz des TC Pliening in dieser Gruppe, z. B. "Herren 40" */
+  teamLabel?: string;
   matches: IndividualMatch[];
   example?: boolean; // true = Beispieldaten (echte Einzeldaten noch nicht verfügbar)
 }
@@ -74,6 +78,14 @@ export function getTcpSide(meeting: { homeClub: string; awayClub: string }): Tcp
 }
 
 export type Outcome = "tcpWin" | "oppWin" | "neutralHome" | "neutralAway" | "loss";
+
+/** Farbe aus Sicht der BETRACHTETEN Seite (Spielerhistorie, Gegnerbriefing):
+ *  gewonnen = grün, verloren = rot — auch gegen den TC Pliening. Entscheidung
+ *  des Auftraggebers vom 09.09.2026; die Outcome-Namen bleiben TCP-zentriert,
+ *  weil der Spielbericht einer TCP-Begegnung weiter aus Pliening-Sicht färbt. */
+export function viewOutcome(won: boolean): Outcome {
+  return won ? "tcpWin" : "oppWin";
+}
 
 export function sideOutcome(side: "home" | "away", won: boolean, tcpSide: TcpSide): Outcome {
   if (!won) return "loss";

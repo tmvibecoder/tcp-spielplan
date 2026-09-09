@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { LeagueStandings, IndividualMatch } from "../types";
+import type { LeagueStandings, IndividualMatch, SeasonId } from "../types";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 import { getSpielbericht } from "../data/spielberichte";
 import type { SpielberichtMeeting } from "../utils/spielbericht";
@@ -8,11 +8,15 @@ import { getMeldeliste } from "../data/meldelisten";
 import TeamStatsDetail from "./TeamStatsDetail";
 
 interface StandingsViewProps {
+  /** Saison der Tabellen — Spielberichte und Meldelisten werden darüber gefunden */
+  seasonId: SeasonId;
   standings: LeagueStandings[];
   /** z. B. "Sommer 2026" */
   seasonLabel?: string;
   /** Datum des letzten BTV-Abgleichs, z. B. "19.08.2026" */
   stand?: string;
+  /** Spieler antippen → Spielerhistorie */
+  onOpenPlayer?: (club: string, name: string) => void;
 }
 
 interface SelectedMeeting {
@@ -67,14 +71,14 @@ function notStarted(league: LeagueStandings): boolean {
   return league.entries.every((e) => e.points === "0:0");
 }
 
-export default function StandingsView({ standings, seasonLabel, stand }: StandingsViewProps) {
+export default function StandingsView({ seasonId, standings, seasonLabel, stand, onOpenPlayer }: StandingsViewProps) {
   const [expandedLeague, setExpandedLeague] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectedMeeting | null>(null);
   const [selectedClub, setSelectedClub] = useState<string | null>(null);
 
   function openCell(league: LeagueStandings, rowClub: string, colClub: string, result: string) {
     const [a, b] = result.split(":").map(Number);
-    const bericht = getSpielbericht(league.leagueName, rowClub, colClub);
+    const bericht = getSpielbericht(seasonId, league.leagueName, rowClub, colClub);
     const leagueDisplay = `${league.teamLabel} · ${league.leagueName}`;
     setSelected({
       // Bei vorhandenem Bericht den kanonischen Heim/Gast-Stand (echtes Spiel) zeigen,
@@ -172,19 +176,20 @@ export default function StandingsView({ standings, seasonLabel, stand }: Standin
               <div className="px-3 pb-3 animate-[fadeIn_200ms_ease-out]">
                 {selectedClub ? (
                   (() => {
-                    const stats = getTeamStats(league.leagueName, selectedClub);
-                    const meldeliste = getMeldeliste(league.leagueName, selectedClub);
+                    const stats = getTeamStats(seasonId, league.leagueName, selectedClub);
+                    const meldeliste = getMeldeliste(seasonId, league.leagueName, selectedClub);
                     const rank = league.entries.find(
                       (e) => e.club === selectedClub
                     )?.rank;
                     if (stats || meldeliste) {
                       return (
                         <TeamStatsDetail
-                          team={stats ?? emptyTeamStats(league.leagueName, selectedClub)}
+                          team={stats ?? emptyTeamStats(league.leagueName, selectedClub, league.teamLabel)}
                           rank={rank}
                           accentColor={league.teamColor}
                           onBack={() => setSelectedClub(null)}
                           meldeliste={meldeliste}
+                          onOpenPlayer={onOpenPlayer}
                         />
                       );
                     }

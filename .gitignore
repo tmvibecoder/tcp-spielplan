@@ -25,7 +25,8 @@ dist-ssr
 *.sw?
 
 # Zwischenstand der Crawls (je Saison eine eigene Cache-Datei)
-scripts/.meldelisten-cache.json
+scripts/.meldelisten-cache*.json
+scripts/.discover-*.json
 scripts/.spielberichte-cache*.json
 scripts/.tmp-*.pdf
 

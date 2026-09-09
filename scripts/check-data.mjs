@@ -25,6 +25,23 @@ const read = (p) => {
 function checkSeason(season) {
   console.log(`\n═══ ${season.label} (${season.id}) ═══`);
 
+  // ── Saisons ohne Spielplan/Tabellen (nur Spielberichte + Meldelisten für die
+  //    Spielerhistorie): Bestand zählen, Berichte auf Vollständigkeit prüfen.
+  if (!season.dataFile) {
+    const sb = season.reports ? read(season.reports) : null;
+    const ml = season.rosters ? read(season.rosters) : null;
+    const n = sb ? (sb.match(new RegExp(`season: "${season.id}"`, "g")) ?? []).length : 0;
+    const r = ml ? (ml.match(new RegExp(`season: "${season.id}"`, "g")) ?? []).length : 0;
+    const leaguesWith = new Set();
+    if (sb) for (const block of sb.split(/\n {2}\{\n/).slice(1)) {
+      if (block.includes(`season: "${season.id}"`)) leaguesWith.add(block.match(/league: "([^"]+)"/)?.[1]);
+    }
+    const missing = season.groups.filter((g) => !leaguesWith.has(g.leagueName)).map((g) => g.leagueName);
+    console.log(`  nur Historie: ${n} Berichte, ${r} Meldelisten, ${leaguesWith.size}/${season.groups.length} Gruppen mit Berichten`);
+    for (const m of missing) console.log(`  OHNE BERICHTE    ${m}`);
+    return { fail: 0 };
+  }
+
   // ── Tabellen einlesen
   const st = read(season.dataFile);
   if (!st) {
@@ -51,6 +68,9 @@ function checkSeason(season) {
   const sb = season.reports ? read(season.reports) : null;
   if (sb) {
     for (const block of sb.split(/\n {2}\{\n/).slice(1)) {
+      // Berichte anderer Saisons überspringen (gleiche Gruppennummern kommen vor)
+      const bs = block.match(/season: "([^"]+)"/)?.[1];
+      if (bs && bs !== season.id) continue;
       const league = block.match(/league: "([^"]+)"/)?.[1];
       const home = block.match(/homeClub: "([^"]+)"/)?.[1];
       const away = block.match(/awayClub: "([^"]+)"/)?.[1];
@@ -65,8 +85,9 @@ function checkSeason(season) {
   const rosters = new Set();
   const ml = season.rosters ? read(season.rosters) : null;
   if (ml) {
-    for (const m of ml.matchAll(/leagueName: "([^"]+)",\s*\n\s*club: "([^"]+)"/g)) {
-      rosters.add(`${m[1]}::${m[2]}`);
+    for (const m of ml.matchAll(/(?:season: "([^"]+)",\s*\n\s*)?leagueName: "([^"]+)",\s*\n\s*club: "([^"]+)"/g)) {
+      if (m[1] && m[1] !== season.id) continue;
+      rosters.add(`${m[2]}::${m[3]}`);
     }
   }
 

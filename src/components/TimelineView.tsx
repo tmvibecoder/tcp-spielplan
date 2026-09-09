@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState, useRef, useEffect } from "react";
-import type { Match, Team, MatchScore, IndividualMatch, LeagueStandings, MonthColor } from "../types";
+import type { Match, Team, MatchScore, IndividualMatch, LeagueStandings, MonthColor, SeasonId } from "../types";
 import { resolveMatchResult } from "../data/results";
 import {
   getMonthKey,
@@ -11,6 +11,8 @@ import MatchRow from "./MatchRow";
 import MatchDetail from "./MatchDetail";
 
 interface TimelineViewProps {
+  /** Saison der angezeigten Begegnungen (für Spielbericht und Gegnerbriefing) */
+  seasonId: SeasonId;
   matches: Match[];
   teamMap: Map<string, Team>;
   /** Alle Tabellen der Saison (ungefiltert) — liefern die offiziellen Ergebnisse */
@@ -28,6 +30,8 @@ interface TimelineViewProps {
   favorites?: Set<string>;
   toggleFavorite?: (key: string) => void;
   provisionalTimesUntil?: string;
+  /** Spieler im Gegnerbriefing antippen → Spielerhistorie */
+  onOpenPlayer?: (key: string) => void;
 }
 
 interface GroupedData {
@@ -50,6 +54,7 @@ interface GroupedData {
 const matchKey = (m: Match) => `${m.teamId}-${m.date}-${m.time}`;
 
 export default function TimelineView({
+  seasonId,
   matches,
   teamMap,
   standings,
@@ -61,6 +66,7 @@ export default function TimelineView({
   favorites,
   toggleFavorite,
   provisionalTimesUntil,
+  onOpenPlayer,
 }: TimelineViewProps) {
   const [openMatch, setOpenMatch] = useState<string | null>(null);
 
@@ -194,6 +200,7 @@ export default function TimelineView({
         />
         {isOpen && (
           <MatchDetail
+            seasonId={seasonId}
             match={m}
             team={team}
             onClose={() => setOpenMatch(null)}
@@ -202,6 +209,7 @@ export default function TimelineView({
             onSaveScore={onSaveScore}
             provisionalTimesUntil={provisionalTimesUntil}
             todayStr={todayStr}
+            onOpenPlayer={onOpenPlayer}
           />
         )}
       </div>

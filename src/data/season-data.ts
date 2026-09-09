@@ -46,7 +46,9 @@ function seasonOf(id: SeasonId): Season {
 
 // Eine Registry statt einer Sommer/Winter-Verzweigung: seit Winter 2026/27 gibt es
 // mehr als zwei Saisons, und „nicht Sommer" wäre nicht mehr eindeutig.
-export const SEASON_DATA: Record<SeasonId, SeasonData> = {
+// Saisons, die nur als Historie vorliegen (sommer-25, winter-2425), haben hier
+// keinen Eintrag — sie haben keinen Spielplan und keine Tabellen in der App.
+export const SEASON_DATA: Partial<Record<SeasonId, SeasonData>> = {
   "winter-2627": {
     season: seasonOf("winter-2627"),
     teams: WINTER_2627_TEAMS as Team[],
@@ -83,5 +85,5 @@ export const SEASON_DATA: Record<SeasonId, SeasonData> = {
 };
 
 export function getSeasonData(id: SeasonId): SeasonData {
-  return SEASON_DATA[id] ?? SEASON_DATA["winter-2627"];
+  return SEASON_DATA[id] ?? SEASON_DATA["winter-2627"]!;
 }

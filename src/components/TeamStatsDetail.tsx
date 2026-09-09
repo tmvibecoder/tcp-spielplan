@@ -7,6 +7,7 @@ import {
   normalizePlayerName,
 } from "../data/player-stats";
 import type { Meldeliste, MeldelistenEintrag } from "../types";
+import LkBadge from "./LkBadge";
 
 interface TeamStatsDetailProps {
   team: TeamStats;
@@ -16,6 +17,10 @@ interface TeamStatsDetailProps {
   /** Komplette namentliche Meldeliste (falls vorhanden, z. B. Mixed Gr. 074):
    *  der Spieler-Tab zeigt dann ALLE gemeldeten Spieler statt nur der eingesetzten. */
   meldeliste?: Meldeliste;
+  /** Beschriftung des Zurück-Knopfs (Standard „Tabelle") */
+  backLabel?: string;
+  /** Spieler antippen → Spielerhistorie (Schlüssel: Verein + Name) */
+  onOpenPlayer?: (club: string, name: string) => void;
 }
 
 type StatTab = "spieler" | "doppel";
@@ -24,18 +29,9 @@ function fmtAvg(p: number): string {
   return p.toFixed(1).replace(".", ",");
 }
 
-/** kleine LK-Pille (wird bei leerer LK nicht gerendert) */
+/** LK-Abzeichen: own = betrachtete Mannschaft (Sky), sonst Gegenseite (Slate) */
 function LkPill({ lk, own = false }: { lk: string; own?: boolean }) {
-  if (!lk) return null;
-  return (
-    <span
-      className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-bold leading-none whitespace-nowrap ${
-        own ? "bg-sky-500/20 text-sky-200" : "bg-slate-700/60 text-slate-300"
-      }`}
-    >
-      {lk}
-    </span>
-  );
+  return <LkBadge lk={lk} tone={own ? "own" : "opp"} />;
 }
 
 function ResultBadge({ won }: { won: boolean }) {
@@ -131,6 +127,7 @@ function RosterRow({
   accentColor,
   isOpen,
   onToggle,
+  onOpenPlayer,
 }: {
   entry: MeldelistenEintrag;
   agg?: PlayerAgg;
@@ -138,6 +135,7 @@ function RosterRow({
   accentColor: string;
   isOpen: boolean;
   onToggle: () => void;
+  onOpenPlayer?: () => void;
 }) {
   const isEinzel = mode === "einzel";
   const shownMatches = agg ? (isEinzel ? agg.matches : agg.doublesMatches) : 0;
@@ -215,6 +213,15 @@ function RosterRow({
               ownLk={isEinzel ? entry.lk : undefined}
             />
           ))}
+          {onOpenPlayer && (
+            <button
+              type="button"
+              onClick={onOpenPlayer}
+              className="mt-2 w-full rounded-lg border border-sky-500/30 bg-sky-600/15 py-1.5 text-[11px] font-semibold text-sky-300 hover:bg-sky-600/25"
+            >
+              Spielerhistorie über alle Saisons ›
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -227,6 +234,8 @@ export default function TeamStatsDetail({
   accentColor,
   onBack,
   meldeliste,
+  backLabel = "Tabelle",
+  onOpenPlayer,
 }: TeamStatsDetailProps) {
   const [tab, setTab] = useState<StatTab>("spieler");
   const [openKey, setOpenKey] = useState<string | null>(null);
@@ -297,7 +306,7 @@ export default function TeamStatsDetail({
           onClick={onBack}
           className="flex-none rounded-lg border border-slate-600/50 bg-slate-800/60 px-2.5 py-1.5 text-xs font-semibold text-sky-300 hover:bg-slate-700/60"
         >
-          ‹ Tabelle
+          ‹ {backLabel}
         </button>
         <div className="min-w-0">
           <div className="truncate text-base font-extrabold text-slate-100">
@@ -405,6 +414,7 @@ export default function TeamStatsDetail({
                       accentColor={accentColor}
                       isOpen={openKey === key}
                       onToggle={() => toggle(key)}
+                      onOpenPlayer={onOpenPlayer ? () => onOpenPlayer(team.club, e.name) : undefined}
                     />
                   );
                 })}
@@ -428,6 +438,7 @@ export default function TeamStatsDetail({
                       accentColor={accentColor}
                       isOpen={openKey === key}
                       onToggle={() => toggle(key)}
+                      onOpenPlayer={onOpenPlayer ? () => onOpenPlayer(team.club, p.name) : undefined}
                     />
                   );
                 })}

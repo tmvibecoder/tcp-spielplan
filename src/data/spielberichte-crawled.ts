@@ -4,11 +4,12 @@ import type { Spielbericht } from "../utils/spielbericht";
 // ── Spielberichte, direkt aus dem btv.de-Widget gecrawlt ─────────────────────
 // AUTO-GENERIERT von scripts/generate-spielberichte.mjs (npm run gen:spielberichte)
 // auf Basis von scripts/crawl-spielberichte.mjs — NICHT von Hand editieren.
-// Stand: 08.09.2026.
-// Enthält alle in nuLiga sichtbaren Begegnungen der Sommer-Saison 2026
-// (407 Berichte). Handgepflegte Berichte in spielberichte.ts greifen nur
-// noch für Begegnungen, die hier fehlen (z. B. gestrichene Spiele zurückgezogener
-// Mannschaften).
+// Stand: 09.09.2026.
+// Enthält alle in nuLiga sichtbaren Begegnungen der Saisons Sommer 2026 (407)
+// — 407 Berichte. Jeder Bericht trägt seine Saison, weil sich
+// Gruppennummern über die Jahre wiederholen. Handgepflegte Berichte in
+// spielberichte.ts greifen nur für Begegnungen, die hier fehlen (z. B.
+// gestrichene Spiele zurückgezogener Mannschaften).
 
 function m(
   id: string,
@@ -38,7 +39,9 @@ function m(
 
 export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Putzbrunn",
     awayClub: "TC Finsing",
     date: "2026-05-16",
@@ -55,7 +58,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Pliening",
     awayClub: "TC Philathlos München",
     date: "2026-05-16",
@@ -72,7 +77,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TSV Oberpframmern",
     awayClub: "TC Finsing",
     date: "2026-06-13",
@@ -89,7 +96,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Pliening",
     awayClub: "TC Putzbrunn",
     date: "2026-06-13",
@@ -106,7 +115,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Philathlos München",
     awayClub: "TC Putzbrunn",
     date: "2026-06-20",
@@ -123,7 +134,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TSV Oberpframmern",
     awayClub: "TC Pliening",
     date: "2026-06-20",
@@ -140,7 +153,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Philathlos München",
     awayClub: "TSV Oberpframmern",
     date: "2026-07-04",
@@ -157,7 +172,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Finsing",
     awayClub: "TC Pliening",
     date: "2026-07-04",
@@ -174,7 +191,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Finsing",
     awayClub: "TC Philathlos München",
     date: "2026-07-18",
@@ -191,7 +210,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 (4er) · Gr. 292",
+    teamLabel: "Herren 30",
     homeClub: "TC Putzbrunn",
     awayClub: "TSV Oberpframmern",
     date: "2026-07-30",
@@ -208,7 +229,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "SpVgg Zolling",
     awayClub: "MTTC Iphitos München",
     date: "2026-05-02",
@@ -228,7 +251,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "Bad WH Dresden",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-05-02",
@@ -248,7 +273,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TSV Kottern",
     awayClub: "TC Kümmersbruck",
     date: "2026-05-02",
@@ -268,7 +295,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Pliening",
     awayClub: "TC Herzogenaurach",
     date: "2026-05-02",
@@ -288,7 +317,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Herzogenaurach",
     awayClub: "MTTC Iphitos München",
     date: "2026-05-09",
@@ -308,7 +339,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TSV Kottern",
     awayClub: "TC Pliening",
     date: "2026-05-09",
@@ -328,7 +361,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "SpVgg Zolling",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-05-09",
@@ -348,7 +383,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "Bad WH Dresden",
     awayClub: "TC Kümmersbruck",
     date: "2026-05-09",
@@ -368,7 +405,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Herzogenaurach",
     awayClub: "Bad WH Dresden",
     date: "2026-05-16",
@@ -388,7 +427,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "MTTC Iphitos München",
     awayClub: "TC Pliening",
     date: "2026-05-16",
@@ -408,7 +449,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TSV Kottern",
     awayClub: "SpVgg Zolling",
     date: "2026-05-16",
@@ -428,7 +471,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Kümmersbruck",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-05-16",
@@ -448,7 +493,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "Bad WH Dresden",
     awayClub: "TC Pliening",
     date: "2026-06-13",
@@ -468,7 +515,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Kümmersbruck",
     awayClub: "SpVgg Zolling",
     date: "2026-06-13",
@@ -488,7 +537,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "MTTC Iphitos München",
     awayClub: "TSV Kottern",
     date: "2026-06-13",
@@ -508,7 +559,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Grün-Weiß Gräfelfing",
     awayClub: "TC Herzogenaurach",
     date: "2026-06-13",
@@ -528,7 +581,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Pliening",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-06-20",
@@ -548,7 +603,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TSV Kottern",
     awayClub: "TC Herzogenaurach",
     date: "2026-06-20",
@@ -568,7 +625,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "SpVgg Zolling",
     awayClub: "Bad WH Dresden",
     date: "2026-06-21",
@@ -588,7 +647,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "MTTC Iphitos München",
     awayClub: "TC Kümmersbruck",
     date: "2026-06-21",
@@ -608,7 +669,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Herzogenaurach",
     awayClub: "SpVgg Zolling",
     date: "2026-06-27",
@@ -628,7 +691,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Kümmersbruck",
     awayClub: "TC Pliening",
     date: "2026-06-27",
@@ -648,7 +713,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "MTTC Iphitos München",
     awayClub: "Bad WH Dresden",
     date: "2026-07-04",
@@ -668,7 +735,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Pliening",
     awayClub: "SpVgg Zolling",
     date: "2026-07-04",
@@ -688,7 +757,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Grün-Weiß Gräfelfing",
     awayClub: "TSV Kottern",
     date: "2026-07-04",
@@ -708,7 +779,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Kümmersbruck",
     awayClub: "TC Herzogenaurach",
     date: "2026-07-04",
@@ -728,7 +801,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "Bad WH Dresden",
     awayClub: "TSV Kottern",
     date: "2026-07-11",
@@ -748,7 +823,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 004",
+    teamLabel: "Herren 40",
     homeClub: "TC Grün-Weiß Gräfelfing",
     awayClub: "MTTC Iphitos München",
     date: "2026-07-12",
@@ -768,7 +845,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TSV Marquartstein",
     awayClub: "TC Ramersdorf",
     date: "2026-05-09",
@@ -788,7 +867,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "SV Schloßberg-Stephansk.",
     awayClub: "TC Unterföhring",
     date: "2026-05-09",
@@ -808,7 +889,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TSV 1860 Rosenheim",
     awayClub: "TC Grün-Gold München",
     date: "2026-05-09",
@@ -828,7 +911,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Unterföhring",
     awayClub: "TSV Marquartstein",
     date: "2026-05-16",
@@ -848,7 +933,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Anzing",
     awayClub: "TSV 1860 Rosenheim",
     date: "2026-05-16",
@@ -868,7 +955,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TSV Marquartstein",
     awayClub: "TC Anzing",
     date: "2026-06-13",
@@ -888,7 +977,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "SV Schloßberg-Stephansk.",
     awayClub: "TSV 1860 Rosenheim",
     date: "2026-06-13",
@@ -908,7 +999,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Ramersdorf",
     awayClub: "TC Unterföhring",
     date: "2026-06-13",
@@ -928,7 +1021,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "SV Schloßberg-Stephansk.",
     awayClub: "TC Anzing",
     date: "2026-06-20",
@@ -948,7 +1043,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Grün-Gold München",
     awayClub: "TSV Marquartstein",
     date: "2026-06-20",
@@ -968,7 +1065,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TSV 1860 Rosenheim",
     awayClub: "TC Ramersdorf",
     date: "2026-06-20",
@@ -988,7 +1087,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TSV 1860 Rosenheim",
     awayClub: "TSV Marquartstein",
     date: "2026-06-27",
@@ -1008,7 +1109,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Ramersdorf",
     awayClub: "SV Schloßberg-Stephansk.",
     date: "2026-07-04",
@@ -1028,7 +1131,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Grün-Gold München",
     awayClub: "TC Anzing",
     date: "2026-07-04",
@@ -1048,7 +1153,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TSV 1860 Rosenheim",
     awayClub: "TC Unterföhring",
     date: "2026-07-04",
@@ -1068,7 +1175,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Anzing",
     awayClub: "TC Ramersdorf",
     date: "2026-07-11",
@@ -1088,7 +1197,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Unterföhring",
     awayClub: "TC Grün-Gold München",
     date: "2026-07-11",
@@ -1108,7 +1219,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "SV Schloßberg-Stephansk.",
     awayClub: "TSV Marquartstein",
     date: "2026-07-15",
@@ -1128,7 +1241,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Anzing",
     awayClub: "TC Unterföhring",
     date: "2026-07-19",
@@ -1148,7 +1263,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Ramersdorf",
     awayClub: "TC Grün-Gold München",
     date: "2026-07-19",
@@ -1168,7 +1285,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 2 · Gr. 043 SU",
+    teamLabel: "Herren 40 II",
     homeClub: "TC Grün-Gold München",
     awayClub: "SV Schloßberg-Stephansk.",
     date: "2026-07-26",
@@ -1188,7 +1307,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TSV Feldkirchen II",
     awayClub: "WB Fideliopark München II",
     date: "2026-05-02",
@@ -1208,7 +1329,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Aschheim",
     awayClub: "TSV Haar II",
     date: "2026-05-03",
@@ -1228,7 +1351,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Grün-Gold München II",
     awayClub: "TC Pliening III",
     date: "2026-05-03",
@@ -1248,7 +1373,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TSV Haar II",
     awayClub: "TSV Feldkirchen II",
     date: "2026-05-16",
@@ -1268,7 +1395,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Pliening III",
     awayClub: "WB Fideliopark München II",
     date: "2026-05-16",
@@ -1288,7 +1417,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Grün-Gold München II",
     awayClub: "TF Markt Schwaben",
     date: "2026-05-17",
@@ -1308,7 +1439,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Pliening III",
     awayClub: "TC Aschheim",
     date: "2026-06-13",
@@ -1328,7 +1461,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TSV Haar II",
     awayClub: "TF Markt Schwaben",
     date: "2026-06-13",
@@ -1348,7 +1483,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TSV Feldkirchen II",
     awayClub: "TC Grün-Gold München II",
     date: "2026-06-13",
@@ -1368,7 +1505,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TF Markt Schwaben",
     awayClub: "TSV Feldkirchen II",
     date: "2026-06-20",
@@ -1388,7 +1527,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Aschheim",
     awayClub: "TC Grün-Gold München II",
     date: "2026-06-20",
@@ -1408,7 +1549,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Grün-Gold München II",
     awayClub: "TSV Haar II",
     date: "2026-06-28",
@@ -1428,7 +1571,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "WB Fideliopark München II",
     awayClub: "TC Aschheim",
     date: "2026-06-28",
@@ -1448,7 +1593,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "WB Fideliopark München II",
     awayClub: "TSV Haar II",
     date: "2026-07-04",
@@ -1468,7 +1615,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Pliening III",
     awayClub: "TF Markt Schwaben",
     date: "2026-07-04",
@@ -1488,7 +1637,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Aschheim",
     awayClub: "TSV Feldkirchen II",
     date: "2026-07-11",
@@ -1508,7 +1659,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Pliening III",
     awayClub: "TSV Haar II",
     date: "2026-07-11",
@@ -1528,7 +1681,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TF Markt Schwaben",
     awayClub: "WB Fideliopark München II",
     date: "2026-07-11",
@@ -1548,7 +1703,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TSV Feldkirchen II",
     awayClub: "TC Pliening III",
     date: "2026-07-18",
@@ -1568,7 +1725,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "TC Aschheim",
     awayClub: "TF Markt Schwaben",
     date: "2026-07-18",
@@ -1588,7 +1747,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 315",
+    teamLabel: "Herren 40 III",
     homeClub: "WB Fideliopark München II",
     awayClub: "TC Grün-Gold München II",
     date: "2026-07-18",
@@ -1608,7 +1769,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TSV Altfraunhofen",
     awayClub: "TC Rot-Weiß Freising",
     date: "2026-05-02",
@@ -1628,7 +1791,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Au",
     awayClub: "TC Weiss-Blau Landshut",
     date: "2026-05-02",
@@ -1648,7 +1813,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Pliening II",
     awayClub: "TC Taufkirchen",
     date: "2026-05-09",
@@ -1668,7 +1835,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TSV Altfraunhofen",
     awayClub: "TC Weiss-Blau Landshut",
     date: "2026-05-09",
@@ -1688,7 +1857,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "VfL Waldkraiburg",
     awayClub: "TC Au",
     date: "2026-05-09",
@@ -1708,7 +1879,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Rot-Weiß Freising",
     awayClub: "TeG Mühldorf",
     date: "2026-05-09",
@@ -1728,7 +1901,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Weiss-Blau Landshut",
     awayClub: "TC Rot-Weiß Freising",
     date: "2026-05-16",
@@ -1748,7 +1923,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "VfL Waldkraiburg",
     awayClub: "TSV Altfraunhofen",
     date: "2026-05-16",
@@ -1768,7 +1945,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Pliening II",
     awayClub: "TC Au",
     date: "2026-05-16",
@@ -1788,7 +1967,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Taufkirchen",
     awayClub: "TeG Mühldorf",
     date: "2026-05-16",
@@ -1808,7 +1989,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TSV Altfraunhofen",
     awayClub: "TC Pliening II",
     date: "2026-06-13",
@@ -1828,7 +2011,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Rot-Weiß Freising",
     awayClub: "VfL Waldkraiburg",
     date: "2026-06-13",
@@ -1848,7 +2033,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Weiss-Blau Landshut",
     awayClub: "TC Taufkirchen",
     date: "2026-06-13",
@@ -1868,7 +2055,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TeG Mühldorf",
     awayClub: "TC Au",
     date: "2026-06-14",
@@ -1888,7 +2077,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Au",
     awayClub: "TC Rot-Weiß Freising",
     date: "2026-06-20",
@@ -1908,7 +2099,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Rot-Weiß Freising",
     awayClub: "TC Pliening II",
     date: "2026-06-27",
@@ -1928,7 +2121,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Taufkirchen",
     awayClub: "TSV Altfraunhofen",
     date: "2026-06-27",
@@ -1948,7 +2143,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "VfL Waldkraiburg",
     awayClub: "TeG Mühldorf",
     date: "2026-06-27",
@@ -1968,7 +2165,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Pliening II",
     awayClub: "TeG Mühldorf",
     date: "2026-07-04",
@@ -1988,7 +2187,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Weiss-Blau Landshut",
     awayClub: "VfL Waldkraiburg",
     date: "2026-07-04",
@@ -2008,7 +2209,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Au",
     awayClub: "TC Taufkirchen",
     date: "2026-07-04",
@@ -2028,7 +2231,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Pliening II",
     awayClub: "TC Weiss-Blau Landshut",
     date: "2026-07-11",
@@ -2048,7 +2253,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Taufkirchen",
     awayClub: "VfL Waldkraiburg",
     date: "2026-07-11",
@@ -2068,7 +2275,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TeG Mühldorf",
     awayClub: "TSV Altfraunhofen",
     date: "2026-07-11",
@@ -2088,7 +2297,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TSV Altfraunhofen",
     awayClub: "TC Au",
     date: "2026-07-18",
@@ -2108,7 +2319,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TC Taufkirchen",
     awayClub: "TC Rot-Weiß Freising",
     date: "2026-07-18",
@@ -2128,7 +2341,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "TeG Mühldorf",
     awayClub: "TC Weiss-Blau Landshut",
     date: "2026-07-18",
@@ -2148,7 +2363,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 355",
+    teamLabel: "Herren 50 II",
     homeClub: "VfL Waldkraiburg",
     awayClub: "TC Pliening II",
     date: "2026-07-18",
@@ -2168,7 +2385,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TC Pliening",
     awayClub: "TeG Kirchheim",
     date: "2026-08-01",
@@ -2185,7 +2404,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TSV Feldkirchen",
     awayClub: "TF Markt Schwaben",
     date: "2026-08-01",
@@ -2202,7 +2423,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TSV Haar",
     awayClub: "TC Pliening",
     date: "2026-08-09",
@@ -2219,7 +2442,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TF Markt Schwaben",
     awayClub: "TSV Haar",
     date: "2026-08-15",
@@ -2236,7 +2461,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TC Pliening",
     awayClub: "TSV Feldkirchen",
     date: "2026-08-15",
@@ -2253,7 +2480,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TC Pliening",
     awayClub: "FC Forstern",
     date: "2026-08-30",
@@ -2270,7 +2499,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TSV Feldkirchen",
     awayClub: "TSV Haar",
     date: "2026-08-30",
@@ -2287,7 +2518,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TF Markt Schwaben",
     awayClub: "TC Pliening",
     date: "2026-09-06",
@@ -2304,7 +2537,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TSV Haar",
     awayClub: "TeG Kirchheim",
     date: "2026-09-06",
@@ -2321,7 +2556,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Spielebene B · Gr. 074",
+    teamLabel: "Mixed",
     homeClub: "TSV Feldkirchen",
     awayClub: "FC Forstern",
     date: "2026-09-06",
@@ -2338,7 +2575,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Finsing",
     awayClub: "TC Erding II",
     date: "2026-05-10",
@@ -2358,7 +2597,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TF Markt Schwaben",
     awayClub: "TC Unterföhring II",
     date: "2026-05-10",
@@ -2378,7 +2619,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TSV Feldkirchen II",
     awayClub: "TC Pliening",
     date: "2026-05-10",
@@ -2398,7 +2641,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "Polizei SV Haar",
     awayClub: "TC Aschheim III",
     date: "2026-05-10",
@@ -2418,7 +2663,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TF Markt Schwaben",
     awayClub: "TC Erding II",
     date: "2026-05-17",
@@ -2438,7 +2685,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TSV Feldkirchen II",
     awayClub: "TC Finsing",
     date: "2026-05-17",
@@ -2458,7 +2707,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Pliening",
     awayClub: "Polizei SV Haar",
     date: "2026-05-17",
@@ -2478,7 +2729,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Aschheim III",
     awayClub: "TC Unterföhring II",
     date: "2026-05-17",
@@ -2498,7 +2751,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Unterföhring II",
     awayClub: "TSV Feldkirchen II",
     date: "2026-06-14",
@@ -2518,7 +2773,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Aschheim III",
     awayClub: "TC Finsing",
     date: "2026-06-14",
@@ -2538,7 +2795,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Erding II",
     awayClub: "TC Pliening",
     date: "2026-06-14",
@@ -2558,7 +2817,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "Polizei SV Haar",
     awayClub: "TF Markt Schwaben",
     date: "2026-06-14",
@@ -2578,7 +2839,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "Polizei SV Haar",
     awayClub: "TC Erding II",
     date: "2026-06-21",
@@ -2598,7 +2861,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Finsing",
     awayClub: "TC Unterföhring II",
     date: "2026-06-21",
@@ -2618,7 +2883,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TSV Feldkirchen II",
     awayClub: "TC Aschheim III",
     date: "2026-06-21",
@@ -2638,7 +2905,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Pliening",
     awayClub: "TF Markt Schwaben",
     date: "2026-06-21",
@@ -2658,7 +2927,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TF Markt Schwaben",
     awayClub: "TSV Feldkirchen II",
     date: "2026-06-28",
@@ -2678,7 +2949,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Pliening",
     awayClub: "TC Finsing",
     date: "2026-06-28",
@@ -2698,7 +2971,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Unterföhring II",
     awayClub: "Polizei SV Haar",
     date: "2026-06-28",
@@ -2718,7 +2993,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Erding II",
     awayClub: "TC Aschheim III",
     date: "2026-06-28",
@@ -2738,7 +3015,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "Polizei SV Haar",
     awayClub: "TSV Feldkirchen II",
     date: "2026-07-05",
@@ -2758,7 +3037,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Erding II",
     awayClub: "TC Unterföhring II",
     date: "2026-07-05",
@@ -2778,7 +3059,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Aschheim III",
     awayClub: "TC Pliening",
     date: "2026-07-05",
@@ -2798,7 +3081,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Finsing",
     awayClub: "TF Markt Schwaben",
     date: "2026-07-05",
@@ -2818,7 +3103,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TSV Feldkirchen II",
     awayClub: "TC Erding II",
     date: "2026-07-12",
@@ -2838,7 +3125,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Finsing",
     awayClub: "Polizei SV Haar",
     date: "2026-07-12",
@@ -2858,7 +3147,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TC Unterföhring II",
     awayClub: "TC Pliening",
     date: "2026-07-12",
@@ -2878,7 +3169,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 023",
+    teamLabel: "Herren",
     homeClub: "TF Markt Schwaben",
     awayClub: "TC Aschheim III",
     date: "2026-07-12",
@@ -2898,7 +3191,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Neuperlach-Kail München II",
     awayClub: "TSV Oberpframmern",
     date: "2026-05-02",
@@ -2918,7 +3213,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Pliening III",
     awayClub: "TS Jahn München",
     date: "2026-05-02",
@@ -2938,7 +3235,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Finsing",
     awayClub: "TF Markt Schwaben",
     date: "2026-05-03",
@@ -2958,7 +3257,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "VfB Forstinning",
     awayClub: "TC Pliening III",
     date: "2026-05-09",
@@ -2978,7 +3279,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TF Markt Schwaben",
     awayClub: "TC Neuperlach-Kail München II",
     date: "2026-05-09",
@@ -2998,7 +3301,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Finsing",
     awayClub: "TC Pliening III",
     date: "2026-05-16",
@@ -3018,7 +3323,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Pliening III",
     awayClub: "TC Neuperlach-Kail München II",
     date: "2026-06-13",
@@ -3038,7 +3345,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TS Jahn München",
     awayClub: "TSV Oberpframmern",
     date: "2026-06-13",
@@ -3058,7 +3367,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Pliening III",
     awayClub: "TSV Oberpframmern",
     date: "2026-06-20",
@@ -3078,7 +3389,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Neuperlach-Kail München II",
     awayClub: "TC Finsing",
     date: "2026-06-21",
@@ -3098,7 +3411,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "VfB Forstinning",
     awayClub: "TF Markt Schwaben",
     date: "2026-06-21",
@@ -3118,7 +3433,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TSV Oberpframmern",
     awayClub: "TF Markt Schwaben",
     date: "2026-06-25",
@@ -3138,7 +3455,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TSV Oberpframmern",
     awayClub: "VfB Forstinning",
     date: "2026-06-27",
@@ -3158,7 +3477,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "VfB Forstinning",
     awayClub: "TC Finsing",
     date: "2026-07-04",
@@ -3178,7 +3499,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TF Markt Schwaben",
     awayClub: "TS Jahn München",
     date: "2026-07-04",
@@ -3198,7 +3521,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TS Jahn München",
     awayClub: "TC Neuperlach-Kail München II",
     date: "2026-07-11",
@@ -3218,7 +3543,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TSV Oberpframmern",
     awayClub: "TC Finsing",
     date: "2026-07-11",
@@ -3238,7 +3565,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Finsing",
     awayClub: "TS Jahn München",
     date: "2026-07-18",
@@ -3258,7 +3587,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TC Neuperlach-Kail München II",
     awayClub: "VfB Forstinning",
     date: "2026-07-18",
@@ -3278,7 +3609,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TF Markt Schwaben",
     awayClub: "TC Pliening III",
     date: "2026-07-18",
@@ -3298,7 +3631,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 379",
+    teamLabel: "Herren 50 III",
     homeClub: "TS Jahn München",
     awayClub: "VfB Forstinning",
     date: "2026-07-25",
@@ -3318,7 +3653,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TC Pliening",
     awayClub: "TC Marzling",
     date: "2026-05-02",
@@ -3338,7 +3675,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TSV Rottenburg",
     awayClub: "TeG Mühldorf",
     date: "2026-05-02",
@@ -3358,7 +3697,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TF Eitting",
     awayClub: "FC Langengeisling",
     date: "2026-05-02",
@@ -3378,7 +3719,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TC Marzling",
     awayClub: "TSV Rottenburg",
     date: "2026-05-09",
@@ -3398,7 +3741,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TC Pliening",
     awayClub: "SV Hörlkofen",
     date: "2026-05-16",
@@ -3418,7 +3763,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TeG Mühldorf",
     awayClub: "FC Langengeisling",
     date: "2026-05-16",
@@ -3438,7 +3785,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TF Eitting",
     awayClub: "TSV Rottenburg",
     date: "2026-05-16",
@@ -3458,7 +3807,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TSV Rottenburg",
     awayClub: "TC Pliening",
     date: "2026-06-13",
@@ -3478,7 +3829,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TC Marzling",
     awayClub: "TF Eitting",
     date: "2026-06-13",
@@ -3498,7 +3851,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "FC Langengeisling",
     awayClub: "SV Hörlkofen",
     date: "2026-06-13",
@@ -3518,7 +3873,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "SV Hörlkofen",
     awayClub: "TC Marzling",
     date: "2026-06-20",
@@ -3538,7 +3895,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "FC Langengeisling",
     awayClub: "TC Pliening",
     date: "2026-06-20",
@@ -3558,7 +3917,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "SV Hörlkofen",
     awayClub: "TeG Mühldorf",
     date: "2026-06-27",
@@ -3578,7 +3939,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TSV Rottenburg",
     awayClub: "FC Langengeisling",
     date: "2026-07-04",
@@ -3598,7 +3961,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TeG Mühldorf",
     awayClub: "TF Eitting",
     date: "2026-07-05",
@@ -3618,7 +3983,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "FC Langengeisling",
     awayClub: "TC Marzling",
     date: "2026-07-11",
@@ -3638,7 +4005,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TeG Mühldorf",
     awayClub: "TC Pliening",
     date: "2026-07-11",
@@ -3658,7 +4027,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TC Marzling",
     awayClub: "TeG Mühldorf",
     date: "2026-07-18",
@@ -3678,7 +4049,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TC Pliening",
     awayClub: "TF Eitting",
     date: "2026-07-18",
@@ -3698,7 +4071,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "SV Hörlkofen",
     awayClub: "TSV Rottenburg",
     date: "2026-07-18",
@@ -3718,7 +4093,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 404",
+    teamLabel: "Herren 60",
     homeClub: "TF Eitting",
     awayClub: "SV Hörlkofen",
     date: "2026-07-25",
@@ -3738,7 +4115,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "Weißblau Allianz München",
     awayClub: "VfB Hallbergmoos",
     date: "2026-05-02",
@@ -3758,7 +4137,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pliening",
     awayClub: "Weißblau Allianz München",
     date: "2026-05-09",
@@ -3778,7 +4159,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "WB Fideliopark München",
     awayClub: "SC Baldham-Vaterstetten",
     date: "2026-05-09",
@@ -3798,7 +4181,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TSV Rudelzhausen",
     awayClub: "VfB Hallbergmoos",
     date: "2026-05-09",
@@ -3818,7 +4203,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pfaffenhofen/Ilm II",
     awayClub: "ESV München Sportpark",
     date: "2026-05-10",
@@ -3838,7 +4225,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "WB Fideliopark München",
     awayClub: "TC Pliening",
     date: "2026-05-16",
@@ -3858,7 +4247,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "SC Baldham-Vaterstetten",
     awayClub: "VfB Hallbergmoos",
     date: "2026-05-17",
@@ -3878,7 +4269,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "Weißblau Allianz München",
     awayClub: "TC Pfaffenhofen/Ilm II",
     date: "2026-05-17",
@@ -3898,7 +4291,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "WB Fideliopark München",
     awayClub: "Weißblau Allianz München",
     date: "2026-06-13",
@@ -3918,7 +4313,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "ESV München Sportpark",
     awayClub: "VfB Hallbergmoos",
     date: "2026-06-13",
@@ -3938,7 +4335,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "SC Baldham-Vaterstetten",
     awayClub: "TSV Rudelzhausen",
     date: "2026-06-13",
@@ -3958,7 +4357,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "SC Baldham-Vaterstetten",
     awayClub: "ESV München Sportpark",
     date: "2026-06-20",
@@ -3978,7 +4379,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pliening",
     awayClub: "TSV Rudelzhausen",
     date: "2026-06-20",
@@ -3998,7 +4401,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pfaffenhofen/Ilm II",
     awayClub: "WB Fideliopark München",
     date: "2026-06-21",
@@ -4018,7 +4423,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pliening",
     awayClub: "TC Pfaffenhofen/Ilm II",
     date: "2026-06-27",
@@ -4038,7 +4445,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TSV Rudelzhausen",
     awayClub: "Weißblau Allianz München",
     date: "2026-07-04",
@@ -4058,7 +4467,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "ESV München Sportpark",
     awayClub: "TC Pliening",
     date: "2026-07-04",
@@ -4078,7 +4489,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pfaffenhofen/Ilm II",
     awayClub: "SC Baldham-Vaterstetten",
     date: "2026-07-04",
@@ -4098,7 +4511,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "VfB Hallbergmoos",
     awayClub: "WB Fideliopark München",
     date: "2026-07-04",
@@ -4118,7 +4533,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pliening",
     awayClub: "SC Baldham-Vaterstetten",
     date: "2026-07-11",
@@ -4138,7 +4555,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TSV Rudelzhausen",
     awayClub: "WB Fideliopark München",
     date: "2026-07-11",
@@ -4158,7 +4577,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "VfB Hallbergmoos",
     awayClub: "TC Pfaffenhofen/Ilm II",
     date: "2026-07-12",
@@ -4178,7 +4599,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "Weißblau Allianz München",
     awayClub: "ESV München Sportpark",
     date: "2026-07-12",
@@ -4198,7 +4621,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "SC Baldham-Vaterstetten",
     awayClub: "Weißblau Allianz München",
     date: "2026-07-18",
@@ -4218,7 +4643,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "VfB Hallbergmoos",
     awayClub: "TC Pliening",
     date: "2026-07-18",
@@ -4238,7 +4665,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "WB Fideliopark München",
     awayClub: "ESV München Sportpark",
     date: "2026-07-18",
@@ -4258,7 +4687,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "ESV München Sportpark",
     awayClub: "TSV Rudelzhausen",
     date: "2026-07-25",
@@ -4278,7 +4709,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 441",
+    teamLabel: "Damen 40",
     homeClub: "TC Pfaffenhofen/Ilm II",
     awayClub: "TSV Rudelzhausen",
     date: "2026-07-27",
@@ -4298,7 +4731,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "1.Deisenhofer Kinder-TC",
     awayClub: "TS Jahn München",
     date: "2026-05-02",
@@ -4315,7 +4750,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Pliening",
     awayClub: "TC Ottobrunn",
     date: "2026-05-02",
@@ -4332,7 +4769,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TSV Haar II",
     awayClub: "TC Unterföhring II",
     date: "2026-05-02",
@@ -4349,7 +4788,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TSV Haar II",
     awayClub: "TS Jahn München",
     date: "2026-05-09",
@@ -4366,7 +4807,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Ottobrunn",
     awayClub: "1.Deisenhofer Kinder-TC",
     date: "2026-05-09",
@@ -4383,7 +4826,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Ottobrunn",
     awayClub: "TSV Haar II",
     date: "2026-05-16",
@@ -4400,7 +4845,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Unterföhring II",
     awayClub: "1.Deisenhofer Kinder-TC",
     date: "2026-06-20",
@@ -4417,7 +4864,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Pliening",
     awayClub: "TSV Haar II",
     date: "2026-06-27",
@@ -4434,7 +4883,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TS Jahn München",
     awayClub: "TC Unterföhring II",
     date: "2026-06-27",
@@ -4451,7 +4902,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Pliening",
     awayClub: "1.Deisenhofer Kinder-TC",
     date: "2026-07-04",
@@ -4468,7 +4921,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TS Jahn München",
     awayClub: "TC Ottobrunn",
     date: "2026-07-04",
@@ -4485,7 +4940,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "1.Deisenhofer Kinder-TC",
     awayClub: "TSV Haar II",
     date: "2026-07-18",
@@ -4502,7 +4959,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TS Jahn München",
     awayClub: "TC Pliening",
     date: "2026-07-18",
@@ -4519,7 +4978,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Ottobrunn",
     awayClub: "TC Unterföhring II",
     date: "2026-07-18",
@@ -4536,7 +4997,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 3 · Gr. 686",
+    teamLabel: "Juniorinnen 18",
     homeClub: "TC Unterföhring II",
     awayClub: "TC Pliening",
     date: "2026-07-24",
@@ -4553,7 +5016,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TSV Haar II",
     awayClub: "ATSV Kirchseeon",
     date: "2026-05-08",
@@ -4570,7 +5035,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Anzing II",
     awayClub: "TF Markt Schwaben",
     date: "2026-05-08",
@@ -4587,7 +5054,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "SC Baldham-Vaterstetten",
     awayClub: "TC Putzbrunn",
     date: "2026-05-08",
@@ -4604,7 +5073,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Putzbrunn",
     awayClub: "TSV Haar II",
     date: "2026-05-15",
@@ -4621,7 +5092,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "ATSV Kirchseeon",
     awayClub: "SC Baldham-Vaterstetten",
     date: "2026-05-15",
@@ -4638,7 +5111,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Anzing II",
     awayClub: "TC Pliening",
     date: "2026-05-15",
@@ -4655,7 +5130,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Pliening",
     awayClub: "TSV Haar II",
     date: "2026-06-12",
@@ -4672,7 +5149,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TSV Haar II",
     awayClub: "SC Baldham-Vaterstetten",
     date: "2026-06-19",
@@ -4689,7 +5168,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Putzbrunn",
     awayClub: "ATSV Kirchseeon",
     date: "2026-06-19",
@@ -4706,7 +5187,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Pliening",
     awayClub: "TF Markt Schwaben",
     date: "2026-06-19",
@@ -4723,7 +5206,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "ATSV Kirchseeon",
     awayClub: "TC Anzing II",
     date: "2026-06-21",
@@ -4740,7 +5225,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TF Markt Schwaben",
     awayClub: "SC Baldham-Vaterstetten",
     date: "2026-07-03",
@@ -4757,7 +5244,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Pliening",
     awayClub: "ATSV Kirchseeon",
     date: "2026-07-03",
@@ -4774,7 +5263,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Anzing II",
     awayClub: "TC Putzbrunn",
     date: "2026-07-03",
@@ -4791,7 +5282,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TSV Haar II",
     awayClub: "TC Anzing II",
     date: "2026-07-10",
@@ -4808,7 +5301,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "SC Baldham-Vaterstetten",
     awayClub: "TC Pliening",
     date: "2026-07-10",
@@ -4825,7 +5320,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "ATSV Kirchseeon",
     awayClub: "TF Markt Schwaben",
     date: "2026-07-10",
@@ -4842,7 +5339,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TC Putzbrunn",
     awayClub: "TC Pliening",
     date: "2026-07-11",
@@ -4859,7 +5358,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TF Markt Schwaben",
     awayClub: "TSV Haar II",
     date: "2026-07-13",
@@ -4876,7 +5377,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "TF Markt Schwaben",
     awayClub: "TC Putzbrunn",
     date: "2026-07-17",
@@ -4893,7 +5396,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 4 · Gr. 596",
+    teamLabel: "Knaben 15",
     homeClub: "SC Baldham-Vaterstetten",
     awayClub: "TC Anzing II",
     date: "2026-07-17",
@@ -4910,7 +5415,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Pliening",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-05-09",
@@ -4930,7 +5437,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "SpVgg Zolling",
     awayClub: "MTTC Iphitos München",
     date: "2026-05-09",
@@ -4950,7 +5459,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "1. Regensburger Tennis-Klub",
     awayClub: "TSV Altenfurt",
     date: "2026-05-09",
@@ -4970,7 +5481,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TSV Burgfarrnbach",
     awayClub: "TC Bamberg",
     date: "2026-05-09",
@@ -4990,7 +5503,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Pliening",
     awayClub: "TSV Burgfarrnbach",
     date: "2026-05-17",
@@ -5010,7 +5525,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Grün-Weiß Gräfelfing",
     awayClub: "1. Regensburger Tennis-Klub",
     date: "2026-05-17",
@@ -5030,7 +5547,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Bamberg",
     awayClub: "SpVgg Zolling",
     date: "2026-05-17",
@@ -5050,7 +5569,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "MTTC Iphitos München",
     awayClub: "TSV Altenfurt",
     date: "2026-05-17",
@@ -5070,7 +5591,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TSV Burgfarrnbach",
     awayClub: "SpVgg Zolling",
     date: "2026-06-13",
@@ -5090,7 +5613,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "MTTC Iphitos München",
     awayClub: "TC Pliening",
     date: "2026-06-13",
@@ -5110,7 +5635,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TSV Altenfurt",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-06-13",
@@ -5130,7 +5657,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "1. Regensburger Tennis-Klub",
     awayClub: "TC Bamberg",
     date: "2026-06-13",
@@ -5150,7 +5679,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "SpVgg Zolling",
     awayClub: "1. Regensburger Tennis-Klub",
     date: "2026-06-20",
@@ -5170,7 +5701,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Bamberg",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-06-21",
@@ -5190,7 +5723,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TSV Burgfarrnbach",
     awayClub: "MTTC Iphitos München",
     date: "2026-06-21",
@@ -5210,7 +5745,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Pliening",
     awayClub: "TSV Altenfurt",
     date: "2026-06-21",
@@ -5230,7 +5767,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TSV Burgfarrnbach",
     awayClub: "TSV Altenfurt",
     date: "2026-06-27",
@@ -5250,7 +5789,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Pliening",
     awayClub: "1. Regensburger Tennis-Klub",
     date: "2026-06-27",
@@ -5270,7 +5811,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "MTTC Iphitos München",
     awayClub: "TC Bamberg",
     date: "2026-06-27",
@@ -5290,7 +5833,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "1. Regensburger Tennis-Klub",
     awayClub: "TSV Burgfarrnbach",
     date: "2026-07-04",
@@ -5310,7 +5855,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "SpVgg Zolling",
     awayClub: "TC Pliening",
     date: "2026-07-04",
@@ -5330,7 +5877,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Grün-Weiß Gräfelfing",
     awayClub: "MTTC Iphitos München",
     date: "2026-07-04",
@@ -5350,7 +5899,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TSV Altenfurt",
     awayClub: "TC Bamberg",
     date: "2026-07-04",
@@ -5370,7 +5921,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Grün-Weiß Gräfelfing",
     awayClub: "TSV Burgfarrnbach",
     date: "2026-07-11",
@@ -5390,7 +5943,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TSV Altenfurt",
     awayClub: "SpVgg Zolling",
     date: "2026-07-11",
@@ -5410,7 +5965,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "TC Bamberg",
     awayClub: "TC Pliening",
     date: "2026-07-11",
@@ -5430,7 +5987,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "1. Regensburger Tennis-Klub",
     awayClub: "MTTC Iphitos München",
     date: "2026-07-11",
@@ -5450,7 +6009,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Regionalliga Süd-Ost · Gr. 005",
+    teamLabel: "Herren 50",
     homeClub: "SpVgg Zolling",
     awayClub: "TC Grün-Weiß Gräfelfing",
     date: "2026-07-18",
@@ -5470,7 +6031,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Pliening",
     awayClub: "TC Grün-Gold München",
     date: "2026-05-03",
@@ -5490,7 +6053,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "WB Fideliopark München II",
     awayClub: "TC Topspin",
     date: "2026-05-03",
@@ -5510,7 +6075,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Unterföhring",
     awayClub: "TC Steinhöring",
     date: "2026-05-03",
@@ -5530,7 +6097,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Steinhöring",
     awayClub: "TC Grün-Gold München",
     date: "2026-05-10",
@@ -5550,7 +6119,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Topspin",
     awayClub: "TC Unterföhring",
     date: "2026-05-10",
@@ -5570,7 +6141,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Pliening",
     awayClub: "WB Fideliopark München II",
     date: "2026-05-10",
@@ -5590,7 +6163,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Neukeferloh",
     awayClub: "TS Jahn München",
     date: "2026-05-10",
@@ -5610,7 +6185,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Unterföhring",
     awayClub: "WB Fideliopark München II",
     date: "2026-05-17",
@@ -5630,7 +6207,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TS Jahn München",
     awayClub: "TC Topspin",
     date: "2026-05-17",
@@ -5650,7 +6229,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Neukeferloh",
     awayClub: "TC Steinhöring",
     date: "2026-05-17",
@@ -5670,7 +6251,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Grün-Gold München",
     awayClub: "TC Neukeferloh",
     date: "2026-06-14",
@@ -5690,7 +6273,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Pliening",
     awayClub: "TS Jahn München",
     date: "2026-06-14",
@@ -5710,7 +6295,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Topspin",
     awayClub: "TC Neukeferloh",
     date: "2026-06-21",
@@ -5730,7 +6317,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Steinhöring",
     awayClub: "TC Pliening",
     date: "2026-06-21",
@@ -5750,7 +6339,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "WB Fideliopark München II",
     awayClub: "TC Grün-Gold München",
     date: "2026-06-21",
@@ -5770,7 +6361,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TS Jahn München",
     awayClub: "TC Unterföhring",
     date: "2026-06-21",
@@ -5790,7 +6383,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Neukeferloh",
     awayClub: "TC Unterföhring",
     date: "2026-06-28",
@@ -5810,7 +6405,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Topspin",
     awayClub: "TC Pliening",
     date: "2026-06-28",
@@ -5830,7 +6427,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Unterföhring",
     awayClub: "TC Pliening",
     date: "2026-07-05",
@@ -5850,7 +6449,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Neukeferloh",
     awayClub: "WB Fideliopark München II",
     date: "2026-07-05",
@@ -5870,7 +6471,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Grün-Gold München",
     awayClub: "TC Topspin",
     date: "2026-07-05",
@@ -5890,7 +6493,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TS Jahn München",
     awayClub: "TC Steinhöring",
     date: "2026-07-05",
@@ -5910,7 +6515,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Grün-Gold München",
     awayClub: "TC Unterföhring",
     date: "2026-07-12",
@@ -5930,7 +6537,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Pliening",
     awayClub: "TC Neukeferloh",
     date: "2026-07-12",
@@ -5950,7 +6559,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "WB Fideliopark München II",
     awayClub: "TS Jahn München",
     date: "2026-07-12",
@@ -5970,7 +6581,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Steinhöring",
     awayClub: "TC Topspin",
     date: "2026-07-12",
@@ -5990,7 +6603,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TS Jahn München",
     awayClub: "TC Grün-Gold München",
     date: "2026-07-19",
@@ -6010,7 +6625,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 · Gr. 160",
+    teamLabel: "Damen",
     homeClub: "TC Steinhöring",
     awayClub: "WB Fideliopark München II",
     date: "2026-08-02",
@@ -6030,7 +6647,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Hofkirchen",
     awayClub: "TC Karlsfeld am See",
     date: "2026-05-09",
@@ -6047,7 +6666,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Moosach München",
     awayClub: "TC Steinhöring",
     date: "2026-05-09",
@@ -6064,7 +6685,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Gernlinden II",
     awayClub: "TSV Eintracht Karlsfeld",
     date: "2026-05-09",
@@ -6081,7 +6704,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Unterhaching II",
     awayClub: "TC Pliening",
     date: "2026-05-09",
@@ -6098,7 +6723,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Unterhaching II",
     awayClub: "TC Steinhöring",
     date: "2026-05-17",
@@ -6115,7 +6742,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Pliening",
     awayClub: "TC Gernlinden II",
     date: "2026-05-17",
@@ -6132,7 +6761,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Karlsfeld am See",
     awayClub: "TSV Moosach München",
     date: "2026-05-17",
@@ -6149,7 +6780,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Hofkirchen",
     awayClub: "TSV Eintracht Karlsfeld",
     date: "2026-05-17",
@@ -6166,7 +6799,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Pliening",
     awayClub: "TC Karlsfeld am See",
     date: "2026-06-14",
@@ -6183,7 +6818,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Steinhöring",
     awayClub: "TC Hofkirchen",
     date: "2026-06-14",
@@ -6200,7 +6837,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Eintracht Karlsfeld",
     awayClub: "TSV Unterhaching II",
     date: "2026-06-14",
@@ -6217,7 +6856,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Gernlinden II",
     awayClub: "TSV Moosach München",
     date: "2026-06-14",
@@ -6234,7 +6875,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Karlsfeld am See",
     awayClub: "TSV Eintracht Karlsfeld",
     date: "2026-06-20",
@@ -6251,7 +6894,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Steinhöring",
     awayClub: "TC Pliening",
     date: "2026-06-20",
@@ -6268,7 +6913,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Moosach München",
     awayClub: "TC Hofkirchen",
     date: "2026-06-20",
@@ -6285,7 +6932,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Unterhaching II",
     awayClub: "TC Gernlinden II",
     date: "2026-06-20",
@@ -6302,7 +6951,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Gernlinden II",
     awayClub: "TC Karlsfeld am See",
     date: "2026-06-28",
@@ -6319,7 +6970,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Pliening",
     awayClub: "TSV Moosach München",
     date: "2026-06-28",
@@ -6336,7 +6989,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Steinhöring",
     awayClub: "TC Gernlinden II",
     date: "2026-07-04",
@@ -6353,7 +7008,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Karlsfeld am See",
     awayClub: "TSV Unterhaching II",
     date: "2026-07-04",
@@ -6370,7 +7027,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Moosach München",
     awayClub: "TSV Eintracht Karlsfeld",
     date: "2026-07-04",
@@ -6387,7 +7046,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Hofkirchen",
     awayClub: "TC Pliening",
     date: "2026-07-04",
@@ -6404,7 +7065,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Karlsfeld am See",
     awayClub: "TC Steinhöring",
     date: "2026-07-11",
@@ -6421,7 +7084,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Gernlinden II",
     awayClub: "TC Hofkirchen",
     date: "2026-07-11",
@@ -6438,7 +7103,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Unterhaching II",
     awayClub: "TSV Moosach München",
     date: "2026-07-11",
@@ -6455,7 +7122,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Eintracht Karlsfeld",
     awayClub: "TC Pliening",
     date: "2026-07-11",
@@ -6472,7 +7141,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TC Hofkirchen",
     awayClub: "TSV Unterhaching II",
     date: "2026-07-18",
@@ -6489,7 +7160,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Landesliga 1 (4er) · Gr. 103 SU",
+    teamLabel: "Damen 50",
     homeClub: "TSV Eintracht Karlsfeld",
     awayClub: "TC Steinhöring",
     date: "2026-07-28",
@@ -6506,7 +7179,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Rot-Weiß Poing",
     awayClub: "FC Forstern",
     date: "2026-05-02",
@@ -6523,7 +7198,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Steinhöring II",
     awayClub: "TC Anzing",
     date: "2026-05-02",
@@ -6540,7 +7217,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "TeG Kirchheim",
     date: "2026-05-02",
@@ -6557,7 +7236,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Pliening II",
     awayClub: "SpVgg Altenerding",
     date: "2026-05-02",
@@ -6574,7 +7255,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Steinhöring II",
     awayClub: "FC Forstern",
     date: "2026-05-09",
@@ -6591,7 +7274,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TeG Kirchheim",
     awayClub: "TC Rot-Weiß Poing",
     date: "2026-05-09",
@@ -6608,7 +7293,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "SpVgg Altenerding",
     awayClub: "TC Anzing",
     date: "2026-05-09",
@@ -6625,7 +7312,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Pliening II",
     awayClub: "SV Walpertskirchen",
     date: "2026-05-09",
@@ -6642,7 +7331,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "SpVgg Altenerding",
     awayClub: "TC Steinhöring II",
     date: "2026-06-13",
@@ -6659,7 +7350,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TeG Kirchheim",
     awayClub: "FC Forstern",
     date: "2026-06-13",
@@ -6676,7 +7369,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "TC Anzing",
     date: "2026-06-13",
@@ -6693,7 +7388,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Rot-Weiß Poing",
     awayClub: "TC Pliening II",
     date: "2026-06-13",
@@ -6710,7 +7407,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "SpVgg Altenerding",
     awayClub: "TC Rot-Weiß Poing",
     date: "2026-06-20",
@@ -6727,7 +7426,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Anzing",
     awayClub: "TeG Kirchheim",
     date: "2026-06-20",
@@ -6744,7 +7445,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Pliening II",
     awayClub: "TC Steinhöring II",
     date: "2026-06-20",
@@ -6761,7 +7464,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Rot-Weiß Poing",
     awayClub: "TC Steinhöring II",
     date: "2026-07-04",
@@ -6778,7 +7483,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "FC Forstern",
     awayClub: "TC Anzing",
     date: "2026-07-04",
@@ -6795,7 +7502,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TeG Kirchheim",
     awayClub: "TC Pliening II",
     date: "2026-07-04",
@@ -6812,7 +7521,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "SpVgg Altenerding",
     date: "2026-07-04",
@@ -6829,7 +7540,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Anzing",
     awayClub: "TC Rot-Weiß Poing",
     date: "2026-07-11",
@@ -6846,7 +7559,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "TC Steinhöring II",
     date: "2026-07-11",
@@ -6863,7 +7578,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TeG Kirchheim",
     awayClub: "SpVgg Altenerding",
     date: "2026-07-11",
@@ -6880,7 +7597,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Pliening II",
     awayClub: "FC Forstern",
     date: "2026-07-11",
@@ -6897,7 +7616,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "FC Forstern",
     awayClub: "SV Walpertskirchen",
     date: "2026-07-13",
@@ -6914,7 +7635,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "FC Forstern",
     awayClub: "SpVgg Altenerding",
     date: "2026-07-18",
@@ -6931,7 +7654,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Rot-Weiß Poing",
     awayClub: "SV Walpertskirchen",
     date: "2026-07-18",
@@ -6948,7 +7673,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Steinhöring II",
     awayClub: "TeG Kirchheim",
     date: "2026-07-18",
@@ -6965,7 +7692,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 2 (4er) · Gr. 488",
+    teamLabel: "Damen 50 II",
     homeClub: "TC Anzing",
     awayClub: "TC Pliening II",
     date: "2026-07-18",
@@ -6982,7 +7711,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "TC Rot-Weiß Poing II",
     date: "2026-05-01",
@@ -6999,7 +7730,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Isen",
     awayClub: "TeG Wasserburg-Reitmehring III",
     date: "2026-05-01",
@@ -7016,7 +7749,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TF Markt Schwaben II",
     awayClub: "FC Forstern",
     date: "2026-05-02",
@@ -7033,7 +7768,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Pliening II",
     awayClub: "FC Forstern",
     date: "2026-05-08",
@@ -7050,7 +7787,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TeG Wasserburg-Reitmehring III",
     awayClub: "SV Walpertskirchen",
     date: "2026-05-08",
@@ -7067,7 +7806,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TF Markt Schwaben II",
     awayClub: "TC Haag",
     date: "2026-05-08",
@@ -7084,7 +7825,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Isen",
     awayClub: "TC Rot-Weiß Poing II",
     date: "2026-05-08",
@@ -7101,7 +7844,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Rot-Weiß Poing II",
     awayClub: "FC Forstern",
     date: "2026-05-15",
@@ -7118,7 +7863,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Isen",
     awayClub: "SV Walpertskirchen",
     date: "2026-05-15",
@@ -7135,7 +7882,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Pliening II",
     awayClub: "TF Markt Schwaben II",
     date: "2026-05-15",
@@ -7152,7 +7901,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TeG Wasserburg-Reitmehring III",
     awayClub: "TC Pliening II",
     date: "2026-06-07",
@@ -7169,7 +7920,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "FC Forstern",
     awayClub: "TC Isen",
     date: "2026-06-12",
@@ -7186,7 +7939,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TeG Wasserburg-Reitmehring III",
     awayClub: "TF Markt Schwaben II",
     date: "2026-06-19",
@@ -7203,7 +7958,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Haag",
     awayClub: "TC Rot-Weiß Poing II",
     date: "2026-06-19",
@@ -7220,7 +7977,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "FC Forstern",
     awayClub: "TC Haag",
     date: "2026-06-26",
@@ -7237,7 +7996,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TeG Wasserburg-Reitmehring III",
     awayClub: "TC Rot-Weiß Poing II",
     date: "2026-06-26",
@@ -7254,7 +8015,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Rot-Weiß Poing II",
     awayClub: "TF Markt Schwaben II",
     date: "2026-07-03",
@@ -7271,7 +8034,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "FC Forstern",
     date: "2026-07-03",
@@ -7288,7 +8053,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Isen",
     awayClub: "TC Haag",
     date: "2026-07-03",
@@ -7305,7 +8072,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Pliening II",
     awayClub: "TC Haag",
     date: "2026-07-09",
@@ -7322,7 +8091,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Haag",
     awayClub: "SV Walpertskirchen",
     date: "2026-07-10",
@@ -7339,7 +8110,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "FC Forstern",
     awayClub: "TeG Wasserburg-Reitmehring III",
     date: "2026-07-10",
@@ -7356,7 +8129,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Rot-Weiß Poing II",
     awayClub: "TC Pliening II",
     date: "2026-07-10",
@@ -7373,7 +8148,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "TF Markt Schwaben II",
     date: "2026-07-12",
@@ -7390,7 +8167,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TF Markt Schwaben II",
     awayClub: "TC Isen",
     date: "2026-07-17",
@@ -7407,7 +8186,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "SV Walpertskirchen",
     awayClub: "TC Pliening II",
     date: "2026-07-19",
@@ -7424,7 +8205,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Pliening II",
     awayClub: "TC Isen",
     date: "2026-07-24",
@@ -7441,7 +8224,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 5 · Gr. 638",
+    teamLabel: "Knaben 15 II",
     homeClub: "TC Haag",
     awayClub: "TeG Wasserburg-Reitmehring III",
     date: "2026-07-25",
@@ -7458,7 +8243,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Aschheim II",
     awayClub: "SC Freimann",
     date: "2026-05-03",
@@ -7475,7 +8262,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "SC Freimann",
     awayClub: "STK Garching",
     date: "2026-05-10",
@@ -7492,7 +8281,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Sport Scheck",
     awayClub: "TC Cosima München",
     date: "2026-05-10",
@@ -7509,7 +8300,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Aschheim II",
     awayClub: "TC Pliening",
     date: "2026-05-10",
@@ -7526,7 +8319,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Cosima München",
     awayClub: "TC Aschheim II",
     date: "2026-05-17",
@@ -7543,7 +8338,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Sport Scheck",
     awayClub: "SC Freimann",
     date: "2026-05-17",
@@ -7560,7 +8357,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "STK Garching",
     awayClub: "TC Pliening",
     date: "2026-05-17",
@@ -7577,7 +8376,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "STK Garching",
     awayClub: "TC Aschheim II",
     date: "2026-06-14",
@@ -7594,7 +8395,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "SC Freimann",
     awayClub: "TC Cosima München",
     date: "2026-06-14",
@@ -7611,7 +8414,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Pliening",
     awayClub: "TC Sport Scheck",
     date: "2026-06-14",
@@ -7628,7 +8433,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "STK Garching",
     awayClub: "TC Sport Scheck",
     date: "2026-06-21",
@@ -7645,7 +8452,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Sport Scheck",
     awayClub: "TC Aschheim II",
     date: "2026-06-28",
@@ -7662,7 +8471,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Cosima München",
     awayClub: "STK Garching",
     date: "2026-06-28",
@@ -7679,7 +8490,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Cosima München",
     awayClub: "TC Pliening",
     date: "2026-07-05",
@@ -7696,7 +8509,9 @@ export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
     ],
   },
   {
+    season: "sommer-26",
     league: "Südliga 1 · Gr. 870",
+    teamLabel: "Midcourt U10",
     homeClub: "TC Pliening",
     awayClub: "SC Freimann",
     date: "2026-07-12",
