@@ -248,8 +248,8 @@ Spielerhistorie und Gegnerbriefing"), die Auswirkungen auf den Aufbau in
 
 **Das Gate — bevor irgendjemand Code anfasst:**
 
-1. Die **noch offenen Fragen F5–F7** aus dem README sind vom Auftraggeber beantwortet
-   (F1–F4 und F8 sind seit 09.09.2026 entschieden — siehe README, Tabelle „Entschieden").
+1. ~~Offene Fragen~~ — **alle Fragen F1–F8 sind seit 09.09.2026 entschieden** (README,
+   Tabelle „Entschieden"); es gibt keine fachlichen Rückfragen mehr.
 2. Die **klickbaren Mobile-Mockups** (Artefakt „TCP Gegnerbriefing Mockups") sind abgenommen
    oder die gewünschten Änderungen sind eingearbeitet und erneut gezeigt.
 3. Es liegt eine **ausdrückliche Freigabe** vor — getrennt für (a) die Anwendung und (b) die
@@ -274,9 +274,10 @@ Wer ohne diese drei Punkte an dem Vorhaben arbeitet, arbeitet außerhalb des Auf
    `src/utils/spielbericht.ts`. Browser-Check 420×912, kein horizontaler Overflow.
 5. **Gegnerbriefing** in `MatchDetail` (lazy geladen, nur laufende Saison, LK an jedem Namen);
    Datenstand + nächster Lauf im ⋯-Menü des Headers.
-6. **Automatik** — erst nach der **eigenen** Freigabe (b): Workflow mit täglichem Wecker,
-   Bot-Commit-Weg gemäß F6, ein manueller Probelauf per `workflow_dispatch` vor dem ersten
-   Cron, Ergebnis im README festhalten.
+6. **Automatik** — erst nach der **eigenen** Freigabe (b): GitHub-Actions-Workflow mit
+   täglichem Wecker (01:00 Berlin), Daten als Bot-PR mit Auto-Merge, E-Mail-Benachrichtigung
+   bei rotem Lauf; ein manueller Probelauf per `workflow_dispatch` vor dem ersten Cron, Ergebnis
+   im README festhalten.
 
 **Fallen, die man vorher kennen sollte:**
 

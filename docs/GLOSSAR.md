@@ -290,4 +290,5 @@ Seite ist. Zeilen gegen Pliening tragen in der Historie eine „TCP"-Marke — r
 **Briefing-Lauf / Wecker.**
 Der geplante automatische Lauf: täglich 01:00 Uhr Berlin prüfen, ob eine TCP-Begegnung in 7, 4
 oder 0 Tagen liegt; wenn ja, BTV-Reports und Spielberichte der Gruppe neu einlesen, Daten
-generieren, prüfen, committen, deployen. **Nicht aktiviert**, solange die Freigabe fehlt.
+generieren, prüfen, als Bot-PR mergen, deployen; bei Fehlschlag E-Mail. Läuft in GitHub Actions.
+**Nicht aktiviert**, solange die Freigabe fehlt.
