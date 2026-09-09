@@ -106,8 +106,13 @@ selbst.
 Eine ausführliche Schritt-für-Schritt-Fassung inklusive Formulierungen steht in
 **[SKILL-VORLAGE-ergebnisse-nachziehen.md](SKILL-VORLAGE-ergebnisse-nachziehen.md)**.
 
-**Niemals** `src/data/spielberichte-crawled.ts` oder `src/data/meldelisten.ts` von Hand
-editieren — beide werden komplett neu geschrieben, Handänderungen gehen verloren.
+**Niemals** `src/data/spielberichte-crawled.ts`, `src/data/meldelisten.ts` oder
+`src/data/data-stand.ts` von Hand editieren — sie werden komplett neu geschrieben, Handänderungen
+gehen verloren. Beide Datendateien enthalten **alle Saisons**; ein Crawl einer Saison lässt die
+anderen unberührt.
+
+Seit 10.09.2026 macht das der **Wecker** rund um jede TCP-Begegnung automatisch (Abschnitt 9);
+von Hand ist es weiter für Nachlesen und Gruppen ohne TCP-Begegnung nötig.
 
 ---
 
@@ -239,51 +244,50 @@ Was nicht geprüft wurde, wird auch nicht behauptet.
 
 ---
 
-## 9. Vorhaben Gegnerbriefing — Status und Freigabe-Gate
+## 9. Suche, Spielerhistorie, Gegnerbriefing und Wecker pflegen
 
-**Stand 09.09.2026:** Suche, Spielerhistorie, Gegnerbriefing und die automatische Aktualisierung
-sind **spezifiziert, aber nicht gebaut**. Die Spezifikation steht im README („Vorhaben: Suche,
-Spielerhistorie und Gegnerbriefing"), die Auswirkungen auf den Aufbau in
-[ARCHITEKTUR.md, Abschnitt 13](ARCHITEKTUR.md), die Begriffe im [Glossar](GLOSSAR.md).
+Gebaut am 09./10.09.2026 (Freigabe des Auftraggebers). Aufbau in
+[ARCHITEKTUR.md, Abschnitt 13](ARCHITEKTUR.md), Fachliches im README.
 
-**Das Gate — bevor irgendjemand Code anfasst:**
+**Eine weitere (auch vergangene) Saison erfassen:**
 
-1. ~~Offene Fragen~~ — **alle Fragen F1–F8 sind seit 09.09.2026 entschieden** (README,
-   Tabelle „Entschieden"); es gibt keine fachlichen Rückfragen mehr.
-2. Die **klickbaren Mobile-Mockups** (Artefakt „TCP Gegnerbriefing Mockups") sind abgenommen
-   oder die gewünschten Änderungen sind eingearbeitet und erneut gezeigt.
-3. Es liegt eine **ausdrückliche Freigabe** vor — getrennt für (a) die Anwendung und (b) die
-   Automatik. Die stehende Freigabe vom 07.09.2026 („fertige Arbeit ausliefern") ersetzt diese
-   Freigabe **nicht**.
+```bash
+node scripts/discover-groups.mjs --season "Sommer 2024"        # groupids mit TC Pliening (btv.de-Archiv)
+# → Block in scripts/seasons.mjs anlegen (historyOnly: true, dataFile: null, groups aus der Ausgabe),
+#   SeasonId in src/types.ts und HISTORY_SEASONS in src/data/seasons.ts erweitern
+npm run crawl:spielberichte -- --season sommer-24               # Berichte (Cache je Saison)
+npm run crawl:meldelisten -- --season sommer-24                 # Meldelisten (schreibt die Datei gleich mit)
+npm run gen:spielberichte && npm run check -- --all
+```
 
-Wer ohne diese drei Punkte an dem Vorhaben arbeitet, arbeitet außerhalb des Auftrags.
+Mixed-Runden sind beim BTV eigene Saisons („Mixed 2025", Region Südbayern, Altersbereiche wie
+sonst — Klassen heißen „MIXED 00 A/B", „MIXED 40 A" …); ihre Gruppen gehören in den Block der
+zugehörigen Sommer-Saison. Jugend-Klassen nur mit `--jugend`.
 
-**Reihenfolge nach der Freigabe (jeder Schritt ein eigener PR, Doku im selben Zug):**
+**Wecker prüfen oder von Hand auslösen:**
 
-1. **Datenlage prüfen** (F2): für **eine** Gruppe von Winter 2024/25 testen, ob das btv.de-Widget
-   und `MeetingReportFOP` die Berichte noch liefern. Ergebnis ins README, fehlende Saisons als
-   Datenlücke festhalten.
-2. **Historische Saisons erfassen:** `SeasonId` um `sommer-25`/`winter-2425` erweitern, Blöcke in
-   `scripts/seasons.mjs` (groupids über das Vereins-Widget, siehe README „Meldelisten") und
-   `src/data/season-data.ts` (ohne Dropdown-Anzeige), dann Saison für Saison
-   `crawl:spielberichte -- --season <id>` und `crawl:meldelisten -- --season <id>`. Winter 2025/26
-   zuerst — dort fehlen nur die groupids. Nach jedem Crawl `npm run check -- --all`.
-3. **Saison an Bericht und Meldeliste** (`season`-Feld), Lookup anpassen, Index
-   `src/data/player-history.ts` bauen. Noch keine UI.
-4. **Suche + Spielerhistorie** (lazy geladen), Farblogik-Parameter „betrachtete Seite" in
-   `src/utils/spielbericht.ts`. Browser-Check 420×912, kein horizontaler Overflow.
-5. **Gegnerbriefing** in `MatchDetail` (lazy geladen, nur laufende Saison, LK an jedem Namen);
-   Datenstand + nächster Lauf im ⋯-Menü des Headers.
-6. **Automatik** — erst nach der **eigenen** Freigabe (b): GitHub-Actions-Workflow mit
-   täglichem Wecker (01:00 Berlin), Daten als Bot-PR mit Auto-Merge, E-Mail-Benachrichtigung
-   bei rotem Lauf; ein manueller Probelauf per `workflow_dispatch` vor dem ersten Cron, Ergebnis
-   im README festhalten.
+```bash
+node scripts/briefing-run.mjs --dry-run          # was wäre heute fällig, wann ist der nächste Lauf?
+node scripts/briefing-run.mjs --force            # alle Gruppen mit Begegnungen ab heute einlesen (lokal)
+node scripts/briefing-run.mjs --stand-only       # nur src/data/data-stand.ts (nächster Lauf) neu schreiben
+```
 
-**Fallen, die man vorher kennen sollte:**
+Auf GitHub: *Actions → „Gegnerbriefing aktualisieren" → Run workflow* (Haken „Lauf erzwingen").
+Der Lauf erzeugt bei Änderungen einen Bot-PR `bot/briefing-<Datum>`, mergt ihn selbst und startet
+den Deploy — danach wie immer den Bundle-Hash prüfen, wenn man es genau wissen will.
 
-- Gruppennummern wiederholen sich über Jahre (Bayernliga Gr. 022 SU gab es 2025/26 **und**
-  2026/27) — ohne `season` im Schlüssel überschreiben sich Berichte.
-- `gen:spielberichte` schreibt die Zieldatei komplett aus **allen** Saison-Caches; die Caches sind
-  gitignored. Ein Kollege ohne Caches kann die Datei nicht regenerieren — vor dem ersten
-  Mehrsaison-Crawl klären, ob die Caches ins Repo sollen (Datenverlust-Risiko, Rückfrage).
-- Der Automat darf weder `--force` auf `gen:spielberichte` noch `keepLeagues` anfassen.
+**Wenn ein Wecker-Lauf rot ist** (E-Mail von GitHub): Protokoll im Actions-Reiter lesen. Typisch:
+BTV/Widget nicht erreichbar (nächste Nacht klappt es meist), `check-data` rot (dann die Abweichung
+wie in Abschnitt 2 klären), Chrome-Absturz (nochmal per *Run workflow*). Der alte Datenstand
+bleibt bis dahin live; das ⋯-Menü zeigt sein Alter.
+
+**Fallen:**
+
+- Gruppennummern wiederholen sich über Jahre — ohne `season` im Schlüssel überschreiben sich
+  Berichte. Alle Lookups nehmen die Saison als ersten Parameter.
+- Die Generatoren übernehmen Ligen ohne Cache aus dem Bestand; wer eine Liga wirklich **entfernen**
+  will, muss sie aus der Datendatei löschen, nicht nur aus dem Cache.
+- Der Wecker darf nie Ligen aus `keepLeagues` überschreiben (`generate-standings.mjs` lässt sie
+  aus) und crawlt nur die Gruppen der fälligen Begegnungen.
+- `discover-groups.mjs` braucht `pdftotext` (poppler) für die Liganamen; ohne rekonstruiert es die
+  Schreibweise aus der Großschreibung des Widgets — dann gegenlesen.
