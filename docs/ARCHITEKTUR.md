@@ -425,3 +425,101 @@ aufmachen.
 4. **Nach Datenänderungen `npm run check`**, nach UI-Änderungen der Browser-Check.
 5. **Deutsche Sprache** in Code-Kommentaren, Doku und Oberflächentexten; Bezeichner und
    Fachbegriffe bleiben, wie sie sind.
+
+---
+
+## 13. Geplante Erweiterung: Suche, Spielerhistorie, Gegnerbriefing, Auto-Aktualisierung
+
+> **Status 09.09.2026: Spezifikation, nicht gebaut.** Fachliche Anforderungen und offene Fragen
+> stehen im README („Vorhaben: Suche, Spielerhistorie und Gegnerbriefing"). Dieser Abschnitt
+> beschreibt, **was sich am Aufbau ändern müsste** — als Leitplanke für die Umsetzung nach der
+> Freigabe. Vor der Freigabe wird weder Anwendungscode geändert noch eine Automatik aktiviert.
+
+### 13.1 Datenmodell: Saison an jedem Bericht und jeder Meldeliste
+
+Heute kennen `Spielbericht` und `Meldeliste` **keine Saison** — der Schlüssel ist
+`league::homeClub::awayClub`, und `spielberichte-crawled.ts` enthält nur Sommer 2026. Für eine
+Historie über Winter 2024/25 … Winter 2026/27 muss jeder Bericht und jede Meldeliste ein
+`season: SeasonId` tragen; `getSpielbericht` bleibt richtungsunabhängig, wird aber um die Saison
+ergänzt (Gruppennummern wiederholen sich über Jahre, z. B. „Bayernliga · Gr. 022 SU" in beiden
+Winterrunden). `SeasonId` wächst um `"sommer-25"` und `"winter-2425"`; beide Registries bekommen
+Einträge, aber **ohne Spielplan-Anzeige** (`SEASONS` im Dropdown bleibt unverändert — die alten
+Runden sind reine Datenquellen). Dafür braucht `SeasonData` ein Kennzeichen wie `historyOnly`.
+
+Neu dazu kommt ein abgeleiteter Index (Arbeitsname `src/data/player-history.ts`):
+
+- **Spieler-Index:** normalisierter Name + Verein → alle Einsätze über alle Saisons, mit Datum,
+  Position, Gegner, Partner, Sätzen, Ergebnis und `vsTcp: boolean`. Gebaut aus
+  `getAllSpielberichte()` wie heute `player-stats.ts`, nur saisonübergreifend und ohne
+  Mannschaftsbezug.
+- **Mannschafts-Index je Gruppe:** je Mannschaft die gespielten Begegnungen mit Aufstellung
+  (Positionen → Namen), Einsatzzähler je Spieler, Doppelpaare, Begegnungsergebnisse.
+- **Datenstand je Gruppe und Saison** (`dataStand: { [groupid]: ISO-Zeitstempel }`), geschrieben
+  vom Crawl, angezeigt im Briefing.
+
+Die Suche braucht eine flache Liste aller Namen (Spieler) und aller Mannschaften in TCP-Gruppen;
+beides ist aus dem Index ableitbar. Alles bleibt eingecheckter TypeScript-Code — **kein Backend**,
+Supabase bleibt auf Live-Zwischenstände beschränkt.
+
+**Bundle-Größe:** Historie und Briefing lesen die vollständigen Spielberichte aller Saisons.
+Diese Daten gehören wie heute in **lazy geladene Chunks** (Muster `SpielberichtLink`/
+`StandingsView`), sonst wächst das Startbundle des Spielplans um mehrere hundert Kilobyte.
+
+### 13.2 Oberfläche: drei neue Einstiege, kein Router
+
+```
+Header ── 🔍 (neu) ──► SearchOverlay ──► Spieler  ──► PlayerHistory (neu, lazy)
+                                     └─► Mannschaft ──► TeamStatsDetail (bestehend, Meldeliste)
+TimelineView ► MatchRow ► MatchDetail ──► OpponentBriefing (neu, lazy)
+                                            ├─ Meldeliste   (RosterRow + Einsatzhäufigkeit)
+                                            ├─ Aufstellungen (Gegner + „Unsere Aufstellungen")
+                                            └─ Ergebnisse   (Gegnerbilanz + direkte Duelle)
+```
+
+- Overlay- und Seitenzustand liegen wie `calendarOpen` und `page` in `App.tsx`; ein
+  `searchOpen` und ein `selectedPlayer` reichen. Zurück-Navigation schließt jeweils eine Ebene.
+- Wiederverwendet werden `RosterRow`, `LkPill`, `ResultBadge` (aus `TeamStatsDetail` zu
+  exportieren), `MatchCard`/`SideLine`, das Bottom-Sheet aus `SpielberichtDrawer`.
+- **Saisonneutral bleiben** (Regel aus AUFGABEN.md, Abschnitt 1): das Briefing findet die Gruppe
+  des Gegners über `Team.league` + Saison, nie über eine Saison-Fallunterscheidung.
+
+### 13.3 Farblogik als Modus, nicht als neue Farben
+
+`sideOutcome(side, won, tcpSide)` in `src/utils/spielbericht.ts` deckt heute TCP-Sicht und
+Fremdpaarung ab. Für die Spielerhistorie kommt ein dritter Modus **„Spielersicht"** dazu:
+gewonnen = grün, verloren = rot aus Sicht des geöffneten Spielers. Die Regel lautet:
+
+| Kontext | Sicht | grün bedeutet |
+|---|---|---|
+| Gegnerbriefing, Spielbericht einer TCP-Begegnung, direkte Duelle | TCP | positiv für Pliening |
+| Zeile in einer Spielerhistorie **gegen TC Pliening** (auch im Profil eines Gegners) | TCP | positiv für Pliening (+ „TCP"-Marke) |
+| Zeile in einer Spielerhistorie gegen Dritte, Saisonbilanz einer Gegnermannschaft | Spieler/Mannschaft | Sieg des Spielers bzw. der Mannschaft |
+
+Satzfelder folgen derselben Entscheidung über `setCellClass`. Neue Farbwerte gibt es nicht.
+
+### 13.4 Auto-Aktualisierung: Wecker statt Terminplan
+
+Empfohlene Form (Entscheidung F5/F6 im README offen): ein **täglicher Cron um 01:00 Uhr
+Europe/Berlin** in GitHub Actions. Weil Actions-Cron in UTC läuft, zwei Cron-Zeilen (23:00 und
+00:00 UTC) und ein Skript, das die lokale Stunde prüft und sonst sofort beendet. Der Lauf:
+
+```
+seasons.mjs → Termine der laufenden Saison
+   └─ liegt eine TCP-Begegnung in genau 7, 4 oder 0 Tagen?   nein → Ende
+        ja ↓
+   ScheduleReportFOP der betroffenen Gruppen  (Verlegungen erkennen)
+   crawl:spielberichte -- <groupid> --force   (neue/korrigierte Berichte, Gegnerspiele)
+   crawl:meldelisten -- <groupid>              (Nachmeldungen)
+   gen:spielberichte · gen:standings --write · check
+   Datenstand je Gruppe schreiben
+   Commit → Bot-PR → Auto-Merge → Deploy (F6)   oder   Ausnahme „Bot darf Daten auf main"
+```
+
+Spielverlegungen brauchen keine Sonderbehandlung: Der Wecker rechnet die Abstände jeden Tag aus
+den **aktuellen** Terminen neu. Fällt ein Lauf aus (BTV nicht erreichbar, Chrome-Absturz), bleibt
+der alte Datenstand sichtbar — deshalb zeigt das Briefing ihn an. Die Regeln aus Abschnitt 11
+(Bundle-Hash prüfen, `[skip ci]` nur für Doku) gelten für Bot-Commits unverändert; ein Bot-Commit
+ist **kein** Doku-Commit und muss deployen.
+
+**Nicht verhandelbar:** Der Automat darf nie `--force` auf `gen:spielberichte` setzen und nie
+Ligen aus `keepLeagues` überschreiben — die Sicherungen aus Abschnitt 10 bleiben scharf.

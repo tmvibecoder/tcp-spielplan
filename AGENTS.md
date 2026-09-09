@@ -89,6 +89,12 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
   Änderungen ohne Rückfrage mergen, deployen und live nehmen — das gilt für alle
   Repositories von Thomas. Rückfragepflichtig bleiben **Datenverlust** und **Eingriffe
   in fremde Systeme**.
+- **Vorhaben Gegnerbriefing ist gesperrt bis zur Freigabe.** Suche, Spielerhistorie,
+  Gegnerbriefing und die automatische Aktualisierung sind seit 09.09.2026 nur **spezifiziert**
+  (README „Vorhaben: Suche, Spielerhistorie und Gegnerbriefing", docs/ARCHITEKTUR.md Abschnitt 13,
+  docs/AUFGABEN.md Abschnitt 9). Kein Anwendungscode, kein Workflow, kein Cron dafür, bevor die
+  offenen Fragen beantwortet, die Mockups abgenommen und die Freigabe **ausdrücklich** erteilt
+  sind — die stehende Freigabe „fertige Arbeit ausliefern" deckt das nicht ab.
 - **Nie direkt auf `main` pushen.** Änderungen: Branch → PR → `gh pr merge --squash`
   (der Merge löst den Deploy aus). Reine Doku-Commits mit `[skip ci]`. Nach dem Deploy
   den **live ausgelieferten Bundle-Hash** prüfen

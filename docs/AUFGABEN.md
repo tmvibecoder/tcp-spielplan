@@ -236,3 +236,51 @@ Bei rotem Ergebnis erst den Hash prüfen, dann den Test wiederholen.
       offene Punkte, nächster Schritt
 
 Was nicht geprüft wurde, wird auch nicht behauptet.
+
+---
+
+## 9. Vorhaben Gegnerbriefing — Status und Freigabe-Gate
+
+**Stand 09.09.2026:** Suche, Spielerhistorie, Gegnerbriefing und die automatische Aktualisierung
+sind **spezifiziert, aber nicht gebaut**. Die Spezifikation steht im README („Vorhaben: Suche,
+Spielerhistorie und Gegnerbriefing"), die Auswirkungen auf den Aufbau in
+[ARCHITEKTUR.md, Abschnitt 13](ARCHITEKTUR.md), die Begriffe im [Glossar](GLOSSAR.md).
+
+**Das Gate — bevor irgendjemand Code anfasst:**
+
+1. Die **offenen Fragen F1–F8** aus dem README sind vom Auftraggeber beantwortet.
+2. Die **klickbaren Mobile-Mockups** (Artefakt „TCP Gegnerbriefing Mockups") sind abgenommen
+   oder die gewünschten Änderungen sind eingearbeitet und erneut gezeigt.
+3. Es liegt eine **ausdrückliche Freigabe** vor — getrennt für (a) die Anwendung und (b) die
+   Automatik. Die stehende Freigabe vom 07.09.2026 („fertige Arbeit ausliefern") ersetzt diese
+   Freigabe **nicht**.
+
+Wer ohne diese drei Punkte an dem Vorhaben arbeitet, arbeitet außerhalb des Auftrags.
+
+**Reihenfolge nach der Freigabe (jeder Schritt ein eigener PR, Doku im selben Zug):**
+
+1. **Datenlage prüfen** (F2): für **eine** Gruppe von Winter 2024/25 testen, ob das btv.de-Widget
+   und `MeetingReportFOP` die Berichte noch liefern. Ergebnis ins README, fehlende Saisons als
+   Datenlücke festhalten.
+2. **Historische Saisons erfassen:** `SeasonId` um `sommer-25`/`winter-2425` erweitern, Blöcke in
+   `scripts/seasons.mjs` (groupids über das Vereins-Widget, siehe README „Meldelisten") und
+   `src/data/season-data.ts` (ohne Dropdown-Anzeige), dann Saison für Saison
+   `crawl:spielberichte -- --season <id>` und `crawl:meldelisten -- --season <id>`. Winter 2025/26
+   zuerst — dort fehlen nur die groupids. Nach jedem Crawl `npm run check -- --all`.
+3. **Saison an Bericht und Meldeliste** (`season`-Feld), Lookup anpassen, Index
+   `src/data/player-history.ts` bauen. Noch keine UI.
+4. **Suche + Spielerhistorie** (lazy geladen), Farblogik-Modus „Spielersicht" in
+   `src/utils/spielbericht.ts`. Browser-Check 420×912, kein horizontaler Overflow.
+5. **Gegnerbriefing** in `MatchDetail` (lazy geladen), Datenstand-Anzeige.
+6. **Automatik** — erst nach der **eigenen** Freigabe (b): Workflow mit täglichem Wecker,
+   Bot-Commit-Weg gemäß F6, ein manueller Probelauf per `workflow_dispatch` vor dem ersten
+   Cron, Ergebnis im README festhalten.
+
+**Fallen, die man vorher kennen sollte:**
+
+- Gruppennummern wiederholen sich über Jahre (Bayernliga Gr. 022 SU gab es 2025/26 **und**
+  2026/27) — ohne `season` im Schlüssel überschreiben sich Berichte.
+- `gen:spielberichte` schreibt die Zieldatei komplett aus **allen** Saison-Caches; die Caches sind
+  gitignored. Ein Kollege ohne Caches kann die Datei nicht regenerieren — vor dem ersten
+  Mehrsaison-Crawl klären, ob die Caches ins Repo sollen (Datenverlust-Risiko, Rückfrage).
+- Der Automat darf weder `--force` auf `gen:spielberichte` noch `keepLeagues` anfassen.

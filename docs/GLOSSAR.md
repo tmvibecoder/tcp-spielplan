@@ -244,3 +244,52 @@ nur eine gruppeninterne Nummer — deren Schlüssel heißen deshalb `SB_mx074n<N
 **Live-Score.**
 Ein von Besuchern **während** der Begegnung eingetippter Zwischenstand (Supabase). Hat
 nichts mit den offiziellen BTV-Ergebnissen zu tun und wird von ihnen später abgelöst.
+
+---
+
+## Vorhaben Gegnerbriefing (Stand 09.09.2026 — spezifiziert, nicht gebaut)
+
+Die Begriffe gelten für die im README beschriebene Erweiterung („Vorhaben: Suche, Spielerhistorie
+und Gegnerbriefing"). Sie tauchen bisher in keinem Code auf.
+
+**Gegnerbriefing.**
+Der Block in der aufgeklappten TCP-Begegnung im Spielplan, der vor dem Spieltag zeigt, **was über
+den Gegner belegt ist**: Meldeliste mit Einsatzhäufigkeit, tatsächliche Aufstellungen, bisherige
+Ergebnisse und direkte Duelle — plus unsere eigenen bisherigen Aufstellungen. **Keine Prognose:**
+Es steht nur darin, was in einem Spielbericht steht.
+
+**Spielerhistorie.**
+Alle Einzel und Doppel **einer Person** über alle erfassten Saisons ab Winter 2024/25, nach
+Saison getrennt, neueste zuerst — mit Datum, Position, Gegner, Doppelpartner, Sätzen und Ergebnis.
+Gibt es für eigene und für gegnerische Spieler. Filter „Nur gegen TC Pliening".
+
+**Einsatzhäufigkeit.**
+Wie oft ein Spieler in der laufenden Runde eingesetzt wurde, getrennt nach Einzel und Doppel, und
+auf welchen **Positionen** (z. B. „3× Einzel · Pos 1–2 · 2× Doppel"). Reine Zählung aus
+Spielberichten, keine Bewertung.
+
+**Direkte Duelle.**
+Begegnungen TC Pliening gegen genau diese Gegnermannschaft — über alle erfassten Saisons. Werden
+im Briefing immer aus **TCP-Sicht** gefärbt.
+
+**Datenstand (Briefing).**
+Datum **und Uhrzeit** des letzten Einlesens der BTV-Berichte einer Gruppe. Nicht zu verwechseln mit
+dem **BTV-Stand** der Tabellen (nur Datum, gesetzt von `gen:standings`). Der Datenstand sagt, ob
+die Gegnerspiele der letzten Tage schon im Briefing sind.
+
+**Datenlücke.**
+Eine Saison oder Gruppe, deren Spielberichte beim BTV **nicht mehr beschafft** werden konnten.
+Wird in der Spielerhistorie **ausgewiesen** („Winter 2025/26 — Spielberichte nicht verfügbar"),
+nie stillschweigend weggelassen. Stand 09.09.2026 sind Winter 2024/25, Sommer 2025 und Winter
+2025/26 noch nicht erfasst.
+
+**TCP-Sicht / Spielersicht (Farblogik).**
+Zwei Lesarten von Grün und Rot. **TCP-Sicht:** Grün = positiv für Pliening, Rot = positiv für den
+Gegner — gilt bei jeder konkreten TCP-Begegnung, auch in der Historie eines gegnerischen Spielers
+(Zeile trägt dann eine „TCP"-Marke). **Spielersicht:** Grün = Sieg, Rot = Niederlage des
+geöffneten Spielers bzw. der Mannschaft — gilt für alles, was nicht gegen Pliening war.
+
+**Briefing-Lauf / Wecker.**
+Der geplante automatische Lauf: täglich 01:00 Uhr Berlin prüfen, ob eine TCP-Begegnung in 7, 4
+oder 0 Tagen liegt; wenn ja, BTV-Reports und Spielberichte der Gruppe neu einlesen, Daten
+generieren, prüfen, committen, deployen. **Nicht aktiviert**, solange die Freigabe fehlt.
