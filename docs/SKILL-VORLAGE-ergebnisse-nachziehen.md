@@ -1,5 +1,12 @@
 # Skill-Vorlage: BTV-Ergebnisse prüfen und auf tcp-spielplan.de nachziehen
 
+> **Einordnung:** Das hier ist die **ausführlichste** Fassung des Ergebnis-Abgleichs,
+> gedacht als Vorlage für einen wiederverwendbaren Prompt/Skill. Wer den Ablauf nur
+> einmal durchführen will, nimmt die Kurzfassung in
+> **[AUFGABEN.md, Abschnitt 2](AUFGABEN.md)**. Fachbegriffe erklärt das
+> **[Glossar](GLOSSAR.md)**, den Aufbau des Projekts die
+> **[Architektur](ARCHITEKTUR.md)**.
+
 Diese Datei fasst alle Erkenntnisse aus der Session vom 15./16.08.2026 zusammen
 (PRs #37–#43). Sie ist als Grundlage gedacht, um in der Claude-App einen Skill zu
 bauen, der auf Zuruf **alle Mannschaften aller Konkurrenzen auf neue Ergebnisse
