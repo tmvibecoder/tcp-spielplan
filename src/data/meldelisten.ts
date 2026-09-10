@@ -4,7 +4,7 @@ import type { Meldeliste, SeasonId } from "../types";
 // AUTO-GENERIERT von scripts/generate-meldelisten.mjs (npm run gen:meldelisten)
 // aus den Caches von scripts/crawl-meldelisten.mjs — NICHT von Hand editieren.
 // Stand 10.09.2026. Quelle: btv.de Mannschaftsportraits der jeweiligen Gruppe.
-// Saisons: Sommer 2026 (126), Winter 2025/26 (40), Sommer 2025 (95), Winter 2024/25 (41).
+// Saisons: Winter 2026/27 (41), Sommer 2026 (126), Winter 2025/26 (40), Sommer 2025 (95), Winter 2024/25 (41).
 // Rang = Meldeposition wie in nuLiga (bei Mixed sind Herren und Damen separat
 // nummeriert); LK = Leistungsklasse laut Portrait (kann von der LK im
 // Spielbericht abweichen, die den Stand am Spieltag zeigt). nation nur,

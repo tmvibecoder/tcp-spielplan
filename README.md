@@ -205,13 +205,17 @@ Spielplan und keine Tabellen (`historyOnly` in `src/data/seasons.ts`, kein Eintr
 
 | Saison | Gruppen mit TCP | Spielberichte | Meldelisten | Bemerkung |
 |---|---|---|---|---|
-| Winter 2026/27 | 7 | — (noch kein Spieltag) | 7 Gruppen | Dropdown, Wecker aktiv |
+| Winter 2026/27 | 7 | — (noch kein Spieltag) | — (BTV-Portraits am 10.09.2026 noch leer) | Dropdown, Wecker aktiv |
 | Sommer 2026 | 18 | 407 | 126 | Dropdown |
 | Winter 2025/26 | 7 | 95 (184/184 Zellen belegt) | 40 Mannschaften | Dropdown; Berichte seit 10.09.2026 |
 | Sommer 2025 | 13 (inkl. Mixed 40) | 304 | 95 Mannschaften | nur Historie |
 | Winter 2024/25 | 7 (zwei Herren-40-Teams) | 99 | 41 Mannschaften | nur Historie |
 
 Zusammen 905 Spielberichte mit 6.845 Einzeln/Doppeln und 302 Meldelisten mit 10.341 Spielern.
+Die Meldelisten der Winterrunde 2026/27 veröffentlicht der BTV erst kurz vor Saisonstart (am
+10.09.2026 zeigten alle 41 Mannschaftsportraits 0 Spieler); der Wecker holt sie 7 Tage vor der
+ersten Begegnung — bis dahin zeigt das Briefing im Reiter „Meldeliste" den Leerzustand und
+`npm run check` meldet für diese Runde „OHNE MELDELISTE" (kein Fehler).
 Jugend-Gruppen der alten Runden sind bewusst nicht erfasst (Historie ab Winter 2024/25 gilt den
 Erwachsenen-Konkurrenzen; `discover-groups.mjs --jugend` holt sie bei Bedarf).
 

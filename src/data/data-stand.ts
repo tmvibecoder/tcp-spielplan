@@ -13,7 +13,7 @@ export interface DataStand {
 }
 
 export const DATA_STAND: DataStand = {
-  crawledAt: "2026-09-09T22:40:00+02:00",
-  scope: "Sommer 2026 vollständig; Winterrunde 2026/27 noch ohne Spieltag",
+  crawledAt: "2026-09-10T02:59:00+02:00",
+  scope: "Meldelisten Winter 2026/27; Spielberichte und Meldelisten aller Runden ab Winter 2024/25",
   nextRun: {"at":"2026-10-03T01:00:00+02:00","reason":"7 Tage vor Herren 30 – TS Jahn München II (10.10.)"},
 };
