@@ -161,7 +161,13 @@ git-worktree'" weiter unten.
 - **LK überall als Abzeichen** (`LkBadge`): kleines Schild mit abgesetztem „LK"-Präfix und fetter
   Zahl — in Spielberichten, Meldelisten, Suche, Historie und Briefing. Sky = betrachtete Seite,
   Slate = Gegenseite, gedimmt = ohne Einsatz. Wunsch des Auftraggebers: LKs sollen beim Überfliegen
-  sofort ins Auge fallen.
+  sofort ins Auge fallen. **Zwei LK-Quellen:** Die LK in Meldelisten, Suche, Spieler-Kopf und
+  Briefing-Meldeliste ist die **aktuelle LK laut btv.de-Mannschaftsportrait beim letzten Crawl**
+  (der Wecker liest die Meldelisten der betroffenen Gruppe bei jedem Lauf neu — 7/4/0 Tage vor der
+  Begegnung, also mit den unter der Saison gestiegenen oder gefallenen LKs). Die LK in
+  Spielberichten, Aufstellungen und Historie-Zeilen ist der **Stand des Spieltags** und bleibt so.
+  Eine nuLiga-„LK-Prognose" gibt es im Portrait nicht (Spalten: Rang, LK, ID, Name, Nation, SG,
+  Bilanzen) — die App zeigt nie eine hochgerechnete LK.
 - **Farblogik: die betrachtete Seite bestimmt die Farbe.** Im Profil eines Gautingers ist sein Sieg
   gegen Pliening **grün**; im Briefing sind Gautings Ergebnisse aus Gautinger Sicht gefärbt,
   „Unsere Aufstellungen" aus Pliening-Sicht. Nur der Spielbericht einer TCP-Begegnung (aus
