@@ -164,7 +164,9 @@ export default function OpponentBriefing({ season, league, teamLabel, accentColo
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
                         <span className={`truncate text-[13px] font-bold ${played ? "text-slate-100" : "text-slate-400"}`}>{e.name}</span>
-                        <LkBadge lk={u?.lk || e.lk} tone={played ? "own" : "muted"} />
+                        {/* Meldelisten-LK = aktuelle LK beim letzten Wecker-Lauf; die LK aus dem
+                            Spielbericht ist nur der Stand des Spieltags und dient als Rückfall */}
+                        <LkBadge lk={e.lk || u?.lk || ""} tone={played ? "own" : "muted"} />
                       </span>
                       <span className="block truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
                     </span>
