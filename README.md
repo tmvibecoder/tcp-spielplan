@@ -166,8 +166,24 @@ git-worktree'" weiter unten.
   (der Wecker liest die Meldelisten der betroffenen Gruppe bei jedem Lauf neu — 7/4/0 Tage vor der
   Begegnung, also mit den unter der Saison gestiegenen oder gefallenen LKs). Die LK in
   Spielberichten, Aufstellungen und Historie-Zeilen ist der **Stand des Spieltags** und bleibt so.
-  Eine nuLiga-„LK-Prognose" gibt es im Portrait nicht (Spalten: Rang, LK, ID, Name, Nation, SG,
-  Bilanzen) — die App zeigt nie eine hochgerechnete LK.
+  Die App zeigt nie eine hochgerechnete LK.
+
+  **Prognose-LK — geprüft am 10.09.2026, nicht verfügbar.** Die „Prognose LK" (LK-Portrait 2.0
+  mit LK-Begleitwert auf drei Nachkommastellen, wöchentlicher Verbesserung/Abschlag und
+  Vorhersage für die Folgewoche) stammt von **mybigpoint/DTB** und ist auf tennis.de im
+  Spielerprofil unter „Ranking" zu sehen — laut tennis.de-Hilfe nur mit **LIZENZ-/PREMIUM-Abo
+  nach Login**. Öffentlich gibt es sie nirgends: das nuLiga-Spielerportrait des BTV
+  (`playerPortrait?person=<ID>`) leitet auf die btv.de-Startseite um, das DTB-Portrait liefert
+  404, die tennis.de-Spielersuche verlangt Anmeldung, und im btv.de-Mannschaftsportrait (unsere
+  Meldelisten-Quelle) stehen nur Rang, LK, ID-Nummer, Name, Nation, SG und Bilanzen — der
+  Spielername ist dort zwar ein Link, führt aber nirgendwohin. Ein Login-Crawler mit dem
+  tennis.de-Konto des Auftraggebers wäre technisch möglich (Zugangsdaten nur als GitHub-Secrets),
+  ist aber **nicht empfohlen**: Nutzungsbedingungen des Abos (fremde Profile automatisiert
+  abgreifen und öffentlich zeigen), Datenschutz, brüchige Login-Abläufe. Praktisch ersetzt die
+  aktuelle LK das meiste: nuLiga setzt sie wöchentlich neu, der Wecker liest sie am Spieltag um
+  01:00 Uhr — das ist der Wert, den die Prognose für diese Woche voraussagt. Denkbare Ergänzung
+  ohne Login: ein **LK-Verlauf** je Spieler aus den Spieltags-LKs der eigenen Spielberichte
+  (echte Historie, keine Hochrechnung). **Entscheidung des Auftraggebers steht aus.**
 - **Farblogik: die betrachtete Seite bestimmt die Farbe.** Im Profil eines Gautingers ist sein Sieg
   gegen Pliening **grün**; im Briefing sind Gautings Ergebnisse aus Gautinger Sicht gefärbt,
   „Unsere Aufstellungen" aus Pliening-Sicht. Nur der Spielbericht einer TCP-Begegnung (aus
