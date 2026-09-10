@@ -195,7 +195,16 @@ ersten Blick falsch wirkt.
 Die bundesweite Spielstärke-Kennzahl, im Datenformat `"LK14,3"` (mit **Komma**).
 **Niedriger ist besser** (LK 1 ist Spitze, LK 25 Anfang). Die App wertet daraus
 **▲ LK-Sieg** (gegen eine bessere LK gewonnen) und **▼** (gegen eine schwächere
-verloren).
+verloren). Zwei Stände kommen vor: die **aktuelle LK** (Meldeliste/btv.de-Portrait beim
+letzten Crawl, wöchentlich von nuLiga neu gesetzt) und die **LK am Spieltag** (steht so im
+Spielbericht, bleibt Geschichte).
+
+**Prognose-LK / LK-Begleitwert.**
+Begriffe aus dem mybigpoint-„LK-Portrait 2.0" (DTB): Der Begleitwert ist die LK mit drei
+Nachkommastellen, in die Siege und der wöchentliche Motivationsabschlag (−0,025) einfließen;
+die öffentliche LK ist der abgeschnittene Begleitwert; die Prognose ist die Vorhersage für die
+Folgewoche. **Nur mit tennis.de-Login/Abo sichtbar, nirgends öffentlich** — in der App deshalb
+nicht vorhanden (Details und Optionen im README unter „LK-Quellen"). Die App rechnet nichts hoch.
 
 **Meldeliste.**
 Die vom Verein vor der Saison gemeldete, nach Stärke sortierte Spielerliste einer
