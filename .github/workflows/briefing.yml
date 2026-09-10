@@ -1,0 +1,85 @@
+# Gegnerbriefing-Wecker: täglich um 01:00 Uhr Berlin prüfen, ob eine
+# TCP-Begegnung in 7, 4 oder 0 Tagen liegt — dann die BTV-Berichte der
+# betroffenen Gruppen neu einlesen, als Bot-PR mergen und den Deploy anstoßen.
+#
+# Zwei Crons, weil GitHub in UTC rechnet: 23:00 UTC = 01:00 MESZ (Sommer),
+# 00:00 UTC = 01:00 MEZ (Winter). Das Skript arbeitet nur, wenn es in Berlin
+# wirklich 01 Uhr ist; der jeweils andere Lauf endet sofort.
+#
+# Merges mit dem GITHUB_TOKEN lösen KEINEN push-Workflow aus — deshalb wird der
+# Deploy am Ende ausdrücklich per workflow_dispatch gestartet.
+#
+# Schlägt ein Lauf fehl (BTV nicht erreichbar, Chrome-Absturz, Konsistenz-Check
+# rot), bleibt der alte Datenstand live und GitHub schickt die übliche
+# E-Mail über den fehlgeschlagenen Workflow.
+
+name: Gegnerbriefing aktualisieren
+
+on:
+  schedule:
+    - cron: "0 23 * * *"
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Lauf erzwingen: alle Gruppen mit Begegnungen ab heute einlesen"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: briefing
+  cancel-in-progress: false
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Briefing-Lauf (Wecker prüfen, ggf. BTV einlesen)
+        id: run
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          CHROME_ARGS: "--no-sandbox --disable-dev-shm-usage"
+          FORCE: ${{ inputs.force }}
+        run: node scripts/briefing-run.mjs
+
+      - name: Änderungen als Bot-PR mergen und Deploy anstoßen
+        if: steps.run.outputs.ran == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "tcp-briefing-bot"
+          git config user.email "briefing-bot@users.noreply.github.com"
+          git add src/data
+          if git diff --cached --quiet; then
+            echo "Keine Datenänderung — nichts zu mergen."
+            exit 0
+          fi
+          BRANCH="bot/briefing-$(date -u +%Y%m%d-%H%M)"
+          git checkout -b "$BRANCH"
+          git commit -m "Briefing-Lauf: ${{ steps.run.outputs.scope }} eingelesen [bot]" \
+                     -m "Automatischer Wecker-Lauf (scripts/briefing-run.mjs): Spielberichte, Meldelisten, Tabellen und Datenstand aktualisiert."
+          git push -u origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "Briefing-Lauf: ${{ steps.run.outputs.scope }} [bot]" \
+            --body "Automatischer Wecker-Lauf um 01:00 Uhr Berlin. Eingelesen: ${{ steps.run.outputs.scope }}. Details im Workflow-Protokoll."
+          gh pr merge "$BRANCH" --squash --delete-branch
+          # Deploy explizit starten (GITHUB_TOKEN-Merges lösen keinen push-Workflow aus)
+          gh workflow run deploy.yml --ref main

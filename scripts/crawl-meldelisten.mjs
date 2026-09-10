@@ -1,8 +1,11 @@
 // Crawlt die namentlichen Meldelisten aller Mannschaften der gepflegten
-// Konkurrenzen von btv.de und schreibt src/data/meldelisten.ts neu.
+// Konkurrenzen von btv.de in den Saison-Cache scripts/.meldelisten-cache-<saison>.json
+// und schreibt danach src/data/meldelisten.ts über generate-meldelisten.mjs neu
+// (aus ALLEN Saison-Caches — ein Winter-Crawl löscht also keine Sommer-Listen).
 //
-//   npm run crawl:meldelisten            # alle Gruppen aus GROUPS
-//   npm run crawl:meldelisten -- 074     # nur Gruppen, deren Kurzname passt
+//   npm run crawl:meldelisten                     # alle Gruppen der laufenden Saison
+//   npm run crawl:meldelisten -- 074              # nur Gruppen, deren Kurzname passt
+//   npm run crawl:meldelisten -- --season winter-2526   # andere Saison
 //
 // Hintergrund: Die nuLiga-HTML-Seiten sind tot (Redirect aufs Portal) und das
 // btv.de-Widget (widget.btv.de/btvgroup) ist eine ZK-Java-App, die DIREKT
@@ -26,7 +29,8 @@ const CHROME =
   process.env.CHROME_PATH ??
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
-import { resolveSeason, describe } from "./seasons.mjs";
+import { resolveSeason, describe, rosterCacheFile } from "./seasons.mjs";
+import { execFileSync } from "node:child_process";
 
 // Vereinsnamen, die im Widget anders heißen als in summer-2026.ts — je Liga,
 // denn derselbe Verein kann in einer Liga zurückgezogen sein und in der anderen
@@ -52,15 +56,15 @@ const groups = filter
   : season.groups;
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const OUT = path.join(ROOT, "src/data/meldelisten.ts");
 
 // Grid-Zeile: <rang> LK<x,y> <id> <Name, Vorname> (<jahr>) [NAT[*]] [<sg-nr>] <bilanzen>
 // Die Nations-Spalte fehlt in manchen Portraits komplett (z. B. Gr. 004) -> optional.
 const ROW_RE =
   /^(\d+) (LK[\d,]+) (\d{7,8}) (.+?) \((\d{4})\)(?: ([A-Z]{3}\*?))?(?: (\d{5}))?(?: (.+))?$/;
 
-// Zwischenstand, damit ein Abbruch nicht alles verwirft (Datei ist gitignored)
-const CACHE = path.join(ROOT, "scripts/.meldelisten-cache.json");
+// Zwischenstand je Saison, damit ein Abbruch nicht alles verwirft (gitignored);
+// der Generator führt alle Saison-Caches zur Datendatei zusammen.
+const CACHE = rosterCacheFile(season);
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 const cacheKey = (lg, club) => `${lg}::${club}`;
 
@@ -280,52 +284,6 @@ for (const g of groups) {
 }
 await browser.close();
 
-const stand = new Date().toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
-const emitEntry = (e) => {
-  const nat = e.nation ? `, nation: "${e.nation}"` : "";
-  return `    { rang: ${e.rang}, name: ${JSON.stringify(e.name)}, lk: "${e.lk}", jahrgang: ${e.jahrgang}${nat} },`;
-};
-
-let ts = `import type { Meldeliste } from "../types";
-
-// ── Namentliche Meldelisten (Sommer 2026 + Mixed-Runde) ──────────────────────
-// AUTO-GENERIERT von scripts/crawl-meldelisten.mjs (npm run crawl:meldelisten),
-// Stand ${stand}. Quelle: btv.de Mannschaftsportraits der jeweiligen Gruppe.
-// Rang = Meldeposition wie in nuLiga (bei Mixed sind Herren und Damen separat
-// nummeriert); LK = aktuelle Leistungsklasse laut Portrait (kann von der LK im
-// Spielbericht-PDF abweichen, die den Stand am Spieltag zeigt). nation nur,
-// wenn nicht GER. Bilanzen stehen NICHT hier — sie kommen live aus den
-// Spielberichten (src/data/spielberichte.ts).
-
-export const MELDELISTEN: Meldeliste[] = [
-`;
-// Mannschaften ohne jeden Spieler weglassen (z. B. Midcourt U10: nuLiga führt
-// dort keine namentliche Meldeliste) — sonst zeigt die App "Einzel (0)".
-for (const t of result.filter((x) => x.herren.length || x.damen.length)) {
-  ts += `  {
-    leagueName: ${JSON.stringify(t.leagueName)},
-    club: ${JSON.stringify(t.club)},
-    herren: [
-${t.herren.map(emitEntry).join("\n")}
-    ],
-    damen: [
-${t.damen.map(emitEntry).join("\n")}
-    ],
-  },
-`;
-}
-ts += `];
-
-/** Meldeliste einer Mannschaft (exakte league/club-Strings wie in SUMMER_STANDINGS). */
-export function getMeldeliste(
-  leagueName: string,
-  club: string
-): Meldeliste | undefined {
-  return MELDELISTEN.find(
-    (m) => m.leagueName === leagueName && m.club === club
-  );
-}
-`;
-fs.writeFileSync(OUT, ts);
-const total = result.reduce((s, t) => s + t.herren.length + t.damen.length, 0);
-console.log(`\ngeschrieben: ${OUT} (${result.length} Mannschaften, ${total} Spieler)`);
+console.log(`\nCache: ${Object.keys(cache).length} Mannschaften in ${path.relative(ROOT, CACHE)}`);
+// Datendatei aus allen Saison-Caches neu erzeugen
+execFileSync("node", [path.join(ROOT, "scripts/generate-meldelisten.mjs")], { stdio: "inherit" });

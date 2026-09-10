@@ -10,6 +10,7 @@ import {
   type SetScore,
   type TcpSide,
 } from "../utils/spielbericht";
+import LkBadge from "./LkBadge";
 
 function SideLine({
   players,
@@ -34,11 +35,7 @@ function SideLine({
           <span key={i} className="flex items-center gap-1.5 text-sm leading-tight">
             {check && i === 0 && <span className={check}>✓</span>}
             <span className="truncate">{p.name}</span>
-            {p.lk && (
-              <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-slate-300 ring-1 ring-inset ring-slate-600/50">
-                {p.lk}
-              </span>
-            )}
+            {p.lk && <LkBadge lk={p.lk} tone={outcome === "tcpWin" || outcome === "neutralHome" ? "own" : "opp"} />}
           </span>
         ))}
       </div>

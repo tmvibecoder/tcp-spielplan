@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import type { Match, Team, MatchScore, IndividualMatch, WinterMatch } from "../types";
+import type { Match, Team, MatchScore, IndividualMatch, WinterMatch, SeasonId } from "../types";
 import type { MatchResult } from "../data/results";
 import { CLUBS } from "../data/clubs";
 import { PLIENING_ADDRESS } from "../data/constants";
@@ -7,8 +7,12 @@ import { formatDateFull } from "../utils/date-helpers";
 import LiveScorePanel from "./LiveScorePanel";
 
 const SpielberichtLink = lazy(() => import("./SpielberichtLink"));
+// Das Briefing zieht den saisonübergreifenden Spieler-Index mit — erst laden,
+// wenn eine Begegnung aufgeklappt ist.
+const OpponentBriefing = lazy(() => import("./OpponentBriefing"));
 
 interface MatchDetailProps {
+  seasonId: SeasonId;
   match: Match;
   team: Team;
   onClose: () => void;
@@ -23,6 +27,8 @@ interface MatchDetailProps {
   /** Hinweis „Beginnzeiten vorläufig“ nur bis zu diesem Datum zeigen */
   provisionalTimesUntil?: string;
   todayStr: string;
+  /** Spieler im Gegnerbriefing antippen → Spielerhistorie */
+  onOpenPlayer?: (key: string) => void;
 }
 
 function mapsUrl(address: string): string {
@@ -44,6 +50,7 @@ const OUTCOME_CLASS: Record<MatchResult["outcome"], string> = {
 };
 
 export default function MatchDetail({
+  seasonId,
   match,
   team,
   onClose,
@@ -52,8 +59,10 @@ export default function MatchDetail({
   onSaveScore,
   provisionalTimesUntil,
   todayStr,
+  onOpenPlayer,
 }: MatchDetailProps) {
   const opponent = match.isHome ? match.away : match.home;
+  const ownClub = match.isHome ? match.home : match.away;
   // Winter: Hallen-Spielort steht direkt am Termin. Sommer: Heim = Pliening,
   // Auswärts = Adresse des Gegners aus clubs.ts.
   const venue = (match as Partial<WinterMatch>).venue;
@@ -119,6 +128,7 @@ export default function MatchDetail({
             <div className="mt-2">
               <Suspense fallback={null}>
                 <SpielberichtLink
+                  season={seasonId}
                   league={team.league}
                   leagueLabel={`${team.label} · ${team.league}`}
                   homeClub={match.home}
@@ -168,6 +178,21 @@ export default function MatchDetail({
           🗺️ Google Maps
         </a>
       </div>
+
+      {/* Gegnerbriefing: was über den Gegner in dieser Saison belegt ist */}
+      {result?.outcome !== "cancelled" && (
+        <Suspense fallback={<p className="mt-3 text-[11px] text-slate-500">Gegnerbriefing wird geladen …</p>}>
+          <OpponentBriefing
+            season={seasonId}
+            league={team.league}
+            teamLabel={team.label}
+            accentColor={team.color}
+            opponentClub={opponent}
+            ownClub={ownClub}
+            onOpenPlayer={onOpenPlayer}
+          />
+        </Suspense>
+      )}
 
       {/* Manuelle Ergebniserfassung nur, solange kein offizielles Ergebnis vorliegt */}
       {onSaveScore && !result && (

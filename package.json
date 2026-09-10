@@ -13,6 +13,7 @@
     "crawl:meldelisten": "node scripts/crawl-meldelisten.mjs",
     "crawl:spielberichte": "node scripts/crawl-spielberichte.mjs",
     "gen:spielberichte": "node scripts/generate-spielberichte.mjs",
+    "gen:meldelisten": "node scripts/generate-meldelisten.mjs",
     "gen:standings": "node scripts/generate-standings.mjs",
     "check": "node scripts/check-data.mjs"
   },

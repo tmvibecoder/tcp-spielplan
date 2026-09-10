@@ -76,6 +76,7 @@ export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
 
   const matches = [];
   let finalHome = null, finalAway = null;
+  let notPlayed = 0; // ausgelassene, nicht begonnene Doppel
 
   // ── Einzel ──
   {
@@ -94,6 +95,9 @@ export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
       // Gast-Position + Gastspieler
       const awayPos = INT.test(lines[i]) ? Number(lines[i++]) : null;
       const awayRaw = isName(lines[i]) ? lines[i++] : "";
+      // Nicht beendetes Einzel (Zeitmangel, vom Spielleiter nicht gewertet): Namen
+      // und Position stehen da, aber keine einzige Ergebniszeile → auslassen.
+      if (scores.length === 0) { notPlayed++; pos = posNr; continue; }
       if (scores.length < 3) throw new Error(`Einzel ohne MP/Sätze/Spiele (Pos ${posNr})`);
       const [mp] = scores.slice(-3);
       const sets = scores.slice(0, -3).map((s) => s.split(":").map(Number));
@@ -129,6 +133,14 @@ export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
       while (i < lines.length && INT.test(lines[i])) i++;      // Platzziffern Gast
       const a1 = isName(lines[i]) ? lines[i++] : "";
       const a2 = isName(lines[i]) ? lines[i++] : "";
+      // Nicht begonnene oder nicht beendete Doppel („wegen Ablauf der Spielzeit",
+      // vom Spielleiter nicht gewertet): keine einzige Ergebniszeile — mit
+      // Platzhaltern oder mit echten Namen → auslassen, nicht abbrechen.
+      if (scores.length === 0) {
+        n++;
+        notPlayed++;
+        continue;
+      }
       if (scores.length < 3) throw new Error(`Doppel ohne MP/Sätze/Spiele (Nr ${n + 1})`);
       const [mp] = scores.slice(-3);
       const sets = scores.slice(0, -3).map((s) => s.split(":").map(Number));
@@ -151,7 +163,7 @@ export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
   finalAway = matches.filter((m) => m.winner === "away").length;
 
   const expected = teamSize;
-  if (matches.length !== expected) {
+  if (matches.length + notPlayed !== expected) {
     throw new Error(`${matches.length} Matches statt ${expected} (Einzel ${singlesCount}+Doppel ${expected - singlesCount})`);
   }
   return { completedDate, matches, finalHome, finalAway };

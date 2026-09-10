@@ -247,10 +247,10 @@ nichts mit den offiziellen BTV-Ergebnissen zu tun und wird von ihnen später abg
 
 ---
 
-## Vorhaben Gegnerbriefing (Stand 09.09.2026 — spezifiziert, nicht gebaut)
+## Suche, Spielerhistorie, Gegnerbriefing (seit 10.09.2026)
 
-Die Begriffe gelten für die im README beschriebene Erweiterung („Vorhaben: Suche, Spielerhistorie
-und Gegnerbriefing"). Sie tauchen bisher in keinem Code auf.
+Die Begriffe der Erweiterung vom 09./10.09.2026 (README „Suche, Spielerhistorie und
+Gegnerbriefing", ARCHITEKTUR Abschnitt 13).
 
 **Gegnerbriefing.**
 Der Block in der aufgeklappten TCP-Begegnung im Spielplan, der vor dem Spieltag zeigt, **was über
@@ -276,9 +276,8 @@ dem **BTV-Stand** der Tabellen (nur Datum, gesetzt von `gen:standings`).
 
 **Datenlücke.**
 Eine Saison oder Gruppe, deren Spielberichte beim BTV **nicht mehr beschafft** werden konnten.
-Wird in der Spielerhistorie **ausgewiesen** („Winter 2025/26 — Spielberichte nicht verfügbar"),
-nie stillschweigend weggelassen. Stand 09.09.2026 sind Winter 2024/25, Sommer 2025 und Winter
-2025/26 noch nicht erfasst.
+Wird in der Spielerhistorie **ausgewiesen** („Datenlücke: Für … sind noch keine Spielberichte
+erfasst"), nie stillschweigend weggelassen; eine noch nicht begonnene Runde zählt nicht als Lücke.
 
 **Betrachtete Seite (Farblogik).**
 Die Mannschaft oder der Spieler, dessen Profil gerade offen ist, bestimmt die Farbe: **Grün =
@@ -288,7 +287,22 @@ Gautingers ist sein Sieg gegen Pliening also grün. Nur der Spielbericht einer T
 Seite ist. Zeilen gegen Pliening tragen in der Historie eine „TCP"-Marke — reine Kennzeichnung.
 
 **Briefing-Lauf / Wecker.**
-Der geplante automatische Lauf: täglich 01:00 Uhr Berlin prüfen, ob eine TCP-Begegnung in 7, 4
-oder 0 Tagen liegt; wenn ja, BTV-Reports und Spielberichte der Gruppe neu einlesen, Daten
-generieren, prüfen, als Bot-PR mergen, deployen; bei Fehlschlag E-Mail. Läuft in GitHub Actions.
-**Nicht aktiviert**, solange die Freigabe fehlt.
+Der automatische Lauf (`scripts/briefing-run.mjs`, `.github/workflows/briefing.yml`): täglich
+01:00 Uhr Berlin prüfen, ob eine TCP-Begegnung in 7, 4 oder 0 Tagen liegt; wenn ja, Spielberichte
+und Meldelisten der Gruppe neu einlesen, Tabellen/Begegnungen generieren, prüfen, als Bot-PR
+mergen, Deploy anstoßen; bei Fehlschlag E-Mail. Aktiv seit 10.09.2026.
+
+**Historien-Saison.**
+Eine Saison, die nur als Spielberichte und Meldelisten vorliegt (`historyOnly`, kein Eintrag in
+`SEASON_DATA`, nicht im Dropdown): Sommer 2025 und Winter 2024/25. Sie speist Suche und
+Spielerhistorie.
+
+**Gruppen-Such-Widget / „Archiv".**
+`widget.btv.de/btvgrpsearch/?region=…`, eingebettet auf btv.de: Region → Knopf „Archiv" (Saison
+bis Sommer 2002) → Altersbereich → Altersklasse → Gruppe, mit „Link auf Gruppe" = groupid. Der
+Weg zu vergangenen Runden, die das Vereins-Widget nicht mehr zeigt. `?archive=true` ist dagegen
+ein altes Archiv bis 2021/22. Bedient von `scripts/discover-groups.mjs`.
+
+**LK-Abzeichen (`LkBadge`).**
+Die einheitliche, grafisch hervorgehobene Darstellung einer Leistungsklasse — kleines Schild mit
+„LK"-Präfix und fetter Zahl; Sky = betrachtete Seite, Slate = Gegenseite, gedimmt = ohne Einsatz.

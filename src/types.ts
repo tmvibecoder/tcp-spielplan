@@ -32,7 +32,9 @@ export interface MonthColor {
 
 export type TeamFormat = "6er" | "4er";
 
-export type SeasonId = "winter-2627" | "sommer-26" | "winter-2526";
+/** Alle Saisons, zu denen es Daten gibt — auch die, die nur als Historie
+ *  (Spielberichte + Meldelisten) vorliegen und keinen Spielplan in der App haben. */
+export type SeasonId = "winter-2627" | "sommer-26" | "winter-2526" | "sommer-25" | "winter-2425";
 
 export interface Season {
   id: SeasonId;
@@ -42,6 +44,9 @@ export interface Season {
   /** Bis zu diesem Datum (YYYY-MM-DD) gelten die Beginnzeiten laut BTV als vorläufig;
    *  danach verschwindet der Hinweis automatisch. */
   provisionalTimesUntil?: string;
+  /** true = nur Spielberichte/Meldelisten für Spielerhistorie und Suche,
+   *  kein Spielplan und keine Tabellen in der App. */
+  historyOnly?: boolean;
 }
 
 export interface StandingsEntry {
@@ -108,8 +113,9 @@ export interface MeldelistenEintrag {
 }
 
 export interface Meldeliste {
-  leagueName: string; // exakt wie in SUMMER_STANDINGS
-  club: string;       // exakt wie in SUMMER_STANDINGS
+  season: SeasonId;   // Gruppennummern wiederholen sich über die Jahre
+  leagueName: string; // exakt wie in den Tabellen der Saison
+  club: string;       // exakt wie in den Tabellen der Saison
   herren: MeldelistenEintrag[];
   damen: MeldelistenEintrag[];
 }

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { MatchResult } from "../data/results";
+import type { SeasonId } from "../types";
 import { getSpielbericht } from "../data/spielberichte";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 
 interface Props {
+  season: SeasonId;
   league: string;      // Team.league, identisch mit LeagueStandings.leagueName
   leagueLabel: string; // z. B. "Herren · Südliga 2 · Gr. 023"
   homeClub: string;
@@ -13,9 +15,9 @@ interface Props {
 
 // Wird per React.lazy geladen, damit die großen Spielbericht-Daten erst dann
 // ins Bundle kommen, wenn jemand ein gespieltes Spiel im Spielplan aufklappt.
-export default function SpielberichtLink({ league, leagueLabel, homeClub, awayClub, result }: Props) {
+export default function SpielberichtLink({ season, league, leagueLabel, homeClub, awayClub, result }: Props) {
   const [open, setOpen] = useState(false);
-  const bericht = getSpielbericht(league, homeClub, awayClub);
+  const bericht = getSpielbericht(season, league, homeClub, awayClub);
   if (!bericht) return null;
 
   return (

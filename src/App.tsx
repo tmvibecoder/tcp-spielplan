@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, lazy, Suspense } from "react";
 import { MATCHES } from "./data/matches";
 import { SEASONS, DEFAULT_SEASON } from "./data/seasons";
-import { SEASON_DATA, getSeasonData } from "./data/season-data";
+import { getSeasonData } from "./data/season-data";
 import type { Team, SeasonId, SubTab } from "./types";
 import { generatePrintHTML } from "./utils/pdf-export";
 import Header from "./components/Header";
@@ -13,13 +13,23 @@ import Footer from "./components/Footer";
 import { Impressum, Datenschutz } from "./components/LegalPages";
 import { useLiveScores } from "./hooks/useLiveScores";
 import { useFavorites } from "./hooks/useFavorites";
+import { DATA_STAND } from "./data/data-stand";
+import { playerKey, type TeamHit } from "./data/player-history";
 
 // Die Tabellen-Ansicht zieht die großen Spielbericht- und Meldelisten-Daten mit.
 // Sie wird erst geladen, wenn jemand den Reiter „Tabelle“ öffnet — der Spielplan
 // startet dadurch deutlich schneller.
 const StandingsView = lazy(() => import("./components/StandingsView"));
+// Suche, Spielerhistorie und Mannschaftsseite brauchen den Index über alle
+// Saisons — ebenfalls erst bei Bedarf laden.
+const SearchOverlay = lazy(() => import("./components/SearchOverlay"));
+const PlayerHistory = lazy(() => import("./components/PlayerHistory"));
+const TeamPage = lazy(() => import("./components/TeamPage"));
 
 type Page = "spielplan" | "impressum" | "datenschutz";
+
+/** Aufgeschlagene Unterseiten (Spieler, Mannschaft) als Stapel — „Zurück" geht eine Ebene hoch. */
+type View = { kind: "spieler"; key: string } | { kind: "mannschaft"; hit: TeamHit };
 
 // Persistenz der Filter-Auswahl (welche Konkurrenzen aktiv, Nur-Heim-Schalter).
 // Wird nur per "Auswahl speichern" im Menü geschrieben und beim Laden angewandt.
@@ -37,7 +47,7 @@ interface FilterPrefs {
 type TeamSelection = Record<SeasonId, Set<string>>;
 
 function allTeamsOf(id: SeasonId): Set<string> {
-  return new Set(SEASON_DATA[id].teams.map((t) => t.id));
+  return new Set(getSeasonData(id).teams.map((t) => t.id));
 }
 
 function loadPrefs(): FilterPrefs | null {
@@ -78,6 +88,24 @@ function App() {
   const [page, setPage] = useState<Page>("spielplan");
   // Kalender-Downloads liegen im ⋯-Menü und öffnen ein Overlay
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [views, setViews] = useState<View[]>([]);
+
+  const openPlayer = useCallback((key: string) => {
+    setSearchOpen(false);
+    setViews((v) => [...v, { kind: "spieler", key }]);
+    window.scrollTo(0, 0);
+  }, []);
+  const openPlayerByName = useCallback((club: string, name: string) => openPlayer(playerKey(club, name)), [openPlayer]);
+  const openTeam = useCallback((hit: TeamHit) => {
+    setSearchOpen(false);
+    setViews((v) => [...v, { kind: "mannschaft", hit }]);
+    window.scrollTo(0, 0);
+  }, []);
+  const popView = useCallback(() => {
+    setViews((v) => v.slice(0, -1));
+    window.scrollTo(0, 0);
+  }, []);
 
   const data = getSeasonData(season);
   const seasonInfo = data.season;
@@ -87,6 +115,7 @@ function App() {
   const changeSubTab = useCallback((tab: SubTab) => {
     setSubTab(tab);
     setCalendarOpen(false);
+    setViews([]);
   }, []);
 
   const navigateToLegal = useCallback((p: "impressum" | "datenschutz") => {
@@ -177,6 +206,11 @@ function App() {
   if (page === "impressum") return <Impressum onBack={backToSpielplan} />;
   if (page === "datenschutz") return <Datenschutz onBack={backToSpielplan} />;
 
+  const current = views[views.length - 1];
+  const viewFallback = (
+    <div className="py-12 text-center text-sm text-slate-500">Wird geladen …</div>
+  );
+
   const standingsFallback = (
     <div className="py-12 text-center text-sm text-slate-500">Tabellen werden geladen …</div>
   );
@@ -186,6 +220,8 @@ function App() {
       <Header
         onPdf={handlePdf}
         onCalendar={() => setCalendarOpen(true)}
+        onSearch={() => setSearchOpen(true)}
+        dataStand={DATA_STAND}
         showPdf={data.supportsPdf}
         subTab={subTab}
         setSubTab={changeSubTab}
@@ -198,6 +234,7 @@ function App() {
               setSeason(id);
               setSubTab("spielplan");
               setCalendarOpen(false);
+              setViews([]);
             }}
           />
         }
@@ -216,10 +253,25 @@ function App() {
         }
       />
 
+      {searchOpen && (
+        <Suspense fallback={null}>
+          <SearchOverlay onClose={() => setSearchOpen(false)} onOpenPlayer={openPlayer} onOpenTeam={openTeam} />
+        </Suspense>
+      )}
+
       <main className="max-w-5xl mx-auto px-4 py-6">
-        {subTab === "spielplan" ? (
+        {current?.kind === "spieler" ? (
+          <Suspense fallback={viewFallback}>
+            <PlayerHistory key={current.key} playerKey={current.key} onBack={popView} />
+          </Suspense>
+        ) : current?.kind === "mannschaft" ? (
+          <Suspense fallback={viewFallback}>
+            <TeamPage hit={current.hit} onBack={popView} onOpenPlayer={openPlayerByName} />
+          </Suspense>
+        ) : subTab === "spielplan" ? (
           <>
             <TimelineView
+              seasonId={season}
               matches={filteredMatches}
               teamMap={teamMap}
               standings={data.standings}
@@ -231,6 +283,7 @@ function App() {
               favorites={favorites}
               toggleFavorite={toggleFavorite}
               provisionalTimesUntil={seasonInfo.provisionalTimesUntil}
+              onOpenPlayer={openPlayer}
             />
             <CalendarDownloads
               season={season}
@@ -241,9 +294,11 @@ function App() {
         ) : (
           <Suspense fallback={standingsFallback}>
             <StandingsView
+              seasonId={season}
               standings={filteredStandings}
               seasonLabel={seasonInfo.label}
               stand={data.standingsStand}
+              onOpenPlayer={openPlayerByName}
             />
           </Suspense>
         )}

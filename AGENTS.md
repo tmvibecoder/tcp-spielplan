@@ -89,12 +89,12 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
   Änderungen ohne Rückfrage mergen, deployen und live nehmen — das gilt für alle
   Repositories von Thomas. Rückfragepflichtig bleiben **Datenverlust** und **Eingriffe
   in fremde Systeme**.
-- **Vorhaben Gegnerbriefing ist gesperrt bis zur Freigabe.** Suche, Spielerhistorie,
-  Gegnerbriefing und die automatische Aktualisierung sind seit 09.09.2026 nur **spezifiziert**
-  (README „Vorhaben: Suche, Spielerhistorie und Gegnerbriefing", docs/ARCHITEKTUR.md Abschnitt 13,
-  docs/AUFGABEN.md Abschnitt 9). Kein Anwendungscode, kein Workflow, kein Cron dafür, bevor die
-  offenen Fragen beantwortet, die Mockups abgenommen und die Freigabe **ausdrücklich** erteilt
-  sind — die stehende Freigabe „fertige Arbeit ausliefern" deckt das nicht ab.
+- **Der Briefing-Wecker läuft automatisch** (`.github/workflows/briefing.yml`, täglich 01:00
+  Uhr Berlin; Freigabe des Auftraggebers vom 09.09.2026). Seine Bot-PRs (`bot/briefing-…`,
+  Commit-Suffix `[bot]`) mergen sich selbst und stoßen den Deploy an — nicht von Hand
+  eingreifen, nicht parallel Daten der laufenden Saison committen, während ein Lauf offen ist
+  (Actions-Reiter prüfen). Läuft er rot, steht der Grund im Protokoll; Rezept in
+  [docs/AUFGABEN.md](docs/AUFGABEN.md), Abschnitt 9.
 - **Nie direkt auf `main` pushen.** Änderungen: Branch → PR → `gh pr merge --squash`
   (der Merge löst den Deploy aus). Reine Doku-Commits mit `[skip ci]`. Nach dem Deploy
   den **live ausgelieferten Bundle-Hash** prüfen
@@ -117,10 +117,12 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
 - **Liga- und Spieldaten nur aus offiziellen BTV-Quellen** übernehmen, **verbatim** —
   auch wenn die BTV-Rangfolge „falsch" aussieht (bei ungleicher Spielzahl sortiert der
   BTV nach Punkt-Quotient). Nichts schätzen, nichts hochrechnen.
-- **`src/data/meldelisten.ts` und `src/data/spielberichte-crawled.ts` sind generiert** —
-  nur über `npm run crawl:meldelisten` bzw.
-  `npm run crawl:spielberichte && npm run gen:spielberichte` ändern. Nach
-  Datenänderungen `npm run check` laufen lassen (Tabellen ↔ Berichte ↔ Meldelisten).
+- **`src/data/meldelisten.ts`, `src/data/spielberichte-crawled.ts` und `src/data/data-stand.ts`
+  sind generiert** — nur über `npm run crawl:meldelisten` (schreibt über `gen:meldelisten`),
+  `npm run crawl:spielberichte && npm run gen:spielberichte` bzw. `scripts/briefing-run.mjs`
+  ändern. Beide Datendateien enthalten **mehrere Saisons**, jeder Eintrag trägt `season`;
+  Ligen ohne Cache übernehmen die Generatoren aus dem Bestand (nichts geht verloren). Nach
+  Datenänderungen `npm run check -- --all` laufen lassen.
 - **UI-Änderungen im echten Browser prüfen** (headless Chrome gegen
   `npx vite preview`), nicht nur `tsc` und Build. Die App ist **mobil-erst**: Viewport
   **420×912**, `isMobile`/`hasTouch`, `.tap()` statt `.click()`. Beispiel-Checks:
@@ -145,8 +147,11 @@ npm run gen:standings -- --write   # Ergebnisse der laufenden Saison nachziehen
 npm run check                      # Konsistenz  (-- --all für alle Saisons)
 npm run crawl:spielberichte        # Spielberichte crawlen (langsam, braucht Chrome)
 npm run gen:spielberichte          # Cache -> src/data/spielberichte-crawled.ts
-npm run crawl:meldelisten          # Meldelisten crawlen
+npm run crawl:meldelisten          # Meldelisten crawlen (Cache je Saison) + gen:meldelisten
+npm run gen:meldelisten            # Caches + Bestand -> src/data/meldelisten.ts
 npm run season:new -- --discover-only    # Mannschaften + groupids einer neuen Runde
+node scripts/discover-groups.mjs --season "Winter 2025/2026"   # groupids JEDER Runde (auch alte)
+node scripts/briefing-run.mjs --dry-run   # Wecker: was wäre heute fällig, wann der nächste Lauf?
 ```
 
 **Die Saison gibt niemand an.** Alle Skripte erkennen sie aus den eingetragenen
@@ -170,10 +175,17 @@ Spielterminen (`scripts/seasons.mjs`) und nennen beim Start, worauf sie wirken;
 | Winterrunde 2025/26 (Archiv) | `src/data/winter-2526.ts` |
 | Spielplan-Termine Sommer (bei Verlegung: Datum aus dem Spielbericht) | `src/data/matches.ts` |
 | Ergebnis je Spielplan-Begegnung aus der Kreuztabelle ableiten | `src/data/results.ts` |
-| Spielberichte (Einzel/Doppel je Begegnung) | `src/data/spielberichte-crawled.ts` (**generiert**) |
-| Lookup drumherum | `src/data/spielberichte.ts` |
-| Meldelisten (alle gemeldeten Spieler) | `src/data/meldelisten.ts` (**generiert**) |
-| Crawler + Generatoren | `scripts/crawl-meldelisten.mjs`, `crawl-spielberichte.mjs`, `parse-spielbericht.mjs`, `generate-spielberichte.mjs`, `generate-standings.mjs` |
+| Spielberichte (Einzel/Doppel je Begegnung, **alle Saisons**, mit `season`) | `src/data/spielberichte-crawled.ts` (**generiert**) |
+| Lookup drumherum (`getSpielbericht(season, …)`) | `src/data/spielberichte.ts` |
+| Meldelisten (alle gemeldeten Spieler, **alle Saisons**, mit `season`) | `src/data/meldelisten.ts` (**generiert**) |
+| **Saisonübergreifender Index**: Spieler, Mannschaften, Einsätze, Suche, Aufstellungen | `src/data/player-history.ts` |
+| Datenstand + nächster Wecker-Lauf (⋯-Menü) | `src/data/data-stand.ts` (**generiert** vom Wecker) |
+| Suche (Overlay), Spielerhistorie, Mannschaftsseite | `src/components/SearchOverlay.tsx`, `PlayerHistory.tsx`, `TeamPage.tsx` (alle lazy) |
+| Gegnerbriefing in der aufgeklappten Begegnung | `src/components/OpponentBriefing.tsx` (lazy, aus `MatchDetail`) |
+| LK-Abzeichen (überall gleich) | `src/components/LkBadge.tsx` |
+| **Wecker**: Fälligkeit 7/4/0 Tage, Crawl, Datenstand | `scripts/briefing-run.mjs` + `.github/workflows/briefing.yml` |
+| groupids beliebiger (auch alter) Saisons aus dem btv.de-Archiv | `scripts/discover-groups.mjs` |
+| Crawler + Generatoren | `scripts/crawl-meldelisten.mjs`, `crawl-spielberichte.mjs`, `parse-spielbericht.mjs`, `generate-spielberichte.mjs`, `generate-meldelisten.mjs`, `generate-standings.mjs` |
 | Prüf-Skripte | `scripts/check-data.mjs`, `check-names.mjs`, `verify-parser.mjs` |
 | Aggregation Spieler/Doppel | `src/data/player-stats.ts` |
 | Spieler-Detailseite | `src/components/TeamStatsDetail.tsx` |
@@ -182,7 +194,7 @@ Spielterminen (`scripts/seasons.mjs`) und nennen beim Start, worauf sie wirken;
 | Live-Zwischenstände (Supabase) | `src/hooks/useLiveScores.ts`, `src/components/LiveScorePanel.tsx`, `ScoreEntry.tsx`, `supabase-setup.sql` |
 | Kalender-Downloads (Overlay aus dem ⋯-Menü) | `src/components/CalendarDownloads.tsx` |
 | Zustand, Filter, Persistenz | `src/App.tsx` (`localStorage["tcp-filter-prefs"]`) |
-| Deploy | `.github/workflows/deploy.yml` |
+| Deploy | `.github/workflows/deploy.yml` (Push auf `main` **oder** `workflow_dispatch` vom Wecker) |
 
 ---
 
