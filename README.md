@@ -139,7 +139,10 @@ git-worktree'" weiter unten.
   Gruppe spielen — mehr ist nicht erfasst) und **Spieler** (eigene und gegnerische, Name in beiden
   Reihenfolgen, Verein). Suche über **alle erfassten Saisons**; Treffer tragen Saison-Chips.
   Mannschaft → vollständige Meldeliste (`TeamPage`, bestehende Darstellung, mit Saison-Umschalter);
-  Spieler → Spielerhistorie.
+  Spieler → Spielerhistorie. **Suchhistorie** (seit 10.09.2026): Solange nichts eingegeben ist,
+  stehen unter dem Feld die zuletzt angetippten Spieler und Mannschaften („Zuletzt angesehen",
+  neueste zuerst, höchstens 10, „Verlauf löschen") — im Browser unter
+  `localStorage["tcp-search-recent"]`, also je Gerät.
 - **Spielerhistorie** (`PlayerHistory`): alle Einzel und Doppel einer Person über alle erfassten
   Saisons, **neueste zuerst**, je Einsatz Datum, Position (E1…/D1…), Gegner mit LK, Doppelpartner,
   Satzfelder und SIEG/NIEDERL.; Zeile antippen → Spielbericht. Schalter **„Nur gegen TC Pliening"**

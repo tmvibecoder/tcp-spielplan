@@ -272,7 +272,8 @@ App.tsx  ── hält: season, subTab, activeTeams (Set je Saison), homeOnly,
 - Gespeichert wird **nur auf Knopfdruck** („Auswahl speichern"), nicht automatisch:
   `localStorage["tcp-filter-prefs"]` = `{ teams: { <seasonId>: string[] }, homeOnly: boolean }`.
   Die alte Fassung `{ summer: [...], winter: [...] }` wird beim Laden noch migriert.
-- Favoriten liegen separat unter `localStorage["tcp-favorites"]` (`useFavorites`).
+- Favoriten liegen separat unter `localStorage["tcp-favorites"]` (`useFavorites`); die
+  Suchhistorie unter `localStorage["tcp-search-recent"]` (`SearchOverlay`, höchstens 10 Einträge).
 
 **Drei Fallen in der Oberfläche:**
 
