@@ -78,8 +78,8 @@ function Row({ a, onOpen }: { a: Appearance; onOpen: () => void }) {
             <span className="text-[10px] text-slate-500">w.o.</span>
           ) : (
             a.sets.map((s, i) => (
-              <span key={i} className={`h-6 w-[26px] rounded text-center text-[12px] leading-6 ${setCellClass(viewOutcome(s.won))}`}>
-                {s.own}
+              <span key={i} className={`h-6 min-w-[34px] rounded px-1 text-center text-[11.5px] leading-6 ${setCellClass(viewOutcome(s.won))}`}>
+                {s.own}:{s.opp}
               </span>
             ))
           )}
