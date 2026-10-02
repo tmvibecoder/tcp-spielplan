@@ -464,6 +464,11 @@ als ersten Parameter — Gruppennummern wiederholen sich über die Jahre.
 `src/data/data-stand.ts` (generiert vom Wecker) hält Zeitpunkt und Umfang des letzten Einlesens
 und den nächsten geplanten Lauf.
 
+`OpponentBriefing.tsx` exportiert neben dem Gegnerbriefing die gemeinsame `RosterList` (Rang,
+Name, LK, Jahrgang, Einsätze, Bilanz) und `OwnRoster`, die eigene Meldeliste zur Begegnung
+(seit 02.10.2026); `MatchDetail` lädt beide über denselben lazy Chunk. Der Jahrgang-Zusatz
+(`Jahrgang`) wohnt neben `LkBadge`, damit `TeamStatsDetail` ihn ohne den Briefing-Chunk nutzt.
+
 ### 13.2 Oberfläche: Overlay und Unterseiten-Stapel, kein Router
 
 ```

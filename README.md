@@ -156,6 +156,13 @@ git-worktree'" weiter unten.
   **„Unsere Aufstellungen"** der eigenen Konkurrenz) und *Ergebnisse* (Begegnungsergebnisse des
   Gegners). **Keine Prognosen** — nur belegte Einsätze. Spieler antippen → Historie, Begegnung
   antippen → Spielbericht. Vor dem ersten Spieltag zeigt es die Meldeliste und Leerzustände.
+- **Unsere Meldeliste** (`OwnRoster` in `OpponentBriefing.tsx`, seit 02.10.2026) direkt unter dem
+  Gegnerbriefing: dieselbe Liste für die **eigene** TCP-Mannschaft der Begegnung — Rang, Name,
+  LK, Jahrgang, Einsätze, Bilanz; einklappbar, weil Winter-Meldelisten bis zu 35 Namen lang sind.
+  Beide Listen rendern über die gemeinsame `RosterList`. Der **Jahrgang** („Jg. 1989",
+  `Jahrgang` in `LkBadge.tsx`) steht seitdem überall hinter der LK, wo eine Meldeliste gezeigt
+  wird (auch in der Mannschaftsansicht der Tabelle und auf der Mannschaftsseite der Suche);
+  Ersatzspieler ohne Meldelisten-Eintrag haben keinen.
 - **Datenstand im ⋯-Menü** (bewusst nicht im Briefing): Datum + Uhrzeit des letzten Einlesens der
   BTV-Berichte, was eingelesen wurde, und der **nächste geplante Wecker-Lauf** mit Grund.
 - **LK überall als Abzeichen** (`LkBadge`): kleines Schild mit abgesetztem „LK"-Präfix und fetter

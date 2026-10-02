@@ -7,7 +7,7 @@ import {
   normalizePlayerName,
 } from "../data/player-stats";
 import type { Meldeliste, MeldelistenEintrag } from "../types";
-import LkBadge from "./LkBadge";
+import LkBadge, { Jahrgang } from "./LkBadge";
 
 interface TeamStatsDetailProps {
   team: TeamStats;
@@ -172,6 +172,7 @@ function RosterRow({
               {entry.name}
             </span>
             <LkPill lk={entry.lk} own={played} />
+            <Jahrgang jahrgang={entry.jahrgang} />
             {entry.nation && (
               <span className="text-[9px] font-bold text-slate-500">
                 {entry.nation}
