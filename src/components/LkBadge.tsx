@@ -36,3 +36,14 @@ export default function LkBadge({ lk, tone = "own", size = "sm", className = "" 
     </span>
   );
 }
+
+/** Jahrgang als dezenter Zusatz hinter der LK — 0/fehlend (Ersatzspieler ohne
+ *  Meldelisten-Eintrag) wird nicht gezeigt. */
+export function Jahrgang({ jahrgang, className = "" }: { jahrgang?: number; className?: string }) {
+  if (!jahrgang) return null;
+  return (
+    <span className={`shrink-0 text-[10px] font-semibold tabular-nums text-slate-500 ${className}`} title={`Jahrgang ${jahrgang}`}>
+      Jg. {jahrgang}
+    </span>
+  );
+}

@@ -10,6 +10,7 @@ const SpielberichtLink = lazy(() => import("./SpielberichtLink"));
 // Das Briefing zieht den saisonübergreifenden Spieler-Index mit — erst laden,
 // wenn eine Begegnung aufgeklappt ist.
 const OpponentBriefing = lazy(() => import("./OpponentBriefing"));
+const OwnRoster = lazy(() => import("./OpponentBriefing").then((m) => ({ default: m.OwnRoster })));
 
 interface MatchDetailProps {
   seasonId: SeasonId;
@@ -188,6 +189,15 @@ export default function MatchDetail({
             teamLabel={team.label}
             accentColor={team.color}
             opponentClub={opponent}
+            ownClub={ownClub}
+            onOpenPlayer={onOpenPlayer}
+          />
+          {/* Eigene Meldeliste: wer bei uns in dieser Mannschaft gemeldet ist (Rang, LK, Jahrgang) */}
+          <OwnRoster
+            season={seasonId}
+            league={team.league}
+            teamLabel={team.label}
+            accentColor={team.color}
             ownClub={ownClub}
             onOpenPlayer={onOpenPlayer}
           />

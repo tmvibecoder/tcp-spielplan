@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { SeasonId } from "../types";
+import type { MeldelistenEintrag, SeasonId } from "../types";
 import { getMeldeliste } from "../data/meldelisten";
 import { getTeamSeason, playerKey, type LineupSlot, type MeetingSummary, type TeamPlayerUsage } from "../data/player-history";
 import { ALL_SEASONS } from "../data/seasons";
-import LkBadge from "./LkBadge";
+import LkBadge, { Jahrgang } from "./LkBadge";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 import type { Spielbericht } from "../utils/spielbericht";
 
@@ -99,6 +99,124 @@ function usageText(u: TeamPlayerUsage | undefined): string {
   return parts.join(" · ");
 }
 
+/** Namentliche Meldeliste einer Mannschaft in der laufenden Saison: Rang, Name,
+ *  aktuelle LK, Jahrgang und (sofern belegt) Einsätze und Bilanz. Gemeinsame
+ *  Darstellung für Gegner- und eigene Meldeliste. */
+export function RosterList({
+  club,
+  rows,
+  usage,
+  accentColor,
+  onOpenPlayer,
+}: {
+  club: string;
+  rows: MeldelistenEintrag[];
+  usage: Map<string, TeamPlayerUsage>;
+  accentColor: string;
+  onOpenPlayer?: (key: string) => void;
+}) {
+  // Eingesetzte Spieler ohne Meldelisten-Eintrag (Ersatz aus anderen Mannschaften)
+  const extra = [...usage.values()].filter((u) => !rows.some((r) => r.name === u.name));
+
+  if (rows.length === 0 && extra.length === 0) {
+    return (
+      <p className="rounded-lg border border-slate-700/50 bg-slate-800/30 px-3 py-3 text-center text-[12px] text-slate-400">
+        Für {club} ist in dieser Saison noch keine Meldeliste erfasst.
+      </p>
+    );
+  }
+  return (
+    <div className="space-y-1">
+      {rows.map((e) => {
+        const u = usage.get(e.name);
+        const played = !!u && (u.singles > 0 || u.doubles > 0);
+        return (
+          <button
+            key={`${e.rang}-${e.name}`}
+            type="button"
+            onClick={onOpenPlayer ? () => onOpenPlayer(playerKey(club, e.name)) : undefined}
+            className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left ${played ? "border-slate-700/50 bg-slate-800/30 hover:bg-slate-700/30" : "border-slate-700/30 bg-slate-800/10 opacity-70"}`}
+          >
+            <span className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-md text-[11px] font-extrabold" style={{ backgroundColor: accentColor + "22", color: accentColor }}>
+              {e.rang}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center gap-1.5">
+                <span className={`truncate text-[13px] font-bold ${played ? "text-slate-100" : "text-slate-400"}`}>{e.name}</span>
+                {/* Meldelisten-LK = aktuelle LK beim letzten Wecker-Lauf; die LK aus dem
+                    Spielbericht ist nur der Stand des Spieltags und dient als Rückfall */}
+                <LkBadge lk={e.lk || u?.lk || ""} tone={played ? "own" : "muted"} />
+                <Jahrgang jahrgang={e.jahrgang} />
+                {e.nation && <span className="shrink-0 text-[9px] font-bold text-slate-500">{e.nation}</span>}
+              </span>
+              <span className="block truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
+            </span>
+            {played && u && (
+              <span className="shrink-0 text-[11px] font-bold tabular-nums">
+                <span className="text-emerald-400">{u.singlesWins + u.doublesWins}</span>
+                <span className="text-slate-500">:</span>
+                <span className="text-red-400">{u.singles + u.doubles - u.singlesWins - u.doublesWins}</span>
+              </span>
+            )}
+          </button>
+        );
+      })}
+      {extra.length > 0 && (
+        <>
+          <p className="px-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">Weitere Einsätze</p>
+          {extra.map((u) => (
+            <button
+              key={u.name}
+              type="button"
+              onClick={onOpenPlayer ? () => onOpenPlayer(playerKey(club, u.name)) : undefined}
+              className="flex w-full items-center gap-2 rounded-lg border border-slate-700/50 bg-slate-800/30 px-2.5 py-1.5 text-left hover:bg-slate-700/30"
+            >
+              <span className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-md bg-slate-700/40 text-[11px] font-extrabold text-slate-400">–</span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-1.5">
+                  <span className="truncate text-[13px] font-bold text-slate-100">{u.name}</span>
+                  <LkBadge lk={u.lk} tone="own" />
+                </span>
+                <span className="block truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
+              </span>
+            </button>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+/** Eigene Meldeliste zur Begegnung: dieselbe Liste wie im Gegnerbriefing, aber
+ *  für die TCP-Mannschaft — wer ist auf welchem Rang gemeldet, mit welcher LK
+ *  und welchem Jahrgang (Auftraggeber-Wunsch 02.10.2026). Einklappbar, weil die
+ *  Winter-Meldelisten bis zu 35 Namen lang sind. */
+export function OwnRoster({ season, league, teamLabel, accentColor, ownClub, onOpenPlayer }: Omit<Props, "opponentClub">) {
+  const [open, setOpen] = useState(true);
+  const own = getTeamSeason(season, league, ownClub);
+  const roster = getMeldeliste(season, league, ownClub);
+  const rows = roster ? [...roster.herren, ...roster.damen] : [];
+  return (
+    <div className="mt-3 rounded-lg border border-emerald-500/25 bg-slate-900/70 p-2.5">
+      <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-baseline justify-between gap-2 text-left">
+        <p className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-300">
+          🏠 Unsere Meldeliste · {teamLabel}
+          {rows.length > 0 && <span className="ml-1.5 font-semibold normal-case tracking-normal text-slate-400">{rows.length} gemeldet</span>}
+        </p>
+        <span className="shrink-0 text-[10px] text-slate-500">{seasonLabel(season)} {open ? "▲" : "▼"}</span>
+      </button>
+      {open && (
+        <div className="mt-2">
+          <RosterList club={ownClub} rows={rows} usage={own.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} />
+          <p className="mt-1.5 px-1 text-[10px] leading-snug text-slate-500">
+            Rang und LK laut BTV-Meldeliste beim letzten Abruf, Jahrgang laut Mannschaftsportrait. Bilanz nur aus Spielberichten dieser Saison.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function OpponentBriefing({ season, league, teamLabel, accentColor, opponentClub, ownClub, onOpenPlayer }: Props) {
   const [tab, setTab] = useState<Tab>("meldeliste");
   const [open, setOpen] = useState<Spielbericht | null>(null);
@@ -107,8 +225,6 @@ export default function OpponentBriefing({ season, league, teamLabel, accentColo
   const own = getTeamSeason(season, league, ownClub);
   const roster = getMeldeliste(season, league, opponentClub);
   const rosterRows = roster ? [...roster.herren, ...roster.damen] : [];
-  // Eingesetzte Spieler ohne Meldelisten-Eintrag (Ersatz aus anderen Mannschaften)
-  const extra = [...opp.usage.values()].filter((u) => !rosterRows.some((r) => r.name === u.name));
 
   const wins = opp.meetings.filter((m) => m.result.own > m.result.opp).length;
   const draws = opp.meetings.filter((m) => m.result.own === m.result.opp).length;
@@ -142,68 +258,7 @@ export default function OpponentBriefing({ season, league, teamLabel, accentColo
 
       {tab === "meldeliste" && (
         <div>
-          {rosterRows.length === 0 && extra.length === 0 ? (
-            <p className="rounded-lg border border-slate-700/50 bg-slate-800/30 px-3 py-3 text-center text-[12px] text-slate-400">
-              Für {opponentClub} ist in dieser Saison noch keine Meldeliste erfasst.
-            </p>
-          ) : (
-            <div className="space-y-1">
-              {rosterRows.map((e) => {
-                const u = opp.usage.get(e.name);
-                const played = !!u && (u.singles > 0 || u.doubles > 0);
-                return (
-                  <button
-                    key={`${e.rang}-${e.name}`}
-                    type="button"
-                    onClick={onOpenPlayer ? () => onOpenPlayer(playerKey(opponentClub, e.name)) : undefined}
-                    className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left ${played ? "border-slate-700/50 bg-slate-800/30 hover:bg-slate-700/30" : "border-slate-700/30 bg-slate-800/10 opacity-70"}`}
-                  >
-                    <span className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-md text-[11px] font-extrabold" style={{ backgroundColor: accentColor + "22", color: accentColor }}>
-                      {e.rang}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-1.5">
-                        <span className={`truncate text-[13px] font-bold ${played ? "text-slate-100" : "text-slate-400"}`}>{e.name}</span>
-                        {/* Meldelisten-LK = aktuelle LK beim letzten Wecker-Lauf; die LK aus dem
-                            Spielbericht ist nur der Stand des Spieltags und dient als Rückfall */}
-                        <LkBadge lk={e.lk || u?.lk || ""} tone={played ? "own" : "muted"} />
-                      </span>
-                      <span className="block truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
-                    </span>
-                    {played && u && (
-                      <span className="shrink-0 text-[11px] font-bold tabular-nums">
-                        <span className="text-emerald-400">{u.singlesWins + u.doublesWins}</span>
-                        <span className="text-slate-500">:</span>
-                        <span className="text-red-400">{u.singles + u.doubles - u.singlesWins - u.doublesWins}</span>
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-              {extra.length > 0 && (
-                <>
-                  <p className="px-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">Weitere Einsätze</p>
-                  {extra.map((u) => (
-                    <button
-                      key={u.name}
-                      type="button"
-                      onClick={onOpenPlayer ? () => onOpenPlayer(playerKey(opponentClub, u.name)) : undefined}
-                      className="flex w-full items-center gap-2 rounded-lg border border-slate-700/50 bg-slate-800/30 px-2.5 py-1.5 text-left hover:bg-slate-700/30"
-                    >
-                      <span className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-md bg-slate-700/40 text-[11px] font-extrabold text-slate-400">–</span>
-                      <span className="min-w-0 flex-1">
-                        <span className="flex items-center gap-1.5">
-                          <span className="truncate text-[13px] font-bold text-slate-100">{u.name}</span>
-                          <LkBadge lk={u.lk} tone="own" />
-                        </span>
-                        <span className="block truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
-                      </span>
-                    </button>
-                  ))}
-                </>
-              )}
-            </div>
-          )}
+          <RosterList club={opponentClub} rows={rosterRows} usage={opp.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} />
           <p className="mt-1.5 px-1 text-[10px] leading-snug text-slate-500">
             Bilanz aus Sicht von {opponentClub}. Nur belegte Einsätze aus Spielberichten dieser Saison — keine Prognose.
           </p>
