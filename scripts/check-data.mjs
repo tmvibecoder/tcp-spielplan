@@ -33,7 +33,7 @@ function checkSeason(season) {
     const n = sb ? (sb.match(new RegExp(`season: "${season.id}"`, "g")) ?? []).length : 0;
     const r = ml ? (ml.match(new RegExp(`season: "${season.id}"`, "g")) ?? []).length : 0;
     const leaguesWith = new Set();
-    if (sb) for (const block of sb.split(/\n {2}\{\n/).slice(1)) {
+    if (sb) for (const block of sb.split(/\n {2}(?:[rt]\()?\{\n/).slice(1)) {
       if (block.includes(`season: "${season.id}"`)) leaguesWith.add(block.match(/league: "([^"]+)"/)?.[1]);
     }
     const missing = season.groups.filter((g) => !leaguesWith.has(g.leagueName)).map((g) => g.leagueName);
@@ -49,7 +49,7 @@ function checkSeason(season) {
     return { fail: 1 };
   }
   const leagues = [];
-  for (const block of st.split(/\n {2}\{\n/).slice(1)) {
+  for (const block of st.split(/\n {2}(?:[rt]\()?\{\n/).slice(1)) {
     const name = block.match(/leagueName: "([^"]+)"/)?.[1];
     if (!name) continue;
     const entries = [...block.matchAll(
@@ -67,7 +67,7 @@ function checkSeason(season) {
   const reports = new Map();
   const sb = season.reports ? read(season.reports) : null;
   if (sb) {
-    for (const block of sb.split(/\n {2}\{\n/).slice(1)) {
+    for (const block of sb.split(/\n {2}(?:[rt]\()?\{\n/).slice(1)) {
       // Berichte anderer Saisons überspringen (gleiche Gruppennummern kommen vor)
       const bs = block.match(/season: "([^"]+)"/)?.[1];
       if (bs && bs !== season.id) continue;

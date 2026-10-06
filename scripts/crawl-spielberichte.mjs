@@ -41,9 +41,11 @@ if (!season.groups.length) {
 // Positionsargument = Filter auf leagueName/groupid; der Wert hinter --season nicht.
 const seasonIdx = args.indexOf("--season");
 const filter = args.find((a, i) => !a.startsWith("--") && i !== seasonIdx + 1);
-const groups = filter
+// --gegner: nur die Gruppen ohne TC Pliening (Spielerhistorie der Gegner, siehe seasons.mjs)
+const onlyGegner = args.includes("--gegner");
+const groups = (filter
   ? season.groups.filter((g) => g.leagueName.includes(filter) || g.groupid === filter)
-  : season.groups;
+  : season.groups).filter((g) => !onlyGegner || g.gegner);
 
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 
@@ -102,7 +104,10 @@ async function openGroup(groupid) {
   throw new Error(`Widget-Frame nicht gefunden (group ${groupid})`);
 }
 
-const STATUS = /^(ANZEIGEN|OFFEN|Blanko-Spielbericht|URSPRÜNGLICH AM .*|VERLEGT.*)$/i;
+// Kampflose Begegnungen stehen mit "HEIM - W.O." bzw. "GAST - W.O." statt "ANZEIGEN"
+// (06.10.2026, Winter 2024/25 Bayernliga Damen Gr. 008): fehlt der Status hier, liest
+// der Parser über die Zeile hinweg und verschluckt die nächste Begegnung.
+const STATUS = /^(ANZEIGEN|OFFEN|Blanko-Spielbericht|URSPRÜNGLICH AM .*|VERLEGT.*|(HEIM|GAST)\s*-\s*W\.?O\.?)$/i;
 const DATE_RE = /^(Mo|Di|Mi|Do|Fr|Sa|So)\.\s+(\d{2})\.(\d{2})\.(\d{2}),\s+(\d{2}:\d{2})$/;
 const SCORE = /^\d+:\d+$/;
 
@@ -250,7 +255,27 @@ async function crawlGroup(g) {
     if (!modal) throw new Error(`kein Modal (idx ${idx})`);
     const pair = modalTeams(modal);
     if (!pair) throw new Error(`Mannschaften im Modal nicht erkannt (idx ${idx})`);
-    const row = byPair.get(`${pair.home}::${pair.away}`);
+    let row = byPair.get(`${pair.home}::${pair.away}`);
+    if (!row) {
+      // Rückfall (06.10.2026, Winter 2024/25 Bayernliga Damen): der Gast der
+      // Spielplanzeile wurde falsch erkannt (Spielort-Zeile sah aus wie ein
+      // Vereinsname). Das Modal ist die Wahrheit — gibt es genau EINE gespielte
+      // Zeile mit diesem Heimverein, deren Gast nicht zu einem anderen Modal
+      // passt, nehmen wir sie und setzen den Gast aus dem Modal.
+      const awayName = table.find((t) => t.club.toUpperCase() === pair.away)?.club;
+      const clubs = new Set(table.map((t) => t.club));
+      const count = new Map();
+      for (const r of played) count.set(`${r.home}::${r.away}`, (count.get(`${r.home}::${r.away}`) ?? 0) + 1);
+      // verdächtig = Gast fehlt in der Tabelle, Gast = Heim, oder die Paarung kommt doppelt vor
+      const cands = played.filter((r) =>
+        r.home.toUpperCase() === pair.home && r.away.toUpperCase() !== pair.away &&
+        (!clubs.has(r.away) || r.away === r.home || count.get(`${r.home}::${r.away}`) > 1) &&
+        !reports.some((x) => x.home === r.home && x.away === r.away && x.date === r.date));
+      if (awayName && cands.length === 1) {
+        console.log(`  ~ Gast korrigiert: ${cands[0].home} – ${cands[0].away} → ${awayName}`);
+        row = { ...cands[0], away: awayName };
+      }
+    }
     if (!row) throw new Error(`Modal-Paarung ${pair.home} – ${pair.away} steht nicht im Spielplan (idx ${idx})`);
     reports.push({
       league: g.leagueName,

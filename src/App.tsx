@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, lazy, Suspense } from "react";
+import { useState, useMemo, useCallback, useRef, useLayoutEffect, lazy, Suspense } from "react";
 import { MATCHES } from "./data/matches";
 import { SEASONS, DEFAULT_SEASON } from "./data/seasons";
 import { getSeasonData } from "./data/season-data";
@@ -29,7 +29,13 @@ const TeamPage = lazy(() => import("./components/TeamPage"));
 type Page = "spielplan" | "impressum" | "datenschutz";
 
 /** Aufgeschlagene Unterseiten (Spieler, Mannschaft) als Stapel — „Zurück" geht eine Ebene hoch. */
-type View = { kind: "spieler"; key: string } | { kind: "mannschaft"; hit: TeamHit };
+// Spieler-/Mannschaftsansichten liegen als Stapel ÜBER dem Spielplan. Der
+// Spielplan (mit aufgeklappter Begegnung) bleibt dabei gemountet, nur
+// unsichtbar — „Zurück" zeigt ihn exakt so wieder, wie man ihn verlassen hat,
+// und scrollt an die gemerkte Stelle (returnScroll) zurück. Thomas' Wunsch
+// vom 06.10.2026: aus der Spielerhistorie zurück zur Spielerliste, nicht an
+// den Seitenanfang.
+type View = ({ kind: "spieler"; key: string } | { kind: "mannschaft"; hit: TeamHit }) & { returnScroll: number };
 
 // Persistenz der Filter-Auswahl (welche Konkurrenzen aktiv, Nur-Heim-Schalter).
 // Wird nur per "Auswahl speichern" im Menü geschrieben und beim Laden angewandt.
@@ -91,21 +97,34 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [views, setViews] = useState<View[]>([]);
 
+  // Scrollposition, die nach dem nächsten Rendern wiederhergestellt werden soll
+  const pendingScroll = useRef<number | null>(null);
+
   const openPlayer = useCallback((key: string) => {
     setSearchOpen(false);
-    setViews((v) => [...v, { kind: "spieler", key }]);
+    setViews((v) => [...v, { kind: "spieler", key, returnScroll: window.scrollY }]);
     window.scrollTo(0, 0);
   }, []);
   const openPlayerByName = useCallback((club: string, name: string) => openPlayer(playerKey(club, name)), [openPlayer]);
   const openTeam = useCallback((hit: TeamHit) => {
     setSearchOpen(false);
-    setViews((v) => [...v, { kind: "mannschaft", hit }]);
+    setViews((v) => [...v, { kind: "mannschaft", hit, returnScroll: window.scrollY }]);
     window.scrollTo(0, 0);
   }, []);
   const popView = useCallback(() => {
-    setViews((v) => v.slice(0, -1));
-    window.scrollTo(0, 0);
+    setViews((v) => {
+      pendingScroll.current = v[v.length - 1]?.returnScroll ?? 0;
+      return v.slice(0, -1);
+    });
   }, []);
+  // Erst wenn die darunterliegende Ansicht wieder sichtbar ist, hat sie ihre
+  // Höhe zurück — dann an die gemerkte Stelle springen.
+  useLayoutEffect(() => {
+    if (pendingScroll.current === null) return;
+    const y = pendingScroll.current;
+    pendingScroll.current = null;
+    window.scrollTo(0, y);
+  }, [views]);
 
   const data = getSeasonData(season);
   const seasonInfo = data.season;
@@ -260,15 +279,21 @@ function App() {
       )}
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        {current?.kind === "spieler" ? (
+        {current?.kind === "spieler" && (
           <Suspense fallback={viewFallback}>
-            <PlayerHistory key={current.key} playerKey={current.key} onBack={popView} />
+            <PlayerHistory key={`${views.length}-${current.key}`} playerKey={current.key} onBack={popView} />
           </Suspense>
-        ) : current?.kind === "mannschaft" ? (
+        )}
+        {current?.kind === "mannschaft" && (
           <Suspense fallback={viewFallback}>
             <TeamPage hit={current.hit} onBack={popView} onOpenPlayer={openPlayerByName} />
           </Suspense>
-        ) : subTab === "spielplan" ? (
+        )}
+        {/* Spielplan bzw. Tabellen bleiben hinter den Spieler-/Mannschafts-
+            ansichten gemountet (nur ausgeblendet), damit „Zurück" die
+            aufgeklappte Begegnung und die Spielerliste unverändert vorfindet. */}
+        <div hidden={current !== undefined}>
+        {subTab === "spielplan" ? (
           <>
             <TimelineView
               seasonId={season}
@@ -302,6 +327,7 @@ function App() {
             />
           </Suspense>
         )}
+        </div>
 
         <Footer onNavigate={navigateToLegal} provisionalTimesUntil={seasonInfo.provisionalTimesUntil} />
       </main>

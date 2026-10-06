@@ -13,7 +13,7 @@ export interface DataStand {
 }
 
 export const DATA_STAND: DataStand = {
-  crawledAt: "2026-10-02T17:40:00+02:00",
-  scope: "Meldelisten Winter 2026/27 (41 Mannschaften, Spieltermine und Gruppen gegen den BTV geprüft); Spielberichte und Meldelisten aller Runden ab Winter 2024/25",
-  nextRun: {"at":"2026-10-03T01:00:00+02:00","reason":"7 Tage vor Herren 30 – TS Jahn München II (10.10.)"},
+  crawledAt: "2026-10-06T23:45:00+02:00",
+  scope: "Vorsaisons aller 34 Gegner der Winterrunde 2026/27 (133 Gegner-Gruppen aus Winter 2024/25, Sommer 2025, Winter 2025/26 und Sommer 2026: Spielberichte und Meldelisten); Meldelisten Winter 2026/27 vom 02.10.2026",
+  nextRun: {"at":"2026-10-10T01:00:00+02:00","reason":"Spieltag Herren 30 – TS Jahn München II"},
 };

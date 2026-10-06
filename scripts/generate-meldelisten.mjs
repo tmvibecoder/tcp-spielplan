@@ -62,12 +62,17 @@ let ts = `import type { Meldeliste, SeasonId } from "../types";
 // wenn nicht GER. Bilanzen stehen NICHT hier — sie kommen live aus den
 // Spielberichten (src/data/spielberichte.ts).
 
+// Jede Meldeliste läuft durch t(): So ist jedes Element bereits als Meldeliste
+// typisiert, und TypeScript muss nicht aus über tausend Objektliteralen einen
+// Vereinigungstyp bilden (TS2590 „union type too complex", seit 06.10.2026).
+const t = (m: Meldeliste): Meldeliste => m;
+
 export const MELDELISTEN: Meldeliste[] = [
 `;
 // Mannschaften ohne jeden Spieler weglassen (z. B. Midcourt U10: nuLiga führt
 // dort keine namentliche Meldeliste) — sonst zeigt die App "Einzel (0)".
 for (const t of result.filter((x) => x.herren.length || x.damen.length)) {
-  ts += `  {
+  ts += `  t({
     season: ${JSON.stringify(t.season)},
     leagueName: ${JSON.stringify(t.leagueName)},
     club: ${JSON.stringify(t.club)},
@@ -77,7 +82,7 @@ ${t.herren.map(emitEntry).join("\n")}
     damen: [
 ${t.damen.map(emitEntry).join("\n")}
     ],
-  },
+  }),
 `;
 }
 ts += `];

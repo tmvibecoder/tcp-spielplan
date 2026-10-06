@@ -233,23 +233,50 @@ Spielplan und keine Tabellen (`historyOnly` in `src/data/seasons.ts`, kein Eintr
   Spielzeit … nicht gewertet") stehen mit Namen, aber ohne Ergebniszeilen im Modal — der Parser
   lässt sie aus, die Begegnung zählt dann weniger als das Format vorgibt.
 
-**Datenstand 10.09.2026** (`npm run check -- --all` grün):
+**Datenstand 06.10.2026** (`npm run check -- --all` grün; Stand 10.09.2026 in Klammern, als nur
+Gruppen mit TCP erfasst waren):
 
-| Saison | Gruppen mit TCP | Spielberichte | Meldelisten | Bemerkung |
-|---|---|---|---|---|
-| Winter 2026/27 | 7 | — (noch kein Spieltag) | — (BTV-Portraits am 10.09.2026 noch leer) | Dropdown, Wecker aktiv |
-| Sommer 2026 | 18 | 407 | 126 | Dropdown |
-| Winter 2025/26 | 7 | 95 (184/184 Zellen belegt) | 40 Mannschaften | Dropdown; Berichte seit 10.09.2026 |
-| Sommer 2025 | 13 (inkl. Mixed 40) | 304 | 95 Mannschaften | nur Historie |
-| Winter 2024/25 | 7 (zwei Herren-40-Teams) | 99 | 41 Mannschaften | nur Historie |
+| Saison | Gruppen mit TCP | Gegner-Gruppen | Spielberichte | Meldelisten | Bemerkung |
+|---|---|---|---|---|---|
+| Winter 2026/27 | 7 | — | — (noch kein Spieltag) | 41 Mannschaften | Dropdown, Wecker aktiv |
+| Sommer 2026 | 18 | 37 | 1.324 (407) | 405 Mannschaften (126) | Dropdown |
+| Winter 2025/26 | 7 | 32 | 572 (95) | 231 Mannschaften (40) | Dropdown |
+| Sommer 2025 | 13 (inkl. Mixed 40) | 35 | 1.187 (304) | 361 Mannschaften (95) | nur Historie |
+| Winter 2024/25 | 7 (zwei Herren-40-Teams) | 29 | 534 (99) | 213 Mannschaften (41) | nur Historie |
 
-Zusammen 905 Spielberichte mit 6.845 Einzeln/Doppeln und 302 Meldelisten mit 10.341 Spielern.
+Zusammen 3.617 Spielberichte mit 27.023 Einzeln/Doppeln (vorher 905 mit 6.845) und 1.251
+Meldelisten (vorher 302). Die lazy geladenen Chunks sind damit deutlich größer: Spielberichte 3,9 MB (578 KB
+gzip), Spielerstatistik samt Meldelisten 3,0 MB (665 KB gzip); beide laden erst beim Aufklappen einer Begegnung, in der Tabelle oder in der Suche (danach gecacht) —
+der Spielplan selbst bleibt beim alten Startbundle.
 Die Meldelisten der Winterrunde 2026/27 veröffentlicht der BTV erst kurz vor Saisonstart (am
 10.09.2026 zeigten alle 41 Mannschaftsportraits 0 Spieler); der Wecker holt sie 7 Tage vor der
 ersten Begegnung — bis dahin zeigt das Briefing im Reiter „Meldeliste" den Leerzustand und
 `npm run check` meldet für diese Runde „OHNE MELDELISTE" (kein Fehler).
 Jugend-Gruppen der alten Runden sind bewusst nicht erfasst (Historie ab Winter 2024/25 gilt den
 Erwachsenen-Konkurrenzen; `discover-groups.mjs --jugend` holt sie bei Bedarf).
+
+**Vorsaisons der Gegner (seit 06.10.2026).** Bis dahin waren nur Gruppen *mit* TC Pliening
+erfasst — ein Gegner, der in den Vorjahren in einer anderen Gruppe spielte, hatte in der
+Spielerhistorie nichts außer der laufenden Runde (TS Jahn München II: null Vorsaison-Einsätze,
+TC Riemerling: nur Sommer 2025). Auftrag des Auftraggebers: für **alle 34 Gegner der
+Winterrunde 2026/27** die **zwei Winter- und zwei Sommerrunden davor** holen. Dafür kennt
+`discover-groups.mjs` jetzt `--clubs` (Gruppen, in denen einer der genannten Vereine spielt,
+römische Mannschaftsziffern zählen nicht — alle Mannschaften des Vereins in der Altersklasse),
+und `scripts/seasons.mjs` markiert solche Gruppen mit **`gegner: true`** (`teamLabel` = die
+Altersklasse). Die Crawler nehmen mit `--gegner` nur diese Gruppen. Sie liefern ausschließlich
+Spielberichte und Meldelisten: keine Tabellen, kein Spielplan, kein Briefing, und der Wecker
+fasst sie nie an. In der App ändert sich dadurch nichts an der Oberfläche — die Historie und die
+Suche zeigen schlicht mehr. Ergebnis: 133 Gegner-Gruppen (Winter 24/25 29, Sommer 25 35,
+Winter 25/26 32, Sommer 26 37), alle 34 Gegner haben Vorsaison-Einsätze; Lücken bleiben nur, wo
+ein Verein in einer Runde keine Mannschaft der Klasse hatte (ATSV Kirchseeon und ASV Glonn im
+Sommer, MTV 1879 München im Winter). Zwei Parser-Fallen kamen dabei ans Licht (beide behoben):
+kampflose Begegnungen stehen im Spielplan mit **„HEIM - W.O." / „GAST - W.O."** statt „ANZEIGEN"
+(der Parser las sonst über die Zeile hinweg und verschluckte die nächste Begegnung), und ab rund
+2.500 Berichten meldet TypeScript für das Array-Literal **TS2590** („union type too complex") —
+deshalb läuft jeder Bericht in `spielberichte-crawled.ts` durch die typisierte Hilfsfunktion `r()`.
+**Falle beim Crawlen:** zwei Meldelisten-Crawls derselben Saison dürfen nicht parallel laufen —
+jeder hält den Cache im Speicher und schreibt ihn komplett zurück, der zweite überschreibt die
+Einträge des ersten (Nachlauf einer einzelnen Gruppe erst nach Ende des Hauptlaufs starten).
 
 **Caches je Saison** (`scripts/.spielberichte-cache-<id>.json`, `.meldelisten-cache-<id>.json`,
 gitignored). Die Generatoren `gen:spielberichte` und `gen:meldelisten` führen alle Caches zusammen

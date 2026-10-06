@@ -455,8 +455,12 @@ als ersten Parameter — Gruppennummern wiederholen sich über die Jahre.
   (`Appearance` mit Position, Gegnern + LK, Partner, Sätzen aus eigener Sicht, `vsTcp`).
   Meldelisten-Spieler ohne Einsatz sind ebenfalls drin (Suche); die LK ist die der neuesten
   Meldeliste, sonst des neuesten Einsatzes.
-- Mannschaften (`TeamHit`: Saison, Liga, Konkurrenz, Verein) — nur Gruppen mit TCP, weil nur die
-  erfasst sind.
+- Mannschaften (`TeamHit`: Saison, Liga, Konkurrenz, Verein) — alle erfassten Gruppen. Das
+  sind die Gruppen mit TCP **und seit 06.10.2026 die Vorsaison-Gruppen der Gegner** (in
+  `scripts/seasons.mjs` mit `gegner: true` markiert, `teamLabel` = Altersklasse): für jeden
+  Gegner der Winterrunde 2026/27 die Gruppen seiner Altersklasse in den vier Runden davor, damit
+  die Spielerhistorie eines Gegners nicht erst mit der laufenden Saison beginnt. Solche Gruppen
+  liefern nur Spielberichte und Meldelisten — keine Tabellen, keinen Spielplan, kein Briefing.
 - `search(query)` (ab zwei Zeichen, diakritik-unempfindlich, Name in beiden Reihenfolgen) und
   `getTeamSeason(season, league, club)` (gespielte Begegnungen mit Aufstellungen, Einsatzzähler
   je Spieler, Doppelpartner) fürs Briefing.
@@ -484,7 +488,11 @@ StandingsView ► TeamStatsDetail ── „Spielerhistorie über alle Saisons �
 
 - `App.tsx` hält `searchOpen` und einen **Stapel** `views` (`spieler` | `mannschaft`); „Zurück"
   nimmt eine Ebene, Reiter- oder Saisonwechsel leert ihn. `TimelineView`, `MatchDetail` und
-  `StandingsView` reichen `onOpenPlayer` durch.
+  `StandingsView` reichen `onOpenPlayer` durch. **Spielplan und Tabellen bleiben unter dem Stapel
+  gemountet** (nur per `hidden` ausgeblendet, seit 06.10.2026): jede Ebene merkt sich beim Öffnen
+  `window.scrollY` (`returnScroll`), „Zurück" blendet die darunterliegende Ansicht wieder ein
+  und springt an genau diese Stelle — die aufgeklappte Begegnung samt Meldeliste steht also
+  unverändert da. Vorher wurde der Spielplan neu aufgebaut und man landete oben auf der Seite.
 - Alle neuen Ansichten sind **lazy** (eigene Chunks), weil sie den Index über alle Saisons ziehen;
   der Spielplan startet unverändert schnell.
 - `LkBadge` ist das einzige LK-Element der App (Ton `own`/`opp`/`muted`); `MatchCard` und
