@@ -9,6 +9,8 @@
 //   node scripts/discover-groups.mjs --season "Sommer 2025" --regions "Südbayern,BTV-Ligen,Regionalliga"
 //   node scripts/discover-groups.mjs --season "Mixed 2025" --regions Südbayern --bereiche MIXED
 //   node scripts/discover-groups.mjs --season "Winter 2024/2025" --jugend   # auch Jugend-Klassen
+//   node scripts/discover-groups.mjs --season "Sommer 2025" --klassen "Herren 30" \
+//        --clubs "TS Jahn München,TC Riemerling"   # Gruppen der GEGNER (ohne TC Pliening)
 //
 // Ausgabe: JSON-Liste { groupid, leagueName, teamLabel, mode, teamSize } nach
 // stdout (und als scripts/.discover-<saison>.json), fertig zum Einfügen in den
@@ -67,7 +69,20 @@ const KLASSEN_ARG = arg("klassen");
 const KLASSEN = KLASSEN_ARG === "alle" ? null
   : (KLASSEN_ARG ?? "Herren,Damen,Herren 30,Herren 40,Herren 50,Herren 60,Damen 30,Damen 40,Damen 50,Mixed 00 A,Mixed 00 B,Mixed 30 A,Mixed 40 A,Mixed 50 A")
       .split(",").map((k) => k.trim().toLowerCase());
-const OUTFILE = path.join(ROOT, `scripts/.discover-${SEASON.replace(/[^a-z0-9]+/gi, "_")}.json`);
+// --clubs "TS Jahn München,TC Riemerling,…": statt der Gruppen MIT TC Pliening die
+// Gruppen finden, in denen einer dieser Vereine spielt (für die Vorsaison-Historie
+// der Gegner). Römische Mannschaftsziffern zählen nicht — „TS Jahn München II"
+// trifft jede Jahn-Mannschaft der Klasse. Gruppen mit TC Pliening werden dabei
+// ausgelassen (die sind längst erfasst).
+const baseClub = (c) => c.replace(/\s+(II|III|IV|V)$/i, "").trim().toLowerCase();
+const CLUBS = arg("clubs") ? new Set(arg("clubs").split(",").map((c) => baseClub(c))) : null;
+const isHit = (clubs) => CLUBS
+  ? clubs.some((c) => CLUBS.has(baseClub(c))) && !clubs.some((c) => OWN.test(c))
+  : clubs.some((c) => OWN.test(c));
+// --out <datei>: eigener Ablageort für die Trefferliste (sonst scripts/.discover-<saison>[-gegner].json)
+const OUTFILE = arg("out")
+  ? path.resolve(arg("out"))
+  : path.join(ROOT, `scripts/.discover-${SEASON.replace(/[^a-z0-9]+/gi, "_")}${CLUBS ? "-gegner" : ""}.json`);
 const log = (...a) => console.error(...a);
 // Fehlersuche: --only "<Bereich>::<Klasse>" beschränkt den Lauf auf eine Klasse
 // und gibt nach jedem Schritt den Seitentext aus.
@@ -299,7 +314,7 @@ for (const region of REGIONS) {
         const g = await readGroup();
         if (!g.groupid || seen.has(g.groupid)) continue;
         seen.add(g.groupid);
-        if (!g.clubs.some((c) => OWN.test(c))) continue;
+        if (!isHit(g.clubs)) continue;
         const pdf = pdfTitle(g.groupid);
         const title = pdf ?? fromUpper(g.header ?? `${klasse} ${b}`);
         const { label, league } = splitTitle(title);
@@ -316,5 +331,5 @@ for (const region of REGIONS) {
 }
 await browser.close();
 fs.writeFileSync(OUTFILE, JSON.stringify(found, null, 2));
-log(`\n${found.length} Gruppen mit TC Pliening — ${path.relative(ROOT, OUTFILE)}`);
-console.log(JSON.stringify(found.map(({ clubs, region, ...g }) => g), null, 2));
+log(`\n${found.length} Gruppen mit ${CLUBS ? "den gesuchten Vereinen" : "TC Pliening"} — ${path.relative(ROOT, OUTFILE)}`);
+console.log(JSON.stringify(found.map(({ clubs, region, ...g }) => (CLUBS ? { ...g, clubs } : g)), null, 2));

@@ -41,9 +41,11 @@ if (!season.groups.length) {
 // Positionsargument = Filter auf leagueName/groupid; der Wert hinter --season nicht.
 const seasonIdx = args.indexOf("--season");
 const filter = args.find((a, i) => !a.startsWith("--") && i !== seasonIdx + 1);
-const groups = filter
+// --gegner: nur die Gruppen ohne TC Pliening (Spielerhistorie der Gegner, siehe seasons.mjs)
+const onlyGegner = args.includes("--gegner");
+const groups = (filter
   ? season.groups.filter((g) => g.leagueName.includes(filter) || g.groupid === filter)
-  : season.groups;
+  : season.groups).filter((g) => !onlyGegner || g.gegner);
 
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 

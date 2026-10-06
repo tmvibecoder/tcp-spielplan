@@ -41,6 +41,12 @@ const ROSTERS_FILE = "src/data/meldelisten.ts";
 //         (Konkurrenz des TC Pliening), mode (herren/damen/mixed für die
 //         Meldelisten-Nummerierung) und teamSize (9 = 6 Einzel + 3 Doppel,
 //         6 = 4 Einzel + 2 Doppel bzw. Mixed).
+//         gegner: true = Gruppe OHNE TC Pliening, erfasst nur für die
+//         Spielerhistorie der Gegner (seit 06.10.2026: die Vorsaisons aller
+//         Gegner der Winterrunde 2026/27, gefunden mit discover-groups.mjs
+//         --clubs). teamLabel ist dort schlicht die Altersklasse. Sie liefern
+//         nur Spielberichte und Meldelisten — keine Tabellen, keinen Spielplan;
+//         `--gegner` bei den Crawlern beschränkt einen Lauf auf diese Gruppen.
 export const SEASONS = [
   {
     id: "winter-2627",
@@ -96,6 +102,7 @@ export const SEASONS = [
       { groupid: "2216473", leagueName: "Südliga 4 · Gr. 596",               teamLabel: "Knaben 15",      mode: "herren", teamSize: 6 },
       { groupid: "2216513", leagueName: "Südliga 5 · Gr. 638",               teamLabel: "Knaben 15 II",   mode: "herren", teamSize: 6 },
       { groupid: "2219939", leagueName: "Südliga 1 · Gr. 870",               teamLabel: "Midcourt U10",   mode: "mixed",  teamSize: 6 },
+      // DISCOVER:sommer-26
     ],
   },
   {
