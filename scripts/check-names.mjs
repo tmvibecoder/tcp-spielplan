@@ -13,7 +13,7 @@ const sb = fs.readFileSync(path.join(ROOT, "src/data/spielberichte-crawled.ts"),
 const ml = fs.readFileSync(path.join(ROOT, "src/data/meldelisten.ts"), "utf8");
 
 const rosters = new Map();
-for (const block of ml.split(/\n {2}\{\n/).slice(1)) {
+for (const block of ml.split(/\n {2}(?:[rt]\()?\{\n/).slice(1)) {
   const season = block.match(/season: "([^"]+)"/)?.[1] ?? "";
   const league = block.match(/leagueName: "([^"]+)"/)?.[1];
   const club = block.match(/club: "([^"]+)"/)?.[1];
@@ -26,7 +26,7 @@ const norm = (n) =>
 
 let checked = 0;
 const missing = new Map();
-for (const block of sb.split(/\n {2}\{\n/).slice(1)) {
+for (const block of sb.split(/\n {2}(?:[rt]\()?\{\n/).slice(1)) {
   const season = block.match(/season: "([^"]+)"/)?.[1] ?? "";
   const league = block.match(/league: "([^"]+)"/)?.[1];
   const home = block.match(/homeClub: "([^"]+)"/)?.[1];

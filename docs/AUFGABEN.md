@@ -264,6 +264,24 @@ Mixed-Runden sind beim BTV eigene Saisons („Mixed 2025", Region Südbayern, Al
 sonst — Klassen heißen „MIXED 00 A/B", „MIXED 40 A" …); ihre Gruppen gehören in den Block der
 zugehörigen Sommer-Saison. Jugend-Klassen nur mit `--jugend`.
 
+**Vorsaisons der Gegner nachziehen** (neue Runde = neue Gegner; gemacht am 06.10.2026 für die
+Winterrunde 2026/27, siehe README „Vorsaisons der Gegner"):
+
+```bash
+# je Altersklasse die Gegnervereine dieser Klasse (ohne römische Ziffer) — findet deren Gruppen
+node scripts/discover-groups.mjs --season "Sommer 2026" --klassen "Herren 30" \
+  --clubs "TS Jahn München,TC Riemerling,…" --out scripts/tmp/found-sommer-26-h30.json
+# → Treffer als { …, gegner: true } vor die Zeile "// DISCOVER:<id>" des Saison-Blocks in scripts/seasons.mjs
+npm run crawl:spielberichte -- --season sommer-26 --gegner   # nur die Gegner-Gruppen (Cache je Saison)
+npm run crawl:meldelisten  -- --season sommer-26 --gegner
+npm run gen:spielberichte && npm run check -- --all
+```
+
+Pro Altersklasse und Region braucht die Suche drei bis acht Minuten (sie klickt jede Gruppe der
+Klasse an), der Crawl danach zwei bis vier Minuten je Gruppe — für vier Runden ein Abend.
+`gegner`-Gruppen tauchen nie in Tabellen, Spielplan oder Wecker auf; `gen:standings` überspringt
+Ligen, die nicht in der Datendatei stehen.
+
 **Wecker prüfen oder von Hand auslösen:**
 
 ```bash
