@@ -194,10 +194,15 @@ function m(
   };
 }
 
+// Jeder Bericht läuft durch r(): So ist jedes Element bereits als Spielbericht
+// typisiert, und TypeScript muss nicht aus Tausenden Objektliteralen einen
+// Vereinigungstyp bilden (ab ~2.500 Berichten: TS2590 „union type too complex").
+const r = (b: Spielbericht): Spielbericht => b;
+
 export const CRAWLED_SPIELBERICHTE: Spielbericht[] = [
 `;
 for (const b of out) {
-  ts += `  {
+  ts += `  r({
     season: ${esc(b.season)},
     league: ${esc(b.league)},
     teamLabel: ${esc(b.teamLabel)},
@@ -217,7 +222,7 @@ ${b.matches
   )
   .join("\n")}
     ],
-  },
+  }),
 `;
 }
 ts += `];
