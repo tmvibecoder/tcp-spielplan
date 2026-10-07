@@ -2,7 +2,7 @@ import type { IndividualMatch, SeasonId } from "../types";
 import { getAllSpielberichte } from "./spielberichte";
 import { MELDELISTEN } from "./meldelisten";
 import { ALL_SEASONS } from "./seasons";
-import { normalizePlayerName, playerKey } from "./player-key";
+import { baseClub, normalizePlayerName, playerKey } from "./player-key";
 import { getSets, parseSide, type SetScore, type Spielbericht } from "../utils/spielbericht";
 
 // ── Saisonübergreifender Index: Spieler, Mannschaften, Einsätze ──────────────
@@ -13,7 +13,9 @@ import { getSets, parseSide, type SetScore, type Spielbericht } from "../utils/s
 //
 // Ein Spieler ist über Saisons hinweg dieselbe Person, wenn Name UND Verein
 // gleich sind (Entscheidung 09.09.2026: ein Vereinswechsel ergibt zwei
-// getrennte Einträge). Die LK am Namen ist immer die des jeweiligen Spieltags
+// getrennte Einträge). Die Mannschaftsziffer zählt dabei NICHT (07.10.2026,
+// baseClub in player-key.ts): „TC Pliening III" und „TC Pliening" sind eine
+// Person. Die LK am Namen ist immer die des jeweiligen Spieltags
 // (aus dem Bericht) bzw. der Meldeliste — nie hochgerechnet.
 
 const OWN_CLUB = /pliening/i;
@@ -114,7 +116,9 @@ function build(): Index {
     const key = playerKey(club, name);
     let p = players.get(key);
     if (!p) {
-      p = { key, name, club, lk: "", seasons: [], teams: [], appearances: [] };
+      // club ohne Mannschaftsziffer: der Eintrag gehört der Person, nicht der
+      // Mannschaft. Welche Mannschaft es je Einsatz war, steht in Appearance.club.
+      p = { key, name, club: baseClub(club), lk: "", seasons: [], teams: [], appearances: [] };
       players.set(key, p);
     }
     return p;

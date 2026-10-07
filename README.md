@@ -148,7 +148,10 @@ git-worktree'" weiter unten.
   Satzfelder und SIEG/NIEDERL.; Zeile antippen → Spielbericht. Schalter **„Nur gegen TC Pliening"**
   (nur bei gegnerischen Spielern). Saisons ohne Spielberichte im Bestand werden als **Datenlücke**
   ausgewiesen; eine noch nicht begonnene Runde zählt nicht als Lücke. Spieler-Identität =
-  normalisierter Name + Verein — ein **Vereinswechsel ergibt zwei Einträge**.
+  normalisierter Name + Verein **ohne Mannschaftsziffer** (`baseClub` in `player-key.ts`, seit
+  07.10.2026: „TC Pliening III" und „TC Pliening" sind dieselbe Person — Nico Ehlers spielte im
+  Sommer 2026 einmal Herren 30 und viermal Herren 40 III und erschien vorher als drei Spieler mit
+  „nur einem Doppel") — ein echter **Vereinswechsel ergibt zwei Einträge**.
 - **Gegnerbriefing** (`OpponentBriefing`) in jeder aufgeklappten TCP-Begegnung im Spielplan, unter
   Termin/Spielort, drei Reiter, **nur die laufende Saison**:
   *Meldeliste* (Rang, Name, LK, Einsatzhäufigkeit „3× Einzel · E1–E2 · 2× Doppel mit …", Bilanz),
@@ -329,7 +332,7 @@ Repo-Einstellung, die dafür nötig war (am 09.09.2026 gesetzt): *Settings → A
 |---|---|---|
 | F1 | Suche über alle Saisons? | **Ja**, alle erfassten Saisons; Treffer nennen die Saisons. |
 | F2 | Sind die BTV-Berichte von Winter 2024/25 und Sommer 2025 noch abrufbar? | **Ja** — über das Gruppen-Such-Widget (siehe oben); geprüft und eingelesen. |
-| F3 | Vereinswechsel eines Spielers? | **Zwei getrennte Einträge.** |
+| F3 | Vereinswechsel eines Spielers? | **Zwei getrennte Einträge.** Wechsel zwischen erster/zweiter/dritter Mannschaft desselben Vereins dagegen **ein** Eintrag (seit 07.10.2026). |
 | F4 | Briefing-Reichweite? | **Nur laufende Saison** — Meldeliste, Aufstellungen, Ergebnisse. |
 | F5 | Wo läuft der Automat? | **GitHub Actions** (Runner mit Chrome), nicht der Hetzner-Server. |
 | F6 | Wie speichert der Automat? | **Eigener Pull Request mit sofortigem Merge**; „nie direkt auf `main`" bleibt. |

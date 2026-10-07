@@ -14,6 +14,21 @@ export function normalizePlayerName(name: string): string {
     .trim();
 }
 
-/** Schlüssel einer Person im saisonübergreifenden Index: Verein + Name.
- *  Ein Vereinswechsel ergibt bewusst zwei Einträge (Entscheidung 09.09.2026). */
-export const playerKey = (club: string, name: string) => `${club}::${normalizePlayerName(name)}`;
+/** Verein ohne Mannschaftsziffer und Zusätze: „TC Pliening III" → „TC Pliening",
+ *  „TC Pliening II (zurückgezogen)" → „TC Pliening". Erste, zweite und dritte
+ *  Mannschaft sind derselbe Verein — und dieselben Personen wandern zwischen
+ *  ihnen (Nico Ehlers: Sommer 2026 einmal Herren 30, viermal Herren 40 III).
+ *  Bis 07.10.2026 ergab jede Ziffer einen eigenen Spieler-Eintrag; Thomas sah
+ *  deshalb bei ihm „nur ein Doppel". */
+export function baseClub(club: string): string {
+  return club
+    .replace(/\s*\([^)]*\)\s*$/, "")
+    .replace(/\s+(II|III|IV|V|VI)$/, "")
+    .trim();
+}
+
+/** Schlüssel einer Person im saisonübergreifenden Index: Verein (ohne
+ *  Mannschaftsziffer) + Name. Ein echter Vereinswechsel ergibt bewusst zwei
+ *  Einträge (Entscheidung 09.09.2026) — ein Wechsel zwischen erster und zweiter
+ *  Mannschaft desselben Vereins nicht (07.10.2026). */
+export const playerKey = (club: string, name: string) => `${baseClub(club)}::${normalizePlayerName(name)}`;
