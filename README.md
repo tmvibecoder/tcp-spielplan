@@ -252,7 +252,7 @@ Gruppen mit TCP erfasst waren):
 |---|---|---|---|---|---|
 | Winter 2026/27 | 7 | — | — (noch kein Spieltag) | 41 Mannschaften | Dropdown, Wecker aktiv |
 | Sommer 2026 | 18 | 37 | 1.324 (407) | 405 Mannschaften (126) | Dropdown |
-| Winter 2025/26 | 7 | 32 | 572 (95) | 231 Mannschaften (40) | Dropdown |
+| Winter 2025/26 | 7 | 32 | 572 (95) | 231 Mannschaften (40) | Dropdown; Spielplan seit 07.10.2026 vollständig (33 statt 27 TCP-Begegnungen, siehe „Kontroll-Crawl Winter 2025/26") |
 | Sommer 2025 | 13 (inkl. Mixed 40) | 35 | 1.187 (304) | 361 Mannschaften (95) | nur Historie |
 | Winter 2024/25 | 7 (zwei Herren-40-Teams) | 29 | 534 (99) | 213 Mannschaften (41) | nur Historie |
 
@@ -266,6 +266,22 @@ ersten Begegnung — bis dahin zeigt das Briefing im Reiter „Meldeliste" den L
 `npm run check` meldet für diese Runde „OHNE MELDELISTE" (kein Fehler).
 Jugend-Gruppen der alten Runden sind bewusst nicht erfasst (Historie ab Winter 2024/25 gilt den
 Erwachsenen-Konkurrenzen; `discover-groups.mjs --jugend` holt sie bei Bedarf).
+
+**Kontroll-Crawl Winter 2025/26 (07.10.2026).** Auf Wunsch des Auftraggebers wurden Sommer 2026
+und Winter 2025/26 komplett neu vom BTV eingelesen (`crawl-spielberichte.mjs --eigene --force`)
+und zeilenweise sortiert gegen den Bestand verglichen. Sommer 2026: identisch. Winter 2025/26:
+Spielberichte identisch, aber **sechs TCP-Begegnungen fehlten im Spielplan** (`winter-2526.ts`
+hatte 27 statt 33) — Herren 30 gegen SC Freimann II, Herren 50 gegen Gräfelfing, Damen 50 bei
+Lohhof II und drei der vier Herren-30-II-Spiele. Ursache: Die Datei war im September von Hand aus
+den Spielplan-PDFs übertragen worden, und im `ScheduleReportFOP` steht das Datum nur bei der
+**ersten** Begegnung eines Tages; die Folgezeilen tragen nur die Uhrzeit und waren übersehen
+worden. `new-season.mjs` trägt das Datum korrekt weiter (Winter 2026/27 war davon nie betroffen).
+Außerdem waren die Tabellen Damen (Gr. 100) und Damen 40 (Gr. 192) auf dem Stand vom
+29.03.2026, als drei Nachholspiele anderer Vereine noch „0:0" standen — jetzt Endstand (Plienings
+Plätze unverändert: Damen 1, Damen 40 3). Lehre: Nach Saisonende einmal `gen:standings --write`
+über einen frischen Crawl laufen lassen, und `check` meldet fehlende Spielplan-Zeilen **nicht**
+(es prüft nur, was eingetragen ist) — die Zahl der Begegnungen je Mannschaft gegen die
+Gruppengröße gegenlesen (n Mannschaften → n−1 Begegnungen je Team).
 
 **Vorsaisons der Gegner (seit 06.10.2026).** Bis dahin waren nur Gruppen *mit* TC Pliening
 erfasst — ein Gegner, der in den Vorjahren in einer anderen Gruppe spielte, hatte in der
@@ -435,7 +451,7 @@ beginnt oder zuletzt endete). Im Übergang zwischen zwei Runden nennt es die zwe
 $ npm run season
 → winter-2627   Winter 2026/27   2026-10-10 – 2027-03-20  ( 34 Begegnungen)  7 Gruppen, Layout winter
   sommer-26     Sommer 2026      2026-05-02 – 2026-09-06  (114 Begegnungen)  18 Gruppen, Layout summer
-  winter-2526   Winter 2025/26   2025-10-04 – 2026-03-28  ( 27 Begegnungen)  0 Gruppen, Layout winter
+  winter-2526   Winter 2025/26   2025-10-04 – 2026-03-28  ( 33 Begegnungen)  0 Gruppen, Layout winter
 
 Saison: Winter 2026/27 (winter-2627) — startet in 31 Tagen; 2026-10-10 – 2027-03-20, 34 Begegnungen
         Hinweis: Sommer 2026 endete vor 3 Tagen — Nachlese mit --season sommer-26
