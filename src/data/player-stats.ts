@@ -1,5 +1,6 @@
 import type { IndividualMatch, SeasonId } from "../types";
 import { getAllSpielberichte } from "./spielberichte";
+import { normalizePlayerName } from "./player-key";
 import { parsePlayer, parseSide } from "../utils/spielbericht";
 
 // ── Spieler-Statistik pro Mannschaft ──────────────────────────────────────────
@@ -157,12 +158,9 @@ export function emptyTeamStats(leagueName: string, club: string, teamLabel = clu
 
 /** Spielbericht-Namen auf Meldelisten-Form bringen: Walkover-Vermerk und
  *  Länderkürzel entfernen ("Faschang, Michael AUT (w.o.)" -> "Faschang, Michael"). */
-export function normalizePlayerName(name: string): string {
-  return name
-    .replace(/\s*\(w\.o\.\)\s*$/i, "")
-    .replace(/\s+[A-Z]{3}\*?$/, "")
-    .trim();
-}
+// normalizePlayerName wohnt seit 07.10.2026 in player-key.ts (ohne Datenimporte);
+// hier nur weitergereicht, damit bestehende Importe funktionieren.
+export { normalizePlayerName };
 
 // ── Abgeleitete Kennzahlen (Einsätze, Bilanz, Ø-Position; sortiert) ───────────
 

@@ -464,6 +464,17 @@ als ersten Parameter — Gruppennummern wiederholen sich über die Jahre.
 - `search(query)` (ab zwei Zeichen, diakritik-unempfindlich, Name in beiden Reihenfolgen) und
   `getTeamSeason(season, league, club)` (gespielte Begegnungen mit Aufstellungen, Einsatzzähler
   je Spieler, Doppelpartner) fürs Briefing.
+- `recentBalance(club, name, days = 365)` (seit 07.10.2026): Siege/Niederlagen einer Person
+  über die letzten 12 Monate aus allen Einsätzen des Index — gerendert von `Bilanz12` in
+  `LkBadge.tsx` in jeder Meldeliste (`RosterList` im Briefing, `RosterRow` in
+  `TeamStatsDetail`). `LkBadge.tsx` selbst importiert den Index **nicht**; die Aufrufer rechnen
+  und übergeben nur Zahlen. **Falle dabei (07.10.2026):** `App.tsx` brauchte `playerKey` aus
+  `player-history.ts` — sobald ein weiterer Lazy-Chunk den Index importierte, packte der Bundler
+  3 MB Meldelisten ins Startbundle. Deshalb wohnen `playerKey` und `normalizePlayerName` jetzt in
+  **`src/data/player-key.ts`**, einem Blatt ohne Datenimporte; `player-stats`/`player-history`
+  reichen sie nur weiter. Nach jedem Build prüfen: `index-*.js` bleibt bei ~520 KB, die
+  Datenchunks (`player-history-*`, `LkBadge-*`/`spielbericht-*`) tauchen im Startbundle nur in
+  Vites Preload-Liste auf, nicht als statischer Import.
 
 `src/data/data-stand.ts` (generiert vom Wecker) hält Zeitpunkt und Umfang des letzten Einlesens
 und den nächsten geplanten Lauf.

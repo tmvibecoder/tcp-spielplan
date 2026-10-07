@@ -163,6 +163,15 @@ git-worktree'" weiter unten.
   `Jahrgang` in `LkBadge.tsx`) steht seitdem überall hinter der LK, wo eine Meldeliste gezeigt
   wird (auch in der Mannschaftsansicht der Tabelle und auf der Mannschaftsseite der Suche);
   Ersatzspieler ohne Meldelisten-Eintrag haben keinen.
+- **12-Monats-Bilanz** (`Bilanz12` in `LkBadge.tsx`, Zahlen aus `recentBalance` in
+  `player-history.ts`, seit 07.10.2026): in jeder Meldeliste (Gegnerbriefing, „Unsere Meldeliste",
+  Spielerliste der Mannschaftsansicht in der Tabelle) steht hinter jedem Namen ein Schild
+  „12 Mon." mit **grünen Siegen : roten Niederlagen** über alle erfassten Einzel und Doppel der
+  letzten 365 Tage, saisonübergreifend. Ohne Match in dem Zeitraum ein gedimmtes „–". Wunsch des
+  Auftraggebers: auf den ersten Blick sehen, ob jemand zuletzt wirklich gespielt hat oder nur
+  gemeldet ist — nicht als bloße Zahl, sondern als Bilanz. Zählt nur, was im Bestand ist (ab
+  Winter 2024/25 für TCP-Gruppen und die Vorsaison-Gruppen der Gegner); ein Spieler, der nur
+  anderswo gespielt hat, zeigt „–".
 - **Datenstand im ⋯-Menü** (bewusst nicht im Briefing): Datum + Uhrzeit des letzten Einlesens der
   BTV-Berichte, was eingelesen wurde, und der **nächste geplante Wecker-Lauf** mit Grund.
 - **LK überall als Abzeichen** (`LkBadge`): kleines Schild mit abgesetztem „LK"-Präfix und fetter
