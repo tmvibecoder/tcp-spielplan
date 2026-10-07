@@ -42,10 +42,12 @@ if (!season.groups.length) {
 const seasonIdx = args.indexOf("--season");
 const filter = args.find((a, i) => !a.startsWith("--") && i !== seasonIdx + 1);
 // --gegner: nur die Gruppen ohne TC Pliening (Spielerhistorie der Gegner, siehe seasons.mjs)
+// --eigene: nur die Gruppen MIT TC Pliening (z. B. Kontroll-Crawl einer Saison mit --force)
 const onlyGegner = args.includes("--gegner");
+const onlyEigene = args.includes("--eigene");
 const groups = (filter
   ? season.groups.filter((g) => g.leagueName.includes(filter) || g.groupid === filter)
-  : season.groups).filter((g) => !onlyGegner || g.gegner);
+  : season.groups).filter((g) => (!onlyGegner || g.gegner) && (!onlyEigene || !g.gegner));
 
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 

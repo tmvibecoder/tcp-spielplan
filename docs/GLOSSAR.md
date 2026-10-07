@@ -271,7 +271,8 @@ mit **LK an jedem Namen**. **Keine Prognose:** Es steht nur darin, was in einem 
 Alle Einzel und Doppel **einer Person** über alle erfassten Saisons ab Winter 2024/25, nach
 Saison getrennt, neueste zuerst — mit Datum, Position, Gegner, Doppelpartner, Sätzen und Ergebnis.
 Gibt es für eigene und für gegnerische Spieler. Filter „Nur gegen TC Pliening". Ein
-Vereinswechsel ergibt zwei getrennte Einträge.
+Vereinswechsel ergibt zwei getrennte Einträge; Einsätze in der ersten, zweiten und dritten
+Mannschaft desselben Vereins gehören zu einer Person (die Mannschaftsziffer zählt nicht).
 
 **Einsatzhäufigkeit.**
 Wie oft ein Spieler in der laufenden Runde eingesetzt wurde, getrennt nach Einzel und Doppel, und
