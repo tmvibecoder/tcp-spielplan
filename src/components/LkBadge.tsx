@@ -37,6 +37,38 @@ export default function LkBadge({ lk, tone = "own", size = "sm", className = "" 
   );
 }
 
+/** Bilanz der letzten 12 Monate als kleines Schild: grüne Siege, rote
+ *  Niederlagen, davor das Etikett „12 Mon.". Ohne Matches in dem Zeitraum
+ *  erscheint ein gedimmtes „–" — so sieht man auf den ersten Blick, wer
+ *  gemeldet, aber nicht aktiv ist (Thomas, 07.10.2026). Die Zahlen rechnet der
+ *  Aufrufer (recentBalance in player-history.ts) — dieses Modul bleibt leicht,
+ *  weil es auch im Startbundel steckt. */
+export function Bilanz12({ wins, losses, className = "" }: { wins: number; losses: number; className?: string }) {
+  const played = wins + losses;
+  const title = played
+    ? `Letzte 12 Monate: ${played} Match${played === 1 ? "" : "es"}, ${wins} gewonnen, ${losses} verloren`
+    : "Keine Matches in den letzten 12 Monaten erfasst";
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-[2px] text-[10px] leading-none tabular-nums ${
+        played ? "border-slate-600/60 bg-slate-800/70" : "border-slate-700/40 bg-slate-800/30"
+      } ${className}`}
+      title={title}
+    >
+      <span className={`font-semibold ${played ? "text-slate-400" : "text-slate-600"}`}>12 Mon.</span>
+      {played ? (
+        <span className="font-extrabold">
+          <span className="text-emerald-400">{wins}</span>
+          <span className="text-slate-500">:</span>
+          <span className="text-red-400">{losses}</span>
+        </span>
+      ) : (
+        <span className="font-extrabold text-slate-600">–</span>
+      )}
+    </span>
+  );
+}
+
 /** Jahrgang als dezenter Zusatz hinter der LK — 0/fehlend (Ersatzspieler ohne
  *  Meldelisten-Eintrag) wird nicht gezeigt. */
 export function Jahrgang({ jahrgang, className = "" }: { jahrgang?: number; className?: string }) {

@@ -7,7 +7,8 @@ import {
   normalizePlayerName,
 } from "../data/player-stats";
 import type { Meldeliste, MeldelistenEintrag } from "../types";
-import LkBadge, { Jahrgang } from "./LkBadge";
+import { recentBalance } from "../data/player-history";
+import LkBadge, { Bilanz12, Jahrgang } from "./LkBadge";
 
 interface TeamStatsDetailProps {
   team: TeamStats;
@@ -122,6 +123,7 @@ function AppearanceRow({
  *  mode "einzel" zählt nur Einzel, mode "doppel" nur Doppel-Einsätze. */
 function RosterRow({
   entry,
+  club,
   agg,
   mode,
   accentColor,
@@ -130,6 +132,8 @@ function RosterRow({
   onOpenPlayer,
 }: {
   entry: MeldelistenEintrag;
+  /** Verein — Schlüssel für die 12-Monats-Bilanz aus dem Spielerindex */
+  club: string;
   agg?: PlayerAgg;
   mode: "einzel" | "doppel";
   accentColor: string;
@@ -178,6 +182,10 @@ function RosterRow({
                 {entry.nation}
               </span>
             )}
+          </div>
+          {/* zweite Zeile: Bilanz der letzten 12 Monate über alle erfassten Runden */}
+          <div className="mt-1">
+            <Bilanz12 {...recentBalance(club, entry.name)} />
           </div>
         </div>
         {played && agg ? (
@@ -410,6 +418,7 @@ export default function TeamStatsDetail({
                     <RosterRow
                       key={key}
                       entry={e}
+                      club={team.club}
                       agg={aggByName.get(e.name)}
                       mode={tab === "spieler" ? "einzel" : "doppel"}
                       accentColor={accentColor}
@@ -434,6 +443,7 @@ export default function TeamStatsDetail({
                     <RosterRow
                       key={key}
                       entry={{ rang: 0, name: p.name, lk: p.lk, jahrgang: 0 }}
+                      club={team.club}
                       agg={p}
                       mode={tab === "spieler" ? "einzel" : "doppel"}
                       accentColor={accentColor}

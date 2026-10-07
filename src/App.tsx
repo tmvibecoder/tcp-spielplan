@@ -14,7 +14,8 @@ import { Impressum, Datenschutz } from "./components/LegalPages";
 import { useLiveScores } from "./hooks/useLiveScores";
 import { useFavorites } from "./hooks/useFavorites";
 import { DATA_STAND } from "./data/data-stand";
-import { playerKey, type TeamHit } from "./data/player-history";
+import { playerKey } from "./data/player-key";
+import type { TeamHit } from "./data/player-history";
 
 // Die Tabellen-Ansicht zieht die großen Spielbericht- und Meldelisten-Daten mit.
 // Sie wird erst geladen, wenn jemand den Reiter „Tabelle“ öffnet — der Spielplan

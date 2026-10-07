@@ -2,7 +2,7 @@ import type { IndividualMatch, SeasonId } from "../types";
 import { getAllSpielberichte } from "./spielberichte";
 import { MELDELISTEN } from "./meldelisten";
 import { ALL_SEASONS } from "./seasons";
-import { normalizePlayerName } from "./player-stats";
+import { normalizePlayerName, playerKey } from "./player-key";
 import { getSets, parseSide, type SetScore, type Spielbericht } from "../utils/spielbericht";
 
 // ── Saisonübergreifender Index: Spieler, Mannschaften, Einsätze ──────────────
@@ -93,7 +93,9 @@ export function compareSeasons(a: SeasonId, b: SeasonId): number {
   return (seasonOrder.get(a) ?? 99) - (seasonOrder.get(b) ?? 99);
 }
 
-export const playerKey = (club: string, name: string) => `${club}::${normalizePlayerName(name)}`;
+// playerKey wohnt in player-key.ts (Blatt ohne Datenimporte) und wird hier nur
+// weitergereicht — App.tsx importiert ihn direkt von dort.
+export { playerKey };
 
 interface Index {
   players: Map<string, PlayerEntry>;
@@ -225,6 +227,36 @@ export function getPlayer(key: string): PlayerEntry | undefined {
 /** Spieler einer Mannschaft (Verein) über die Meldeliste oder die Einsätze finden. */
 export function findPlayer(club: string, name: string): PlayerEntry | undefined {
   return idx().players.get(playerKey(club, name));
+}
+
+export interface RecentBalance {
+  played: number;
+  wins: number;
+  losses: number;
+  singles: number;
+  doubles: number;
+}
+
+/** Bilanz einer Person über die letzten `days` Tage (Standard: 12 Monate) aus
+ *  allen erfassten Einzeln und Doppeln — saison- und vereinsübergreifend, aber
+ *  je Verein getrennt (Vereinswechsel = eigener Eintrag, wie überall).
+ *  Thomas' Wunsch vom 07.10.2026: auf den ersten Blick sehen, ob jemand
+ *  zuletzt wirklich gespielt hat oder nur gemeldet ist — als grüne Siege und
+ *  rote Niederlagen, nicht bloß als Zahl. */
+export function recentBalance(club: string, name: string, days = 365, today = new Date()): RecentBalance {
+  const cutoff = new Date(today.getTime() - days * 86400000).toISOString().slice(0, 10);
+  const out: RecentBalance = { played: 0, wins: 0, losses: 0, singles: 0, doubles: 0 };
+  const p = findPlayer(club, name);
+  if (!p) return out;
+  for (const a of p.appearances) {
+    if (!a.date || a.date < cutoff) continue;
+    out.played++;
+    if (a.won) out.wins++;
+    else out.losses++;
+    if (a.type === "singles") out.singles++;
+    else out.doubles++;
+  }
+  return out;
 }
 
 // ── Suche ───────────────────────────────────────────────────────────────────

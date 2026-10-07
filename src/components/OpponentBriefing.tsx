@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { MeldelistenEintrag, SeasonId } from "../types";
 import { getMeldeliste } from "../data/meldelisten";
-import { getTeamSeason, playerKey, type LineupSlot, type MeetingSummary, type TeamPlayerUsage } from "../data/player-history";
+import { getTeamSeason, playerKey, recentBalance, type LineupSlot, type MeetingSummary, type TeamPlayerUsage } from "../data/player-history";
 import { ALL_SEASONS } from "../data/seasons";
-import LkBadge, { Jahrgang } from "./LkBadge";
+import LkBadge, { Bilanz12, Jahrgang } from "./LkBadge";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 import type { Spielbericht } from "../utils/spielbericht";
 
@@ -149,10 +149,15 @@ export function RosterList({
                 <Jahrgang jahrgang={e.jahrgang} />
                 {e.nation && <span className="shrink-0 text-[9px] font-bold text-slate-500">{e.nation}</span>}
               </span>
-              <span className="block truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
+              {/* zweite Zeile: Einsätze dieser Saison, daneben die 12-Monats-Bilanz —
+                  bewusst nicht in der Namenszeile, sonst werden Namen auf dem Handy abgeschnitten */}
+              <span className="mt-0.5 flex items-center gap-1.5">
+                <span className="min-w-0 truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
+                <Bilanz12 {...recentBalance(club, e.name)} />
+              </span>
             </span>
             {played && u && (
-              <span className="shrink-0 text-[11px] font-bold tabular-nums">
+              <span className="shrink-0 text-[11px] font-bold tabular-nums" title="Bilanz in dieser Saison">
                 <span className="text-emerald-400">{u.singlesWins + u.doublesWins}</span>
                 <span className="text-slate-500">:</span>
                 <span className="text-red-400">{u.singles + u.doubles - u.singlesWins - u.doublesWins}</span>
@@ -177,7 +182,10 @@ export function RosterList({
                   <span className="truncate text-[13px] font-bold text-slate-100">{u.name}</span>
                   <LkBadge lk={u.lk} tone="own" />
                 </span>
-                <span className="block truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
+                <span className="mt-0.5 flex items-center gap-1.5">
+                  <span className="min-w-0 truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
+                  <Bilanz12 {...recentBalance(club, u.name)} />
+                </span>
               </span>
             </button>
           ))}
