@@ -63,9 +63,16 @@ const isName = (l) =>
 /**
  * @returns {{date:string|null, matches:Array, finalHome:number, finalAway:number}}
  */
+// teamSize: 9 = 6 Einzel + 3 Doppel, 6 = 4 + 2, 7 = 5 + 2 („5er"), 3 = 2 + 1 („2er") —
+// oder "auto": das Format aus dem Bericht selbst ablesen (Anzahl Einzel → Doppel laut
+// Tabelle). Nötig seit dem Voll-Crawl aller Altersklassen (08.10.2026): Gruppen der
+// Gegner tragen das Format nicht immer im Liganamen (Regionalliga Herren 65 mit 4+2,
+// Bayernliga „(5er)", Herren 80 „(2er)").
+const DOUBLES_FOR = { 2: 1, 4: 2, 5: 2, 6: 3 };
+
 export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
   const lines = modal.split("\n").map((l) => l.trim()).filter((l) => l && l !== " ");
-  const singlesCount = teamSize === 6 ? 4 : 6;
+  const singlesCount = teamSize === "auto" ? null : teamSize === 6 ? 4 : teamSize === 7 ? 5 : teamSize === 3 ? 2 : 6;
 
   const dateM = modal.match(/abgeschlossen am (\d{2})\.(\d{2})\.(\d{4})/);
   const completedDate = dateM ? `${dateM[3]}-${dateM[2]}-${dateM[1]}` : null;
@@ -76,7 +83,8 @@ export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
 
   const matches = [];
   let finalHome = null, finalAway = null;
-  let notPlayed = 0; // ausgelassene, nicht begonnene Doppel
+  let notPlayed = 0; // ausgelassene, nicht gewertete Einzel und Doppel
+  let notPlayedSingles = 0; // davon Einzel (für die Formaterkennung bei "auto")
 
   // ── Einzel ──
   {
@@ -97,7 +105,7 @@ export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
       const awayRaw = isName(lines[i]) ? lines[i++] : "";
       // Nicht beendetes Einzel (Zeitmangel, vom Spielleiter nicht gewertet): Namen
       // und Position stehen da, aber keine einzige Ergebniszeile → auslassen.
-      if (scores.length === 0) { notPlayed++; pos = posNr; continue; }
+      if (scores.length === 0) { notPlayed++; notPlayedSingles++; pos = posNr; continue; }
       if (scores.length < 3) throw new Error(`Einzel ohne MP/Sätze/Spiele (Pos ${posNr})`);
       const [mp] = scores.slice(-3);
       const sets = scores.slice(0, -3).map((s) => s.split(":").map(Number));
@@ -162,9 +170,18 @@ export function parseModal(modal, { keyPrefix = "x", teamSize = 9 } = {}) {
   finalHome = matches.filter((m) => m.winner === "home").length;
   finalAway = matches.filter((m) => m.winner === "away").length;
 
-  const expected = teamSize;
+  let expected = teamSize;
+  let singles = singlesCount;
+  if (teamSize === "auto") {
+    // Format aus dem Bericht: gezählte Einzel (gespielt + nicht gewertet) → Doppelzahl
+    const singlesSeen = matches.filter((m) => m.type === "singles").length + notPlayedSingles;
+    const doubles = DOUBLES_FOR[singlesSeen];
+    if (!doubles) throw new Error(`${singlesSeen} Einzel — unbekanntes Format`);
+    singles = singlesSeen;
+    expected = singlesSeen + doubles;
+  }
   if (matches.length + notPlayed !== expected) {
-    throw new Error(`${matches.length} Matches statt ${expected} (Einzel ${singlesCount}+Doppel ${expected - singlesCount})`);
+    throw new Error(`${matches.length} Matches statt ${expected} (Einzel ${singles}+Doppel ${expected - singles})`);
   }
   return { completedDate, matches, finalHome, finalAway };
 }

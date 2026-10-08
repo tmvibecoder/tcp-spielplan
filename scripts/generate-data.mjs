@@ -83,6 +83,7 @@ function ensureGroup(season, league, teamLabel) {
 
 // ── 2. Caches einmischen (Cache schlägt Bestand je Gruppe und Teil) ──────────
 let fromCacheReports = 0, fromCacheRosters = 0, failed = 0;
+const autoFormat = new Set(); // Ligen, deren Format aus dem Bericht statt der Registry kam
 for (const season of SEASONS) {
   const rf = cacheFile(season);
   if (fs.existsSync(rf)) {
@@ -97,7 +98,15 @@ for (const season of SEASONS) {
         const idBase = r.meetingId ? `m${r.meetingId}` : `${season.id}_${r.home}_${r.away}`.replace(/\W+/g, "");
         let parsed;
         try {
-          parsed = parseModal(r.modal, { keyPrefix: idBase, teamSize });
+          try {
+            parsed = parseModal(r.modal, { keyPrefix: idBase, teamSize });
+          } catch (e) {
+            // Format passt nicht zur Registry (Gegner-Gruppen tragen „4er"/„5er"/„2er"
+            // nicht immer im Liganamen) → Format aus dem Bericht selbst lesen
+            if (!/Matches statt/.test(e.message)) throw e;
+            parsed = parseModal(r.modal, { keyPrefix: idBase, teamSize: "auto" });
+            autoFormat.add(`${season.id}::${league}`);
+          }
         } catch (e) {
           console.error(`FEHLER ${season.id} ${league} | ${r.home} – ${r.away}: ${e.message}`);
           failed++;
@@ -233,7 +242,7 @@ const perSeason = SEASONS.map((s) => {
   return `${s.label}: ${gs.length} Gruppen, ${n} Berichte, ${r} Meldelisten`;
 });
 const matchCount = allReports.reduce((s, b) => s + b.matches.length, 0);
-console.log(`Bestand ${carried} Gruppen, aus Caches ${fromCacheReports} Gruppen mit Berichten und ${fromCacheRosters} mit Meldelisten${failed ? `, ${failed} Berichte fehlgeschlagen` : ""}`);
+console.log(`Bestand ${carried} Gruppen, aus Caches ${fromCacheReports} Gruppen mit Berichten und ${fromCacheRosters} mit Meldelisten${failed ? `, ${failed} Berichte fehlgeschlagen` : ""}${autoFormat.size ? `, Format aus dem Bericht gelesen in ${autoFormat.size} Ligen` : ""}`);
 for (const line of perSeason) console.log(`  ${line}`);
 console.log(`Gesamt: ${allReports.length} Berichte, ${matchCount} Einzel/Doppel, ${allRosters.length} Meldelisten, ${index.players.size} Personen in ${byClub.size} Vereinen`);
 console.log(`public/data: ${written} Dateien geschrieben, ${unchanged} unverändert`);

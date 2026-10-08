@@ -264,20 +264,26 @@ Spielplan und keine Tabellen (`historyOnly` in `src/data/seasons.ts`, kein Eintr
   Spielzeit … nicht gewertet") stehen mit Namen, aber ohne Ergebniszeilen im Modal — der Parser
   lässt sie aus, die Begegnung zählt dann weniger als das Format vorgibt.
 
-**Datenstand 06.10.2026** (`npm run check -- --all` grün; Stand 10.09.2026 in Klammern, als nur
-Gruppen mit TCP erfasst waren):
+**Datenstand 08.10.2026** (`npm run check -- --all` grün; Stand 06.10.2026 in Klammern, als
+die Gegner nur in ihrer eigenen Altersklasse erfasst waren):
 
 | Saison | Gruppen mit TCP | Gegner-Gruppen | Spielberichte | Meldelisten | Bemerkung |
 |---|---|---|---|---|---|
 | Winter 2026/27 | 7 | — | — (noch kein Spieltag) | 41 Mannschaften | Dropdown, Wecker aktiv |
-| Sommer 2026 | 18 | 37 | 1.324 (407) | 405 Mannschaften (126) | Dropdown |
-| Winter 2025/26 | 7 | 32 | 572 (95) | 231 Mannschaften (40) | Dropdown; Spielplan seit 07.10.2026 vollständig (33 statt 27 TCP-Begegnungen, siehe „Kontroll-Crawl Winter 2025/26") |
-| Sommer 2025 | 13 (inkl. Mixed 40) | 35 | 1.187 (304) | 361 Mannschaften (95) | nur Historie |
-| Winter 2024/25 | 7 (zwei Herren-40-Teams) | 29 | 534 (99) | 213 Mannschaften (41) | nur Historie |
+| Sommer 2026 | 18 | 188 (37) | 4.877 (1.324) | 1.507 Mannschaften (405) | Dropdown |
+| Winter 2025/26 | 7 | 127 (32) | 1.942 (572) | 784 Mannschaften (231) | Dropdown; Spielplan seit 07.10.2026 vollständig (33 statt 27 TCP-Begegnungen, siehe „Kontroll-Crawl Winter 2025/26") |
+| Sommer 2025 | 13 (inkl. Mixed 40) | 195 (35) | 4.936 (1.187) | 1.541 Mannschaften (361) | nur Historie; zwei Freizeit-Doppel-60-Gruppen ohne Berichte |
+| Winter 2024/25 | 7 (zwei Herren-40-Teams) | 112 (29) | 1.760 (534) | 698 Mannschaften (213) | nur Historie; Südliga 1 Gr. 146 ohne Berichte |
 
-Zusammen 3.617 Spielberichte mit 27.023 Einzeln/Doppeln (vorher 905 mit 6.845) und 1.251
-Meldelisten (vorher 302). Seit 08.10.2026 liegen sie als JSON unter `public/data` (siehe oben);
-der Spielplan selbst bleibt beim alten Startbundle (~512 KB).
+Zusammen **13.515 Spielberichte mit 99.311 Einzeln/Doppeln** (vorher 3.617 mit 27.023) und
+**4.571 Meldelisten** (vorher 1.251) — 43.776 Personen in 529 Vereinen. Sie liegen als JSON unter
+`public/data` (67 MB im Repo, siehe oben; größte Vereinsdatei 166 KB gzip, Suchindex 536 KB gzip,
+Gruppen bis 91 KB roh); der Spielplan selbst bleibt beim alten Startbundle (~512 KB). Ein einziger
+Bericht (Winter 2025/26 Südliga 2 Gr. 022, TSV Haar III – TC Sport Scheck) lässt sich nicht
+parsen (Doppel ohne Ergebniszeilen) und fehlt bewusst. Lücken-Check danach: 491 von 1.590
+gemeldeten Gegnerspielern (31 %) ohne Einsatz in den Vorsaisons (vorher 707, 44 %); die
+verbliebenen Spitzenspieler ohne Einsatz sind nach Stichproben echte Nichtspieler (Ex-Profis bei
+Wacker/Iphitos, Bundesliga-Spieler außerhalb des BTV).
 Die Meldelisten der Winterrunde 2026/27 veröffentlicht der BTV erst kurz vor Saisonstart (am
 10.09.2026 zeigten alle 41 Mannschaftsportraits 0 Spieler); der Wecker holt sie 7 Tage vor der
 ersten Begegnung — bis dahin zeigt das Briefing im Reiter „Meldeliste" den Leerzustand und
