@@ -7,8 +7,10 @@ import {
   normalizePlayerName,
 } from "../data/player-stats";
 import type { Meldeliste, MeldelistenEintrag } from "../types";
-import { recentBalance } from "../data/player-history";
+import type { RecentBalance } from "../data/player-history";
 import LkBadge, { Bilanz12, Jahrgang } from "./LkBadge";
+
+const NO_BALANCE: RecentBalance = { played: 0, wins: 0, losses: 0, singles: 0, doubles: 0 };
 
 interface TeamStatsDetailProps {
   team: TeamStats;
@@ -22,6 +24,8 @@ interface TeamStatsDetailProps {
   backLabel?: string;
   /** Spieler antippen → Spielerhistorie (Schlüssel: Verein + Name) */
   onOpenPlayer?: (club: string, name: string) => void;
+  /** 12-Monats-Bilanz je Spieler (aus den nachgeladenen Vereinsdaten); fehlt sie, bleibt das Schild leer */
+  balanceOf?: (name: string) => RecentBalance;
 }
 
 type StatTab = "spieler" | "doppel";
@@ -123,7 +127,7 @@ function AppearanceRow({
  *  mode "einzel" zählt nur Einzel, mode "doppel" nur Doppel-Einsätze. */
 function RosterRow({
   entry,
-  club,
+  balanceOf,
   agg,
   mode,
   accentColor,
@@ -132,8 +136,10 @@ function RosterRow({
   onOpenPlayer,
 }: {
   entry: MeldelistenEintrag;
-  /** Verein — Schlüssel für die 12-Monats-Bilanz aus dem Spielerindex */
+  /** Verein — Schlüssel für die Spielerhistorie */
   club: string;
+  /** 12-Monats-Bilanz aus den nachgeladenen Vereinsdaten */
+  balanceOf?: (name: string) => RecentBalance;
   agg?: PlayerAgg;
   mode: "einzel" | "doppel";
   accentColor: string;
@@ -185,7 +191,7 @@ function RosterRow({
           </div>
           {/* zweite Zeile: Bilanz der letzten 12 Monate über alle erfassten Runden */}
           <div className="mt-1">
-            <Bilanz12 {...recentBalance(club, entry.name)} />
+            <Bilanz12 {...(balanceOf ? balanceOf(entry.name) : NO_BALANCE)} />
           </div>
         </div>
         {played && agg ? (
@@ -245,6 +251,7 @@ export default function TeamStatsDetail({
   meldeliste,
   backLabel = "Tabelle",
   onOpenPlayer,
+  balanceOf,
 }: TeamStatsDetailProps) {
   const [tab, setTab] = useState<StatTab>("spieler");
   const [openKey, setOpenKey] = useState<string | null>(null);
@@ -419,6 +426,7 @@ export default function TeamStatsDetail({
                       key={key}
                       entry={e}
                       club={team.club}
+                      balanceOf={balanceOf}
                       agg={aggByName.get(e.name)}
                       mode={tab === "spieler" ? "einzel" : "doppel"}
                       accentColor={accentColor}
@@ -444,6 +452,7 @@ export default function TeamStatsDetail({
                       key={key}
                       entry={{ rang: 0, name: p.name, lk: p.lk, jahrgang: 0 }}
                       club={team.club}
+                      balanceOf={balanceOf}
                       agg={p}
                       mode={tab === "spieler" ? "einzel" : "doppel"}
                       accentColor={accentColor}

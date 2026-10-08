@@ -69,6 +69,25 @@ const ROW_RE =
 const CACHE = rosterCacheFile(season);
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 const cacheKey = (lg, club) => `${lg}::${club}`;
+// --no-gen: Datendatei am Ende NICHT neu erzeugen (für parallele Läufe, die
+// gen:meldelisten einmal gesammelt am Schluss aufrufen).
+const NO_GEN = args.includes("--no-gen");
+
+// Mehrere Crawls derselben Saison dürfen parallel laufen (je Prozess eine
+// Gruppe, siehe scripts/vollcrawl-gegner.mjs): Vor jedem Schreiben wird der
+// Stand von der Platte eingemischt (fremde Mannschaften übernommen, eigene
+// behalten) und die Datei atomar per tmp + rename ersetzt. Ohne das überschrieb
+// der zweite Prozess die Einträge des ersten (Falle vom 06.10.2026).
+const ownKeys = new Set();
+function saveCache(key) {
+  ownKeys.add(key);
+  let onDisk = {};
+  try { onDisk = JSON.parse(fs.readFileSync(CACHE, "utf8")); } catch { /* noch keine Datei */ }
+  for (const [k, v] of Object.entries(onDisk)) if (!ownKeys.has(k)) cache[k] = v;
+  const tmp = `${CACHE}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(cache));
+  fs.renameSync(tmp, CACHE);
+}
 
 let browser, page;
 async function startBrowser() {
@@ -280,12 +299,12 @@ for (const g of groups) {
     const entry = { leagueName: g.leagueName, ...team };
     result.push(entry);
     cache[key] = entry;
-    fs.writeFileSync(CACHE, JSON.stringify(cache));
+    saveCache(key);
     console.log(`  ${team.club}: ${team.herren.length} H + ${team.damen.length} D`);
   }
 }
 await browser.close();
 
 console.log(`\nCache: ${Object.keys(cache).length} Mannschaften in ${path.relative(ROOT, CACHE)}`);
-// Datendatei aus allen Saison-Caches neu erzeugen
-execFileSync("node", [path.join(ROOT, "scripts/generate-meldelisten.mjs")], { stdio: "inherit" });
+// Datendatei aus allen Saison-Caches neu erzeugen (außer bei --no-gen)
+if (!NO_GEN) execFileSync("node", [path.join(ROOT, "scripts/generate-meldelisten.mjs")], { stdio: "inherit" });

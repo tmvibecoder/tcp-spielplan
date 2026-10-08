@@ -1,6 +1,7 @@
 // Der automatische Briefing-Lauf (Wecker): prüft, ob eine TCP-Begegnung der
-// laufenden Saison in genau 7, 4 oder 0 Tagen liegt, und liest dann für die
-// betroffenen Gruppen die BTV-Berichte neu ein — Spielberichte, Meldelisten,
+// laufenden Saison in genau 7, 4 oder 0 Tagen liegt — oder vor 1 bzw. 3 Tagen
+// lag (Ergebnis-Nachlauf) — und liest dann für die betroffenen Gruppen die
+// BTV-Berichte neu ein — Spielberichte, Meldelisten,
 // Tabellen und Begegnungen (inkl. Verlegungen). Danach schreibt er den
 // Datenstand für das ⋯-Menü der App. Committen/Deployen macht der Workflow
 // (.github/workflows/briefing.yml), nicht dieses Skript.
@@ -26,7 +27,10 @@ const has = (f) => argv.includes(f);
 const DRY = has("--dry-run");
 const FORCE = has("--force") || process.env.FORCE === "true";
 const STAND_ONLY = has("--stand-only");
-const OFFSETS = [7, 4, 0];
+// Tage VOR einer TCP-Begegnung (Briefing) — und seit 08.10.2026 auch DANACH
+// (-1, -3): die Ergebnisse des Wochenendes stehen so am Montag bzw. Mittwoch
+// automatisch in der App, ohne dass jemand den Ergebnis-Skill anstoßen muss.
+const OFFSETS = [7, 4, 0, -1, -3];
 const RUN_HOUR = 1;
 const OWN = /pliening/i;
 
@@ -112,7 +116,9 @@ for (const m of matches) {
     const at = `${runDate}T0${RUN_HOUR}:00:00${berlin(new Date(`${runDate}T12:00:00Z`)).offset}`;
     const reason = off === 0
       ? `Spieltag ${m.label} – ${m.opponent}`
-      : `${off} Tage vor ${m.label} – ${m.opponent} (${fmt(m.date).slice(0, 6)})`;
+      : off > 0
+        ? `${off} Tage vor ${m.label} – ${m.opponent} (${fmt(m.date).slice(0, 6)})`
+        : `Ergebnis ${-off} Tag${off === -1 ? "" : "e"} nach ${m.label} – ${m.opponent} (${fmt(m.date).slice(0, 6)})`;
     if (!nextRun || at < nextRun.at) nextRun = { at, reason };
   }
 }
@@ -157,7 +163,7 @@ if (STAND_ONLY) {
 }
 
 if (!selected.length) {
-  console.log("Heute ist keine TCP-Begegnung in 7, 4 oder 0 Tagen — nichts zu tun.");
+  console.log("Heute ist keine TCP-Begegnung in 7, 4 oder 0 Tagen und keine lag vor 1 oder 3 Tagen — nichts zu tun.");
   output({ ran: false, scope: "" });
   process.exit(0);
 }

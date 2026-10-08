@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { search, type PlayerEntry, type TeamHit } from "../data/player-history";
+import { search, type SearchPlayer, type TeamHit } from "../data/player-history";
+import { useSearchIndex } from "../data/store";
 import { ALL_SEASONS } from "../data/seasons";
 import type { SeasonId } from "../types";
 import LkBadge from "./LkBadge";
@@ -103,8 +104,8 @@ export default function SearchOverlay({ onClose, onOpenPlayer, onOpenTeam }: Pro
     setRecent(next);
   }, []);
 
-  const openPlayer = (p: PlayerEntry) => {
-    remember({ kind: "spieler", key: p.key, name: p.name, club: p.club, teamLabel: p.teams[0]?.teamLabel ?? "", lk: p.lk, seasons: p.seasons });
+  const openPlayer = (p: SearchPlayer) => {
+    remember({ kind: "spieler", key: p.key, name: p.name, club: p.club, teamLabel: p.teamLabel, lk: p.lk, seasons: p.seasons });
     onOpenPlayer(p.key);
   };
   const openTeam = (hit: TeamHit, seasons: SeasonId[]) => {
@@ -117,7 +118,9 @@ export default function SearchOverlay({ onClose, onOpenPlayer, onOpenTeam }: Pro
     setRecent([]);
   };
 
-  const result = useMemo(() => search(query), [query]);
+  // Suchindex (alle Namen, Vereine, Mannschaften) wird beim Öffnen nachgeladen
+  const { data: index, loading: indexLoading } = useSearchIndex();
+  const result = useMemo(() => search(index, query), [index, query]);
   const tooShort = query.trim().length < 2;
 
   const teamGroups = useMemo(() => {
@@ -216,7 +219,7 @@ export default function SearchOverlay({ onClose, onOpenPlayer, onOpenTeam }: Pro
             </p>
           </>
         ) : result.players.length === 0 && teamGroups.length === 0 ? (
-          <p className="px-1 pt-6 text-center text-sm text-slate-500">Nichts gefunden.</p>
+          <p className="px-1 pt-6 text-center text-sm text-slate-500">{indexLoading ? "Suchindex wird geladen …" : "Nichts gefunden."}</p>
         ) : (
           <>
             {teamGroups.length > 0 && (
@@ -250,7 +253,7 @@ export default function SearchOverlay({ onClose, onOpenPlayer, onOpenTeam }: Pro
                   Spieler ({result.players.length})
                 </h2>
                 <div className="space-y-1">
-                  {result.players.map((p: PlayerEntry) => (
+                  {result.players.map((p: SearchPlayer) => (
                     <button key={p.key} type="button" onClick={() => openPlayer(p)} className={rowClass}>
                       <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-700/50 text-sm">👤</span>
                       <span className="min-w-0 flex-1">
@@ -262,7 +265,7 @@ export default function SearchOverlay({ onClose, onOpenPlayer, onOpenTeam }: Pro
                         </span>
                         <span className="block truncate text-[10.5px] text-slate-400">
                           {p.club}
-                          {p.teams[0]?.teamLabel ? ` · ${p.teams[0].teamLabel}` : ""}
+                          {p.teamLabel ? ` · ${p.teamLabel}` : ""}
                           {p.seasons.map(seasonChip)}
                         </span>
                       </span>

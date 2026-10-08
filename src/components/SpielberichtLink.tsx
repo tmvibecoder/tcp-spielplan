@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { MatchResult } from "../data/results";
 import type { SeasonId } from "../types";
 import { getSpielbericht } from "../data/spielberichte";
+import { useGroup } from "../data/store";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 
 interface Props {
@@ -13,11 +14,13 @@ interface Props {
   result: MatchResult;
 }
 
-// Wird per React.lazy geladen, damit die großen Spielbericht-Daten erst dann
-// ins Bundle kommen, wenn jemand ein gespieltes Spiel im Spielplan aufklappt.
+// Lädt die Gruppendatei (public/data/groups/…) erst, wenn jemand ein gespieltes
+// Spiel im Spielplan aufklappt — die Berichte stecken seit 08.10.2026 nicht mehr
+// im Bundle.
 export default function SpielberichtLink({ season, league, leagueLabel, homeClub, awayClub, result }: Props) {
   const [open, setOpen] = useState(false);
-  const bericht = getSpielbericht(season, league, homeClub, awayClub);
+  const { data: group } = useGroup(season, league);
+  const bericht = getSpielbericht(group, homeClub, awayClub);
   if (!bericht) return null;
 
   return (

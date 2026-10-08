@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { MeldelistenEintrag, SeasonId } from "../types";
 import { getMeldeliste } from "../data/meldelisten";
-import { getTeamSeason, playerKey, recentBalance, type LineupSlot, type MeetingSummary, type TeamPlayerUsage } from "../data/player-history";
+import { getTeamSeason, playerKey, recentBalance, type LineupSlot, type MeetingSummary, type RecentBalance, type TeamPlayerUsage } from "../data/player-history";
+import { useClub, useGroup } from "../data/store";
 import { ALL_SEASONS } from "../data/seasons";
 import LkBadge, { Bilanz12, Jahrgang } from "./LkBadge";
 import SpielberichtDrawer from "./SpielberichtDrawer";
@@ -108,12 +109,15 @@ export function RosterList({
   usage,
   accentColor,
   onOpenPlayer,
+  balanceOf,
 }: {
   club: string;
   rows: MeldelistenEintrag[];
   usage: Map<string, TeamPlayerUsage>;
   accentColor: string;
   onOpenPlayer?: (key: string) => void;
+  /** 12-Monats-Bilanz je Spieler aus den nachgeladenen Vereinsdaten */
+  balanceOf: (name: string) => RecentBalance;
 }) {
   // Eingesetzte Spieler ohne Meldelisten-Eintrag (Ersatz aus anderen Mannschaften)
   const extra = [...usage.values()].filter((u) => !rows.some((r) => r.name === u.name));
@@ -153,7 +157,7 @@ export function RosterList({
                   bewusst nicht in der Namenszeile, sonst werden Namen auf dem Handy abgeschnitten */}
               <span className="mt-0.5 flex items-center gap-1.5">
                 <span className="min-w-0 truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
-                <Bilanz12 {...recentBalance(club, e.name)} />
+                <Bilanz12 {...balanceOf(e.name)} />
               </span>
             </span>
             {played && u && (
@@ -184,7 +188,7 @@ export function RosterList({
                 </span>
                 <span className="mt-0.5 flex items-center gap-1.5">
                   <span className="min-w-0 truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
-                  <Bilanz12 {...recentBalance(club, u.name)} />
+                  <Bilanz12 {...balanceOf(u.name)} />
                 </span>
               </span>
             </button>
@@ -201,9 +205,12 @@ export function RosterList({
  *  Winter-Meldelisten bis zu 35 Namen lang sind. */
 export function OwnRoster({ season, league, teamLabel, accentColor, ownClub, onOpenPlayer }: Omit<Props, "opponentClub">) {
   const [open, setOpen] = useState(true);
-  const own = getTeamSeason(season, league, ownClub);
-  const roster = getMeldeliste(season, league, ownClub);
+  const { data: group } = useGroup(season, league);
+  const { data: ownData } = useClub(ownClub);
+  const own = getTeamSeason(group, ownClub);
+  const roster = getMeldeliste(group, ownClub);
   const rows = roster ? [...roster.herren, ...roster.damen] : [];
+  const balanceOf = (name: string) => recentBalance(ownData, ownClub, name);
   return (
     <div className="mt-3 rounded-lg border border-emerald-500/25 bg-slate-900/70 p-2.5">
       <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-baseline justify-between gap-2 text-left">
@@ -215,7 +222,7 @@ export function OwnRoster({ season, league, teamLabel, accentColor, ownClub, onO
       </button>
       {open && (
         <div className="mt-2">
-          <RosterList club={ownClub} rows={rows} usage={own.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} />
+          <RosterList club={ownClub} rows={rows} usage={own.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} balanceOf={balanceOf} />
           <p className="mt-1.5 px-1 text-[10px] leading-snug text-slate-500">
             Rang und LK laut BTV-Meldeliste beim letzten Abruf, Jahrgang laut Mannschaftsportrait. Bilanz nur aus Spielberichten dieser Saison.
           </p>
@@ -229,10 +236,15 @@ export default function OpponentBriefing({ season, league, teamLabel, accentColo
   const [tab, setTab] = useState<Tab>("meldeliste");
   const [open, setOpen] = useState<Spielbericht | null>(null);
 
-  const opp = getTeamSeason(season, league, opponentClub);
-  const own = getTeamSeason(season, league, ownClub);
-  const roster = getMeldeliste(season, league, opponentClub);
+  // Gruppendatei (Berichte + Meldelisten) und Vereinsdaten des Gegners werden
+  // beim Aufklappen nachgeladen (public/data, seit 08.10.2026)
+  const { data: group, loading } = useGroup(season, league);
+  const { data: oppData } = useClub(opponentClub);
+  const opp = getTeamSeason(group, opponentClub);
+  const own = getTeamSeason(group, ownClub);
+  const roster = getMeldeliste(group, opponentClub);
   const rosterRows = roster ? [...roster.herren, ...roster.damen] : [];
+  const balanceOf = (name: string) => recentBalance(oppData, opponentClub, name);
 
   const wins = opp.meetings.filter((m) => m.result.own > m.result.opp).length;
   const draws = opp.meetings.filter((m) => m.result.own === m.result.opp).length;
@@ -266,7 +278,11 @@ export default function OpponentBriefing({ season, league, teamLabel, accentColo
 
       {tab === "meldeliste" && (
         <div>
-          <RosterList club={opponentClub} rows={rosterRows} usage={opp.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} />
+          {loading && rosterRows.length === 0 ? (
+            <p className="rounded-lg border border-slate-700/50 bg-slate-800/30 px-3 py-3 text-center text-[12px] text-slate-500">Meldeliste wird geladen …</p>
+          ) : (
+            <RosterList club={opponentClub} rows={rosterRows} usage={opp.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} balanceOf={balanceOf} />
+          )}
           <p className="mt-1.5 px-1 text-[10px] leading-snug text-slate-500">
             Bilanz aus Sicht von {opponentClub}. Nur belegte Einsätze aus Spielberichten dieser Saison — keine Prognose.
           </p>

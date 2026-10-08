@@ -5,6 +5,8 @@ import { getSpielbericht } from "../data/spielberichte";
 import type { SpielberichtMeeting } from "../utils/spielbericht";
 import { getTeamStats, emptyTeamStats } from "../data/player-stats";
 import { getMeldeliste } from "../data/meldelisten";
+import { recentBalance } from "../data/player-history";
+import { useClub, useGroup } from "../data/store";
 import TeamStatsDetail from "./TeamStatsDetail";
 
 interface StandingsViewProps {
@@ -75,10 +77,14 @@ export default function StandingsView({ seasonId, standings, seasonLabel, stand,
   const [expandedLeague, setExpandedLeague] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectedMeeting | null>(null);
   const [selectedClub, setSelectedClub] = useState<string | null>(null);
+  // Berichte und Meldelisten der aufgeklappten Gruppe sowie die Einsätze des
+  // angetippten Vereins werden erst jetzt nachgeladen (public/data, seit 08.10.2026)
+  const { data: group, loading: groupLoading } = useGroup(seasonId, expandedLeague);
+  const { data: clubData } = useClub(selectedClub);
 
   function openCell(league: LeagueStandings, rowClub: string, colClub: string, result: string) {
     const [a, b] = result.split(":").map(Number);
-    const bericht = getSpielbericht(seasonId, league.leagueName, rowClub, colClub);
+    const bericht = getSpielbericht(group, rowClub, colClub);
     const leagueDisplay = `${league.teamLabel} · ${league.leagueName}`;
     setSelected({
       // Bei vorhandenem Bericht den kanonischen Heim/Gast-Stand (echtes Spiel) zeigen,
@@ -176,11 +182,14 @@ export default function StandingsView({ seasonId, standings, seasonLabel, stand,
               <div className="px-3 pb-3 animate-[fadeIn_200ms_ease-out]">
                 {selectedClub ? (
                   (() => {
-                    const stats = getTeamStats(seasonId, league.leagueName, selectedClub);
-                    const meldeliste = getMeldeliste(seasonId, league.leagueName, selectedClub);
+                    const stats = getTeamStats(group, selectedClub);
+                    const meldeliste = getMeldeliste(group, selectedClub);
                     const rank = league.entries.find(
                       (e) => e.club === selectedClub
                     )?.rank;
+                    if (groupLoading) {
+                      return <p className="px-1 py-3 text-[12px] text-slate-500">Spielberichte werden geladen …</p>;
+                    }
                     if (stats || meldeliste) {
                       return (
                         <TeamStatsDetail
@@ -190,6 +199,7 @@ export default function StandingsView({ seasonId, standings, seasonLabel, stand,
                           onBack={() => setSelectedClub(null)}
                           meldeliste={meldeliste}
                           onOpenPlayer={onOpenPlayer}
+                          balanceOf={(name) => recentBalance(clubData, selectedClub, name)}
                         />
                       );
                     }

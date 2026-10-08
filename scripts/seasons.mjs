@@ -26,10 +26,12 @@ import { fileURLToPath } from "node:url";
 
 export const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-// Gemeinsame Ablage der gecrawlten Berichte und Meldelisten (alle Saisons in
-// EINER Datei, jeder Eintrag trägt seine Saison).
-const REPORTS_FILE = "src/data/spielberichte-crawled.ts";
-const ROSTERS_FILE = "src/data/meldelisten.ts";
+// Ablage der gecrawlten Berichte und Meldelisten: seit 08.10.2026 JSON je
+// Gruppe und Saison unter public/data/groups/<saison>/ (scripts/generate-data.mjs,
+// Lesen über scripts/data-files.mjs). Die Felder reports/rosters je Saison
+// bleiben als Hinweis, wo die Daten liegen.
+const REPORTS_FILE = "public/data/groups";
+const ROSTERS_FILE = "public/data/groups";
 
 // layout: "summer" = Ergebnisse stehen nur in der Kreuztabelle, der Spielplan
 //                    (matches.ts) kennt nur Termine.

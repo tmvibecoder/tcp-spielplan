@@ -1,93 +1,22 @@
 import type { IndividualMatch, SeasonId } from "../types";
-import { getAllSpielberichte } from "./spielberichte";
-import { MELDELISTEN } from "./meldelisten";
 import { ALL_SEASONS } from "./seasons";
-import { baseClub, normalizePlayerName, playerKey } from "./player-key";
-import { getSets, parseSide, type SetScore, type Spielbericht } from "../utils/spielbericht";
+import { normalizePlayerName, playerKey } from "./player-key";
+import { parseSide, type Spielbericht } from "../utils/spielbericht";
+import { posLabel } from "./history-index";
+import type { AppearanceData, ClubData, ClubPlayer, GroupData, SearchIndex, SearchPlayer, TeamHit } from "./data-format";
 
-// ── Saisonübergreifender Index: Spieler, Mannschaften, Einsätze ──────────────
+// ── Spielerhistorie, Suche, Gegnerbriefing: Auswertungen auf geladenen Daten ──
 //
-// Grundlage für Suche, Spielerhistorie und Gegnerbriefing. Wird LIVE aus den
-// gecrawlten Spielberichten (alle Saisons) und den Meldelisten gebaut — einmal
-// beim ersten Zugriff, danach aus dem Speicher.
-//
-// Ein Spieler ist über Saisons hinweg dieselbe Person, wenn Name UND Verein
-// gleich sind (Entscheidung 09.09.2026: ein Vereinswechsel ergibt zwei
-// getrennte Einträge). Die Mannschaftsziffer zählt dabei NICHT (07.10.2026,
-// baseClub in player-key.ts): „TC Pliening III" und „TC Pliening" sind eine
-// Person. Die LK am Namen ist immer die des jeweiligen Spieltags
-// (aus dem Bericht) bzw. der Meldeliste — nie hochgerechnet.
+// Seit 08.10.2026 baut die App keinen saisonübergreifenden Index mehr selbst.
+// Der Generator (scripts/generate-data.mjs, Logik in history-index.ts) schreibt
+// je Verein eine JSON-Datei mit allen Personen und Einsätzen, und die App lädt
+// sie bei Bedarf (store.ts). Die Funktionen hier bekommen die geladenen Daten
+// als Argument — sie bleiben damit rein und testbar.
 
-const OWN_CLUB = /pliening/i;
-
-export interface SetView {
-  own: number;
-  opp: number;
-  won: boolean;
-  isTiebreak: boolean;
-}
-
-export interface Appearance {
-  season: SeasonId;
-  league: string;
-  /** Konkurrenz des TC Pliening in dieser Gruppe, z. B. "Herren 40" */
-  teamLabel: string;
-  date?: string;
-  day?: string;
-  /** Verein, für den der Spieler hier angetreten ist */
-  club: string;
-  opponentClub: string;
-  /** Begegnung gegen den TC Pliening (aus Sicht eines Gegners) */
-  vsTcp: boolean;
-  isHome: boolean;
-  type: "singles" | "doubles";
-  position: number;
-  /** "E1" … "E6" bzw. "D1" … "D3" */
-  posLabel: string;
-  /** LK des Spielers am Spieltag (nur Einzel — Doppel weisen keine LK aus) */
-  lk: string;
-  partner?: string;
-  opponents: { name: string; lk: string }[];
-  sets: SetView[];
-  won: boolean;
-  /** Begegnungsergebnis aus Sicht des Spielers */
-  teamResult: { own: number; opp: number };
-  /** Zum Öffnen des Spielberichts */
-  report: Spielbericht;
-  match: IndividualMatch;
-}
-
-export interface PlayerEntry {
-  key: string;
-  name: string;
-  club: string;
-  /** zuletzt bekannte LK (neueste Meldeliste, sonst neuester Einsatz) */
-  lk: string;
-  seasons: SeasonId[];
-  /** Mannschaften je Saison (Konkurrenz des TC Pliening in dieser Gruppe + Liga) */
-  teams: { season: SeasonId; teamLabel: string; league: string }[];
-  appearances: Appearance[];
-}
-
-export interface TeamHit {
-  season: SeasonId;
-  league: string;
-  teamLabel: string;
-  club: string;
-}
-
-function posLabel(position: number): string {
-  return position >= 7 ? `D${position - 6}` : `E${position}`;
-}
-
-function setsFor(im: IndividualMatch, side: "home" | "away"): SetView[] {
-  return getSets(im).map((s: SetScore) => ({
-    own: side === "home" ? s.home : s.away,
-    opp: side === "home" ? s.away : s.home,
-    won: side === "home" ? s.homeWon : !s.homeWon,
-    isTiebreak: s.isTiebreak,
-  }));
-}
+export type Appearance = AppearanceData;
+export type PlayerEntry = ClubPlayer;
+export type { TeamHit, SearchPlayer };
+export { playerKey };
 
 const seasonOrder = new Map(ALL_SEASONS.map((s, i) => [s.id, i]));
 /** Neueste Saison zuerst */
@@ -95,142 +24,18 @@ export function compareSeasons(a: SeasonId, b: SeasonId): number {
   return (seasonOrder.get(a) ?? 99) - (seasonOrder.get(b) ?? 99);
 }
 
-// playerKey wohnt in player-key.ts (Blatt ohne Datenimporte) und wird hier nur
-// weitergereicht — App.tsx importiert ihn direkt von dort.
-export { playerKey };
-
-interface Index {
-  players: Map<string, PlayerEntry>;
-  teams: TeamHit[];
+/** Verein aus einem Spieler-Schlüssel ("Verein::Nachname, Vorname"). */
+export function clubOfKey(key: string): string {
+  return key.split("::")[0] ?? "";
 }
 
-let index: Index | null = null;
-
-function build(): Index {
-  const players = new Map<string, PlayerEntry>();
-  const teamKeys = new Map<string, TeamHit>();
-
-  const touchPlayer = (club: string, rawName: string): PlayerEntry | null => {
-    const name = normalizePlayerName(rawName);
-    if (!name || name.startsWith("—")) return null; // "— (w.o.)"-Platzhalter
-    const key = playerKey(club, name);
-    let p = players.get(key);
-    if (!p) {
-      // club ohne Mannschaftsziffer: der Eintrag gehört der Person, nicht der
-      // Mannschaft. Welche Mannschaft es je Einsatz war, steht in Appearance.club.
-      p = { key, name, club: baseClub(club), lk: "", seasons: [], teams: [], appearances: [] };
-      players.set(key, p);
-    }
-    return p;
-  };
-  const touchTeam = (season: SeasonId, league: string, teamLabel: string, club: string) => {
-    const k = `${season}::${league}::${club}`;
-    if (!teamKeys.has(k)) teamKeys.set(k, { season, league, teamLabel, club });
-  };
-  const addTeamToPlayer = (p: PlayerEntry, season: SeasonId, teamLabel: string, league: string) => {
-    if (!p.seasons.includes(season)) p.seasons.push(season);
-    if (!p.teams.some((t) => t.season === season && t.league === league)) p.teams.push({ season, teamLabel, league });
-  };
-
-  for (const b of getAllSpielberichte()) {
-    const teamLabel = b.teamLabel ?? "";
-    touchTeam(b.season, b.league, teamLabel, b.homeClub);
-    touchTeam(b.season, b.league, teamLabel, b.awayClub);
-    for (const im of b.matches) {
-      for (const side of ["home", "away"] as const) {
-        const club = side === "home" ? b.homeClub : b.awayClub;
-        const opponentClub = side === "home" ? b.awayClub : b.homeClub;
-        const ownRaw = side === "home" ? im.home_player : im.away_player;
-        const oppRaw = side === "home" ? im.away_player : im.home_player;
-        if (!ownRaw) continue;
-        const ownPlayers = parseSide(ownRaw);
-        const opponents = parseSide(oppRaw).map((o) => ({ name: normalizePlayerName(o.name), lk: o.lk }));
-        const won = im.winner === side;
-        const sets = setsFor(im, side);
-        const teamResult = side === "home"
-          ? { own: b.finalHome, opp: b.finalAway }
-          : { own: b.finalAway, opp: b.finalHome };
-        for (const pl of ownPlayers) {
-          const p = touchPlayer(club, pl.name);
-          if (!p) continue;
-          addTeamToPlayer(p, b.season, teamLabel, b.league);
-          const partnerRaw = im.match_type === "doubles"
-            ? ownPlayers.find((q) => q.name !== pl.name)?.name
-            : undefined;
-          p.appearances.push({
-            season: b.season,
-            league: b.league,
-            teamLabel,
-            date: b.date,
-            day: b.day,
-            club,
-            opponentClub,
-            vsTcp: OWN_CLUB.test(opponentClub),
-            isHome: side === "home",
-            type: im.match_type,
-            position: im.position,
-            posLabel: posLabel(im.position),
-            lk: pl.lk,
-            partner: partnerRaw ? normalizePlayerName(partnerRaw) : undefined,
-            opponents,
-            sets,
-            won,
-            teamResult,
-            report: b,
-            match: im,
-          });
-        }
-      }
-    }
-  }
-
-  // Meldelisten: auch Spieler ohne Einsatz sind auffindbar, und die LK dort ist
-  // die jüngste bekannte.
-  for (const ml of MELDELISTEN) {
-    const teamLabel = teamKeys.get(`${ml.season}::${ml.leagueName}::${ml.club}`)?.teamLabel
-      ?? [...teamKeys.values()].find((t) => t.season === ml.season && t.league === ml.leagueName)?.teamLabel
-      ?? "";
-    touchTeam(ml.season, ml.leagueName, teamLabel, ml.club);
-    for (const e of [...ml.herren, ...ml.damen]) {
-      const p = touchPlayer(ml.club, e.name);
-      if (!p) continue;
-      addTeamToPlayer(p, ml.season, teamLabel, ml.leagueName);
-      // Meldelisten-LK der neuesten Saison gewinnt
-      const newest = p.seasons.slice().sort(compareSeasons)[0];
-      if (!p.lk || ml.season === newest) p.lk = e.lk;
-    }
-  }
-
-  for (const p of players.values()) {
-    p.seasons.sort(compareSeasons);
-    p.teams.sort((a, b) => compareSeasons(a.season, b.season));
-    p.appearances.sort(
-      (a, b) => compareSeasons(a.season, b.season) || (b.date ?? "").localeCompare(a.date ?? "") || a.position - b.position,
-    );
-    if (!p.lk) {
-      const withLk = p.appearances.find((a) => a.lk);
-      if (withLk) p.lk = withLk.lk;
-    }
-  }
-
-  const teams = [...teamKeys.values()].sort(
-    (a, b) => a.club.localeCompare(b.club, "de") || compareSeasons(a.season, b.season) || a.teamLabel.localeCompare(b.teamLabel, "de"),
-  );
-  return { players, teams };
-}
-
-function idx(): Index {
-  if (!index) index = build();
-  return index;
-}
-
-export function getPlayer(key: string): PlayerEntry | undefined {
-  return idx().players.get(key);
+export function getPlayer(club: ClubData | undefined, key: string): PlayerEntry | undefined {
+  return club?.players.find((p) => p.key === key);
 }
 
 /** Spieler einer Mannschaft (Verein) über die Meldeliste oder die Einsätze finden. */
-export function findPlayer(club: string, name: string): PlayerEntry | undefined {
-  return idx().players.get(playerKey(club, name));
+export function findPlayer(club: ClubData | undefined, clubName: string, name: string): PlayerEntry | undefined {
+  return getPlayer(club, playerKey(clubName, name));
 }
 
 export interface RecentBalance {
@@ -247,10 +52,10 @@ export interface RecentBalance {
  *  Thomas' Wunsch vom 07.10.2026: auf den ersten Blick sehen, ob jemand
  *  zuletzt wirklich gespielt hat oder nur gemeldet ist — als grüne Siege und
  *  rote Niederlagen, nicht bloß als Zahl. */
-export function recentBalance(club: string, name: string, days = 365, today = new Date()): RecentBalance {
+export function recentBalance(club: ClubData | undefined, clubName: string, name: string, days = 365, today = new Date()): RecentBalance {
   const cutoff = new Date(today.getTime() - days * 86400000).toISOString().slice(0, 10);
   const out: RecentBalance = { played: 0, wins: 0, losses: 0, singles: 0, doubles: 0 };
-  const p = findPlayer(club, name);
+  const p = findPlayer(club, clubName, name);
   if (!p) return out;
   for (const a of p.appearances) {
     if (!a.date || a.date < cutoff) continue;
@@ -266,25 +71,23 @@ export function recentBalance(club: string, name: string, days = 365, today = ne
 // ── Suche ───────────────────────────────────────────────────────────────────
 
 const fold = (s: string) =>
-  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ß/g, "ss");
+  s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ß/g, "ss");
 
 export interface SearchResult {
-  players: PlayerEntry[];
+  players: SearchPlayer[];
   teams: TeamHit[];
 }
 
 /** Ab zwei Zeichen: Spieler (Name in beiden Reihenfolgen) und Mannschaften
- *  (Vereinsname) aller erfassten Saisons — nur Gruppen, in denen der TC
- *  Pliening spielt, denn nur die sind erfasst. */
-export function search(query: string, limit = 40): SearchResult {
+ *  (Vereinsname) aller erfassten Saisons. */
+export function search(index: SearchIndex | undefined, query: string, limit = 40): SearchResult {
   const q = fold(query.trim());
-  if (q.length < 2) return { players: [], teams: [] };
+  if (q.length < 2 || !index) return { players: [], teams: [] };
   const words = q.split(/\s+/).filter(Boolean);
   const matches = (hay: string) => words.every((w) => hay.includes(w));
-  const { players, teams } = idx();
 
-  const playerHits: PlayerEntry[] = [];
-  for (const p of players.values()) {
+  const playerHits: SearchPlayer[] = [];
+  for (const p of index.players) {
     const [last, first = ""] = p.name.split(",").map((s) => s.trim());
     const hay = fold(`${p.name} ${first} ${last} ${p.club}`);
     if (matches(hay)) playerHits.push(p);
@@ -296,7 +99,7 @@ export function search(query: string, limit = 40): SearchResult {
     return sa - sb || a.name.localeCompare(b.name, "de") || a.club.localeCompare(b.club, "de");
   });
 
-  const teamHits = teams.filter((t) => matches(fold(`${t.club} ${t.teamLabel}`)));
+  const teamHits = index.teams.filter((t) => matches(fold(`${t.club} ${t.teamLabel}`)));
 
   return { players: playerHits.slice(0, limit), teams: teamHits.slice(0, limit) };
 }
@@ -342,18 +145,14 @@ export interface TeamSeason {
   usage: Map<string, TeamPlayerUsage>;
 }
 
-const teamCache = new Map<string, TeamSeason>();
+const EMPTY_GROUP: GroupData = { season: "sommer-26", league: "", teamLabel: "", reports: [], rosters: [] };
 
 /** Alle gespielten Begegnungen einer Mannschaft in einer Saison mit
- *  tatsächlichen Aufstellungen und Einsatzzählern je Spieler. */
-export function getTeamSeason(season: SeasonId, league: string, club: string): TeamSeason {
-  const k = `${season}::${league}::${club}`;
-  const cached = teamCache.get(k);
-  if (cached) return cached;
-
-  const reports = getAllSpielberichte(season).filter(
-    (b) => b.league === league && (b.homeClub === club || b.awayClub === club),
-  );
+ *  tatsächlichen Aufstellungen und Einsatzzählern je Spieler — aus der
+ *  geladenen Gruppendatei. */
+export function getTeamSeason(group: GroupData | undefined, club: string): TeamSeason {
+  const g = group ?? EMPTY_GROUP;
+  const reports = g.reports.filter((b) => b.homeClub === club || b.awayClub === club);
   const usage = new Map<string, TeamPlayerUsage>();
   const use = (name: string): TeamPlayerUsage => {
     let u = usage.get(name);
@@ -405,7 +204,7 @@ export function getTeamSeason(season: SeasonId, league: string, club: string): T
   meetings.sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
 
   // LK aus der Meldeliste, wenn kein Einzel gespielt wurde
-  const ml = MELDELISTEN.find((m) => m.season === season && m.leagueName === league && m.club === club);
+  const ml = g.rosters.find((m) => m.club === club);
   if (ml) {
     for (const e of [...ml.herren, ...ml.damen]) {
       const u = usage.get(e.name);
@@ -413,8 +212,6 @@ export function getTeamSeason(season: SeasonId, league: string, club: string): T
     }
   }
 
-  const teamLabel = reports.find((b) => b.teamLabel)?.teamLabel ?? "";
-  const ts: TeamSeason = { season, league, teamLabel, club, meetings, usage };
-  teamCache.set(k, ts);
-  return ts;
+  const teamLabel = reports.find((b) => b.teamLabel)?.teamLabel ?? g.teamLabel;
+  return { season: g.season, league: g.league, teamLabel, club, meetings, usage };
 }

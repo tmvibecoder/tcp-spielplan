@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { getPlayer, compareSeasons, type Appearance } from "../data/player-history";
-import { getAllSpielberichte } from "../data/spielberichte";
+import { getPlayer, clubOfKey, compareSeasons, type Appearance } from "../data/player-history";
+import { getSpielbericht } from "../data/spielberichte";
+import { useClub, useGroup } from "../data/store";
 import { ALL_SEASONS } from "../data/seasons";
-import { SEASON_DATA } from "../data/season-data";
 import type { SeasonId } from "../types";
 import { setCellClass, viewOutcome } from "../utils/spielbericht";
 import LkBadge from "./LkBadge";
@@ -97,9 +97,15 @@ function Row({ a, onOpen }: { a: Appearance; onOpen: () => void }) {
 }
 
 export default function PlayerHistory({ playerKey, onBack, backLabel = "Zurück" }: Props) {
-  const player = getPlayer(playerKey);
+  // Vereinsdatei (alle Personen und Einsätze des Vereins) nachladen — seit
+  // 08.10.2026 liegt die Historie nicht mehr im Bundle
+  const { data: clubData, loading } = useClub(clubOfKey(playerKey));
+  const player = getPlayer(clubData, playerKey);
   const [onlyTcp, setOnlyTcp] = useState(false);
   const [open, setOpen] = useState<Appearance | null>(null);
+  // Spielbericht zum angetippten Einsatz: Gruppendatei erst beim Öffnen holen
+  const { data: openGroup } = useGroup(open?.season ?? "sommer-26", open ? open.league : null);
+  const openReport = open ? getSpielbericht(openGroup, open.ref.homeClub, open.ref.awayClub) : null;
 
   const bySeason = useMemo(() => {
     const map = new Map<SeasonId, Appearance[]>();
@@ -112,24 +118,13 @@ export default function PlayerHistory({ playerKey, onBack, backLabel = "Zurück"
     return map;
   }, [player, onlyTcp]);
 
-  // Datenlücken: Saisons ganz ohne Spielberichte im Datenbestand — eine Runde,
-  // die noch nicht begonnen hat, ist keine Lücke.
-  const gaps = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const notStarted = (id: SeasonId) => {
-      const d = SEASON_DATA[id];
-      return !!d && d.matches.every((m) => m.date > today);
-    };
-    return ALL_SEASONS.filter((s) => !notStarted(s.id) && getAllSpielberichte(s.id).length === 0).map((s) => s.id);
-  }, []);
-
   if (!player) {
     return (
       <div className="px-1">
         <button type="button" onClick={onBack} className="mb-3 rounded-lg border border-slate-600/50 bg-slate-800/60 px-2.5 py-1.5 text-xs font-semibold text-sky-300">
           ‹ {backLabel}
         </button>
-        <p className="text-sm text-slate-400">Spieler nicht gefunden.</p>
+        <p className="text-sm text-slate-400">{loading ? "Spielerhistorie wird geladen …" : "Spieler nicht gefunden."}</p>
       </div>
     );
   }
@@ -199,13 +194,9 @@ export default function PlayerHistory({ playerKey, onBack, backLabel = "Zurück"
               {rows.length > 0 ? (
                 <div className="space-y-1">
                   {rows.map((a, i) => (
-                    <Row key={`${a.match.id}-${i}`} a={a} onOpen={() => setOpen(a)} />
+                    <Row key={`${a.ref.matchId}-${i}`} a={a} onOpen={() => setOpen(a)} />
                   ))}
                 </div>
-              ) : gaps.includes(sid) ? (
-                <p className="rounded-lg border border-dashed border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[11.5px] leading-snug text-amber-200">
-                  <b className="font-extrabold">Datenlücke:</b> Für {meta?.label} sind noch keine Spielberichte erfasst.
-                </p>
               ) : (
                 <p className="px-1 text-[11px] text-slate-500">
                   {onlyTcp ? "In dieser Saison nicht gegen den TC Pliening gespielt." : "Gemeldet, aber ohne erfassten Einsatz."}
@@ -214,11 +205,6 @@ export default function PlayerHistory({ playerKey, onBack, backLabel = "Zurück"
             </section>
           );
         })}
-        {gaps.filter((g) => !seasonsShown.includes(g)).length > 0 && (
-          <p className="px-1 text-[10.5px] leading-snug text-slate-500">
-            Ohne Spielberichte im Datenbestand: {gaps.filter((g) => !seasonsShown.includes(g)).map((g) => seasonMeta.get(g)?.label ?? g).join(", ")} — dort kann ein Einsatz fehlen.
-          </p>
-        )}
       </div>
 
       <SpielberichtDrawer
@@ -228,16 +214,16 @@ export default function PlayerHistory({ playerKey, onBack, backLabel = "Zurück"
           open
             ? {
                 league: `${open.teamLabel ? open.teamLabel + " · " : ""}${open.league}`,
-                homeClub: open.report.homeClub,
-                awayClub: open.report.awayClub,
-                finalHome: open.report.finalHome,
-                finalAway: open.report.finalAway,
-                date: open.report.date,
-                day: open.report.day,
+                homeClub: open.ref.homeClub,
+                awayClub: open.ref.awayClub,
+                finalHome: open.isHome ? open.teamResult.own : open.teamResult.opp,
+                finalAway: open.isHome ? open.teamResult.opp : open.teamResult.own,
+                date: open.date,
+                day: open.day,
               }
             : null
         }
-        matches={open?.report.matches ?? null}
+        matches={openReport?.matches ?? null}
       />
     </div>
   );
