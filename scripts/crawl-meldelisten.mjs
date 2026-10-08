@@ -61,8 +61,11 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 // Grid-Zeile: <rang> LK<x,y> <id> <Name, Vorname> (<jahr>) [NAT[*]] [<sg-nr>] <bilanzen>
 // Die Nations-Spalte fehlt in manchen Portraits komplett (z. B. Gr. 004) -> optional.
+// Rang kann einen Nachmelde-Zusatz tragen („4a", „16b": nachträglich zwischen
+// 4 und 5 eingereiht; gesehen 08.10.2026 bei Raschke Taufkirchen, TSV Haar,
+// Lindau) — gespeichert wird die Zahl, der Zusatz erlaubt gleiche Ränge in Folge.
 const ROW_RE =
-  /^(\d+) (LK[\d,]+) (\d{7,8}) (.+?) \((\d{4})\)(?: ([A-Z]{3}\*?))?(?: (\d{5}))?(?: (.+))?$/;
+  /^(\d+)([a-z])? (LK[\d,]+) (\d{7,8}) (.+?) \((\d{4})\)(?: ([A-Z]{3}\*?))?(?: (\d{5}))?(?: (.+))?$/;
 
 // Zwischenstand je Saison, damit ein Abbruch nicht alles verwirft (gitignored);
 // der Generator führt alle Saison-Caches zur Datendatei zusammen.
@@ -236,7 +239,7 @@ async function crawlTeam(frame, club, mode, leagueName) {
   for (const line of raw) {
     const m = line.match(ROW_RE);
     if (!m) throw new Error(`Parse-Fehler ${club}: ${line}`);
-    const [, rangS, lk, id, name, jahrS, nation] = m;
+    const [, rangS, rangZusatz, lk, id, name, jahrS, nation] = m;
     const rang = Number(rangS);
     if (seenIds.has(id)) continue; // Seite doppelt erwischt
     seenIds.add(id);
@@ -244,14 +247,14 @@ async function crawlTeam(frame, club, mode, leagueName) {
     // dem Rang, ab dem der Verein die Spieler dieser Mannschaft gemeldet hat
     // (z. B. Feldkirchen II ab Rang 7) — also nur lückenlose Folge prüfen.
     // Mixed: fällt der Rang wieder, beginnt die Damen-Liste.
-    if (mode === "mixed" && prevRang && rang <= prevRang) section = damen;
+    if (mode === "mixed" && prevRang && (rang < prevRang || (rang === prevRang && !rangZusatz))) section = damen;
     // Nur aufsteigend prüfen: Ränge dürfen Lücken haben (abgemeldete Spieler,
     // z. B. Anzing II ohne Rang 20) und beginnen bei II./III. Mannschaften mitten
     // in der vereinsweiten Liste. Ein Rücksprung dagegen heißt: Seite doppelt
     // gelesen oder Damen-Liste beginnt.
     const last = section[section.length - 1]?.rang;
-    if (last !== undefined && rang <= last) {
-      throw new Error(`Rang-Rücksprung ${club}: nach ${last} kam ${rang} (${name})`);
+    if (last !== undefined && (rang < last || (rang === last && !rangZusatz))) {
+      throw new Error(`Rang-Rücksprung ${club}: nach ${last} kam ${rang}${rangZusatz ?? ""} (${name})`);
     }
     section.push({
       rang,

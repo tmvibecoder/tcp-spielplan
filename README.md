@@ -619,6 +619,9 @@ abgefangene URL enthält `group=<id>` (vorher ggf. „MEHR LADEN" klicken). Alle
   vereinsweiten Liste und beginnt bei dem Rang, ab dem der Verein für diese Mannschaft meldet
   (Feldkirchen II ab **7**, Aschheim III ab **13**). Nur **Lückenlosigkeit** prüfen, nicht den Start.
 - **Nations-Spalte fehlt** in manchen Portraits komplett (z. B. Gr. 004) → im Zeilen-Regex optional.
+- **Nachmelde-Ränge „4a", „16b"** (nachträglich zwischen zwei Ränge eingereiht; seit 08.10.2026 beim
+  Voll-Crawl großer Vereine wie Raschke Taufkirchen, TSV Haar, Lindau gesehen): gespeichert wird die
+  Zahl, der Zusatz erlaubt denselben Rang zweimal in Folge — ohne ihn wäre das ein Rücksprung.
 - **ZK-Pager bleibt stehen:** Nach dem Wechsel zur nächsten Mannschaft zeigt das Grid noch die alte
   Seite → vor dem Auslesen `a.z-paging-first` klicken, bis die erste Zeile passt.
 - **Vereinslinks nur aus der Tabelle** oben holen: im Spielplan darunter stehen auch **Spielort**-Links
