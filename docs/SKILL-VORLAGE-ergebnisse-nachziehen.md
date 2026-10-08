@@ -9,8 +9,17 @@
 
 > **Seit 10.09.2026:** Der automatische Wecker (`scripts/briefing-run.mjs`,
 > `.github/workflows/briefing.yml`) erledigt die Schritte 1–3 dieses Ablaufs gruppenweise 7, 4
-> und 0 Tage vor jeder TCP-Begegnung selbst. Dieser Skill bleibt für Nachlesen ganzer Saisons,
-> Gruppen ohne TCP-Begegnung und alles, was der Wecker nicht anfasst.
+> und 0 Tage vor jeder TCP-Begegnung selbst — **seit 08.10.2026 auch 1 und 3 Tage danach**
+> (Ergebnis-Nachlauf). Dieser Skill bleibt für Nachlesen ganzer Saisons, Gruppen ohne
+> TCP-Begegnung und alles, was der Wecker nicht anfasst.
+>
+> **Stand 08.10.2026:** Die aktuelle Kurzfassung des Skills (so wie er in der Claude-App
+> hinterlegt ist) steht in **[SKILL-tcp-ergebnisse.md](SKILL-tcp-ergebnisse.md)**. Wichtigste
+> Änderung gegenüber den Beispielen unten: Spielberichte und Meldelisten liegen nicht mehr in
+> `src/data/*.ts`, sondern als JSON unter `public/data` (`npm run gen:spielberichte` erzeugt
+> sie); die Live-Prüfung läuft gegen `https://tcp-spielplan.de/data/groups/<saison>/<liga>.json`
+> statt gegen den Bundle-Hash. `scripts/groups.mjs` gibt es nicht mehr — die Gruppen stehen je
+> Saison in `scripts/seasons.mjs`.
 
 Diese Datei fasst alle Erkenntnisse aus der Session vom 15./16.08.2026 zusammen
 (PRs #37–#43). Sie ist als Grundlage gedacht, um in der Claude-App einen Skill zu

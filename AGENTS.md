@@ -117,7 +117,7 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
 - **Liga- und Spieldaten nur aus offiziellen BTV-Quellen** übernehmen, **verbatim** —
   auch wenn die BTV-Rangfolge „falsch" aussieht (bei ungleicher Spielzahl sortiert der
   BTV nach Punkt-Quotient). Nichts schätzen, nichts hochrechnen.
-- **`src/data/meldelisten.ts`, `src/data/spielberichte-crawled.ts` und `src/data/data-stand.ts`
+- **`public/data/**`, `src/data/data-version.ts` und `src/data/data-stand.ts`
   sind generiert** — nur über `npm run crawl:meldelisten` (schreibt über `gen:meldelisten`),
   `npm run crawl:spielberichte && npm run gen:spielberichte` bzw. `scripts/briefing-run.mjs`
   ändern. Beide Datendateien enthalten **mehrere Saisons**, jeder Eintrag trägt `season`;
@@ -146,9 +146,11 @@ npm run gen:standings              # Diff der Ergebnisse ansehen
 npm run gen:standings -- --write   # Ergebnisse der laufenden Saison nachziehen
 npm run check                      # Konsistenz  (-- --all für alle Saisons)
 npm run crawl:spielberichte        # Spielberichte crawlen (langsam, braucht Chrome)
-npm run gen:spielberichte          # Cache -> src/data/spielberichte-crawled.ts
-npm run crawl:meldelisten          # Meldelisten crawlen (Cache je Saison) + gen:meldelisten
-npm run gen:meldelisten            # Caches + Bestand -> src/data/meldelisten.ts
+npm run crawl:meldelisten          # Meldelisten crawlen (Cache je Saison) + Generator
+npm run gen:spielberichte          # = gen:meldelisten = scripts/generate-data.mjs:
+npm run gen:meldelisten            #   Caches + Bestand -> public/data (JSON je Gruppe/Verein, Suchindex)
+node scripts/check-luecken.mjs     # Gemeldete der Gegner ohne Einsatz in den Vorsaisons (Lücken)
+node scripts/vollcrawl-gegner.mjs --all   # Saisonwechsel: alle Gegner, alle Erwachsenenklassen, Vorsaisons
 npm run season:new -- --discover-only    # Mannschaften + groupids einer neuen Runde
 node scripts/discover-groups.mjs --season "Winter 2025/2026"   # groupids JEDER Runde (auch alte)
 node scripts/briefing-run.mjs --dry-run   # Wecker: was wäre heute fällig, wann der nächste Lauf?
@@ -175,18 +177,24 @@ Spielterminen (`scripts/seasons.mjs`) und nennen beim Start, worauf sie wirken;
 | Winterrunde 2025/26 (Archiv) | `src/data/winter-2526.ts` |
 | Spielplan-Termine Sommer (bei Verlegung: Datum aus dem Spielbericht) | `src/data/matches.ts` |
 | Ergebnis je Spielplan-Begegnung aus der Kreuztabelle ableiten | `src/data/results.ts` |
-| Spielberichte (Einzel/Doppel je Begegnung, **alle Saisons**, mit `season`) | `src/data/spielberichte-crawled.ts` (**generiert**) |
-| Lookup drumherum (`getSpielbericht(season, …)`) | `src/data/spielberichte.ts` |
-| Meldelisten (alle gemeldeten Spieler, **alle Saisons**, mit `season`) | `src/data/meldelisten.ts` (**generiert**) |
-| **Saisonübergreifender Index**: Spieler, Mannschaften, Einsätze, Suche, Aufstellungen | `src/data/player-history.ts` |
+| **Spielberichte + Meldelisten je Gruppe und Saison** (JSON, zur Laufzeit geladen) | `public/data/groups/<saison>/<liga>.json` (**generiert**) |
+| **Alle Personen eines Vereins mit allen Einsätzen** (JSON) | `public/data/clubs/<verein>.json` (**generiert**) |
+| **Suchindex** (JSON) | `public/data/search.json` (**generiert**) |
+| Datenformat + Pfade/Slugs, kompakte Schreibweise (Generator **und** App) | `src/data/data-format.ts`, `src/data/data-codec.ts` |
+| Nachladen + React-Hooks (`useGroup`, `useClub`, `useSearchIndex`) | `src/data/store.ts` |
+| Lookups auf geladenen Daten (`getSpielbericht(group, …)`, `getMeldeliste(group, club)`) | `src/data/spielberichte.ts`, `src/data/meldelisten.ts` |
+| **Saisonübergreifender Index** (Logik, vom Generator gerechnet) | `src/data/history-index.ts` |
+| Suche, Bilanz, Aufstellungen auf geladenen Daten | `src/data/player-history.ts` |
+| Cache-Buster der Datenanfragen | `src/data/data-version.ts` (**generiert**) |
 | Datenstand + nächster Wecker-Lauf (⋯-Menü) | `src/data/data-stand.ts` (**generiert** vom Wecker) |
 | Suche (Overlay), Spielerhistorie, Mannschaftsseite | `src/components/SearchOverlay.tsx`, `PlayerHistory.tsx`, `TeamPage.tsx` (alle lazy) |
 | Gegnerbriefing in der aufgeklappten Begegnung | `src/components/OpponentBriefing.tsx` (lazy, aus `MatchDetail`) |
 | LK-Abzeichen (überall gleich) | `src/components/LkBadge.tsx` |
-| **Wecker**: Fälligkeit 7/4/0 Tage, Crawl, Datenstand | `scripts/briefing-run.mjs` + `.github/workflows/briefing.yml` |
+| **Wecker**: Fälligkeit 7/4/0 Tage vor und 1/3 Tage nach jeder TCP-Begegnung, Crawl, Datenstand | `scripts/briefing-run.mjs` + `.github/workflows/briefing.yml` |
+| **Voll-Crawl zum Saisonwechsel** (alle Gegner, alle Erwachsenenklassen, Vorsaisons) | `scripts/vollcrawl-gegner.mjs` |
 | groupids beliebiger (auch alter) Saisons aus dem btv.de-Archiv | `scripts/discover-groups.mjs` |
-| Crawler + Generatoren | `scripts/crawl-meldelisten.mjs`, `crawl-spielberichte.mjs`, `parse-spielbericht.mjs`, `generate-spielberichte.mjs`, `generate-meldelisten.mjs`, `generate-standings.mjs` |
-| Prüf-Skripte | `scripts/check-data.mjs`, `check-names.mjs`, `verify-parser.mjs` |
+| Crawler + Generatoren | `scripts/crawl-meldelisten.mjs`, `crawl-spielberichte.mjs`, `parse-spielbericht.mjs`, **`generate-data.mjs`** (Aufrufer: `generate-spielberichte.mjs`, `generate-meldelisten.mjs`), `generate-standings.mjs` |
+| Prüf-Skripte (lesen JSON über `scripts/data-files.mjs`) | `scripts/check-data.mjs`, `check-names.mjs`, `check-luecken.mjs`, `verify-parser.mjs` |
 | Aggregation Spieler/Doppel | `src/data/player-stats.ts` |
 | Spieler-Detailseite | `src/components/TeamStatsDetail.tsx` |
 | Tabellen-Ansicht + Drilldown (**lazy geladen**) | `src/components/StandingsView.tsx` |
@@ -205,6 +213,13 @@ die Begegnungen selbst aus dem Crawl-Cache; verlegte Termine kommen mit. Sanity-
 Summe der Einzel-/Doppel-Siege = Endergebnis der Begegnung, Kreuztabellen-Zelle =
 Matchpunkte, Tabellen-Delta = Sätze/Spiele des neuen Berichts. Das `_STANDINGS_STAND`
 der Saison setzt der Generator; bei Hand-Änderungen selbst nachziehen.
+
+**Spielberichte und Meldelisten** liegen seit 08.10.2026 als JSON unter `public/data`
+(je Gruppe, je Verein, Suchindex) und werden von der App bei Bedarf geladen — nie im Bundle.
+`npm run gen:spielberichte` erzeugt sie aus den Caches, der Bestand wird übernommen.
+**Zum Saisonwechsel** einmal `node scripts/vollcrawl-gegner.mjs --all`: alle Gegnervereine der
+neuen Runde über alle Erwachsenenklassen in den Vorsaisons (Spieler wechseln die Altersklasse,
+die Historie braucht alle Mannschaften eines Vereins). Danach `node scripts/check-luecken.mjs`.
 
 **Neue Saison anlegen:**
 `npm run season:new -- --id <id> --label "<Name>" --layout winter|summer` schreibt die

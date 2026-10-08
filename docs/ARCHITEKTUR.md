@@ -62,21 +62,21 @@ Die Qualitätssicherung läuft über vier andere Wege — siehe Abschnitt 9.
    │  scripts/seasons.mjs = Registry: welche Saison, welche       │
    │                        Gruppen, welches Layout               │
    │  Zwischenlager: scripts/.spielberichte-cache-<saison>.json   │
-   │                 scripts/.meldelisten-cache.json (gitignored) │
-   └───────────────────────────┬──────────────────────────────────┘
-                               │  schreibt TypeScript
-                               ▼
+   │                 scripts/.meldelisten-cache-<saison>.json     │
+   └──────────┬───────────────────────────────┬───────────────────┘
+              │ schreibt TypeScript           │ schreibt JSON (generate-data.mjs)
+              ▼                               ▼
+   ┌──────────────────────────────┐  ┌────────────────────────────────────┐
+   │ src/data/*.ts                │  │ public/data/  (eingecheckt)        │
+   │ Spielplan + Tabellen je      │  │ groups/<saison>/<liga>.json        │
+   │ Saison, data-stand.ts,       │  │   Spielberichte + Meldelisten      │
+   │ data-version.ts              │  │ clubs/<verein>.json  Einsätze      │
+   │ season-data.ts = Registry    │  │ search.json          Suchindex     │
+   └──────────────┬───────────────┘  └──────────────┬─────────────────────┘
+                  │ import (Build-Zeit)             │ fetch zur Laufzeit
+                  ▼                                 │ (src/data/store.ts, bei Bedarf)
    ┌──────────────────────────────────────────────────────────────┐
-   │  src/data/*.ts   —   die eingecheckte Wahrheit               │
-   │  winter-2627.ts · summer-2026.ts · winter-2526.ts            │
-   │  matches.ts · spielberichte-crawled.ts · meldelisten.ts …    │
-   │                                                              │
-   │  src/data/season-data.ts = Registry: was zieht eine Saison?  │
-   └───────────────────────────┬──────────────────────────────────┘
-                               │  import (zur Build-Zeit)
-                               ▼
-   ┌──────────────────────────────────────────────────────────────┐
-   │  React-Komponenten  →  vite build  →  dist/                  │
+   │  React-Komponenten  →  vite build  →  dist/ (inkl. data/)    │
    └───────────────────────────┬──────────────────────────────────┘
                                │  GitHub Action bei Push auf main
                                ▼
@@ -91,9 +91,16 @@ Dazu **quer** dazu (nur ein kleiner Teil der App):
 ```
 
 **Die wichtigste Konsequenz:** Wer Liga-Daten ändern will, ändert **nicht die App**,
-sondern lässt ein Skript laufen, das `src/data/…` neu schreibt — und committet das
-Ergebnis. Wer die Darstellung ändern will, fasst `src/components/…` an und rührt
-`src/data/` nicht an.
+sondern lässt ein Skript laufen, das `src/data/…` bzw. `public/data/…` neu schreibt — und
+committet das Ergebnis. Wer die Darstellung ändern will, fasst `src/components/…` an und rührt
+die Daten nicht an.
+
+**Warum zwei Ablagen (seit 08.10.2026):** Spielplan und Tabellen sind klein und gehören ins
+Bundle. Spielberichte und Meldelisten sind groß (nach dem Voll-Crawl aller Gegnervereine über
+alle Altersklassen mehrere tausend Berichte) und werden deshalb als JSON je Gruppe, je Verein und
+als Suchindex ausgeliefert und erst beim Antippen geladen. Format: `src/data/data-format.ts`,
+kompakte Schreibweise (Tupel + Stringtabelle): `src/data/data-codec.ts`; beide Module nutzen
+Generator (Node, Typ-Stripping) **und** App — Pfade und Slugs entstehen nur an einer Stelle.
 
 ---
 
@@ -108,7 +115,13 @@ tcp-spielplan/
 │   ├── ARCHITEKTUR.md        ← diese Datei
 │   ├── GLOSSAR.md            ← Tennis- und BTV-Begriffe
 │   ├── AUFGABEN.md           ← Rezepte für die typischen Arbeitsaufträge
-│   └── SKILL-VORLAGE-ergebnisse-nachziehen.md   ← Prompt-Vorlage für den Ergebnis-Abgleich
+│   ├── SKILL-VORLAGE-ergebnisse-nachziehen.md   ← Prompt-Vorlage für den Ergebnis-Abgleich
+│   └── server/nginx-gzip.sh  ← Komprimierung für JS/JSON auf dem Hetzner-Server
+│
+├── public/data/              ← AUTO-GENERIERT (generate-data.mjs), eingecheckt, zur Laufzeit geladen
+│   ├── groups/<saison>/<liga>.json   Spielberichte + Meldelisten einer Gruppe
+│   ├── clubs/<verein>.json           alle Personen eines Vereins mit allen Einsätzen
+│   └── search.json                   Suchindex
 │
 ├── src/
 │   ├── main.tsx              ← Einstiegspunkt (React-Root)
@@ -357,23 +370,28 @@ Alle sind Node-ESM-Skripte, laufen über `node scripts/<name>.mjs` bzw. die
 | `new-season.mjs` | Legt eine komplette neue Saison an: Mannschaften und `groupid`s aus dem Vereins-Widget, Spielplan-Reports, Spielorte → fertige `src/data/<id>.ts`. |
 | `crawl-spielberichte.mjs` | Puppeteer-Crawl aller Spielberichte einer Gruppe → Cache-JSON. Langsam (~45 min für alles). |
 | `parse-spielbericht.mjs` | Reines Text-Parsing des Bericht-Modals. **Keine Netzzugriffe** — dadurch kann man am Parser arbeiten, ohne neu zu crawlen. |
-| `generate-spielberichte.mjs` | Cache → `src/data/spielberichte-crawled.ts`. Schreibt die Datei **komplett** neu. |
+| `generate-data.mjs` | **Der** Generator (seit 08.10.2026): alle Caches + Bestand → `public/data/` (Gruppen, Vereine, Suchindex) + `src/data/data-version.ts`. Schreibt nur geänderte Dateien. |
+| `generate-spielberichte.mjs`, `generate-meldelisten.mjs` | Nur noch Aufrufer von `generate-data.mjs` (Namen bleiben für npm-Aliase, Wecker und Doku). |
 | `generate-standings.mjs` | Cache → Tabellen (und im Winter-Layout die Begegnungen). `--write` schreibt, ohne Flag gibt es nur den Diff. |
-| `crawl-meldelisten.mjs` | Puppeteer-Crawl der Meldelisten → `src/data/meldelisten.ts`. |
+| `crawl-meldelisten.mjs` | Puppeteer-Crawl der Meldelisten → Cache-JSON, ruft am Ende den Generator (außer `--no-gen`). |
+| `data-files.mjs` | Lesehilfe für die JSON-Daten (Gruppen, Vereine, Suchindex) — für alle Prüfskripte. |
 | `check-data.mjs` | Der Konsistenz-Check (siehe oben). |
-| `generate-meldelisten.mjs` | Alle Meldelisten-Caches + Bestand → `src/data/meldelisten.ts`. Wird vom Crawler am Ende aufgerufen. |
-| `discover-groups.mjs` | groupids **beliebiger** Saisons (auch vergangener) aus dem btv.de-Gruppen-Such-Widget — Grundlage für die Historien-Saisons. |
-| `briefing-run.mjs` | Der Wecker: Fälligkeit 7/4/0 Tage, Crawl der betroffenen Gruppen, Generatoren, Check, Datenstand (Abschnitt 13.4). |
+| `check-luecken.mjs` | Gemeldete der Gegner ohne jeden Einsatz in den Vorsaisons — Häufung unter den Top 6 = fehlende Gruppe (andere Altersklasse). |
+| `discover-groups.mjs` | groupids **beliebiger** Saisons (auch vergangener) aus dem btv.de-Gruppen-Such-Widget — Grundlage für die Historien-Saisons. `--clubs` sucht Gruppen der Gegner, `--klassen alle` alle Erwachsenenklassen. |
+| `vollcrawl-gegner.mjs` | Voll-Crawl zum Saisonwechsel: Gegner der laufenden Runde in allen Vorsaisons über alle Erwachsenenklassen suchen (`--discover`), eintragen (`--merge`), parallel crawlen (`--crawl`), erzeugen und prüfen (`--gen`), alles (`--all`). |
+| `briefing-run.mjs` | Der Wecker: Fälligkeit 7/4/0 Tage vor und 1/3 Tage nach einer TCP-Begegnung, Crawl der betroffenen Gruppen, Generatoren, Check, Datenstand (Abschnitt 13.4). |
 | `check-names.mjs` | Spieler aus Berichten ohne Meldelisten-Eintrag (das sind Ersatzspieler, kein Fehler). |
 | `verify-parser.mjs` | Parser-Ausgabe gegen bekannte Daten diffen. |
 
 **Zwei Sicherungen, die man kennen muss:**
 
 - Crawl-Caches liegen **je Saison** (`scripts/.spielberichte-cache-<id>.json`,
-  `scripts/.meldelisten-cache-<id>.json`) und sind gitignored. Die Generatoren führen alle Caches
-  zusammen und übernehmen Ligen bzw. Mannschaften **ohne Cache aus dem Bestand** (die bestehende
-  Datendatei wird per Node-Typ-Stripping importiert, Node ≥ 23). Ein Teil-Crawl — auch auf dem
-  GitHub-Runner ohne Caches — verliert dadurch nichts.
+  `scripts/.meldelisten-cache-<id>.json`) und sind gitignored. `generate-data.mjs` führt alle
+  Caches zusammen und übernimmt Gruppen **ohne Cache aus dem Bestand** (den vorhandenen
+  JSON-Dateien unter `public/data/groups`). Ein Teil-Crawl — auch auf dem GitHub-Runner ohne
+  Caches — verliert dadurch nichts. Die Crawler mischen vor jedem Schreiben den Cache von der
+  Platte ein und ersetzen ihn atomar — parallele Läufe derselben Saison sind seit 08.10.2026
+  erlaubt (vorher überschrieb der zweite den ersten).
 - Für die Crawler wird **Google Chrome** gebraucht (`puppeteer-core`, Pfad über
   `CHROME_PATH`). Bei wenig Arbeitsspeicher gruppenweise crawlen und Chrome bremsen:
   `CHROME_ARGS="--disable-dev-shm-usage --js-flags=--max-old-space-size=384 --renderer-process-limit=1 --blink-settings=imagesEnabled=false"`.
@@ -412,9 +430,13 @@ curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'
 curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c '<neuer-datenschnipsel>'
 ```
 
-Für Tabellen- und Spielbericht-Inhalte im **lazy geladenen Chunk** suchen
-(`StandingsView-*.js`) oder die Live-Seite im Browser öffnen und den Reiter „Tabelle"
-aufmachen.
+Spielberichte und Meldelisten liegen **nicht im Bundle**, sondern unter `/data/…` — dort direkt
+prüfen (Pfad = Saison + Liga-Slug, `?v=` wie in `src/data/data-version.ts`):
+
+```bash
+curl -s 'https://tcp-spielplan.de/data/groups/winter-2627/suedliga-2-gr-129.json' | grep -c 'Hasanbegovic'
+curl -sI -H 'Accept-Encoding: gzip' https://tcp-spielplan.de/data/search.json | grep -i content-encoding   # muss gzip sein
+```
 
 ---
 
@@ -424,8 +446,8 @@ aufmachen.
    wenn eine Rangfolge falsch aussieht (bei ungleicher Spielzahl sortiert der BTV nach
    Punkt-*Quotient*, nicht nach Summe). Nichts schätzen, nichts hochrechnen, nichts
    „korrigieren".
-2. **Generierte Dateien nie von Hand editieren**: `src/data/spielberichte-crawled.ts`
-   und `src/data/meldelisten.ts`. Änderungen laufen über die Skripte.
+2. **Generierte Dateien nie von Hand editieren**: `public/data/**`, `src/data/data-version.ts`
+   und `src/data/data-stand.ts`. Änderungen laufen über die Skripte.
 3. **Neue Saison = Daten + fünf Registrierungen**, aber keine Komponenten-Änderung
    (Rezept in [AUFGABEN.md](AUFGABEN.md)).
 4. **Nach Datenänderungen `npm run check`**, nach UI-Änderungen der Browser-Check.
@@ -446,35 +468,45 @@ aufmachen.
 umfasst auch die **Historien-Saisons** `sommer-25` und `winter-2425`, die keinen Eintrag in
 `SEASON_DATA` haben (deshalb ist die Registry jetzt `Partial<Record<SeasonId, SeasonData>>`) und
 in `src/data/seasons.ts` unter `HISTORY_SEASONS` stehen; `ALL_SEASONS` = Dropdown-Saisons +
-Historie, neueste zuerst. `getSpielbericht`, `getMeldeliste` und `getTeamStats` nehmen die Saison
-als ersten Parameter — Gruppennummern wiederholen sich über die Jahre.
+Historie, neueste zuerst. Gruppennummern wiederholen sich über die Jahre — deshalb ist jede
+Gruppendatei unter ihrer Saison abgelegt (`data/groups/<saison>/<liga-slug>.json`).
 
-**`src/data/player-history.ts`** ist der saisonübergreifende Index, gebaut beim ersten Zugriff:
+**Seit 08.10.2026 lädt die App die Daten nach** (`src/data/store.ts`): `useGroup(season, league)`
+liefert `GroupData` (Berichte + Meldelisten einer Gruppe), `useClub(club)` die `ClubData` eines
+Vereins (alle Personen mit allen Einsätzen), `useSearchIndex()` den Suchindex. Jede Datei wird
+höchstens einmal geholt; bis dahin rendern die Komponenten einen kurzen Ladehinweis.
+`getSpielbericht(group, a, b)`, `getMeldeliste(group, club)`, `getTeamStats(group, club)` und
+`getTeamSeason(group, club)` sind reine Funktionen auf der geladenen Gruppe; `recentBalance(clubData,
+club, name)` und `getPlayer(clubData, key)` auf dem geladenen Verein; `search(index, query)` auf dem
+Index. `TeamStatsDetail` und `RosterList` bekommen die Bilanz als Funktion `balanceOf(name)`
+hereingereicht — sie wissen nichts vom Laden.
 
-- Spieler (`PlayerEntry`, Schlüssel `Verein::Name`): Saisons, Mannschaften, alle Einsätze
-  (`Appearance` mit Position, Gegnern + LK, Partner, Sätzen aus eigener Sicht, `vsTcp`).
-  Meldelisten-Spieler ohne Einsatz sind ebenfalls drin (Suche); die LK ist die der neuesten
-  Meldeliste, sonst des neuesten Einsatzes.
+**`src/data/history-index.ts`** ist der saisonübergreifende Index — dieselbe Logik wie früher in
+`player-history.ts`, aber ohne Datenimporte, weil ihn jetzt der **Generator** einmal rechnet und
+je Verein in `data/clubs/` ablegt (die App baut nichts mehr beim ersten Zugriff):
+
+- Spieler (`ClubPlayer`, Schlüssel `Verein::Name`): Saisons, Mannschaften, alle Einsätze
+  (`AppearanceData` mit Position, Gegnern + LK, Partner, Sätzen aus eigener Sicht, `vsTcp` und
+  `ref` auf Begegnung und Match — den vollständigen Spielbericht lädt die Historie erst beim
+  Antippen über die Gruppendatei). Meldelisten-Spieler ohne Einsatz sind ebenfalls drin (Suche);
+  die LK ist die der neuesten Meldeliste, sonst des neuesten Einsatzes.
 - Mannschaften (`TeamHit`: Saison, Liga, Konkurrenz, Verein) — alle erfassten Gruppen. Das
   sind die Gruppen mit TCP **und seit 06.10.2026 die Vorsaison-Gruppen der Gegner** (in
   `scripts/seasons.mjs` mit `gegner: true` markiert, `teamLabel` = Altersklasse): für jeden
   Gegner der Winterrunde 2026/27 die Gruppen seiner Altersklasse in den vier Runden davor, damit
   die Spielerhistorie eines Gegners nicht erst mit der laufenden Saison beginnt. Solche Gruppen
   liefern nur Spielberichte und Meldelisten — keine Tabellen, keinen Spielplan, kein Briefing.
-- `search(query)` (ab zwei Zeichen, diakritik-unempfindlich, Name in beiden Reihenfolgen) und
-  `getTeamSeason(season, league, club)` (gespielte Begegnungen mit Aufstellungen, Einsatzzähler
-  je Spieler, Doppelpartner) fürs Briefing.
-- `recentBalance(club, name, days = 365)` (seit 07.10.2026): Siege/Niederlagen einer Person
-  über die letzten 12 Monate aus allen Einsätzen des Index — gerendert von `Bilanz12` in
+- `search(index, query)` (ab zwei Zeichen, diakritik-unempfindlich, Name in beiden Reihenfolgen)
+  und `getTeamSeason(group, club)` (gespielte Begegnungen mit Aufstellungen, Einsatzzähler je
+  Spieler, Doppelpartner) fürs Briefing — beide in `src/data/player-history.ts`.
+- `recentBalance(clubData, club, name, days = 365)` (seit 07.10.2026): Siege/Niederlagen einer
+  Person über die letzten 12 Monate aus allen Einsätzen — gerendert von `Bilanz12` in
   `LkBadge.tsx` in jeder Meldeliste (`RosterList` im Briefing, `RosterRow` in
-  `TeamStatsDetail`). `LkBadge.tsx` selbst importiert den Index **nicht**; die Aufrufer rechnen
-  und übergeben nur Zahlen. **Falle dabei (07.10.2026):** `App.tsx` brauchte `playerKey` aus
-  `player-history.ts` — sobald ein weiterer Lazy-Chunk den Index importierte, packte der Bundler
-  3 MB Meldelisten ins Startbundle. Deshalb wohnen `playerKey` und `normalizePlayerName` jetzt in
-  **`src/data/player-key.ts`**, einem Blatt ohne Datenimporte; `player-stats`/`player-history`
-  reichen sie nur weiter. Nach jedem Build prüfen: `index-*.js` bleibt bei ~520 KB, die
-  Datenchunks (`player-history-*`, `LkBadge-*`/`spielbericht-*`) tauchen im Startbundle nur in
-  Vites Preload-Liste auf, nicht als statischer Import.
+  `TeamStatsDetail`). `LkBadge.tsx` selbst lädt nichts; die Aufrufer rechnen und übergeben nur
+  Zahlen. `playerKey` und `normalizePlayerName` wohnen in **`src/data/player-key.ts`**, einem
+  Blatt ohne Datenimporte (seit 07.10.2026, damals gegen 3 MB Meldelisten im Startbundle; seit
+  dem Umzug der Daten nach `public/data` gibt es keine Datenchunks mehr — das Startbundle bleibt
+  bei ~512 KB, die Komponenten-Chunks sind 6–14 KB).
 
 `src/data/data-stand.ts` (generiert vom Wecker) hält Zeitpunkt und Umfang des letzten Einlesens
 und den nächsten geplanten Lauf.
@@ -530,11 +562,11 @@ GitHub Actions: cron 23:00 + 00:00 UTC (= 01:00 Berlin je nach Jahreszeit), work
    └─ scripts/briefing-run.mjs
         ├─ Cron-Lauf und nicht 01 Uhr Berlin? → Ende
         ├─ Saison per seasons.mjs, TCP-Begegnungen aus der Datendatei
-        ├─ Begegnung in genau 7 / 4 / 0 Tagen?   nein → Ende (ran=false)
+        ├─ Begegnung in genau 7 / 4 / 0 Tagen oder vor 1 / 3 Tagen?   nein → Ende (ran=false)
         ├─ je betroffener Gruppe: crawl-spielberichte --force · crawl-meldelisten
-        ├─ gen:spielberichte · gen:standings --write · check (rot = Abbruch)
+        ├─ gen:spielberichte (= generate-data → public/data) · gen:standings --write · check (rot = Abbruch)
         └─ data-stand.ts (crawledAt, scope, nextRun) · ran=true
-   └─ Workflow: git add src/data → bot/briefing-<Datum> → gh pr create → gh pr merge --squash
+   └─ Workflow: git add src/data public/data → bot/briefing-<Datum> → gh pr create → gh pr merge --squash
                 → gh workflow run deploy.yml
 ```
 

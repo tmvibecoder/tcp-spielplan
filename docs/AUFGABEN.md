@@ -86,7 +86,8 @@ Neue Spieltage sind gelaufen, die App soll aktuell werden.
 
 ```bash
 npm run season                     # welche Saison ist dran?
-npm run crawl:spielberichte        # Berichte holen (langsam; -- <gruppe> für eine einzelne)
+npm run crawl:spielberichte        # Berichte holen (langsam; -- <gruppe> --force für eine einzelne)
+npm run gen:spielberichte          # Caches + Bestand → public/data (JSON je Gruppe/Verein, Suchindex)
 npm run gen:standings              # Diff ansehen — schreibt noch nichts
 npm run gen:standings -- --write   # übernehmen
 npm run check                      # Konsistenz prüfen
@@ -106,13 +107,15 @@ selbst.
 Eine ausführliche Schritt-für-Schritt-Fassung inklusive Formulierungen steht in
 **[SKILL-VORLAGE-ergebnisse-nachziehen.md](SKILL-VORLAGE-ergebnisse-nachziehen.md)**.
 
-**Niemals** `src/data/spielberichte-crawled.ts`, `src/data/meldelisten.ts` oder
-`src/data/data-stand.ts` von Hand editieren — sie werden komplett neu geschrieben, Handänderungen
-gehen verloren. Beide Datendateien enthalten **alle Saisons**; ein Crawl einer Saison lässt die
-anderen unberührt.
+**Niemals** `public/data/**`, `src/data/data-version.ts` oder `src/data/data-stand.ts` von Hand
+editieren — sie werden vom Generator bzw. Wecker neu geschrieben, Handänderungen gehen verloren.
+Der Generator übernimmt Gruppen ohne Cache aus dem Bestand; ein Crawl einer Saison lässt die
+anderen unberührt. **Commit immer mit `public/data`** — die JSON-Dateien sind die Daten.
 
-Seit 10.09.2026 macht das der **Wecker** rund um jede TCP-Begegnung automatisch (Abschnitt 9);
-von Hand ist es weiter für Nachlesen und Gruppen ohne TCP-Begegnung nötig.
+Seit 10.09.2026 macht das der **Wecker** rund um jede TCP-Begegnung automatisch — 7, 4 und 0
+Tage davor und seit 08.10.2026 auch 1 und 3 Tage danach, sodass die Ergebnisse des Wochenendes
+montags von selbst live sind (Abschnitt 9). Von Hand ist es für Nachlesen, Gruppen ohne
+TCP-Begegnung und als wöchentliche Kontrolle (Skill `tcp-ergebnisse`) weiter nötig.
 
 ---
 
@@ -264,23 +267,40 @@ Mixed-Runden sind beim BTV eigene Saisons („Mixed 2025", Region Südbayern, Al
 sonst — Klassen heißen „MIXED 00 A/B", „MIXED 40 A" …); ihre Gruppen gehören in den Block der
 zugehörigen Sommer-Saison. Jugend-Klassen nur mit `--jugend`.
 
-**Vorsaisons der Gegner nachziehen** (neue Runde = neue Gegner; gemacht am 06.10.2026 für die
-Winterrunde 2026/27, siehe README „Vorsaisons der Gegner"):
+**Voll-Crawl der Gegner zum Saisonwechsel** (neue Runde = neue Gegner; Thomas' Entscheidung vom
+08.10.2026: **alle Erwachsenenklassen** jedes Gegnervereins, nicht nur die Klasse, in der er gegen
+uns spielt — Spieler wechseln die Altersklasse, siehe README „Voll-Crawl aller Altersklassen"):
 
 ```bash
-# je Altersklasse die Gegnervereine dieser Klasse (ohne römische Ziffer) — findet deren Gruppen
-node scripts/discover-groups.mjs --season "Sommer 2026" --klassen "Herren 30" \
-  --clubs "TS Jahn München,TC Riemerling,…" --out scripts/tmp/found-sommer-26-h30.json
-# → Treffer als { …, gegner: true } vor die Zeile "// DISCOVER:<id>" des Saison-Blocks in scripts/seasons.mjs
-npm run crawl:spielberichte -- --season sommer-26 --gegner   # nur die Gegner-Gruppen (Cache je Saison)
-npm run crawl:meldelisten  -- --season sommer-26 --gegner
-npm run gen:spielberichte && npm run check -- --all
+# Voraussetzung: die neue Saison ist angelegt (Abschnitt 3) und ihre Tabellen nennen die Gegner.
+node scripts/vollcrawl-gegner.mjs --discover      # 1 je Vorsaison eine Gruppensuche, parallel (~3 h)
+node scripts/vollcrawl-gegner.mjs --merge         # 2 Treffer als gegner: true in scripts/seasons.mjs
+node scripts/vollcrawl-gegner.mjs --crawl         # 3 fehlende Gruppen crawlen, 6 parallel (--parallel n)
+node scripts/vollcrawl-gegner.mjs --gen           # 4 generate-data, check --all, check-luecken
+# oder alles hintereinander: node scripts/vollcrawl-gegner.mjs --all
 ```
 
-Pro Altersklasse und Region braucht die Suche drei bis acht Minuten (sie klickt jede Gruppe der
-Klasse an), der Crawl danach zwei bis vier Minuten je Gruppe — für vier Runden ein Abend.
+Gegnervereine liest das Skript aus den Tabellen der laufenden Saison, Vorsaisons sind alle
+anderen Saisons der Registry (`--seasons a,b` schränkt ein). Zwischenstände liegen in
+`scripts/tmp/` (gitignored): `found-<saison>.json` je Suche, `logs/` je Crawl. Abgebrochene
+Läufe einfach neu starten — Suche und Crawl überspringen, was schon da ist. Danach
+`scripts/check-luecken.mjs` lesen: Gemeldete ohne Einsatz unter den Top 6 einer Gegnerliste
+deuten auf eine Gruppe, die der BTV in keiner durchsuchten Region führt (dann von Hand mit
+`discover-groups.mjs --clubs "<Verein>" --klassen "<Klasse>" --regions …`). Pro Altersklasse
+und Region braucht die Suche drei bis acht Minuten, der Crawl zwei bis vier Minuten je Gruppe.
 `gegner`-Gruppen tauchen nie in Tabellen, Spielplan oder Wecker auf; `gen:standings` überspringt
 Ligen, die nicht in der Datendatei stehen.
+
+Einzelne Gruppe nachziehen (wie bis 06.10.2026):
+
+```bash
+node scripts/discover-groups.mjs --season "Sommer 2026" --klassen "Herren" \
+  --clubs "TC Riemerling" --out scripts/tmp/found-x.json
+# → Treffer als { …, gegner: true } vor "// DISCOVER:<id>" in scripts/seasons.mjs (oder --merge)
+npm run crawl:spielberichte -- <groupid> --season sommer-26
+npm run crawl:meldelisten  -- <groupid> --season sommer-26
+npm run gen:spielberichte && npm run check -- --all
+```
 
 **Wecker prüfen oder von Hand auslösen:**
 

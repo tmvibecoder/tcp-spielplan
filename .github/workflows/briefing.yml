@@ -67,7 +67,9 @@ jobs:
           set -euo pipefail
           git config user.name "tcp-briefing-bot"
           git config user.email "briefing-bot@users.noreply.github.com"
-          git add src/data
+          # src/data: Tabellen, Begegnungen, Datenstand, data-version — public/data: Spielberichte,
+          # Meldelisten, Vereins- und Suchindex als JSON (seit 08.10.2026)
+          git add src/data public/data
           if git diff --cached --quiet; then
             echo "Keine Datenänderung — nichts zu mergen."
             exit 0

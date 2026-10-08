@@ -1,6 +1,6 @@
 // Crawlt die namentlichen Meldelisten aller Mannschaften der gepflegten
 // Konkurrenzen von btv.de in den Saison-Cache scripts/.meldelisten-cache-<saison>.json
-// und schreibt danach src/data/meldelisten.ts über generate-meldelisten.mjs neu
+// und schreibt danach public/data über generate-meldelisten.mjs (= generate-data.mjs) neu
 // (aus ALLEN Saison-Caches — ein Winter-Crawl löscht also keine Sommer-Listen).
 //
 //   npm run crawl:meldelisten                     # alle Gruppen der laufenden Saison

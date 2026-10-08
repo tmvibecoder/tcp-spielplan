@@ -49,7 +49,7 @@ Stelle — der Registry `src/data/season-data.ts`; siehe „Eine Saison anlegen"
 
 In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → Detailseite mit zwei Reitern.
 Welche Ansicht erscheint, hängt davon ab, ob für die Mannschaft eine **Meldeliste** vorliegt
-(`src/data/meldelisten.ts`, seit 15.08.2026 für alle sechs Spielbericht-Konkurrenzen):
+(`public/data/groups/<saison>/<liga>.json`, Feld `rosters`; seit 15.08.2026 für alle sechs Spielbericht-Konkurrenzen):
 
 **A) Mit Meldeliste — „Einzel" / „Doppel", jeweils die KOMPLETTE Mannschaft** (Normalfall)
 
@@ -73,7 +73,7 @@ Welche Ansicht erscheint, hängt davon ab, ob für die Mannschaft eine **Meldeli
 - Mannschaften ganz ohne Spielbericht **und** ohne Meldeliste zeigen den Hinweis-Leerzustand.
 
 **Datenquelle & Funktionsweise:** Bilanzen werden **live aus den echten nuLiga-Spielberichten**
-(`src/data/spielberichte-crawled.ts`) aggregiert – es gibt **keine Beispieldaten**; die Namensliste
+(`public/data/groups/<saison>/<liga>.json`, nachgeladen) aggregiert – es gibt **keine Beispieldaten**; die Namensliste
 kommt aus `meldelisten.ts`. Funktioniert für **jede** Mannschaft, die in einem Spielbericht vorkommt
 (auch Gegner), da jeder Bericht beide Aufstellungen enthält. Seit 16.08.2026 sind **alle 18
 Konkurrenzen** der Sommer-Saison komplett erfasst: 402 Spielberichte (3.168 Einzel/Doppel) und
@@ -210,14 +210,33 @@ git-worktree'" weiter unten.
   in der Historie eine „TCP"-Marke (reine Kennzeichnung, Anker für den Filter). Technisch:
   `viewOutcome(won)` in `src/utils/spielbericht.ts`; neue Farbwerte gibt es nicht.
 
-### Woher die Daten kommen — mehrere Saisons in einer Datei
+### Woher die Daten kommen — JSON je Gruppe und Verein (seit 08.10.2026)
 
-`src/data/spielberichte-crawled.ts` und `src/data/meldelisten.ts` enthalten seit 10.09.2026
-**alle erfassten Saisons**; jeder Eintrag trägt `season`, weil sich Gruppennummern über die Jahre
-wiederholen („Bayernliga · Gr. 022 SU" gab es im Winter 2025/26 und 2026/27). Alle Lookups laufen
-über `season + Liga + Vereine`. Der saisonübergreifende Index (`src/data/player-history.ts`) baut
-daraus beim ersten Zugriff Spieler-, Mannschafts- und Einsatz-Verzeichnisse — lazy geladen, damit
-der Spielplan schnell bleibt.
+Spielberichte und Meldelisten liegen **nicht im Bundle**, sondern als JSON-Dateien unter
+`public/data/`, die die App bei Bedarf nachlädt (`src/data/store.ts`, Hooks `useGroup`,
+`useClub`, `useSearchIndex`). Drei Dateifamilien, alle von `scripts/generate-data.mjs` erzeugt
+(Format in `src/data/data-format.ts`, kompakte Schreibweise mit Stringtabellen in
+`src/data/data-codec.ts` — Generator und App teilen sich beide Module per Node-Typ-Stripping):
+
+| Datei | Inhalt | wer sie lädt |
+|---|---|---|
+| `data/groups/<saison>/<liga-slug>.json` | alle Spielberichte und Meldelisten einer Gruppe | Tabelle (aufgeklappte Liga), Begegnung (Spielbericht, Briefing), Mannschaftsseite, Spielbericht aus der Historie |
+| `data/clubs/<verein-slug>.json` | alle Personen eines Vereins mit allen Einsätzen aller Saisons | Spielerhistorie, 12-Monats-Bilanz in jeder Meldeliste |
+| `data/search.json` | Suchindex: Namen, Vereine, LK, Saisons, Mannschaften | Suche, Saison-Umschalter der Mannschaftsseite |
+
+Jede Datei trägt ihre Saison, weil sich Gruppennummern über die Jahre wiederholen („Bayernliga ·
+Gr. 022 SU" gab es im Winter 2025/26 und 2026/27); der Pfad ist `Saison + Liga-Slug`. Der
+Spielerindex (früher live in `player-history.ts` gebaut) entsteht jetzt **einmal im Generator**
+(`src/data/history-index.ts`, dieselbe Logik) und liegt fertig in den Vereinsdateien. Über die
+Leitung gehen pro Tipp 10–80 KB (gzip) statt vorher 0,6–1,2 MB; der Browser cached die Dateien,
+`?v=<Datenstand>` (`src/data/data-version.ts`, vom Generator geschrieben) holt nach jedem Lauf
+frische. Fehlt eine Datei (404), gilt sie als leer — ein Verein ohne Einsätze ist kein Fehler.
+**Voraussetzung auf dem Server:** nginx muss JSON und JS komprimieren (`gzip_types`), siehe
+`docs/server/nginx-gzip.sh`.
+
+Warum der Umbau: Thomas' Voll-Crawl aller Gegnervereine über alle Erwachsenenklassen (unten)
+vervielfacht die Datenmenge; als TypeScript-Literale im Bundle (vorher 3,9 MB + 3,0 MB je Chunk)
+wäre das auf dem Handy nicht mehr tragbar gewesen.
 
 **Historische Saisons** (Winter 2024/25, Sommer 2025, Winter 2025/26) haben in der App keinen
 Spielplan und keine Tabellen (`historyOnly` in `src/data/seasons.ts`, kein Eintrag in
@@ -257,9 +276,8 @@ Gruppen mit TCP erfasst waren):
 | Winter 2024/25 | 7 (zwei Herren-40-Teams) | 29 | 534 (99) | 213 Mannschaften (41) | nur Historie |
 
 Zusammen 3.617 Spielberichte mit 27.023 Einzeln/Doppeln (vorher 905 mit 6.845) und 1.251
-Meldelisten (vorher 302). Die lazy geladenen Chunks sind damit deutlich größer: Spielberichte 3,9 MB (578 KB
-gzip), Spielerstatistik samt Meldelisten 3,0 MB (665 KB gzip); beide laden erst beim Aufklappen einer Begegnung, in der Tabelle oder in der Suche (danach gecacht) —
-der Spielplan selbst bleibt beim alten Startbundle.
+Meldelisten (vorher 302). Seit 08.10.2026 liegen sie als JSON unter `public/data` (siehe oben);
+der Spielplan selbst bleibt beim alten Startbundle (~512 KB).
 Die Meldelisten der Winterrunde 2026/27 veröffentlicht der BTV erst kurz vor Saisonstart (am
 10.09.2026 zeigten alle 41 Mannschaftsportraits 0 Spieler); der Wecker holt sie 7 Tage vor der
 ersten Begegnung — bis dahin zeigt das Briefing im Reiter „Meldeliste" den Leerzustand und
@@ -300,24 +318,38 @@ ein Verein in einer Runde keine Mannschaft der Klasse hatte (ATSV Kirchseeon und
 Sommer, MTV 1879 München im Winter). Zwei Parser-Fallen kamen dabei ans Licht (beide behoben):
 kampflose Begegnungen stehen im Spielplan mit **„HEIM - W.O." / „GAST - W.O."** statt „ANZEIGEN"
 (der Parser las sonst über die Zeile hinweg und verschluckte die nächste Begegnung), und ab rund
-2.500 Berichten meldet TypeScript für das Array-Literal **TS2590** („union type too complex") —
-deshalb läuft jeder Bericht in `spielberichte-crawled.ts` durch die typisierte Hilfsfunktion `r()`.
-**Falle beim Crawlen:** zwei Meldelisten-Crawls derselben Saison dürfen nicht parallel laufen —
-jeder hält den Cache im Speicher und schreibt ihn komplett zurück, der zweite überschreibt die
-Einträge des ersten (Nachlauf einer einzelnen Gruppe erst nach Ende des Hauptlaufs starten).
+2.500 Berichten meldete TypeScript für das Array-Literal **TS2590** („union type too complex") —
+seit dem Umzug der Daten nach `public/data` (08.10.2026) gegenstandslos, ebenso die frühere
+Falle, dass zwei Meldelisten-Crawls derselben Saison einander den Cache überschrieben.
+
+**Voll-Crawl aller Altersklassen (seit 08.10.2026).** Die Klassen-Suche von oben hatte eine
+Lücke: Spieler wechseln die Altersklasse, die Mannschaft nicht. Hamza Hasanbegovic (Jg. 1997)
+steht im Winter 2026/27 auf Rang 1 der Riemerlinger Herren 30, war im Sommer 2026 aber erst 29
+und spielte in der offenen Herren-Mannschaft (Südliga 3 Gr. 047) — die hatte niemand gesucht,
+weil für Riemerling nur „Herren 30" abgefragt war. `scripts/check-luecken.mjs` zählte danach
+707 von 1.590 gemeldeten Gegnerspielern (44 %) ohne jeden Einsatz in vier Vorsaisons, darunter 40
+unter den Top 6 ihrer Meldeliste: junge Jahrgänge aus „Herren", Bayernliga-Herren-40-Leute aus
+Herren-30-Teams, alte Jahrgänge aus Herren 60/65. Thomas' Entscheidung: **zum Saisonwechsel
+einmal alle Gegnervereine der neuen Runde über alle Erwachsenenklassen** in den Vorsaisons
+erfassen — `node scripts/vollcrawl-gegner.mjs --all` (Rezept in AUFGABEN §9). Während der Saison
+genügt der Wecker auf den TCP-Gruppen.
 
 **Caches je Saison** (`scripts/.spielberichte-cache-<id>.json`, `.meldelisten-cache-<id>.json`,
-gitignored). Die Generatoren `gen:spielberichte` und `gen:meldelisten` führen alle Caches zusammen
-und übernehmen Ligen **ohne Cache aus dem Bestand** (die bestehende Datendatei wird per
-Node-Typ-Stripping importiert). Dadurch verliert ein Teil-Crawl nichts, und der GitHub-Runner
-(der keine Caches hat) kann einzelne Gruppen nachziehen. Der frühere ABBRUCH-Schutz ist damit
-überflüssig geworden.
+gitignored). `scripts/generate-data.mjs` (Aufrufer: `gen:spielberichte`, `gen:meldelisten`)
+führt alle Caches zusammen und übernimmt Gruppen **ohne Cache aus dem Bestand** (den vorhandenen
+JSON-Dateien). Dadurch verliert ein Teil-Crawl nichts, und der GitHub-Runner (der keine Caches
+hat) kann einzelne Gruppen nachziehen. Geschrieben wird nur, was sich geändert hat — Commits
+bleiben klein. Seit 08.10.2026 mischen beide Crawler vor jedem Schreiben den Cache von der Platte
+ein und ersetzen die Datei atomar: **beliebig viele Crawls derselben Saison dürfen parallel
+laufen** (`crawl-meldelisten.mjs --no-gen` unterdrückt dabei den Generatorlauf am Ende).
 
 ### Der Wecker (automatische Aktualisierung)
 
 `.github/workflows/briefing.yml` läuft täglich um **01:00 Uhr Berlin** (zwei UTC-Crons 23:00 und
 00:00; `scripts/briefing-run.mjs` arbeitet nur, wenn es in Berlin wirklich 1 Uhr ist). Er prüft, ob
-eine TCP-Begegnung der laufenden Saison in **genau 7, 4 oder 0 Tagen** liegt. Wenn ja:
+eine TCP-Begegnung der laufenden Saison in **genau 7, 4 oder 0 Tagen** liegt — oder **vor 1 oder
+3 Tagen** lag (Ergebnis-Nachlauf, seit 08.10.2026: die Resultate des Wochenendes stehen so am
+Montag und Mittwoch von selbst in der App). Wenn ja:
 
 1. für die betroffenen Gruppen `crawl-spielberichte.mjs <groupid> --force` (neue und korrigierte
    Berichte, also auch die zwischenzeitlichen Gegnerspiele) und `crawl-meldelisten.mjs <groupid>`
@@ -523,14 +555,15 @@ Quelle: **eine** PDF mit allen Ligen, „Ergebnistabellen gesamt":
 
 Pro Liga ein `LeagueStandings`-Objekt; `entries` in **Rang-Reihenfolge**. `crossResults[i]` = Ergebnis der Zeilen-Mannschaft gegen die Mannschaft mit `rank = i+1` (`"***"` = Diagonale, `"0:0"` = noch nicht gespielt → „n.a."); Array-Länge = Mannschaftszahl. Werte **1:1** übernehmen — auch bei zurückgezogenen Teams, wo offizielle Matchpunkte von der Kreuztabelle abweichen. Erfasst sind die 13 Herren-/Damen-Ligen (Jugend bewusst nicht). `ownRank`/`isOwnClub` zeigen auf den TC-Pliening-Eintrag.
 
-### Spielberichte (Kreuztabellen-Detailansicht) → `src/data/spielberichte-crawled.ts`
+### Spielberichte (Kreuztabellen-Detailansicht) → `public/data/groups/<saison>/<liga>.json`
 
-**AUTO-GENERIERT — nicht von Hand editieren.** Seit 16.08.2026 sind **alle** Begegnungen aller 18 Konkurrenzen erfasst (Stand 07.09.2026: **407 Berichte, 3.198 Einzel/Doppel**); `src/data/spielberichte.ts` ist nur noch der Lookup drumherum (`getSpielbericht`, `getAllSpielberichte`). Die früher handgepflegten Berichte sind entfallen — der Crawl deckt sie alle ab (117/117 identisch bis auf Länderkürzel-Schreibweise und zwei Namen, die nuLiga inzwischen korrigiert hat).
+**AUTO-GENERIERT — nicht von Hand editieren** (bis 08.10.2026 `src/data/spielberichte-crawled.ts`
+im Bundle, seitdem JSON je Gruppe, siehe „Woher die Daten kommen"). Seit 16.08.2026 sind **alle** Begegnungen aller 18 Konkurrenzen erfasst (Stand 07.09.2026: **407 Berichte, 3.198 Einzel/Doppel**); `src/data/spielberichte.ts` ist nur noch der Lookup drumherum (`getSpielbericht`, `getAllSpielberichte`). Die früher handgepflegten Berichte sind entfallen — der Crawl deckt sie alle ab (117/117 identisch bis auf Länderkürzel-Schreibweise und zwei Namen, die nuLiga inzwischen korrigiert hat).
 
 ```bash
 npm run crawl:spielberichte          # alle Gruppen (~45 min) -> scripts/.spielberichte-cache.json
 npm run crawl:spielberichte -- 292   # nur eine Gruppe; --force verwirft deren Cache
-npm run gen:spielberichte            # Cache -> src/data/spielberichte-crawled.ts (Sekunden)
+npm run gen:spielberichte            # Caches + Bestand -> public/data (generate-data.mjs, Sekunden)
 node scripts/verify-parser.mjs       # Parser gegen vorhandene Daten diffen
 node scripts/check-data.mjs          # Tabellen <-> Berichte <-> Meldelisten prüfen
 ```
@@ -545,9 +578,10 @@ Crawl und Parsing sind getrennt: am Parser (`scripts/parse-spielbericht.mjs`) ka
 - Unbenannte/abwesende Spieler („nicht anwesend k.A.*", „unbekannt / wird nachgenannt") → `"— (w.o.)"` bzw. `"—"`.
 - **Endstand = offizielles Ergebnis aus dem Spielplan**, auch wenn die Summe der Matchsiege abweicht: bei Verstößen wertet der Spielleiter Matches um (z. B. Strafwertung aller Doppel nach WO §60.1). Der Generator meldet solche Fälle als HINWEIS.
 
-### Meldelisten (Spielerlisten) → `src/data/meldelisten.ts`
+### Meldelisten (Spielerlisten) → `public/data/groups/<saison>/<liga>.json` (Feld `rosters`)
 
-**AUTO-GENERIERT — nicht von Hand editieren.** Neu erzeugen mit:
+**AUTO-GENERIERT — nicht von Hand editieren** (bis 08.10.2026 `src/data/meldelisten.ts` im
+Bundle). Neu erzeugen mit:
 
 ```bash
 npm run crawl:meldelisten                      # alle Gruppen der laufenden Saison
@@ -556,10 +590,10 @@ npm run crawl:meldelisten -- --season sommer-26   # andere Saison
 npm run gen:meldelisten                        # nur neu schreiben (aus allen Saison-Caches + Bestand)
 ```
 
-Seit 10.09.2026 enthält die Datei **alle Saisons** (Feld `season`), der Crawler schreibt je Saison
-einen eigenen Cache (`scripts/.meldelisten-cache-<id>.json`) und ruft danach
-`generate-meldelisten.mjs`, das alle Caches zusammenführt und Mannschaften ohne Cache aus dem
-Bestand übernimmt. `getMeldeliste(season, leagueName, club)` braucht deshalb die Saison.
+Der Crawler schreibt je Saison einen eigenen Cache (`scripts/.meldelisten-cache-<id>.json`) und
+ruft danach `generate-meldelisten.mjs` (= `generate-data.mjs`), das alle Caches zusammenführt und
+Mannschaften ohne Cache aus dem Bestand übernimmt (`--no-gen` lässt das aus, für parallele Läufe).
+In der App: `getMeldeliste(group, club)` auf der nachgeladenen Gruppendatei (`useGroup`).
 
 Der Crawler (`scripts/crawl-meldelisten.mjs`, braucht Google Chrome, Pfad via `CHROME_PATH`
 überschreibbar) holt die Listen aus den **btv.de-Mannschaftsportraits**. Stand 16.08.2026:
@@ -568,8 +602,8 @@ je Saison in **`scripts/seasons.mjs`** (`groupid`, `leagueName`, `mode` herren/d
 `teamSize` 9 oder 6); dieselbe Registry nutzen Spielbericht-Crawler, Generator und Prüfskript.
 
 Ausnahme: **Midcourt U10 (Gr. 870)** hat in nuLiga keine namentliche Meldeliste (keine LK in dieser
-Altersklasse) — die sechs Mannschaften stehen deshalb nicht in `meldelisten.ts` und zeigen in der App
-die klassische Spieler-Ansicht.
+Altersklasse) — die sechs Mannschaften haben deshalb keine Meldeliste in der Gruppendatei und zeigen
+in der App die klassische Spieler-Ansicht.
 
 **groupid einer beliebigen Mannschaft finden:** auf der [Vereinsseite](https://www.btv.de/de/mein-verein/vereinsseite/tc-pliening.html)
 steckt das Mannschafts-Widget in einem iframe von `btv-prod.burdadigitalsystems.de/btvteams/?clubnr=02467`.
