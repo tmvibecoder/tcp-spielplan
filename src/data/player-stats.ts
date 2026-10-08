@@ -1,5 +1,5 @@
-import type { IndividualMatch, SeasonId } from "../types";
-import { getAllSpielberichte } from "./spielberichte";
+import type { IndividualMatch } from "../types";
+import type { GroupData } from "./data-format";
 import { normalizePlayerName } from "./player-key";
 import { parsePlayer, parseSide } from "../utils/spielbericht";
 
@@ -58,14 +58,9 @@ function scoreFromSide(im: IndividualMatch, side: "home" | "away"): string {
 }
 
 /** Baut die Spieler-Statistik einer Mannschaft aus allen Spielberichten der Konkurrenz. */
-export function getTeamStats(
-  season: SeasonId,
-  leagueName: string,
-  club: string
-): TeamStats | undefined {
-  const reports = getAllSpielberichte(season).filter(
-    (b) => b.league === leagueName && (b.homeClub === club || b.awayClub === club)
-  );
+export function getTeamStats(group: GroupData | undefined, club: string): TeamStats | undefined {
+  const leagueName = group?.league ?? "";
+  const reports = (group?.reports ?? []).filter((b) => b.homeClub === club || b.awayClub === club);
   if (reports.length === 0) return undefined;
 
   const playersMap = new Map<string, PlayerStat>();

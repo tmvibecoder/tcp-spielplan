@@ -51,6 +51,22 @@ const groups = (filter
 
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 
+// Mehrere Crawls derselben Saison dürfen parallel laufen (je Prozess eine
+// Gruppe, siehe scripts/vollcrawl-gegner.mjs): Vor jedem Schreiben wird der
+// Stand von der Platte eingemischt (fremde Gruppen übernommen, eigene behalten)
+// und die Datei atomar per tmp + rename ersetzt. Ohne das überschrieb der
+// zweite Prozess die Gruppen des ersten (Falle vom 06.10.2026).
+const ownKeys = new Set();
+function saveCache(key) {
+  ownKeys.add(key);
+  let onDisk = {};
+  try { onDisk = JSON.parse(fs.readFileSync(CACHE, "utf8")); } catch { /* noch keine Datei */ }
+  for (const [k, v] of Object.entries(onDisk)) if (!ownKeys.has(k)) cache[k] = v;
+  const tmp = `${CACHE}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(cache));
+  fs.renameSync(tmp, CACHE);
+}
+
 let browser, page;
 async function startBrowser() {
   if (browser) await browser.close().catch(() => {});
@@ -314,7 +330,7 @@ for (const g of groups) {
   }
   if (!data) continue;
   cache[g.leagueName] = data;
-  fs.writeFileSync(CACHE, JSON.stringify(cache));
+  saveCache(g.leagueName);
   console.log(`  -> ${data.reports.length} Berichte gespeichert`);
 }
 await browser.close();

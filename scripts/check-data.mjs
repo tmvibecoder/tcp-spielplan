@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { ROOT, SEASONS, seasonById, resolveSeason, describe } from "./seasons.mjs";
+import { loadGroups } from "./data-files.mjs";
 
 const argv = process.argv.slice(2);
 const read = (p) => {
@@ -27,15 +28,11 @@ function checkSeason(season) {
 
   // ── Saisons ohne Spielplan/Tabellen (nur Spielberichte + Meldelisten für die
   //    Spielerhistorie): Bestand zählen, Berichte auf Vollständigkeit prüfen.
+  const groupData = loadGroups(season); // JSON-Gruppendateien (public/data, seit 08.10.2026)
   if (!season.dataFile) {
-    const sb = season.reports ? read(season.reports) : null;
-    const ml = season.rosters ? read(season.rosters) : null;
-    const n = sb ? (sb.match(new RegExp(`season: "${season.id}"`, "g")) ?? []).length : 0;
-    const r = ml ? (ml.match(new RegExp(`season: "${season.id}"`, "g")) ?? []).length : 0;
-    const leaguesWith = new Set();
-    if (sb) for (const block of sb.split(/\n {2}(?:[rt]\()?\{\n/).slice(1)) {
-      if (block.includes(`season: "${season.id}"`)) leaguesWith.add(block.match(/league: "([^"]+)"/)?.[1]);
-    }
+    const n = groupData.reduce((a, g) => a + g.reports.length, 0);
+    const r = groupData.reduce((a, g) => a + g.rosters.length, 0);
+    const leaguesWith = new Set(groupData.filter((g) => g.reports.length).map((g) => g.league));
     const missing = season.groups.filter((g) => !leaguesWith.has(g.leagueName)).map((g) => g.leagueName);
     console.log(`  nur Historie: ${n} Berichte, ${r} Meldelisten, ${leaguesWith.size}/${season.groups.length} Gruppen mit Berichten`);
     for (const m of missing) console.log(`  OHNE BERICHTE    ${m}`);
@@ -65,31 +62,15 @@ function checkSeason(season) {
 
   // ── Spielberichte einlesen (falls die Saison welche hat)
   const reports = new Map();
-  const sb = season.reports ? read(season.reports) : null;
-  if (sb) {
-    for (const block of sb.split(/\n {2}(?:[rt]\()?\{\n/).slice(1)) {
-      // Berichte anderer Saisons überspringen (gleiche Gruppennummern kommen vor)
-      const bs = block.match(/season: "([^"]+)"/)?.[1];
-      if (bs && bs !== season.id) continue;
-      const league = block.match(/league: "([^"]+)"/)?.[1];
-      const home = block.match(/homeClub: "([^"]+)"/)?.[1];
-      const away = block.match(/awayClub: "([^"]+)"/)?.[1];
-      const fh = Number(block.match(/finalHome: (\d+)/)?.[1]);
-      const fa = Number(block.match(/finalAway: (\d+)/)?.[1]);
-      const n = (block.match(/\n\s+m\(/g) ?? []).length;
-      if (league && home && away) reports.set(`${league}::${home}::${away}`, { fh, fa, n });
-    }
+  const sb = groupData.some((g) => g.reports.length) ? true : null;
+  for (const g of groupData) {
+    for (const b of g.reports) reports.set(`${g.league}::${b.homeClub}::${b.awayClub}`, { fh: b.finalHome, fa: b.finalAway, n: b.matches.length });
   }
 
   // ── Meldelisten einlesen (falls vorhanden)
   const rosters = new Set();
-  const ml = season.rosters ? read(season.rosters) : null;
-  if (ml) {
-    for (const m of ml.matchAll(/(?:season: "([^"]+)",\s*\n\s*)?leagueName: "([^"]+)",\s*\n\s*club: "([^"]+)"/g)) {
-      if (m[1] && m[1] !== season.id) continue;
-      rosters.add(`${m[2]}::${m[3]}`);
-    }
-  }
+  const ml = groupData.some((g) => g.rosters.length) ? true : null;
+  for (const g of groupData) for (const r of g.rosters) rosters.add(`${g.league}::${r.club}`);
 
   let missingReports = 0, wrongResult = 0, missingRoster = 0, cells = 0, ok = 0;
   for (const lg of leagues) {

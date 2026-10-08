@@ -1,6 +1,6 @@
 // Crawlt die namentlichen Meldelisten aller Mannschaften der gepflegten
 // Konkurrenzen von btv.de in den Saison-Cache scripts/.meldelisten-cache-<saison>.json
-// und schreibt danach src/data/meldelisten.ts über generate-meldelisten.mjs neu
+// und schreibt danach public/data über generate-meldelisten.mjs (= generate-data.mjs) neu
 // (aus ALLEN Saison-Caches — ein Winter-Crawl löscht also keine Sommer-Listen).
 //
 //   npm run crawl:meldelisten                     # alle Gruppen der laufenden Saison
@@ -61,14 +61,36 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 // Grid-Zeile: <rang> LK<x,y> <id> <Name, Vorname> (<jahr>) [NAT[*]] [<sg-nr>] <bilanzen>
 // Die Nations-Spalte fehlt in manchen Portraits komplett (z. B. Gr. 004) -> optional.
+// Rang kann einen Nachmelde-Zusatz tragen („4a", „16b": nachträglich zwischen
+// 4 und 5 eingereiht; gesehen 08.10.2026 bei Raschke Taufkirchen, TSV Haar,
+// Lindau) — gespeichert wird die Zahl, der Zusatz erlaubt gleiche Ränge in Folge.
 const ROW_RE =
-  /^(\d+) (LK[\d,]+) (\d{7,8}) (.+?) \((\d{4})\)(?: ([A-Z]{3}\*?))?(?: (\d{5}))?(?: (.+))?$/;
+  /^(\d+)([a-z])? (LK[\d,]+) (\d{7,8}) (.+?) \((\d{4})\)(?: ([A-Z]{3}\*?))?(?: (\d{5}))?(?: (.+))?$/;
 
 // Zwischenstand je Saison, damit ein Abbruch nicht alles verwirft (gitignored);
 // der Generator führt alle Saison-Caches zur Datendatei zusammen.
 const CACHE = rosterCacheFile(season);
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, "utf8")) : {};
 const cacheKey = (lg, club) => `${lg}::${club}`;
+// --no-gen: Datendatei am Ende NICHT neu erzeugen (für parallele Läufe, die
+// gen:meldelisten einmal gesammelt am Schluss aufrufen).
+const NO_GEN = args.includes("--no-gen");
+
+// Mehrere Crawls derselben Saison dürfen parallel laufen (je Prozess eine
+// Gruppe, siehe scripts/vollcrawl-gegner.mjs): Vor jedem Schreiben wird der
+// Stand von der Platte eingemischt (fremde Mannschaften übernommen, eigene
+// behalten) und die Datei atomar per tmp + rename ersetzt. Ohne das überschrieb
+// der zweite Prozess die Einträge des ersten (Falle vom 06.10.2026).
+const ownKeys = new Set();
+function saveCache(key) {
+  ownKeys.add(key);
+  let onDisk = {};
+  try { onDisk = JSON.parse(fs.readFileSync(CACHE, "utf8")); } catch { /* noch keine Datei */ }
+  for (const [k, v] of Object.entries(onDisk)) if (!ownKeys.has(k)) cache[k] = v;
+  const tmp = `${CACHE}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(cache));
+  fs.renameSync(tmp, CACHE);
+}
 
 let browser, page;
 async function startBrowser() {
@@ -217,7 +239,7 @@ async function crawlTeam(frame, club, mode, leagueName) {
   for (const line of raw) {
     const m = line.match(ROW_RE);
     if (!m) throw new Error(`Parse-Fehler ${club}: ${line}`);
-    const [, rangS, lk, id, name, jahrS, nation] = m;
+    const [, rangS, rangZusatz, lk, id, name, jahrS, nation] = m;
     const rang = Number(rangS);
     if (seenIds.has(id)) continue; // Seite doppelt erwischt
     seenIds.add(id);
@@ -225,14 +247,14 @@ async function crawlTeam(frame, club, mode, leagueName) {
     // dem Rang, ab dem der Verein die Spieler dieser Mannschaft gemeldet hat
     // (z. B. Feldkirchen II ab Rang 7) — also nur lückenlose Folge prüfen.
     // Mixed: fällt der Rang wieder, beginnt die Damen-Liste.
-    if (mode === "mixed" && prevRang && rang <= prevRang) section = damen;
+    if (mode === "mixed" && prevRang && (rang < prevRang || (rang === prevRang && !rangZusatz))) section = damen;
     // Nur aufsteigend prüfen: Ränge dürfen Lücken haben (abgemeldete Spieler,
     // z. B. Anzing II ohne Rang 20) und beginnen bei II./III. Mannschaften mitten
     // in der vereinsweiten Liste. Ein Rücksprung dagegen heißt: Seite doppelt
     // gelesen oder Damen-Liste beginnt.
     const last = section[section.length - 1]?.rang;
-    if (last !== undefined && rang <= last) {
-      throw new Error(`Rang-Rücksprung ${club}: nach ${last} kam ${rang} (${name})`);
+    if (last !== undefined && (rang < last || (rang === last && !rangZusatz))) {
+      throw new Error(`Rang-Rücksprung ${club}: nach ${last} kam ${rang}${rangZusatz ?? ""} (${name})`);
     }
     section.push({
       rang,
@@ -280,12 +302,12 @@ for (const g of groups) {
     const entry = { leagueName: g.leagueName, ...team };
     result.push(entry);
     cache[key] = entry;
-    fs.writeFileSync(CACHE, JSON.stringify(cache));
+    saveCache(key);
     console.log(`  ${team.club}: ${team.herren.length} H + ${team.damen.length} D`);
   }
 }
 await browser.close();
 
 console.log(`\nCache: ${Object.keys(cache).length} Mannschaften in ${path.relative(ROOT, CACHE)}`);
-// Datendatei aus allen Saison-Caches neu erzeugen
-execFileSync("node", [path.join(ROOT, "scripts/generate-meldelisten.mjs")], { stdio: "inherit" });
+// Datendatei aus allen Saison-Caches neu erzeugen (außer bei --no-gen)
+if (!NO_GEN) execFileSync("node", [path.join(ROOT, "scripts/generate-meldelisten.mjs")], { stdio: "inherit" });

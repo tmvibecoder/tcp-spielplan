@@ -33,3 +33,6 @@ scripts/.tmp-*.pdf
 # Arbeits-Worktrees (EnterWorktree legt sie hier an) — stehen sonst dauerhaft
 # als untracked im Status des Haupt-Checkouts
 .claude/worktrees/
+
+# Zwischenstände der Gruppensuche und Crawl-Logs (scripts/vollcrawl-gegner.mjs)
+scripts/tmp/
