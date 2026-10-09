@@ -436,9 +436,16 @@ zusammen, Änderungen an einem ziehen das andere nach.
   Log-Format `anon`); gzip für JS/JSON (`docs/server/nginx-gzip.sh`).
 - **Impressum:** privates Angebot, ausdrücklich kein Angebot des TC Pliening e.V.; Anschrift auf
   Anfrage.
-- **Passwortschutz (seit 09.10.2026):** HTTP Basic Auth in nginx für die ganze Seite inklusive
-  `/data` (`docs/server/nginx-passwort.sh`, Benutzer `tcp`, Passwort nicht im Repo). Die Seite
-  ist damit kein öffentliches Angebot mehr; Live-Checks brauchen `curl -u tcp:<Passwort>`.
+- **Zugang nur mit Anmeldung (seit 09.10.2026):** eigene Anmeldeseite `public/login.html`
+  (statisch, Outfit, 420 px zuerst) statt Browser-Dialog. Die Seite rechnet im Browser
+  SHA-256(`benutzer:passwort`) und setzt das Cookie `tcp_auth` (1 Jahr); nginx vergleicht den
+  Wert mit dem Hash in `/etc/nginx/conf.d/tcp-spielplan-auth.conf` (`docs/server/nginx-login.sh`,
+  Benutzer `tcp`, Passwort nicht im Repo) und schickt sonst per 302 zur Anmeldeseite (mit
+  `?fehler=1`, wenn ein falsches Cookie da war). Frei sind nur `/login.html`, `/fonts/` und das
+  Favicon — alles andere inklusive `/data` ist geschlossen. Live-Checks brauchen das Cookie:
+  `curl -b "tcp_auth=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -d' ' -f1)" …` bzw.
+  `TCP_PW=<Passwort> node scripts/tmp/smoke.mjs https://tcp-spielplan.de`. Die frühere
+  Basic-Auth-Fassung (`nginx-passwort.sh`) ist damit abgelöst.
 
 ## Daten pflegen (nuLiga)
 

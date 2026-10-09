@@ -98,12 +98,14 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
 - **Nie direkt auf `main` pushen.** Änderungen: Branch → PR → `gh pr merge --squash`
   (der Merge löst den Deploy aus). Reine Doku-Commits mit `[skip ci]`. Nach dem Deploy
   den **live ausgelieferten Bundle-Hash** prüfen
-  (`curl -s -u tcp:<Passwort> https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`)
+  (`curl -s -b tcp_auth=<hash> https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`)
   und eine neue `/data`-Datei greppen — „grüner Workflow" allein reicht nicht.
-- **Die Seite ist passwortgeschützt** (seit 09.10.2026, HTTP Basic Auth in nginx, Benutzer
-  `tcp`, Passwort kennt Thomas — es steht nicht im Repo; `docs/server/nginx-passwort.sh`).
-  Jeder Live-Check braucht `-u tcp:<Passwort>` bzw. `page.authenticate()` in Puppeteer;
-  ohne Passwort antwortet alles mit 401.
+- **Die Seite ist geschlossen** (seit 09.10.2026): Anmeldeseite `public/login.html`, nginx
+  prüft das Cookie `tcp_auth` = SHA-256(`tcp:<Passwort>`) (`docs/server/nginx-login.sh`; das
+  Passwort kennt Thomas, es steht nicht im Repo). Ohne gültiges Cookie antwortet alles außer
+  `/login.html`, `/fonts/` und dem Favicon mit 302 zur Anmeldung — auch `/data`. Jeder
+  Live-Check braucht das Cookie (`curl -b tcp_auth=<hash>`, Puppeteer `page.setCookie`;
+  Rezept im README „Datenschutz in der App").
 - **Supabase-Env ist seit 09.10.2026 optional.** Live-Scores sind standardmäßig aus
   (`VITE_LIVE_SCORES=on` schaltet sie ein), der Client wird erst bei Zugriff erzeugt — ein
   Build ohne `.env` läuft durch und rendert normal. Die früheren Stub-Werte
