@@ -108,8 +108,11 @@ export interface MeldelistenEintrag {
   rang: number;     // Meldeposition laut nuLiga (Herren/Damen separat nummeriert)
   name: string;     // "Nachname, Vorname"
   lk: string;       // aktuelle LK laut Mannschaftsportrait, z. B. "LK14,3"
-  jahrgang: number;
-  nation?: string;  // nur gesetzt, wenn nicht GER (z. B. "CYP", "UKR*")
+  /** Geburtsjahr — seit 09.10.2026 nur noch in den eigenen TCP-Meldelisten vorhanden
+   *  (Datenschutz: für Gegner und für alle Minderjährigen entfernt der Generator ihn) */
+  jahrgang?: number;
+  /** Länderkürzel ≠ GER — seit 09.10.2026 nicht mehr veröffentlicht (Datenminimierung) */
+  nation?: string;
 }
 
 export interface Meldeliste {

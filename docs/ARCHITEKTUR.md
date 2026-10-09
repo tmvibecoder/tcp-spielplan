@@ -132,7 +132,7 @@ tcp-spielplan/
 │   ├── data/                 ← die eingecheckten Liga-Daten (Abschnitt 6)
 │   ├── components/           ← die Oberfläche (Abschnitt 7)
 │   ├── hooks/                ← useLiveScores (Supabase), useFavorites (localStorage)
-│   ├── lib/supabase.ts       ← Supabase-Client, wird beim Modul-Import erzeugt (!)
+│   ├── lib/supabase.ts       ← Supabase-Client, erst bei Zugriff und nur mit VITE_LIVE_SCORES=on
 │   └── utils/                ← date-helpers, ics-export, pdf-export,
 │                               score-helpers, spielbericht (Parser fürs Anzeigen)
 │
@@ -321,15 +321,11 @@ Zwischenstände eintragen. Das ist der **einzige** Teil der App mit Laufzeit-Dat
   offizielle Spielbericht vorliegt, wird er über die Skripte nachgezogen — er ist die
   maßgebliche Quelle.
 
-**Die wichtigste Build-Falle des Projekts hängt daran:** `src/lib/supabase.ts` ruft
-`createClient(url, key)` **schon beim Modul-Import** auf. Fehlen die Env-Variablen,
-wirft das beim Laden, und die App rendert eine **komplett leere Seite** (nicht etwa nur
-ohne Live-Scores). Da `.env` gitignored ist, passiert das in jedem frischen
-`git worktree`. Abhilfe für Bau- und Rendering-Tests:
-
-```bash
-VITE_SUPABASE_URL=https://stub.supabase.co VITE_SUPABASE_ANON_KEY=stub npm run build
-```
+**Seit 09.10.2026 standardmäßig aus** (Datenschutz-Prüfung): `src/lib/supabase.ts` erzeugt
+den Client erst bei `getSupabase()`, und `useLiveScores` ruft das nur mit
+`VITE_LIVE_SCORES=on`. Ohne die Variable gibt es weder Abfrage noch Realtime-Verbindung
+noch Eingabe-Panel — und die frühere Build-Falle „leere Seite ohne Supabase-Env" ist damit
+Geschichte: Ein Build ohne `.env` läuft durch und rendert normal.
 
 Vite backt Env-Variablen **zur Build-Zeit** ein — nach einer Änderung muss neu gebaut
 werden.
@@ -372,6 +368,7 @@ Alle sind Node-ESM-Skripte, laufen über `node scripts/<name>.mjs` bzw. die
 | `parse-spielbericht.mjs` | Reines Text-Parsing des Bericht-Modals. **Keine Netzzugriffe** — dadurch kann man am Parser arbeiten, ohne neu zu crawlen. |
 | `generate-data.mjs` | **Der** Generator (seit 08.10.2026): alle Caches + Bestand → `public/data/` (Gruppen, Vereine, Suchindex) + `src/data/data-version.ts`. Schreibt nur geänderte Dateien. |
 | `generate-spielberichte.mjs`, `generate-meldelisten.mjs` | Nur noch Aufrufer von `generate-data.mjs` (Namen bleiben für npm-Aliase, Wecker und Doku). |
+| `schutz.mjs` + `sperrliste.json` | Datenschutz im Generator (09.10.2026): Minderjährige, Jugend-Gruppen und Widersprüche nur als Initialen ohne Suche/Historie; Jahrgang nur in TCP-Listen; keine Nationalität. |
 | `generate-standings.mjs` | Cache → Tabellen (und im Winter-Layout die Begegnungen). `--write` schreibt, ohne Flag gibt es nur den Diff. |
 | `crawl-meldelisten.mjs` | Puppeteer-Crawl der Meldelisten → Cache-JSON, ruft am Ende den Generator (außer `--no-gen`). |
 | `data-files.mjs` | Lesehilfe für die JSON-Daten (Gruppen, Vereine, Suchindex) — für alle Prüfskripte. |

@@ -100,11 +100,12 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
   den **live ausgelieferten Bundle-Hash** prüfen
   (`curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`) und im
   Bundle nach einem neuen Datenschnipsel greppen — „grüner Workflow" allein reicht nicht.
-- **Kein Bauen ohne Supabase-Env.** `.env` ist gitignored und existiert nur im
-  Haupt-Checkout; im Worktree Dummy-Werte setzen, sonst weiße Seite
-  („supabaseUrl is required"):
-  `VITE_SUPABASE_URL=https://stub.supabase.co VITE_SUPABASE_ANON_KEY=stub npm run build`
-  Im Worktree fehlt außerdem `node_modules` → einmal `npm install`; der Haupt-Checkout
+- **Supabase-Env ist seit 09.10.2026 optional.** Live-Scores sind standardmäßig aus
+  (`VITE_LIVE_SCORES=on` schaltet sie ein), der Client wird erst bei Zugriff erzeugt — ein
+  Build ohne `.env` läuft durch und rendert normal. Die früheren Stub-Werte
+  (`VITE_SUPABASE_URL=https://stub.supabase.co VITE_SUPABASE_ANON_KEY=stub npm run build`)
+  schaden nicht, sind aber nicht mehr nötig.
+  Im Worktree fehlt `node_modules` → einmal `npm install`; der Haupt-Checkout
   hat kein `puppeteer-core`, Browser-Crawls scheitern dort mit `ERR_MODULE_NOT_FOUND`.
   Eigene Hilfsskripte müssen **im Repo** liegen (sonst finden sie `node_modules` nicht)
   und danach wieder weg.
@@ -117,6 +118,13 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
 - **Liga- und Spieldaten nur aus offiziellen BTV-Quellen** übernehmen, **verbatim** —
   auch wenn die BTV-Rangfolge „falsch" aussieht (bei ungleicher Spielzahl sortiert der
   BTV nach Punkt-Quotient). Nichts schätzen, nichts hochrechnen.
+- **Datenschutz ist Teil der Technik** (DSGVO-Prüfung 09.10.2026): Minderjährige, Jugend-
+  Konkurrenzen und Personen auf `scripts/sperrliste.json` erscheinen nur mit Initialen, ohne
+  Jahrgang, ohne Suche und Historie — das macht `scripts/schutz.mjs` im Generator, nicht die
+  App. Jahrgang nur in TCP-eigenen Meldelisten, Nationalität nirgends. Keine Verbindung zu
+  Drittanbietern beim Seitenaufruf: Schrift selbst gehostet (`public/fonts`), Live-Scores
+  (Supabase) nur mit `VITE_LIVE_SCORES=on`. Wer etwas davon ändert, zieht die
+  Datenschutzerklärung (`src/components/LegalPages.tsx`) im selben Zug nach.
 - **`public/data/**`, `src/data/data-version.ts` und `src/data/data-stand.ts`
   sind generiert** — nur über `npm run crawl:meldelisten` (schreibt über `gen:meldelisten`),
   `npm run crawl:spielberichte && npm run gen:spielberichte` bzw. `scripts/briefing-run.mjs`

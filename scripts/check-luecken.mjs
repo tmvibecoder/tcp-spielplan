@@ -15,6 +15,7 @@
 import { resolveSeason, describe } from "./seasons.mjs";
 import { loadGroups, loadClub } from "./data-files.mjs";
 import { baseClub, playerKey } from "../src/data/player-key.ts";
+import { isAbbreviated } from "./schutz.mjs";
 
 const argv = process.argv.slice(2);
 const TOP = Number(argv[argv.indexOf("--top") + 1]) || 6;
@@ -42,7 +43,8 @@ for (const g of loadGroups(season)) {
   for (const r of g.rosters) {
     if (OWN.test(r.club)) continue;
     lists++;
-    const entries = [...r.herren, ...r.damen];
+    // Geschützte Personen (nur Initialen, keine Historie — scripts/schutz.mjs) zählen nicht als Lücke
+    const entries = [...r.herren, ...r.damen].filter((e) => !isAbbreviated(e.name));
     players += entries.length;
     const missing = entries.filter((e) => appearances(r.club, e.name) === 0);
     zero += missing.length;
