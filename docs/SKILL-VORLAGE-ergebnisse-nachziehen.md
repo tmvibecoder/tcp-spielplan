@@ -101,8 +101,10 @@ Jedes Skript nennt beim Start die Saison, auf die es wirkt, und lässt sich mit
    ```
    npm run crawl:meldelisten
    ```
-   Cache (`scripts/.meldelisten-cache.json`) vorher löschen, wenn wirklich alles
-   neu geholt werden soll; sonst werden gecachte Mannschaften übersprungen.
+   Cache (`scripts/.meldelisten-cache-<saison>.json`) vorher löschen, wenn wirklich alles
+   neu geholt werden soll; sonst werden gecachte Mannschaften übersprungen — auch solche, die
+   beim ersten Crawl noch **leer** waren (vor dem Saisonstart der Normalfall). Ein `--force`
+   gibt es für Meldelisten nicht.
 
 5. **Konsistenz prüfen** (Pflicht vor jedem Commit):
    ```
@@ -131,10 +133,14 @@ Jedes Skript nennt beim Start die Saison, auf die es wirkt, und lässt sich mit
    ```
    Danach warten bis der Actions-Run auf `main` grün ist und das **Live-Bundle
    verifizieren** — grüner Workflow allein reicht nicht:
+   Seit 09.10.2026 ist die Seite nur mit Anmeldung erreichbar — ohne Cookie kommt `302`, und
+   jeder `grep -c` zählt still 0 (Passwort bei Thomas, nicht im Repo):
    ```
-   curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'
-   curl -s https://tcp-spielplan.de/assets/<bundle> | grep -c "<neuer Datenschnipsel>"
+   H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)
+   curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'
+   curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c "<neuer Datenschnipsel>"
    ```
+   (Spielberichte und Meldelisten liegen seit 08.10.2026 unter `/data`, nicht mehr im Bundle.)
 
 ## Datenquellen — was funktioniert, was nicht
 
@@ -265,8 +271,8 @@ doppelt bleibt. Ebenso `layout` (Sommer = Ergebnisse nur in der Kreuztabelle) un
   Runde (`resolveSeason`). Löste `scripts/groups.mjs` ab. Neue Saison = ein Block mehr.
 - `scripts/new-season.mjs` — legt eine Saison komplett an (Mannschaften, groupids, Spielplan,
   Spielorte) und nennt die Handgriffe, die danach bleiben.
-- Caches (gitignored): `scripts/.spielberichte-cache-<saison>.json` (je Saison eine),
-  `scripts/.meldelisten-cache.json`.
+- Caches (gitignored): `scripts/.spielberichte-cache-<saison>.json` und
+  `scripts/.meldelisten-cache-<saison>.json` (je Saison eine).
 
 ## Crawler-Stolperfallen (alle in den Skripten gelöst — nicht „wegoptimieren")
 

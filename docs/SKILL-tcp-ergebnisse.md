@@ -5,7 +5,7 @@ description: Prüft für die Tennis-App tcp-spielplan.de (Repo tmvibecoder/tcp-s
 
 # BTV-Ergebnisse prüfen und auf tcp-spielplan.de nachziehen
 
-> Stand 08.10.2026. Diese Datei im Repo (`docs/SKILL-tcp-ergebnisse.md`) ist die Quelle des
+> Stand 09.10.2026 (Live-Checks mit Anmelde-Cookie). Diese Datei im Repo (`docs/SKILL-tcp-ergebnisse.md`) ist die Quelle des
 > Skills in der Claude-App — bei Änderungen dort den Text neu einfügen.
 
 ## Auftrag
@@ -64,11 +64,14 @@ curl -sL -A "Mozilla/5.0" "https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokument
 
 ```
 npm run crawl:spielberichte -- <groupid> --force     # je Gruppe, wenige Minuten
-npm run crawl:meldelisten  -- <groupid>              # Nachmeldungen, LK-Änderungen
+npm run crawl:meldelisten  -- <groupid>              # Nachmeldungen, LK-Änderungen (Cache-Hinweis unten)
 npm run gen:spielberichte                            # Caches + Bestand → public/data
 ```
 
-`--force` ist nötig, sonst kommt der gecachte alte Stand zurück. Braucht Google Chrome
+`--force` ist nötig, sonst kommt der gecachte alte Stand zurück. Der **Meldelisten-Crawler kennt
+kein `--force`** und überspringt alles, was im Saison-Cache steht — auch leere Listen. Für frische
+Meldelisten vorher `rm scripts/.meldelisten-cache-<saison>.json` (gefahrlos: Gruppen ohne Cache
+übernimmt der Generator aus dem Bestand). Braucht Google Chrome
 (`CHROME_PATH` überschreibbar) und `puppeteer-core`. Nie pauschal alles neu crawlen.
 
 ### 3. Tabellen und Begegnungen nachziehen
@@ -110,13 +113,20 @@ gh pr create --fill && gh pr merge <nr> --squash
 Warten, bis der Actions-Run auf `main` grün ist, dann prüfen — **die Daten liegen nicht im
 Bundle, sondern unter `/data`**:
 
+Die Seite ist seit 09.10.2026 **nur mit Anmeldung** erreichbar — jeder Abruf braucht das Cookie
+`tcp_auth` (Passwort bei Thomas erfragen, falls nicht bekannt; es steht nicht im Repo):
+
 ```
-curl -s https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c "<Nachname eines neuen Berichts>"
-curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'     # Bundle-Hash nur zur Info
+H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)
+curl -sI -b "tcp_auth=$H" https://tcp-spielplan.de/ | head -1          # muss 200 sein, sonst Cookie falsch
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c "<Nachname eines neuen Berichts>"
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'     # Bundle-Hash nur zur Info
 ```
 
 Liga-Slug = Liganame klein, Umlaute aufgelöst, alles andere Bindestrich („Südliga 2 · Gr. 129" →
 `suedliga-2-gr-129`). Trifft der grep 0, ist der Deploy nicht durch — nicht „grün" melden.
+**Aber erst die erste Zeile prüfen:** Ohne gültiges Cookie kommt `302` (Weiterleitung zur
+Anmeldeseite), und der grep zählt dann immer 0 — das ist ein falsches Cookie, kein fehlender Deploy.
 
 ## Bekannte korrekte Ausnahmen — nicht reparieren
 

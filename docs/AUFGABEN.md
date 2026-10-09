@@ -219,19 +219,25 @@ gh pr create --fill
 gh pr merge --squash                    # löst den Deploy aus
 ```
 
-**Nie direkt auf `main` pushen.** Nach dem Merge:
+**Nie direkt auf `main` pushen.** Nach dem Merge — die Seite ist geschlossen, jeder Abruf
+braucht das Anmelde-Cookie (ohne kommt nur die 302-Weiterleitung zurück, und `grep -c` meldet
+still „0"; Hintergrund in ARCHITEKTUR.md, Abschnitt 11.1):
 
 ```bash
+H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)               # Cookie-Wert, einmal je Shell
 gh run list --limit 3                                                   # Action grün?
-curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # neuer Hash?
-curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c '<schnipsel>'
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # neuer Hash?
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/assets/index-XXXX.js | grep -c '<schnipsel>'
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c '<schnipsel>'
 ```
+
+Das Passwort steht nicht im Repo — bei Thomas erfragen, falls es in der Sitzung nicht bekannt ist.
 
 **Ein grüner Workflow allein ist kein Beweis** — genau diese Verwechslung hat im Juni
 2026 einen Deploy vorgetäuscht, der nie live ging. Deshalb immer der Griff ins
-ausgelieferte Bundle. Für Tabellen- und Spielbericht-Inhalte im Chunk
-`StandingsView-*.js` suchen oder die Live-Seite im Browser prüfen — sie stehen **nicht**
-im Startbundle.
+ausgelieferte Bundle. Spielberichte und Meldelisten stehen seit 08.10.2026 **nicht** im
+Bundle, sondern unter `/data/…` (letzte Zeile oben); Tabellen und Spielplan stecken im
+Chunk `StandingsView-*.js`.
 
 Direkt nach „Deploy erfolgreich" kann der erste Abruf noch den alten Stand liefern.
 Bei rotem Ergebnis erst den Hash prüfen, dann den Test wiederholen.
@@ -245,7 +251,8 @@ Bei rotem Ergebnis erst den Hash prüfen, dann den Test wiederholen.
 - [ ] bei Datenänderungen: `npm run check` ist grün
 - [ ] bei UI-Änderungen: im echten Browser gesehen, mobil (420×912)
 - [ ] die betroffene Dokumentation ist im selben Zug nachgezogen
-- [ ] PR gemergt, Deploy grün **und** der Bundle-Hash live gegengeprüft
+- [ ] PR gemergt, Deploy grün **und** der Bundle-Hash live gegengeprüft (mit Anmelde-Cookie —
+      ohne ist jede Live-Prüfung wertlos, siehe Abschnitt 7)
 - [ ] die Übergabe nennt: Branch/Commit, Änderung, **tatsächlich ausgeführte** Prüfungen,
       offene Punkte, nächster Schritt
 
@@ -316,8 +323,12 @@ einer Woche):
 npm run gen:spielberichte          # schreibt die Person überall als Initialen, entfernt Suche + Historie
 npm run check -- --all
 # Branch → PR → Squash-Merge, Live prüfen: der Klarname darf in keiner /data-Datei mehr vorkommen
-curl -s https://tcp-spielplan.de/data/search.json | grep -c "<Nachname>"
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/search.json | grep -c "<Nachname>"
 ```
+
+**Achtung, Gegenprobe:** „0" beweist hier nur dann etwas, wenn der Abruf wirklich die Datei
+liefert. Ohne gültiges Cookie kommt die Weiterleitung, und „0" täuscht eine Löschung vor. Deshalb
+denselben Befehl einmal mit einem Namen laufen lassen, der sicher drinsteht (er muss > 0 zählen).
 
 Der Schutz läuft im Generator (`scripts/schutz.mjs`): Minderjährige (Jahrgang ≥ laufendes
 Jahr − 18 laut irgendeiner Meldeliste) und Jugend-Konkurrenzen werden automatisch genauso
@@ -351,3 +362,59 @@ bleibt bis dahin live; das ⋯-Menü zeigt sein Alter.
   aus) und crawlt nur die Gruppen der fälligen Begegnungen.
 - `discover-groups.mjs` braucht `pdftotext` (poppler) für die Liganamen; ohne rekonstruiert es die
   Schreibweise aus der Großschreibung des Widgets — dann gegenlesen.
+- **Meldelisten frisch holen:** `crawl:meldelisten` überspringt alles, was im Saison-Cache steht —
+  auch Mannschaften mit **leerer** Liste — und hat kein `--force`. Vor dem Saisonstart sind die
+  Listen beim BTV noch leer (Winter 26/27: am 10.09. leer, am 16.09. die vorläufigen Meldungen
+  da — sichtbar erst mit einem Crawl ohne den alten Cache). Lokal deshalb vorher
+  `rm scripts/.meldelisten-cache-<saison>.json` — gefahrlos, die übrigen
+  Gruppen übernimmt der Generator aus dem Bestand. Der Wecker auf dem Runner hat keinen Cache.
+
+---
+
+## 10. Zugang: Passwörter der Anmeldung ändern
+
+Die Seite ist seit 09.10.2026 nur mit Anmeldung erreichbar (Aufbau: ARCHITEKTUR.md,
+Abschnitt 11.1). Benutzer ist `tcp`; es können **mehrere Passwörter nebeneinander** gelten —
+Stand 09.10.2026 sind es zwei. Die Klartexte stehen nicht im Repo.
+
+Das ist ein **Eingriff auf dem Server** (Abschnitt 6): Thomas führt das Skript selbst als root
+aus; Agenten bereiten den Befehl vor. Immer die **vollständige** Liste übergeben — das Skript
+schreibt die Liste der gültigen Hashes komplett neu:
+
+```bash
+# aus dem Haupt-Checkout, nach git pull (das Skript wird lokal gelesen und per ssh hineingereicht)
+ssh hetzner 'bash -s -- tcp "<Passwort1>" "<Passwort2>"' < docs/server/nginx-login.sh
+```
+
+Erwartete Ausgabe bei einem Lauf über eine schon eingerichtete Anmeldung:
+
+```
+Site-Konfiguration schon aktuell (Anmelde-Tor vorhanden)
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Anmeldung über /login.html aktiv (Benutzer tcp, 2 gültige Passwörter)
+```
+
+Prüfen (je Passwort einmal `200`, ohne Cookie `302`, falsches Cookie `302` mit `?fehler=1`):
+
+```bash
+for PW in "<Passwort1>" "<Passwort2>"; do
+  H=$(printf 'tcp:%s' "$PW" | shasum -a 256 | cut -c1-32)
+  curl -sI -b "tcp_auth=$H" https://tcp-spielplan.de/ | head -1
+done
+curl -sI https://tcp-spielplan.de/ | head -1
+curl -sI -b tcp_auth=00000000000000000000000000000000 https://tcp-spielplan.de/ | grep -i ^location
+```
+
+- **Passwort entfernen** = Skript nur mit den verbleibenden Passwörtern laufen lassen. Wer mit
+  dem entfernten angemeldet war, landet beim nächsten Aufruf wieder auf der Anmeldeseite.
+- **Sicherheitsnetz:** Das Skript sichert Site-Konfiguration und Hash-Liste vorher nach
+  `/etc/nginx/backups/` und spielt beides zurück, wenn ein Schritt scheitert oder `nginx -t`
+  rot ist („FEHLER: … Sicherung zurückgespielt"). Dann gilt der alte Stand unverändert weiter.
+- **Falle (behoben 09.10.2026, PR #77):** Der erste Wiederholungslauf brach mit
+  „location / nicht gefunden" ab, weil das schon vorhandene Tor als „nicht gefunden" galt — und
+  ließ dabei eine neue, ungeladene Hash-Liste liegen. Wer so eine Meldung je wieder sieht: Die
+  Site-Konfiguration auf dem Server weicht vom erwarteten Muster ab; nicht von Hand
+  nachbessern, sondern mit Thomas die Datei ansehen.
+- **Kein App-Deploy nötig:** Die Anmeldeseite ändert sich dabei nicht; Commits am Skript oder an
+  der Doku tragen `[skip ci]`.

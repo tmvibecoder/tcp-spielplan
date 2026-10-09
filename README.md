@@ -442,12 +442,20 @@ zusammen, Änderungen an einem ziehen das andere nach.
   Wert (die ersten 32 Hex-Zeichen — 64 passen nicht in nginx' Standard-map-Hashtabelle) mit dem
   Hash in `/etc/nginx/conf.d/tcp-spielplan-auth.conf` (`docs/server/nginx-login.sh`,
   Benutzer `tcp`, Passwörter nicht im Repo; das Skript nimmt **mehrere Passwörter** entgegen —
-  jedes wird eine eigene Zeile in der `map`, alle gelten nebeneinander) und schickt sonst per 302 zur Anmeldeseite (mit
+  jedes wird eine eigene Zeile in der `map`, alle gelten nebeneinander; **Stand 09.10.2026: zwei
+  Passwörter**) und schickt sonst per 302 zur Anmeldeseite (mit
   `?fehler=1`, wenn ein falsches Cookie da war). Frei sind nur `/login.html`, `/fonts/` und das
-  Favicon — alles andere inklusive `/data` ist geschlossen. Live-Checks brauchen das Cookie:
-  `curl -b "tcp_auth=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)" …` bzw.
-  `TCP_PW=<Passwort> node scripts/tmp/smoke.mjs https://tcp-spielplan.de`. Die frühere
-  Basic-Auth-Fassung (`nginx-passwort.sh`) ist damit abgelöst.
+  Favicon — alles andere inklusive `/data` und `/assets` ist geschlossen. Live-Checks brauchen das Cookie:
+  `curl -b "tcp_auth=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)" …` bzw. im
+  Browser-Skript `page.setCookie({ name: "tcp_auth", value: <hash>, domain: "tcp-spielplan.de" })`
+  (das frühere Hilfsskript `scripts/tmp/smoke.mjs` ist lokal und gitignored, nicht im Repo).
+  **Passwörter ändern oder ein weiteres hinzufügen:** Skript mit der vollständigen Liste erneut
+  ausführen — Rezept in [AUFGABEN.md, Abschnitt 10](docs/AUFGABEN.md); Aufbau in
+  [ARCHITEKTUR.md, Abschnitt 11.1](docs/ARCHITEKTUR.md). Ein Wiederholungslauf lässt die
+  Site-Konfiguration unverändert („schon aktuell"), scheitert ein Schritt, spielt das Skript die
+  Sicherung aus `/etc/nginx/backups/` zurück (seit PR #77). Deploy, Wecker und Crawler rufen die
+  eigene Seite nie ab und sind deshalb nicht betroffen. Die frühere
+  Basic-Auth-Fassung (`nginx-passwort.sh`, 09.10. vormittags) ist damit abgelöst.
 
 ## Daten pflegen (nuLiga)
 
@@ -651,8 +659,12 @@ Mannschaften ohne Cache aus dem Bestand übernimmt (`--no-gen` lässt das aus, f
 In der App: `getMeldeliste(group, club)` auf der nachgeladenen Gruppendatei (`useGroup`).
 
 Der Crawler (`scripts/crawl-meldelisten.mjs`, braucht Google Chrome, Pfad via `CHROME_PATH`
-überschreibbar) holt die Listen aus den **btv.de-Mannschaftsportraits**. Stand 16.08.2026:
-**132 Mannschaften, 4.238 Spieler** — alle 18 Konkurrenzen der Sommer-Saison. Die Gruppen stehen
+überschreibbar) holt die Listen aus den **btv.de-Mannschaftsportraits**. Stand 09.10.2026 (nach
+dem Voll-Crawl der Gegner): **4.571 Mannschaften, 178.291 Meldeplätze** über fünf Saisons —
+Sommer 25 1.541, Sommer 26 1.507, Winter 24/25 698, Winter 25/26 784, **Winter 26/27 41**
+(alle sieben TCP-Gruppen; vorläufige Meldungen seit 16.09.2026, am 10.09. waren die Listen beim
+BTV noch leer). Meldeplätze, nicht Personen: wer in mehreren Mannschaften gemeldet ist, zählt
+mehrfach. Die Gruppen stehen
 je Saison in **`scripts/seasons.mjs`** (`groupid`, `leagueName`, `mode` herren/damen/mixed,
 `teamSize` 9 oder 6); dieselbe Registry nutzen Spielbericht-Crawler, Generator und Prüfskript.
 
@@ -683,9 +695,20 @@ abgefangene URL enthält `group=<id>` (vorher ggf. „MEHR LADEN" klicken). Alle
   („TC Kirchheim bei Mü."), die kein Portrait haben und ins Timeout laufen.
 - **Frame wird detached**, sobald etwas schiefgeht → Seite (notfalls Browser) neu aufbauen und den
   Frame **neu holen**; der alte Handle bleibt sonst für den Rest des Laufs kaputt.
-- **Cache:** Nach jeder Mannschaft wird `scripts/.meldelisten-cache.json` geschrieben (gitignored).
-  Ein Wiederanlauf überspringt fertige Mannschaften — Abbrüche kosten daher fast nichts. Cache löschen
-  = kompletter Neu-Crawl (dauert ~30–40 min für alle sechs Gruppen).
+- **Cache:** Nach jeder Mannschaft wird der Saison-Cache `scripts/.meldelisten-cache-<saison>.json`
+  geschrieben (gitignored). Ein Wiederanlauf überspringt fertige Mannschaften — Abbrüche kosten
+  daher fast nichts. Cache löschen = kompletter Neu-Crawl der Saison (Winter 26/27: 41 Mannschaften
+  in rund 20 Minuten); die übrigen Saisons und Gruppen ohne Cache übernimmt der Generator aus dem
+  Bestand, es geht also nichts verloren.
+- **Leere Listen bleiben im Cache kleben:** Der Crawler überspringt auch Mannschaften, die mit
+  **0 Spielern** im Cache stehen, und kennt kein `--force`. Genau so blieben die Winter-26/27-Listen
+  in dem Worktree, in dem der erste Crawl am 10.09. lief, leer: der BTV hatte noch nichts, und der
+  Cache hielt die 41 leeren Einträge fest; am 16.09. kamen die vorläufigen Meldungen erst mit einem
+  Crawl in einem frischen Worktree ohne diesen Cache. Vor dem Saisonstart und für Nachmeldungen deshalb den Cache
+  der Saison löschen. (Der Wecker auf dem GitHub-Runner hat keinen Cache und holt immer frisch.)
+- **Ein Timeout ist kein Fehler:** „Waiting failed: 25000ms exceeded" bei einer Mannschaft — das
+  Skript baut die Seite neu auf und versucht es bis zu dreimal (am 16.09. bei TC Pliening II im
+  zweiten Versuch erfolgreich). Erst eine Mannschaft, die nach drei Versuchen fehlt, ist ein Problem.
 - **Vereinsnamen müssen exakt** den `club`-Strings in `summer-2026.ts` entsprechen; Abweichungen über
   `CLUB_ALIASES` im Script abfangen (z. B. „VfB Forstinning" → „VfB Forstinning (zurückgezogen)").
   Nach dem Crawl gegenprüfen, dass jede Tabellen-Mannschaft eine Meldeliste hat.
@@ -763,15 +786,18 @@ trotzdem **success**. Folge: PR #8 (Spieler-Statistik) war gemergt, CI grün –
 - Build-Check (`test -d dist/assets`).
 
 **Lehre:** Grüner Deploy ≠ neuer Code live. Nach einem Deploy den live ausgelieferten
-Bundle-Hash prüfen, z. B.:
+Bundle-Hash prüfen — seit 09.10.2026 **mit Anmelde-Cookie**, sonst liefert nginx nur die
+302-Weiterleitung und jeder `grep` geht still leer aus:
 ```bash
-curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # Hash kann - und _ enthalten
-curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c <feature-string>
+H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # Hash kann - und _ enthalten
+curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/assets/index-XXXX.js | grep -c <feature-string>
 ```
 Dabei beachten: **Tabellen- und Spielbericht-Texte stehen nicht im Startbundle**, sondern in den
-lazy geladenen Chunks (`StandingsView-*.js`, `SpielberichtDrawer-*.js`). Ein `grep` nach „BTV-Stand"
-oder „im Einsatz" im Startbundle schlägt deshalb korrekt fehl — für diese Teile die Live-Seite im
-Browser aufrufen und den Tabellen-Reiter öffnen.
+lazy geladenen Chunks (`StandingsView-*.js`, `SpielberichtDrawer-*.js`); **Spielberichte und
+Meldelisten selbst** liegen seit 08.10.2026 gar nicht mehr im Bundle, sondern unter
+`/data/groups/<saison>/<liga>.json` — dort mit demselben Cookie greppen. Ein `grep` nach
+„BTV-Stand" oder „im Einsatz" im Startbundle schlägt deshalb korrekt fehl.
 
 ### ⚠️ Stolperfalle „leere Seite im git-worktree" (lokales Testen)
 

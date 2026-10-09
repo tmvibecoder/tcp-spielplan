@@ -106,7 +106,15 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
   das Skript nimmt sie als weitere Argumente). Ohne gültiges Cookie antwortet alles außer
   `/login.html`, `/fonts/` und dem Favicon mit 302 zur Anmeldung — auch `/data`. Jeder
   Live-Check braucht das Cookie (`curl -b tcp_auth=<hash>`, Puppeteer `page.setCookie`;
-  Rezept im README „Datenschutz in der App").
+  Rezept im README „Datenschutz in der App") — **ohne Cookie zählt jeder `grep -c` still 0**,
+  das ist dann kein fehlender Deploy und keine erfolgreiche Löschung. Aufbau:
+  [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md), Abschnitt 11.1; Passwörter ändern:
+  [docs/AUFGABEN.md](docs/AUFGABEN.md), Abschnitt 10.
+- **Server-Skripte (`docs/server/*.sh`) führt Thomas aus**, nicht der Agent: Sie ändern die
+  nginx-Konfiguration auf dem Hetzner-Server (Eingriff in ein fremdes System). Agenten
+  bereiten den fertigen `ssh hetzner 'bash -s -- …' < docs/server/<skript>.sh`-Befehl vor,
+  Thomas startet ihn, danach prüft der Agent live. Die Skripte sichern vorher nach
+  `/etc/nginx/backups/` und spielen bei Fehlern zurück.
 - **Supabase-Env ist seit 09.10.2026 optional.** Live-Scores sind standardmäßig aus
   (`VITE_LIVE_SCORES=on` schaltet sie ein), der Client wird erst bei Zugriff erzeugt — ein
   Build ohne `.env` läuft durch und rendert normal. Die früheren Stub-Werte
@@ -151,7 +159,7 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
 # Entwicklung
 npm install                        # im frischen Worktree nötig
 npm run dev                        # Vite-Dev-Server
-npm run build                      # tsc -b && vite build  (braucht Supabase-Env!)
+npm run build                      # tsc -b && vite build  (seit 09.10.2026 ohne Supabase-Env lauffähig)
 npm run lint
 npm run preview -- --port 4317
 
@@ -162,6 +170,8 @@ npm run gen:standings -- --write   # Ergebnisse der laufenden Saison nachziehen
 npm run check                      # Konsistenz  (-- --all für alle Saisons)
 npm run crawl:spielberichte        # Spielberichte crawlen (langsam, braucht Chrome)
 npm run crawl:meldelisten          # Meldelisten crawlen (Cache je Saison) + Generator
+                                   #   überspringt Gecachtes, auch LEERE Listen; kein --force →
+                                   #   für frische Listen vorher scripts/.meldelisten-cache-<saison>.json löschen
 npm run gen:spielberichte          # = gen:meldelisten = scripts/generate-data.mjs:
 npm run gen:meldelisten            #   Caches + Bestand -> public/data (JSON je Gruppe/Verein, Suchindex)
 node scripts/check-luecken.mjs     # Gemeldete der Gegner ohne Einsatz in den Vorsaisons (Lücken)
