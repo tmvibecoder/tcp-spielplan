@@ -6,19 +6,29 @@
 # 302 nach /login.html (bei vorhandenem, falschem Cookie mit ?fehler=1). Frei bleiben nur die
 # Anmeldeseite, die Schriftdateien und das Favicon. Ersetzt die Basic-Auth-Zeilen vom 09.10.
 #
-# Ausführen als root (Benutzer und Passwort als Argumente, landen nicht im Repo):
-#   ssh hetzner 'bash -s -- tcp "<Passwort>"' < docs/server/nginx-login.sh
+# Ausführen als root (Benutzer und Passwörter als Argumente, landen nicht im Repo). Mehrere
+# Passwörter sind erlaubt — jedes gilt für sich, alle für denselben Benutzer (seit 09.10.2026,
+# Thomas' Wunsch: ein langes und ein kurzes Passwort nebeneinander):
+#   ssh hetzner 'bash -s -- tcp "<Passwort1>" "<Passwort2>"' < docs/server/nginx-login.sh
 # Prüfen:
 #   curl -sI https://tcp-spielplan.de/ | grep -iE "^HTTP|^location"        → 302 /login.html
 #   curl -sI https://tcp-spielplan.de/login.html | head -1                  → 200
 #   H=$(printf 'tcp:<Passwort>' | sha256sum | cut -c1-32); curl -sI -b "tcp_auth=$H" https://tcp-spielplan.de/ | head -1   → 200
-# Passwort ändern: Skript mit neuem Passwort erneut ausführen (alte Cookies werden ungültig).
+# Passwörter ändern: Skript mit der neuen vollständigen Liste erneut ausführen — die map wird
+# komplett neu geschrieben, Cookies weggelassener Passwörter werden damit ungültig.
 set -euo pipefail
-USER_="${1:-}"; PW="${2:-}"
-[ -z "$USER_" ] || [ -z "$PW" ] && { echo "Aufruf: bash -s -- <benutzer> '<Passwort>'"; exit 1; }
+USER_="${1:-}"; shift || true
+[ -z "$USER_" ] || [ $# -eq 0 ] && { echo "Aufruf: bash -s -- <benutzer> '<Passwort>' ['<weiteres Passwort>' ...]"; exit 1; }
 # erste 32 Hex-Zeichen der SHA-256 (128 Bit): passt in nginx' Standard-map-Hashtabelle (64 Zeichen
 # täten das nicht, und map_hash_bucket_size darf nur vor dem ersten map-Block stehen)
-HASH=$(printf '%s:%s' "$(echo "$USER_" | tr 'A-Z' 'a-z')" "$PW" | sha256sum | cut -c1-32)
+USER_LC=$(echo "$USER_" | tr 'A-Z' 'a-z')
+MAP_LINES=""
+for PW in "$@"; do
+  [ -z "$PW" ] && { echo "FEHLER: leeres Passwort übergeben"; exit 1; }
+  HASH=$(printf '%s:%s' "$USER_LC" "$PW" | sha256sum | cut -c1-32)
+  MAP_LINES="${MAP_LINES}    \"$HASH\" 1;
+"
+done
 SITE=/etc/nginx/sites-enabled/tcp-spielplan.de
 AUTH=/etc/nginx/conf.d/tcp-spielplan-auth.conf
 mkdir -p /etc/nginx/backups
@@ -29,10 +39,10 @@ cp "$SITE" "$BAK"
 # 1. Hash-Vergleich im http-Kontext (conf.d wird von nginx.conf eingebunden)
 cat > "$AUTH" <<EOF
 # tcp-spielplan.de: Anmeldung über Cookie tcp_auth = erste 32 Hex-Zeichen von SHA-256("benutzer:passwort"), siehe docs/server/nginx-login.sh
+# Eine Zeile je gültigem Passwort ($# Stück, Benutzer $USER_LC)
 map \$cookie_tcp_auth \$tcp_auth_ok {
     default 0;
-    "$HASH" 1;
-}
+${MAP_LINES}}
 EOF
 chmod 600 "$AUTH"
 
@@ -66,7 +76,7 @@ EOF
 
 if nginx -t; then
   systemctl reload nginx
-  echo "Anmeldung über /login.html aktiv (Benutzer $USER_)"
+  echo "Anmeldung über /login.html aktiv (Benutzer $USER_, $# gültige Passwörter)"
 else
   cp "$BAK" "$SITE"; [ -f "$BAK.auth" ] && cp "$BAK.auth" "$AUTH" || rm -f "$AUTH"
   echo "FEHLER: Konfiguration ungültig, Sicherung zurückgespielt"; exit 1

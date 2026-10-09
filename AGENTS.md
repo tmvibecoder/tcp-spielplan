@@ -101,8 +101,9 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
   (`curl -s -b tcp_auth=<hash> https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`)
   und eine neue `/data`-Datei greppen — „grüner Workflow" allein reicht nicht.
 - **Die Seite ist geschlossen** (seit 09.10.2026): Anmeldeseite `public/login.html`, nginx
-  prüft das Cookie `tcp_auth` = SHA-256(`tcp:<Passwort>`) (`docs/server/nginx-login.sh`; das
-  Passwort kennt Thomas, es steht nicht im Repo). Ohne gültiges Cookie antwortet alles außer
+  prüft das Cookie `tcp_auth` = SHA-256(`tcp:<Passwort>`) (`docs/server/nginx-login.sh`; die
+  Passwörter kennt Thomas, sie stehen nicht im Repo — es können mehrere nebeneinander gelten,
+  das Skript nimmt sie als weitere Argumente). Ohne gültiges Cookie antwortet alles außer
   `/login.html`, `/fonts/` und dem Favicon mit 302 zur Anmeldung — auch `/data`. Jeder
   Live-Check braucht das Cookie (`curl -b tcp_auth=<hash>`, Puppeteer `page.setCookie`;
   Rezept im README „Datenschutz in der App").

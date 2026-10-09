@@ -441,7 +441,8 @@ zusammen, Änderungen an einem ziehen das andere nach.
   SHA-256(`benutzer:passwort`) und setzt das Cookie `tcp_auth` (1 Jahr); nginx vergleicht den
   Wert (die ersten 32 Hex-Zeichen — 64 passen nicht in nginx' Standard-map-Hashtabelle) mit dem
   Hash in `/etc/nginx/conf.d/tcp-spielplan-auth.conf` (`docs/server/nginx-login.sh`,
-  Benutzer `tcp`, Passwort nicht im Repo) und schickt sonst per 302 zur Anmeldeseite (mit
+  Benutzer `tcp`, Passwörter nicht im Repo; das Skript nimmt **mehrere Passwörter** entgegen —
+  jedes wird eine eigene Zeile in der `map`, alle gelten nebeneinander) und schickt sonst per 302 zur Anmeldeseite (mit
   `?fehler=1`, wenn ein falsches Cookie da war). Frei sind nur `/login.html`, `/fonts/` und das
   Favicon — alles andere inklusive `/data` ist geschlossen. Live-Checks brauchen das Cookie:
   `curl -b "tcp_auth=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)" …` bzw.
