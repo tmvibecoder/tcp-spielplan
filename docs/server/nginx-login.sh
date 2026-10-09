@@ -11,12 +11,14 @@
 # Prüfen:
 #   curl -sI https://tcp-spielplan.de/ | grep -iE "^HTTP|^location"        → 302 /login.html
 #   curl -sI https://tcp-spielplan.de/login.html | head -1                  → 200
-#   H=$(printf 'tcp:<Passwort>' | sha256sum | cut -d' ' -f1); curl -sI -b "tcp_auth=$H" https://tcp-spielplan.de/ | head -1   → 200
+#   H=$(printf 'tcp:<Passwort>' | sha256sum | cut -c1-32); curl -sI -b "tcp_auth=$H" https://tcp-spielplan.de/ | head -1   → 200
 # Passwort ändern: Skript mit neuem Passwort erneut ausführen (alte Cookies werden ungültig).
 set -euo pipefail
 USER_="${1:-}"; PW="${2:-}"
 [ -z "$USER_" ] || [ -z "$PW" ] && { echo "Aufruf: bash -s -- <benutzer> '<Passwort>'"; exit 1; }
-HASH=$(printf '%s:%s' "$(echo "$USER_" | tr 'A-Z' 'a-z')" "$PW" | sha256sum | cut -d' ' -f1)
+# erste 32 Hex-Zeichen der SHA-256 (128 Bit): passt in nginx' Standard-map-Hashtabelle (64 Zeichen
+# täten das nicht, und map_hash_bucket_size darf nur vor dem ersten map-Block stehen)
+HASH=$(printf '%s:%s' "$(echo "$USER_" | tr 'A-Z' 'a-z')" "$PW" | sha256sum | cut -c1-32)
 SITE=/etc/nginx/sites-enabled/tcp-spielplan.de
 AUTH=/etc/nginx/conf.d/tcp-spielplan-auth.conf
 mkdir -p /etc/nginx/backups
@@ -26,9 +28,7 @@ cp "$SITE" "$BAK"
 
 # 1. Hash-Vergleich im http-Kontext (conf.d wird von nginx.conf eingebunden)
 cat > "$AUTH" <<EOF
-# tcp-spielplan.de: Anmeldung über Cookie tcp_auth = SHA-256("benutzer:passwort"), siehe docs/server/nginx-login.sh
-# 64-Zeichen-Schlüssel passen nicht in die Standard-Bucketgröße (64) der map-Hashtabelle
-map_hash_bucket_size 128;
+# tcp-spielplan.de: Anmeldung über Cookie tcp_auth = erste 32 Hex-Zeichen von SHA-256("benutzer:passwort"), siehe docs/server/nginx-login.sh
 map \$cookie_tcp_auth \$tcp_auth_ok {
     default 0;
     "$HASH" 1;
