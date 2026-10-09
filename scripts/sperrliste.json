@@ -1,0 +1,4 @@
+{
+  "hinweis": "Personen, die der Veröffentlichung widersprochen haben (Art. 21 DSGVO). Eintrag: club = Verein ohne Mannschaftsziffer, name = 'Nachname, Vorname' wie in der BTV-Meldeliste. Der Generator (scripts/schutz.mjs) zeigt sie überall nur noch mit Initialen, ohne Jahrgang, ohne Suche, ohne Spielerhistorie. Danach npm run gen:spielberichte und deployen.",
+  "personen": []
+}

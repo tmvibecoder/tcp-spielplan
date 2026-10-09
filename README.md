@@ -97,9 +97,15 @@ Konkurrenzen** der Sommer-Saison komplett erfasst: 402 Spielberichte (3.168 Einz
 
 ### Live-Zwischenstände (Supabase) — der einzige dynamische Teil
 
-Während eine Begegnung läuft, kann **jeder Besucher** im aufgeklappten Spiel die
-einzelnen Einzel und Doppel eintragen. Diese Stände sind **unabhängig** von den
-offiziellen BTV-Ergebnissen und werden später von ihnen abgelöst.
+**Seit 09.10.2026 standardmäßig ausgeschaltet** (Datenschutz-Prüfung; Thomas nutzt die
+Funktion nicht): Ohne `VITE_LIVE_SCORES=on` erzeugt `src/lib/supabase.ts` keinen Client,
+`useLiveScores` fragt nichts ab und abonniert nichts, `saveScores` ist `undefined` und
+`MatchDetail` zeigt kein Eingabe-Panel — die Seite baut keine Verbindung zu Supabase auf.
+Wer sie einschaltet, ergänzt vorher Abschnitt 8 der Datenschutzerklärung.
+
+Während eine Begegnung läuft, kann (bei eingeschalteter Funktion) **jeder Besucher** im
+aufgeklappten Spiel die einzelnen Einzel und Doppel eintragen. Diese Stände sind
+**unabhängig** von den offiziellen BTV-Ergebnissen und werden später von ihnen abgelöst.
 
 - **Schema:** `supabase-setup.sql` — `match_scores` (eine Begegnung, eindeutig über
   `team_id + match_date + match_time`) und `individual_matches` (ein Einzel/Doppel je
@@ -117,11 +123,11 @@ offiziellen BTV-Ergebnissen und werden später von ihnen abgelöst.
   (`getSinglesCount`/`getDoublesCount`) — steht eine Konkurrenz dort nicht drin, zeigt
   die Eingabemaske still **6 Einzel + 3 Doppel** statt 4 + 2.
 
-⚠️ **Daran hängt die häufigste Build-Falle des Projekts:** `src/lib/supabase.ts` ruft
-`createClient(...)` schon beim Modul-Import auf. Ohne `VITE_SUPABASE_URL` /
-`VITE_SUPABASE_ANON_KEY` wirft das beim Laden und die App rendert eine **komplett leere
-Seite** — nicht etwa nur ohne Live-Scores. Details unter „Stolperfalle ‚leere Seite im
-git-worktree'" weiter unten.
+Die frühere **Build-Falle „leere Seite ohne Supabase-Env"** gibt es seit 09.10.2026 nicht mehr:
+`src/lib/supabase.ts` erzeugt den Client erst beim ersten Zugriff (`getSupabase()`), und der
+passiert nur bei `VITE_LIVE_SCORES=on`. Ein Build ohne jede Supabase-Variable läuft durch und
+die Seite rendert normal. Die Stub-Werte in älteren Anleitungen schaden nicht, sind aber
+nicht mehr nötig.
 
 ---
 
@@ -399,6 +405,37 @@ Die Mockups aus der Planungsphase (Artefakt „TCP Gegnerbriefing Mockups") sind
 Umsetzung abgelöst und werden nicht weiter gepflegt.
 
 ---
+
+## Datenschutz in der App (seit 09.10.2026)
+
+Ergebnis der DSGVO-Prüfung vom 09.10.2026 (Auftrag von Thomas). Die Datenschutzerklärung
+(`src/components/LegalPages.tsx`) beschreibt genau diesen Stand — Technik und Text gehören
+zusammen, Änderungen an einem ziehen das andere nach.
+
+- **Keine Drittanbieter beim Seitenaufruf.** Die Schrift Outfit (SIL OFL) liegt als variable
+  woff2 unter `public/fonts/` und wird per `@font-face` in `src/index.css` eingebunden — vorher
+  kam sie von Google-Servern (Abmahnrisiko seit LG München 2022). Live-Zwischenstände über
+  Supabase sind standardmäßig **aus** (`VITE_LIVE_SCORES=on` schaltet sie ein; `src/lib/supabase.ts`
+  erzeugt den Client erst dann, `useLiveScores` fragt nichts ab, `MatchDetail` zeigt kein
+  Eingabe-Panel). Google Maps und BTV sind reine Links.
+- **Schutz Minderjähriger und Sperrliste** — `scripts/schutz.mjs`, angewendet von
+  `generate-data.mjs` auf Bestand und Caches: Personen mit Jahrgang ≥ (laufendes Jahr − 18) laut
+  irgendeiner Meldeliste, alle Spieler in Jugend-Konkurrenzen (Junioren, Knaben, Mädchen,
+  Midcourt, U-Klassen) und alle Einträge der `scripts/sperrliste.json` (Widerspruch nach
+  Art. 21 DSGVO) erscheinen überall nur als Initialen („B., S."), ohne Jahrgang, ohne Nation,
+  ohne Sucheintrag und ohne Spielerhistorie/Bilanz. Ihre Ergebnisse bleiben in den
+  Spielberichten (sonst stimmt das Mannschaftsergebnis nicht). Stand 09.10.2026: 4.832
+  Minderjährige, 4 Jugend-Gruppen. Die Abkürzung ist idempotent — ein Runner ohne Caches, der
+  nur den Bestand übernimmt, verändert nichts.
+- **Datenminimierung:** Jahrgänge nur noch in den TCP-eigenen Meldelisten (Thomas' Wunsch
+  vom 02.10. bleibt für die eigenen Listen erhalten), Nationalitätskennzeichen nirgends mehr —
+  auch nicht in den Spielberichts-Strings.
+- **Aufbewahrung:** laufende Runde plus vier davor. Beim Anlegen einer neuen Saison wird die
+  älteste ausgetragen (AUFGABEN §3, Schritt 6).
+- **Server:** Zugriffslogs 14 Tage (logrotate), IP-Adressen gekürzt (`docs/server/nginx-anon-ip.sh`,
+  Log-Format `anon`); gzip für JS/JSON (`docs/server/nginx-gzip.sh`).
+- **Impressum:** privates Angebot, ausdrücklich kein Angebot des TC Pliening e.V.; Anschrift auf
+  Anfrage.
 
 ## Daten pflegen (nuLiga)
 
@@ -726,21 +763,12 @@ Browser aufrufen und den Tabellen-Reiter öffnen.
 
 ### ⚠️ Stolperfalle „leere Seite im git-worktree" (lokales Testen)
 
-Die Supabase-Zugangsdaten kommen aus `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` und werden
-**zur Build-Zeit** ins Bundle eingebettet (`src/lib/supabase.ts` ruft `createClient(...)` schon
-beim Modul-Import). Die `.env` ist **gitignored** und wird daher **nicht** in einen frischen
-`git worktree` übernommen. Folge: ohne `.env` baut zwar alles, aber `createClient(undefined, …)`
-wirft beim Laden → die App rendert eine **leere Seite** (Filter/Spielplan fehlen komplett).
-
-**Vor dem lokalen Browser-Test im Worktree** die `.env` aus dem Haupt-Checkout kopieren und
-**neu bauen** (env-Vars stecken im Build, nicht zur Laufzeit):
+**Seit 09.10.2026 entschärft:** Live-Scores sind standardmäßig aus und `src/lib/supabase.ts`
+erzeugt den Client erst bei Zugriff — ein Build ohne `.env` läuft durch und rendert normal.
+Die Falle gilt nur noch, wenn jemand `VITE_LIVE_SCORES=on` setzt und dann die Supabase-Werte
+fehlen. Für den lokalen Test reicht:
 ```bash
-cp ../../../.env .env   # vom Worktree aus; Pfad zum Haupt-Repo anpassen
 npm run build && npm run preview -- --port 4317
-```
-Geht es nur um Rendering/Daten (nicht um Live-Scores), reichen auch **Dummy-Werte** statt der echten `.env`:
-```bash
-VITE_SUPABASE_URL=https://dummy.supabase.co VITE_SUPABASE_ANON_KEY=dummy npm run build
 ```
 Nützliche Selektoren für den Tabellen-Smoke-Test: Liga-Akkordeon = `button` mit Text `Gr. <NNN>`;
 Kreuztabellen-Zellen = `button[title$="Spielbericht öffnen"]` (Anzahl = gespielte Begegnungen × 2).

@@ -20,7 +20,8 @@ interface TimelineViewProps {
   months: Record<string, string>;
   monthColors: Record<string, MonthColor>;
   scores: Map<string, MatchScore>;
-  onSaveScore: (
+  /** fehlt, wenn Live-Scores ausgeschaltet sind (VITE_LIVE_SCORES) — dann keine Ergebnis-Eingabe */
+  onSaveScore?: (
     teamId: string,
     matchDate: string,
     matchTime: string,

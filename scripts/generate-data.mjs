@@ -27,6 +27,7 @@ import { ROOT, SEASONS, cacheFile, rosterCacheFile } from "./seasons.mjs";
 import { groupPath, clubPath, SEARCH_PATH } from "../src/data/data-format.ts";
 import { buildIndex } from "../src/data/history-index.ts";
 import { encodeGroup, decodeGroup, encodeClub, encodeSearch } from "../src/data/data-codec.ts";
+import { schuetzen, isAbbreviated } from "./schutz.mjs";
 
 const argv = process.argv.slice(2);
 const PUB = path.join(ROOT, "public");
@@ -176,6 +177,10 @@ function toIndividualMatch(mm) {
   };
 }
 
+// ── 2b. Datenschutz: Minderjährige, Jugend, Sperrliste, Jahrgang, Nation ───────
+// (scripts/schutz.mjs — läuft über Bestand UND Caches, deshalb nach dem Mischen)
+const schutz = schuetzen([...groups.values()]);
+
 // ── 3. Gruppendateien schreiben ──────────────────────────────────────────────
 let written = 0, unchanged = 0;
 function writeIfChanged(rel, data) {
@@ -205,6 +210,9 @@ for (const g of [...groups.values()].sort((a, b) => (order.get(a.season) ?? 99) 
 
 // ── 4. Index je Verein und Suchindex ─────────────────────────────────────────
 const index = buildIndex(allReports, allRosters, seasonIds);
+// Geschützte Personen (nur noch Initialen) bekommen keine Historie und keinen Sucheintrag
+let hidden = 0;
+for (const [k, p] of index.players) if (isAbbreviated(p.name)) { index.players.delete(k); hidden++; }
 const byClub = new Map();
 for (const p of index.players.values()) {
   const list = byClub.get(p.club) ?? [];
@@ -245,4 +253,5 @@ const matchCount = allReports.reduce((s, b) => s + b.matches.length, 0);
 console.log(`Bestand ${carried} Gruppen, aus Caches ${fromCacheReports} Gruppen mit Berichten und ${fromCacheRosters} mit Meldelisten${failed ? `, ${failed} Berichte fehlgeschlagen` : ""}${autoFormat.size ? `, Format aus dem Bericht gelesen in ${autoFormat.size} Ligen` : ""}`);
 for (const line of perSeason) console.log(`  ${line}`);
 console.log(`Gesamt: ${allReports.length} Berichte, ${matchCount} Einzel/Doppel, ${allRosters.length} Meldelisten, ${index.players.size} Personen in ${byClub.size} Vereinen`);
+console.log(`Datenschutz: ${schutz.minors} Minderjährige (Jahrgang ≥ ${schutz.grenze}) und ${schutz.sperrliste} Sperrlisten-Einträge nur mit Initialen, ${schutz.jugendGroups} Jugend-Gruppen komplett, ${hidden} Personen ohne Historie/Suche; Jahrgang nur in TCP-Listen, keine Nationalität`);
 console.log(`public/data: ${written} Dateien geschrieben, ${unchanged} unverändert`);

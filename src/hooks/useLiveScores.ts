@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "../lib/supabase";
+import { getSupabase, LIVE_SCORES_ENABLED } from "../lib/supabase";
 import type { MatchScore, IndividualMatch } from "../types";
 
 type ScoresMap = Map<string, MatchScore>;
@@ -8,13 +8,26 @@ function makeKey(teamId: string, date: string, time: string): string {
   return `${teamId}-${date}-${time}`;
 }
 
-export function useLiveScores() {
+export type SaveScores = (
+  teamId: string,
+  matchDate: string,
+  matchTime: string,
+  individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
+) => Promise<{ success: boolean; error?: string }>;
+
+// Live-Zwischenstände über Supabase. Seit 09.10.2026 nur aktiv, wenn
+// VITE_LIVE_SCORES=on gesetzt ist (src/lib/supabase.ts) — sonst keine Abfrage,
+// keine Realtime-Verbindung, keine Ergebnis-Eingabe (saveScores ist undefined,
+// MatchDetail blendet das Panel dann aus).
+export function useLiveScores(): { scores: ScoresMap; loading: boolean; error: string | null; saveScores?: SaveScores } {
   const [scores, setScores] = useState<ScoresMap>(new Map());
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(LIVE_SCORES_ENABLED);
   const [error, setError] = useState<string | null>(null);
 
   // Initial fetch
   useEffect(() => {
+    if (!LIVE_SCORES_ENABLED) return;
+    const supabase = getSupabase();
     async function load() {
       try {
         const { data: matchScores, error: msError } = await supabase
@@ -58,6 +71,8 @@ export function useLiveScores() {
 
   // Real-time subscription
   useEffect(() => {
+    if (!LIVE_SCORES_ENABLED) return;
+    const supabase = getSupabase();
     const channel = supabase
       .channel("live-scores")
       .on(
@@ -119,14 +134,10 @@ export function useLiveScores() {
   }, []);
 
   // Upsert match score + individual matches
-  const saveScores = useCallback(
-    async (
-      teamId: string,
-      matchDate: string,
-      matchTime: string,
-      individualMatches: Omit<IndividualMatch, "id" | "match_score_id">[]
-    ) => {
+  const saveScores = useCallback<SaveScores>(
+    async (teamId, matchDate, matchTime, individualMatches) => {
       try {
+        const supabase = getSupabase();
         // Compute team score
         let homeWins = 0;
         let awayWins = 0;
@@ -189,5 +200,5 @@ export function useLiveScores() {
     []
   );
 
-  return { scores, loading, error, saveScores };
+  return { scores, loading, error, saveScores: LIVE_SCORES_ENABLED ? saveScores : undefined };
 }
