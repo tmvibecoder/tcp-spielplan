@@ -172,7 +172,8 @@
         submit.disabled = true;
         submit.textContent = "Anmelden …";
         try {
-          var hash = await sha256Hex(u + ":" + p);
+          // erste 32 Hex-Zeichen (128 Bit) reichen — und passen in nginx' Standard-map-Hashtabelle
+          var hash = (await sha256Hex(u + ":" + p)).slice(0, 32);
           writeCookie(hash, 60 * 60 * 24 * 365);
           location.replace(next);
         } catch (ex) {
