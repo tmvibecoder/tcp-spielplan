@@ -21,7 +21,9 @@ if grep -q "auth_basic" "$SITE"; then
   echo "auth_basic schon in $SITE — nur das Passwort wurde erneuert"
   systemctl reload nginx
 else
-  BAK="$SITE.bak-auth-$(date +%Y%m%d)"
+  # Sicherung NICHT nach sites-enabled (nginx liest dort alles ein → „conflicting server name")
+  mkdir -p /etc/nginx/backups
+  BAK="/etc/nginx/backups/tcp-spielplan.de.bak-auth-$(date +%Y%m%d)"
   cp "$SITE" "$BAK"
   # Die beiden Zeilen in den 443-Block direkt nach der root-Zeile setzen
   python3 - "$SITE" <<'EOF'
