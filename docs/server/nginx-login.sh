@@ -47,11 +47,13 @@ EOF
 chmod 600 "$AUTH"
 
 # 2. Site: Basic-Auth raus, Cookie-Tor rein (nur im 443-Block, der die root-Zeile hat)
-python3 - "$SITE" <<'EOF'
+# Bricht dieser Schritt ab, gilt weiter die alte map (Sicherung zurück) — sonst läge eine
+# neue, ungeladene map auf der Platte, die erst beim nächsten nginx-Reload unbemerkt greift.
+if ! python3 - "$SITE" <<'EOF'
 import re, sys
 p = sys.argv[1]
-s = open(p).read()
-s = re.sub(r"^[ \t]*auth_basic[^\n]*\n", "", s, flags=re.M)
+orig = open(p).read()
+s = re.sub(r"^[ \t]*auth_basic[^\n]*\n", "", orig, flags=re.M)
 gate = """    # Anmeldung (docs/server/nginx-login.sh): frei sind nur Login-Seite, Schriften, Favicon
     location = /login.html { try_files $uri =404; }
     location /fonts/ { try_files $uri =404; }
@@ -64,15 +66,24 @@ gate = """    # Anmeldung (docs/server/nginx-login.sh): frei sind nur Login-Seit
         try_files $uri $uri/ =404;
     }
 """
-# vorhandenes Tor (Wiederholungslauf) oder die ursprüngliche location / ersetzen
-s2 = re.sub(r"    # Anmeldung \(docs/server/nginx-login\.sh\).*?\n    location / \{.*?\n    \}\n", gate, s, count=1, flags=re.S)
-if s2 == s:
-    s2 = re.sub(r"    location / \{\n        try_files \$uri \$uri/ =404;\n    \}\n", gate, s, count=1)
-if s2 == s:
+# vorhandenes Tor (Wiederholungslauf) oder die ursprüngliche location / ersetzen. Gezählt wird
+# der Treffer, nicht die Textänderung: beim Wiederholungslauf ist das Tor schon identisch da
+# (nur die map ändert sich) — das ist kein Fehler.
+s2, n = re.subn(r"    # Anmeldung \(docs/server/nginx-login\.sh\).*?\n    location / \{.*?\n    \}\n", gate, s, count=1, flags=re.S)
+if n == 0:
+    s2, n = re.subn(r"    location / \{\n        try_files \$uri \$uri/ =404;\n    \}\n", gate, s, count=1)
+if n == 0:
     sys.exit("location / nicht gefunden — nichts geändert")
-open(p, "w").write(s2)
-print("Site-Konfiguration angepasst")
+if s2 != orig:
+    open(p, "w").write(s2)
+    print("Site-Konfiguration angepasst")
+else:
+    print("Site-Konfiguration schon aktuell (Anmelde-Tor vorhanden)")
 EOF
+then
+  cp "$BAK" "$SITE"; [ -f "$BAK.auth" ] && cp "$BAK.auth" "$AUTH" || rm -f "$AUTH"
+  echo "FEHLER: Site-Konfiguration nicht anpassbar, Sicherung zurückgespielt"; exit 1
+fi
 
 if nginx -t; then
   systemctl reload nginx
