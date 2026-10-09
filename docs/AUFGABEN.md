@@ -137,9 +137,15 @@ Danach nennt es die **fünf Handgriffe**, die es nicht selbst erledigen kann:
 3. `src/data/seasons.ts` — die laufende Runde **nach vorn**, `SEASONS[0]` ist die Vorauswahl
 4. `src/data/season-data.ts` — Eintrag in der Registry (`supportsPdf` nur bei Sommer)
 5. `src/data/team-format.ts` — neue Konkurrenz-Ids eintragen, **sonst gilt still `"6er"`**
+6. **Älteste Runde austragen** (Datenschutzerklärung Abschnitt 5 verspricht: laufende Runde
+   plus vier davor, nicht mehr): ihren Block aus `scripts/seasons.mjs` entfernen, ihre Id aus
+   `SeasonId` (`src/types.ts`) und `HISTORY_SEASONS` (`src/data/seasons.ts`) streichen,
+   `public/data/groups/<id>/` löschen, danach `npm run gen:spielberichte` (baut Vereinsdateien
+   und Suchindex ohne die alte Runde neu).
 
 Danach `npm run season` — steht die neue Runde vorn, ziehen alle Werkzeuge ab sofort
-auf sie.
+auf sie. Und `node scripts/vollcrawl-gegner.mjs --all` für die Vorsaisons der neuen Gegner
+(Abschnitt 9).
 
 **Gegenlesen, was das Skript nicht wissen kann:**
 
@@ -301,6 +307,22 @@ npm run crawl:spielberichte -- <groupid> --season sommer-26
 npm run crawl:meldelisten  -- <groupid> --season sommer-26
 npm run gen:spielberichte && npm run check -- --all
 ```
+
+**Widerspruch einer Person eintragen** (Datenschutzerklärung Abschnitt 7; Zusage: innerhalb
+einer Woche):
+
+```bash
+# scripts/sperrliste.json: { "club": "<Verein ohne Ziffer>", "name": "Nachname, Vorname" } anhängen
+npm run gen:spielberichte          # schreibt die Person überall als Initialen, entfernt Suche + Historie
+npm run check -- --all
+# Branch → PR → Squash-Merge, Live prüfen: der Klarname darf in keiner /data-Datei mehr vorkommen
+curl -s https://tcp-spielplan.de/data/search.json | grep -c "<Nachname>"
+```
+
+Der Schutz läuft im Generator (`scripts/schutz.mjs`): Minderjährige (Jahrgang ≥ laufendes
+Jahr − 18 laut irgendeiner Meldeliste) und Jugend-Konkurrenzen werden automatisch genauso
+behandelt — Initialen, kein Jahrgang, keine Nation, nicht suchbar, keine Historie. Jahrgänge
+stehen nur noch in den TCP-eigenen Meldelisten.
 
 **Wecker prüfen oder von Hand auslösen:**
 
