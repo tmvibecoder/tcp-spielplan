@@ -436,6 +436,9 @@ zusammen, Änderungen an einem ziehen das andere nach.
   Log-Format `anon`); gzip für JS/JSON (`docs/server/nginx-gzip.sh`).
 - **Impressum:** privates Angebot, ausdrücklich kein Angebot des TC Pliening e.V.; Anschrift auf
   Anfrage.
+- **Passwortschutz (seit 09.10.2026):** HTTP Basic Auth in nginx für die ganze Seite inklusive
+  `/data` (`docs/server/nginx-passwort.sh`, Benutzer `tcp`, Passwort nicht im Repo). Die Seite
+  ist damit kein öffentliches Angebot mehr; Live-Checks brauchen `curl -u tcp:<Passwort>`.
 
 ## Daten pflegen (nuLiga)
 

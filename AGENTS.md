@@ -98,8 +98,12 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
 - **Nie direkt auf `main` pushen.** Änderungen: Branch → PR → `gh pr merge --squash`
   (der Merge löst den Deploy aus). Reine Doku-Commits mit `[skip ci]`. Nach dem Deploy
   den **live ausgelieferten Bundle-Hash** prüfen
-  (`curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`) und im
-  Bundle nach einem neuen Datenschnipsel greppen — „grüner Workflow" allein reicht nicht.
+  (`curl -s -u tcp:<Passwort> https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`)
+  und eine neue `/data`-Datei greppen — „grüner Workflow" allein reicht nicht.
+- **Die Seite ist passwortgeschützt** (seit 09.10.2026, HTTP Basic Auth in nginx, Benutzer
+  `tcp`, Passwort kennt Thomas — es steht nicht im Repo; `docs/server/nginx-passwort.sh`).
+  Jeder Live-Check braucht `-u tcp:<Passwort>` bzw. `page.authenticate()` in Puppeteer;
+  ohne Passwort antwortet alles mit 401.
 - **Supabase-Env ist seit 09.10.2026 optional.** Live-Scores sind standardmäßig aus
   (`VITE_LIVE_SCORES=on` schaltet sie ein), der Client wird erst bei Zugriff erzeugt — ein
   Build ohne `.env` läuft durch und rendert normal. Die früheren Stub-Werte
