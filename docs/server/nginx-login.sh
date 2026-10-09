@@ -27,6 +27,8 @@ cp "$SITE" "$BAK"
 # 1. Hash-Vergleich im http-Kontext (conf.d wird von nginx.conf eingebunden)
 cat > "$AUTH" <<EOF
 # tcp-spielplan.de: Anmeldung über Cookie tcp_auth = SHA-256("benutzer:passwort"), siehe docs/server/nginx-login.sh
+# 64-Zeichen-Schlüssel passen nicht in die Standard-Bucketgröße (64) der map-Hashtabelle
+map_hash_bucket_size 128;
 map \$cookie_tcp_auth \$tcp_auth_ok {
     default 0;
     "$HASH" 1;
