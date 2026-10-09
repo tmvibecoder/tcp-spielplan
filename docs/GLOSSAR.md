@@ -210,6 +210,12 @@ nicht vorhanden (Details und Optionen im README unter „LK-Quellen"). Die App r
 Die vom Verein vor der Saison gemeldete, nach Stärke sortierte Spielerliste einer
 Mannschaft. Quelle für die Namen in der Spieler-Statistik.
 
+> **Vorläufige Meldung:** Die Listen erscheinen beim BTV erst einige Wochen vor dem ersten
+> Spieltag, zunächst als **vorläufige** Meldung; bis dahin sind die Mannschaftsportraits leer
+> (0 Spieler — kein Fehler). Bis zum Saisonstart kann sich noch etwas verschieben
+> (Nachmeldungen, Reihenfolge, LK). Winter 2026/27: am 10.09.2026 leer, am 16.09.2026 für alle
+> 41 Mannschaften gefüllt (Spieltage ab 10.10.2026).
+
 **Meldeposition / Rang.**
 Der Platz auf dieser Liste. Steht in Spielberichten in der Klammer:
 `"Nachname, Vorname (23, LK7,2)"`.
