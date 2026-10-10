@@ -436,26 +436,13 @@ zusammen, Änderungen an einem ziehen das andere nach.
   Log-Format `anon`); gzip für JS/JSON (`docs/server/nginx-gzip.sh`).
 - **Impressum:** privates Angebot, ausdrücklich kein Angebot des TC Pliening e.V.; Anschrift auf
   Anfrage.
-- **Zugang nur mit Anmeldung (seit 09.10.2026):** eigene Anmeldeseite `public/login.html`
-  (statisch, Outfit, 420 px zuerst) statt Browser-Dialog. Die Seite rechnet im Browser
-  SHA-256(`benutzer:passwort`) und setzt das Cookie `tcp_auth` (1 Jahr); nginx vergleicht den
-  Wert (die ersten 32 Hex-Zeichen — 64 passen nicht in nginx' Standard-map-Hashtabelle) mit dem
-  Hash in `/etc/nginx/conf.d/tcp-spielplan-auth.conf` (`docs/server/nginx-login.sh`,
-  Benutzer `tcp`, Passwörter nicht im Repo; das Skript nimmt **mehrere Passwörter** entgegen —
-  jedes wird eine eigene Zeile in der `map`, alle gelten nebeneinander; **Stand 09.10.2026: zwei
-  Passwörter**) und schickt sonst per 302 zur Anmeldeseite (mit
-  `?fehler=1`, wenn ein falsches Cookie da war). Frei sind nur `/login.html`, `/fonts/` und das
-  Favicon — alles andere inklusive `/data` und `/assets` ist geschlossen. Live-Checks brauchen das Cookie:
-  `curl -b "tcp_auth=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)" …` bzw. im
-  Browser-Skript `page.setCookie({ name: "tcp_auth", value: <hash>, domain: "tcp-spielplan.de" })`
-  (das frühere Hilfsskript `scripts/tmp/smoke.mjs` ist lokal und gitignored, nicht im Repo).
-  **Passwörter ändern oder ein weiteres hinzufügen:** Skript mit der vollständigen Liste erneut
-  ausführen — Rezept in [AUFGABEN.md, Abschnitt 10](docs/AUFGABEN.md); Aufbau in
-  [ARCHITEKTUR.md, Abschnitt 11.1](docs/ARCHITEKTUR.md). Ein Wiederholungslauf lässt die
-  Site-Konfiguration unverändert („schon aktuell"), scheitert ein Schritt, spielt das Skript die
-  Sicherung aus `/etc/nginx/backups/` zurück (seit PR #77). Deploy, Wecker und Crawler rufen die
-  eigene Seite nie ab und sind deshalb nicht betroffen. Die frühere
-  Basic-Auth-Fassung (`nginx-passwort.sh`, 09.10. vormittags) ist damit abgelöst.
+- **Zugang offen (seit 10.10.2026):** Die Seite ist ohne Passwort erreichbar. Die Anmeldung vom
+  09.10.2026 (zuerst Basic Auth, dann eigene Anmeldeseite `public/login.html` mit Cookie
+  `tcp_auth` und Hash-Vergleich in nginx) hat Thomas am 10.10.2026 wieder entfernen lassen:
+  `docs/server/nginx-login-entfernen.sh` nimmt Tor und Passwort-Hashes vom Server, die alten
+  Skripte `nginx-login.sh`/`nginx-passwort.sh` stehen nur noch in der Git-Historie
+  (Hintergrund: [ARCHITEKTUR.md, Abschnitt 11.1](docs/ARCHITEKTUR.md)). Live-Checks brauchen
+  kein Cookie mehr.
 
 ## Daten pflegen (nuLiga)
 
@@ -786,17 +773,15 @@ trotzdem **success**. Folge: PR #8 (Spieler-Statistik) war gemergt, CI grün –
 - Build-Check (`test -d dist/assets`).
 
 **Lehre:** Grüner Deploy ≠ neuer Code live. Nach einem Deploy den live ausgelieferten
-Bundle-Hash prüfen — seit 09.10.2026 **mit Anmelde-Cookie**, sonst liefert nginx nur die
-302-Weiterleitung und jeder `grep` geht still leer aus:
+Bundle-Hash prüfen:
 ```bash
-H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # Hash kann - und _ enthalten
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/assets/index-XXXX.js | grep -c <feature-string>
+curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # Hash kann - und _ enthalten
+curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c <feature-string>
 ```
 Dabei beachten: **Tabellen- und Spielbericht-Texte stehen nicht im Startbundle**, sondern in den
 lazy geladenen Chunks (`StandingsView-*.js`, `SpielberichtDrawer-*.js`); **Spielberichte und
 Meldelisten selbst** liegen seit 08.10.2026 gar nicht mehr im Bundle, sondern unter
-`/data/groups/<saison>/<liga>.json` — dort mit demselben Cookie greppen. Ein `grep` nach
+`/data/groups/<saison>/<liga>.json` — dort greppen. Ein `grep` nach
 „BTV-Stand" oder „im Einsatz" im Startbundle schlägt deshalb korrekt fehl.
 
 ### ⚠️ Stolperfalle „leere Seite im git-worktree" (lokales Testen)

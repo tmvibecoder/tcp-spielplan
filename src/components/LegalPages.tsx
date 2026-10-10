@@ -97,7 +97,6 @@ export function Datenschutz({ onBack }: LegalPageProps) {
       <section>
         <H2>2. Kurz gesagt</H2>
         <ul className="list-disc list-inside mt-1 space-y-1 text-slate-400">
-          <li>Die Seite ist nur mit dem Vereinspasswort erreichbar — ein geschlossener Kreis, kein öffentliches Angebot.</li>
           <li>Keine Cookies, kein Tracking, keine Analyse-Tools, keine Werbung.</li>
           <li>Keine Verbindung zu Google oder anderen Drittanbietern beim Aufruf der Seite.</li>
           <li>Gezeigt werden Spiel- und Spielerdaten aus dem öffentlichen BTV-Spielbetrieb (Abschnitt 5).</li>

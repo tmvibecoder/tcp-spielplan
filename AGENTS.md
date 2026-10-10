@@ -98,18 +98,12 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
 - **Nie direkt auf `main` pushen.** Änderungen: Branch → PR → `gh pr merge --squash`
   (der Merge löst den Deploy aus). Reine Doku-Commits mit `[skip ci]`. Nach dem Deploy
   den **live ausgelieferten Bundle-Hash** prüfen
-  (`curl -s -b tcp_auth=<hash> https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`)
+  (`curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'`)
   und eine neue `/data`-Datei greppen — „grüner Workflow" allein reicht nicht.
-- **Die Seite ist geschlossen** (seit 09.10.2026): Anmeldeseite `public/login.html`, nginx
-  prüft das Cookie `tcp_auth` = SHA-256(`tcp:<Passwort>`) (`docs/server/nginx-login.sh`; die
-  Passwörter kennt Thomas, sie stehen nicht im Repo — es können mehrere nebeneinander gelten,
-  das Skript nimmt sie als weitere Argumente). Ohne gültiges Cookie antwortet alles außer
-  `/login.html`, `/fonts/` und dem Favicon mit 302 zur Anmeldung — auch `/data`. Jeder
-  Live-Check braucht das Cookie (`curl -b tcp_auth=<hash>`, Puppeteer `page.setCookie`;
-  Rezept im README „Datenschutz in der App") — **ohne Cookie zählt jeder `grep -c` still 0**,
-  das ist dann kein fehlender Deploy und keine erfolgreiche Löschung. Aufbau:
-  [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md), Abschnitt 11.1; Passwörter ändern:
-  [docs/AUFGABEN.md](docs/AUFGABEN.md), Abschnitt 10.
+- **Die Seite ist offen** — ohne Passwort erreichbar. Die Anmeldung vom 09.10.2026 (Cookie-Tor in
+  nginx, `public/login.html`) wurde am 10.10.2026 auf Thomas' Wunsch wieder entfernt
+  (`docs/server/nginx-login-entfernen.sh`; Hintergrund: [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md),
+  Abschnitt 11.1). Live-Checks brauchen deshalb kein Cookie mehr.
 - **Server-Skripte (`docs/server/*.sh`) führt Thomas aus**, nicht der Agent: Sie ändern die
   nginx-Konfiguration auf dem Hetzner-Server (Eingriff in ein fremdes System). Agenten
   bereiten den fertigen `ssh hetzner 'bash -s -- …' < docs/server/<skript>.sh`-Befehl vor,

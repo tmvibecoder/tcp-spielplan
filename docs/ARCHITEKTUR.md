@@ -82,8 +82,8 @@ Die Qualitätssicherung läuft über vier andere Wege — siehe Abschnitt 9.
                                │  GitHub Action bei Push auf main
                                ▼
                     nginx  →  https://tcp-spielplan.de
-                      │  nur mit gültigem Cookie tcp_auth, sonst 302 → /login.html
-                      ▼  (Abschnitt 11.1)
+                      │
+                      ▼
                     Browser
 ```
 
@@ -122,12 +122,9 @@ tcp-spielplan/
 │   ├── SKILL-VORLAGE-ergebnisse-nachziehen.md   ← Prompt-Vorlage für den Ergebnis-Abgleich
 │   ├── SKILL-tcp-ergebnisse.md                  ← Skill „Ergebnisse nachziehen" (kurze Fassung)
 │   └── server/               ← Skripte für den Hetzner-Server (führt Thomas als root aus)
-│       ├── nginx-login.sh    ← Anmeldung: Cookie-Tor + gültige Passwort-Hashes (Abschnitt 11.1)
+│       ├── nginx-login-entfernen.sh ← Anmeldung wieder entfernt (10.10.2026, Abschnitt 11.1)
 │       ├── nginx-gzip.sh     ← Komprimierung für JS/JSON
-│       ├── nginx-anon-ip.sh  ← gekürzte IP-Adressen in den Zugriffslogs
-│       └── nginx-passwort.sh ← ABGELÖST: frühere Basic-Auth-Fassung, nur noch als Historie
-│
-├── public/login.html         ← Anmeldeseite (statisch, rechnet den Hash im Browser)
+│       └── nginx-anon-ip.sh  ← gekürzte IP-Adressen in den Zugriffslogs
 │
 ├── public/data/              ← AUTO-GENERIERT (generate-data.mjs), eingecheckt, zur Laufzeit geladen
 │   ├── groups/<saison>/<liga>.json   Spielberichte + Meldelisten einer Gruppe
@@ -437,57 +434,34 @@ Branch → Pull Request → gh pr merge --squash
   (`set -euo pipefail`, `git reset --hard`, `npm ci`, `test -d dist/assets`), die
   **Nachkontrolle bleibt trotzdem Pflicht**:
 
-Alle Abrufe brauchen das Anmelde-Cookie (Abschnitt 11.1) — ohne antwortet nginx mit 302, und
-ein `grep -c` auf die Weiterleitungsseite meldet still „0":
-
 ```bash
-H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)       # Cookie-Wert, einmal je Shell
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/assets/index-XXXX.js | grep -c '<neuer-datenschnipsel>'
+curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'
+curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c '<neuer-datenschnipsel>'
 ```
 
 Spielberichte und Meldelisten liegen **nicht im Bundle**, sondern unter `/data/…` — dort direkt
 prüfen (Pfad = Saison + Liga-Slug, `?v=` wie in `src/data/data-version.ts`):
 
 ```bash
-curl -s -b "tcp_auth=$H" 'https://tcp-spielplan.de/data/groups/winter-2627/suedliga-2-gr-129.json' | grep -c 'Hasanbegovic'
-curl -sI -b "tcp_auth=$H" -H 'Accept-Encoding: gzip' https://tcp-spielplan.de/data/search.json | grep -i content-encoding   # muss gzip sein
+curl -s 'https://tcp-spielplan.de/data/groups/winter-2627/suedliga-2-gr-129.json' | grep -c 'Hasanbegovic'
+curl -sI -H 'Accept-Encoding: gzip' https://tcp-spielplan.de/data/search.json | grep -i content-encoding   # muss gzip sein
 ```
 
-### 11.1 Zugang: Anmeldeseite und Cookie-Tor in nginx
+### 11.1 Zugang: offen, ohne Anmeldung
 
-Seit 09.10.2026 ist die Seite geschlossen. Es gibt dafür **kein Backend** — die Prüfung macht
-nginx allein:
+Die Seite ist **ohne Passwort** erreichbar. Vom 09.10. bis 10.10.2026 war sie geschlossen: erst
+per HTTP Basic Auth, dann mit eigener Anmeldeseite (`public/login.html`), die im Browser
+SHA-256(`benutzer:passwort`) rechnete und als Cookie `tcp_auth` setzte; nginx verglich das Cookie
+mit einer `map` in `/etc/nginx/conf.d/tcp-spielplan-auth.conf` und schickte sonst per 302 zur
+Anmeldeseite. Am 10.10.2026 hat Thomas die Anmeldung wieder entfernen lassen.
 
-```
-Browser ──GET /──▶ nginx: Cookie tcp_auth in der map?  ── ja ──▶ dist/ (App, /data, /assets)
-                         │ nein
-                         ▼
-                   302 → /login.html  (mit ?fehler=1, wenn ein falsches Cookie dabei war)
-                         │
-   login.html: Benutzer + Passwort → SHA-256("benutzer:passwort") im Browser (WebCrypto),
-               erste 32 Hex-Zeichen → Cookie tcp_auth (1 Jahr, Secure, SameSite=Lax) → zurück zu /
-```
-
-- **Wo was liegt:** die Seite `public/login.html` (im Repo, wird mit ausgeliefert); die gültigen
-  Hashes in `/etc/nginx/conf.d/tcp-spielplan-auth.conf` als `map $cookie_tcp_auth $tcp_auth_ok`
-  (eine Zeile je Passwort); das Tor (`location /` mit zwei `if`) in der Site-Konfiguration
-  `/etc/nginx/sites-enabled/tcp-spielplan.de`. Beides schreibt **`docs/server/nginx-login.sh`**.
-- **Frei** sind nur `/login.html`, `/fonts/` und `/favicon.svg` — alles andere, auch `/data` und
-  `/assets`, nur mit Cookie.
-- **Mehrere Passwörter** für denselben Benutzer `tcp` gelten nebeneinander (je eine `map`-Zeile).
-  Stand 09.10.2026: zwei. Die Klartexte stehen **nicht im Repo**, auf dem Server liegen nur Hashes.
-- **Warum 32 statt 64 Zeichen:** ein 64-Zeichen-Schlüssel sprengt nginx' Standard-
-  `map_hash_bucket_size 64`, und die Direktive dürfte nur vor dem ersten `map` stehen (der steht
-  wegen der IP-Kürzung schon in `nginx.conf`). 128 Bit reichen für diesen Zweck.
-- **Der Benutzername wird kleingeschrieben** (Skript und Seite), das Passwort nicht.
-- **Ändern:** Skript mit der **vollständigen** neuen Passwortliste erneut ausführen
-  (Rezept: AUFGABEN.md, Abschnitt 10). Es schreibt die `map` komplett neu — Cookies
-  weggelassener Passwörter werden ungültig, die Besucher landen wieder auf der Anmeldeseite.
-- **Deploy, Wecker und Crawler sind nicht betroffen:** keiner davon ruft die eigene Seite ab.
-  Nur Live-Checks brauchen das Cookie (siehe oben).
-- Die frühere Fassung (09.10.2026 vormittags) war HTTP Basic Auth (`nginx-passwort.sh`,
-  Browser-Dialog) — abgelöst, weil Thomas eine gestaltete Anmeldeseite wollte.
+- **Entfernt wird sie auf dem Server** mit `docs/server/nginx-login-entfernen.sh` (Thomas führt es
+  aus, `ssh hetzner 'bash -s' < docs/server/nginx-login-entfernen.sh`): Das Tor in
+  `/etc/nginx/sites-enabled/tcp-spielplan.de` wird wieder zur schlichten `location /`, die
+  Hash-Datei und eine etwaige `.htpasswd-tcp` werden gelöscht; Sicherung in `/etc/nginx/backups/`.
+- Die Einrichtungs-Skripte (`nginx-login.sh`, `nginx-passwort.sh`) stehen nur noch in der
+  Git-Historie (bis Commit `3e670b0`), falls die Seite je wieder geschlossen werden soll — dann
+  auch die Datenschutzerklärung (`src/components/LegalPages.tsx`) im selben Zug anpassen.
 
 ---
 

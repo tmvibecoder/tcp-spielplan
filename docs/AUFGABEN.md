@@ -219,19 +219,15 @@ gh pr create --fill
 gh pr merge --squash                    # löst den Deploy aus
 ```
 
-**Nie direkt auf `main` pushen.** Nach dem Merge — die Seite ist geschlossen, jeder Abruf
-braucht das Anmelde-Cookie (ohne kommt nur die 302-Weiterleitung zurück, und `grep -c` meldet
-still „0"; Hintergrund in ARCHITEKTUR.md, Abschnitt 11.1):
+**Nie direkt auf `main` pushen.** Nach dem Merge:
 
 ```bash
-H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)               # Cookie-Wert, einmal je Shell
 gh run list --limit 3                                                   # Action grün?
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # neuer Hash?
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/assets/index-XXXX.js | grep -c '<schnipsel>'
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c '<schnipsel>'
+curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'   # neuer Hash?
+curl -s https://tcp-spielplan.de/assets/index-XXXX.js | grep -c '<schnipsel>'
+curl -s https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c '<schnipsel>'
 ```
 
-Das Passwort steht nicht im Repo — bei Thomas erfragen, falls es in der Sitzung nicht bekannt ist.
 
 **Ein grüner Workflow allein ist kein Beweis** — genau diese Verwechslung hat im Juni
 2026 einen Deploy vorgetäuscht, der nie live ging. Deshalb immer der Griff ins
@@ -323,11 +319,11 @@ einer Woche):
 npm run gen:spielberichte          # schreibt die Person überall als Initialen, entfernt Suche + Historie
 npm run check -- --all
 # Branch → PR → Squash-Merge, Live prüfen: der Klarname darf in keiner /data-Datei mehr vorkommen
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/search.json | grep -c "<Nachname>"
+curl -s https://tcp-spielplan.de/data/search.json | grep -c "<Nachname>"
 ```
 
 **Achtung, Gegenprobe:** „0" beweist hier nur dann etwas, wenn der Abruf wirklich die Datei
-liefert. Ohne gültiges Cookie kommt die Weiterleitung, und „0" täuscht eine Löschung vor. Deshalb
+liefert (ein Tippfehler im Pfad liefert eine Fehlerseite, und „0" täuscht eine Löschung vor). Deshalb
 denselben Befehl einmal mit einem Namen laufen lassen, der sicher drinsteht (er muss > 0 zählen).
 
 Der Schutz läuft im Generator (`scripts/schutz.mjs`): Minderjährige (Jahrgang ≥ laufendes
@@ -371,50 +367,36 @@ bleibt bis dahin live; das ⋯-Menü zeigt sein Alter.
 
 ---
 
-## 10. Zugang: Passwörter der Anmeldung ändern
+## 10. Zugang: die Seite ist offen
 
-Die Seite ist seit 09.10.2026 nur mit Anmeldung erreichbar (Aufbau: ARCHITEKTUR.md,
-Abschnitt 11.1). Benutzer ist `tcp`; es können **mehrere Passwörter nebeneinander** gelten —
-Stand 09.10.2026 sind es zwei. Die Klartexte stehen nicht im Repo.
-
-Das ist ein **Eingriff auf dem Server** (Abschnitt 6): Thomas führt das Skript selbst als root
-aus; Agenten bereiten den Befehl vor. Immer die **vollständige** Liste übergeben — das Skript
-schreibt die Liste der gültigen Hashes komplett neu:
+Seit 10.10.2026 ist die Seite wieder **ohne Passwort** erreichbar (Hintergrund: ARCHITEKTUR.md,
+Abschnitt 11.1). Die Anmeldung vom 09.10.2026 nimmt auf dem Server ein Skript zurück — ein
+**Eingriff auf dem Server** (Abschnitt 6): Thomas führt es selbst als root aus, Agenten bereiten
+den Befehl vor:
 
 ```bash
 # aus dem Haupt-Checkout, nach git pull (das Skript wird lokal gelesen und per ssh hineingereicht)
-ssh hetzner 'bash -s -- tcp "<Passwort1>" "<Passwort2>"' < docs/server/nginx-login.sh
+ssh hetzner 'bash -s' < docs/server/nginx-login-entfernen.sh
 ```
 
-Erwartete Ausgabe bei einem Lauf über eine schon eingerichtete Anmeldung:
+Erwartete Ausgabe:
 
 ```
-Site-Konfiguration schon aktuell (Anmelde-Tor vorhanden)
+Site-Konfiguration angepasst: Anmelde-Tor entfernt
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
-Anmeldung über /login.html aktiv (Benutzer tcp, 2 gültige Passwörter)
+Anmeldung entfernt — tcp-spielplan.de ist ohne Passwort erreichbar
 ```
 
-Prüfen (je Passwort einmal `200`, ohne Cookie `302`, falsches Cookie `302` mit `?fehler=1`):
+Prüfen (beides `200`, kein `302`):
 
 ```bash
-for PW in "<Passwort1>" "<Passwort2>"; do
-  H=$(printf 'tcp:%s' "$PW" | shasum -a 256 | cut -c1-32)
-  curl -sI -b "tcp_auth=$H" https://tcp-spielplan.de/ | head -1
-done
 curl -sI https://tcp-spielplan.de/ | head -1
-curl -sI -b tcp_auth=00000000000000000000000000000000 https://tcp-spielplan.de/ | grep -i ^location
+curl -sI https://tcp-spielplan.de/data/search.json | head -1
 ```
 
-- **Passwort entfernen** = Skript nur mit den verbleibenden Passwörtern laufen lassen. Wer mit
-  dem entfernten angemeldet war, landet beim nächsten Aufruf wieder auf der Anmeldeseite.
-- **Sicherheitsnetz:** Das Skript sichert Site-Konfiguration und Hash-Liste vorher nach
-  `/etc/nginx/backups/` und spielt beides zurück, wenn ein Schritt scheitert oder `nginx -t`
-  rot ist („FEHLER: … Sicherung zurückgespielt"). Dann gilt der alte Stand unverändert weiter.
-- **Falle (behoben 09.10.2026, PR #77):** Der erste Wiederholungslauf brach mit
-  „location / nicht gefunden" ab, weil das schon vorhandene Tor als „nicht gefunden" galt — und
-  ließ dabei eine neue, ungeladene Hash-Liste liegen. Wer so eine Meldung je wieder sieht: Die
-  Site-Konfiguration auf dem Server weicht vom erwarteten Muster ab; nicht von Hand
-  nachbessern, sondern mit Thomas die Datei ansehen.
-- **Kein App-Deploy nötig:** Die Anmeldeseite ändert sich dabei nicht; Commits am Skript oder an
-  der Doku tragen `[skip ci]`.
+- **Wiederholungslauf** ist harmlos („schon offen"). Scheitert ein Schritt, spielt das Skript die
+  Sicherung aus `/etc/nginx/backups/` zurück — dann gilt der alte Stand unverändert weiter.
+- **Wieder schließen** ginge mit den alten Skripten aus der Git-Historie (`nginx-login.sh`, bis
+  Commit `3e670b0`) plus `public/login.html` — nur auf ausdrücklichen Auftrag, und die
+  Datenschutzerklärung (`src/components/LegalPages.tsx`) im selben Zug anpassen.
