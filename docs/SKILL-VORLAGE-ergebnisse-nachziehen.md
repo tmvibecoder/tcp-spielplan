@@ -133,12 +133,9 @@ Jedes Skript nennt beim Start die Saison, auf die es wirkt, und lässt sich mit
    ```
    Danach warten bis der Actions-Run auf `main` grün ist und das **Live-Bundle
    verifizieren** — grüner Workflow allein reicht nicht:
-   Seit 09.10.2026 ist die Seite nur mit Anmeldung erreichbar — ohne Cookie kommt `302`, und
-   jeder `grep -c` zählt still 0 (Passwort bei Thomas, nicht im Repo):
    ```
-   H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)
-   curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'
-   curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c "<neuer Datenschnipsel>"
+   curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'
+   curl -s https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c "<neuer Datenschnipsel>"
    ```
    (Spielberichte und Meldelisten liegen seit 08.10.2026 unter `/data`, nicht mehr im Bundle.)
 

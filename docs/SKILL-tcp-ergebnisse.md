@@ -113,14 +113,10 @@ gh pr create --fill && gh pr merge <nr> --squash
 Warten, bis der Actions-Run auf `main` grün ist, dann prüfen — **die Daten liegen nicht im
 Bundle, sondern unter `/data`**:
 
-Die Seite ist seit 09.10.2026 **nur mit Anmeldung** erreichbar — jeder Abruf braucht das Cookie
-`tcp_auth` (Passwort bei Thomas erfragen, falls nicht bekannt; es steht nicht im Repo):
-
 ```
-H=$(printf 'tcp:<Passwort>' | shasum -a 256 | cut -c1-32)
-curl -sI -b "tcp_auth=$H" https://tcp-spielplan.de/ | head -1          # muss 200 sein, sonst Cookie falsch
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c "<Nachname eines neuen Berichts>"
-curl -s -b "tcp_auth=$H" https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'     # Bundle-Hash nur zur Info
+curl -sI https://tcp-spielplan.de/ | head -1          # muss 200 sein
+curl -s https://tcp-spielplan.de/data/groups/<saison>/<liga-slug>.json | grep -c "<Nachname eines neuen Berichts>"
+curl -s https://tcp-spielplan.de/ | grep -oE 'assets/index-[^"]+\.js'     # Bundle-Hash nur zur Info
 ```
 
 Liga-Slug = Liganame klein, Umlaute aufgelöst, alles andere Bindestrich („Südliga 2 · Gr. 129" →
