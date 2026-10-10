@@ -146,6 +146,7 @@ tcp-spielplan/
 │
 ├── scripts/                  ← Node-Werkzeuge (Abschnitt 10)
 ├── .github/workflows/deploy.yml
+├── .github/workflows/server-skript.yml   ← Server-Skripte aus docs/server/ per Knopf ausführen (Abschnitt 11.2)
 ├── supabase-setup.sql        ← Schema der beiden Live-Score-Tabellen
 └── public/, index.html, vite.config.ts, eslint.config.js, tsconfig*.json
 ```
@@ -456,12 +457,34 @@ mit einer `map` in `/etc/nginx/conf.d/tcp-spielplan-auth.conf` und schickte sons
 Anmeldeseite. Am 10.10.2026 hat Thomas die Anmeldung wieder entfernen lassen.
 
 - **Entfernt wird sie auf dem Server** mit `docs/server/nginx-login-entfernen.sh` (Thomas führt es
-  aus, `ssh hetzner 'bash -s' < docs/server/nginx-login-entfernen.sh`): Das Tor in
+  aus, Abschnitt 11.2; gelaufen am 10.10.2026, Lauf 1 des Workflows): Das Tor in
   `/etc/nginx/sites-enabled/tcp-spielplan.de` wird wieder zur schlichten `location /`, die
   Hash-Datei und eine etwaige `.htpasswd-tcp` werden gelöscht; Sicherung in `/etc/nginx/backups/`.
-- Die Einrichtungs-Skripte (`nginx-login.sh`, `nginx-passwort.sh`) stehen nur noch in der
-  Git-Historie (bis Commit `3e670b0`), falls die Seite je wieder geschlossen werden soll — dann
-  auch die Datenschutzerklärung (`src/components/LegalPages.tsx`) im selben Zug anpassen.
+- Die Einrichtungs-Skripte (`nginx-login.sh`, `nginx-passwort.sh`) und die Anmeldeseite
+  `public/login.html` stehen nur noch in der Git-Historie (bis Commit `3e670b0` bzw. `6121bb6`),
+  falls die Seite je wieder geschlossen werden soll — dann auch die Datenschutzerklärung
+  (`src/components/LegalPages.tsx`) im selben Zug anpassen.
+
+### 11.2 Server-Skripte ausführen: `server-skript.yml`
+
+Die Skripte in `docs/server/` ändern die nginx-Konfiguration auf dem Hetzner-Server. Seit dem
+10.10.2026 gibt es dafür den Workflow `.github/workflows/server-skript.yml`: Er meldet sich mit
+denselben Secrets wie der Deploy an (`SERVER_IP`, `SERVER_USER`, `SSH_PRIVATE_KEY`) und reicht
+das Skript per `bash -s` hinein — derselbe Weg wie `ssh hetzner 'bash -s' < docs/server/<skript>.sh`
+vom Mac, nur per Knopf im Actions-Reiter („Server-Skript ausführen" → „Run workflow", Skript aus
+der Auswahlliste). Die Ausgabe des Skripts steht im Protokoll des Laufs.
+
+- **Wer startet:** Thomas (Eingriff in ein fremdes System, AGENTS.md). Die Agenten-Umgebung
+  blockiert das Auslösen durch Agenten — per Knopf (die GitHub-App der Agenten darf keinen
+  `workflow_dispatch`), per Auftragsdatei und per `ssh` gleichermaßen (Befund 10.10.2026).
+  Deshalb: Agent nennt das Skript, Thomas drückt den Knopf, Agent prüft danach live.
+- **Bewusst eng:** nur Skripte, die auf `main` liegen **und** in der Auswahlliste stehen; keine
+  Argumente — Passwörter gehören nie in Workflow-Eingaben (sie stünden im Protokoll). Ein neues
+  Skript kommt per PR nach `docs/server/` **und** in `options` (und `ERLAUBT`).
+- Der zweite Auslöser im Workflow (Push auf `main`, der `docs/server/auftrag.txt` ändert) ist
+  angelegt, aber ohne Auftragsdatei im Repo wirkungslos; er bleibt als Option für später.
+- **Nachkontrolle:** Protokoll lesen (die Skripte melden Erfolg oder „Sicherung zurückgespielt"),
+  dann live prüfen (`curl -sI https://tcp-spielplan.de/ | head -1`).
 
 ---
 

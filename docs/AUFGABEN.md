@@ -371,15 +371,18 @@ bleibt bis dahin live; das ⋯-Menü zeigt sein Alter.
 
 Seit 10.10.2026 ist die Seite wieder **ohne Passwort** erreichbar (Hintergrund: ARCHITEKTUR.md,
 Abschnitt 11.1). Die Anmeldung vom 09.10.2026 nimmt auf dem Server ein Skript zurück — ein
-**Eingriff auf dem Server** (Abschnitt 6): Thomas führt es selbst als root aus, Agenten bereiten
-den Befehl vor:
+**Eingriff auf dem Server** (Abschnitt 6): Thomas startet es selbst, Agenten nennen das Skript.
+Seit 10.10.2026 geht das per Knopf (ARCHITEKTUR.md, Abschnitt 11.2) — gilt für jedes Skript in
+`docs/server/`:
 
-```bash
-# aus dem Haupt-Checkout, nach git pull (das Skript wird lokal gelesen und per ssh hineingereicht)
-ssh hetzner 'bash -s' < docs/server/nginx-login-entfernen.sh
-```
+1. <https://github.com/tmvibecoder/tcp-spielplan/actions/workflows/server-skript.yml> öffnen
+2. „Run workflow" → Skript aus der Liste wählen → „Run workflow"
+3. Lauf abwarten, Ausgabe im Protokoll lesen; der Agent prüft danach live
 
-Erwartete Ausgabe:
+Alternativ vom Mac: `ssh hetzner 'bash -s' < docs/server/nginx-login-entfernen.sh` (nach `git pull`).
+Erledigt am 10.10.2026 (Lauf 1 des Workflows) — die Seite ist seitdem offen.
+
+Erwartete Ausgabe im Protokoll:
 
 ```
 Site-Konfiguration angepasst: Anmelde-Tor entfernt
