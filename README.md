@@ -439,7 +439,8 @@ zusammen, Änderungen an einem ziehen das andere nach.
 - **Zugang offen (seit 10.10.2026):** Die Seite ist ohne Passwort erreichbar. Die Anmeldung vom
   09.10.2026 (zuerst Basic Auth, dann eigene Anmeldeseite `public/login.html` mit Cookie
   `tcp_auth` und Hash-Vergleich in nginx) hat Thomas am 10.10.2026 wieder entfernen lassen:
-  `docs/server/nginx-login-entfernen.sh` nimmt Tor und Passwort-Hashes vom Server, die alten
+  `docs/server/nginx-login-entfernen.sh` nimmt Tor und Passwort-Hashes vom Server (gelaufen am
+  10.10.2026 per `.github/workflows/server-skript.yml`, ARCHITEKTUR 11.2), die alten
   Skripte `nginx-login.sh`/`nginx-passwort.sh` stehen nur noch in der Git-Historie
   (Hintergrund: [ARCHITEKTUR.md, Abschnitt 11.1](docs/ARCHITEKTUR.md)). Live-Checks brauchen
   kein Cookie mehr.

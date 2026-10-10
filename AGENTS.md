@@ -106,9 +106,11 @@ Prüfpflichten und erlaubt keine Arbeiten außerhalb des Auftrags.
   Abschnitt 11.1). Live-Checks brauchen deshalb kein Cookie mehr.
 - **Server-Skripte (`docs/server/*.sh`) führt Thomas aus**, nicht der Agent: Sie ändern die
   nginx-Konfiguration auf dem Hetzner-Server (Eingriff in ein fremdes System). Agenten
-  bereiten den fertigen `ssh hetzner 'bash -s -- …' < docs/server/<skript>.sh`-Befehl vor,
-  Thomas startet ihn, danach prüft der Agent live. Die Skripte sichern vorher nach
-  `/etc/nginx/backups/` und spielen bei Fehlern zurück.
+  nennen das Skript, Thomas startet es — am einfachsten im Actions-Reiter über
+  „Server-Skript ausführen" → „Run workflow" (`.github/workflows/server-skript.yml`, seit
+  10.10.2026; Aufbau: [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md), Abschnitt 11.2) oder per
+  `ssh hetzner 'bash -s' < docs/server/<skript>.sh` vom Mac. Danach prüft der Agent live. Die
+  Skripte sichern vorher nach `/etc/nginx/backups/` und spielen bei Fehlern zurück.
 - **Supabase-Env ist seit 09.10.2026 optional.** Live-Scores sind standardmäßig aus
   (`VITE_LIVE_SCORES=on` schaltet sie ein), der Client wird erst bei Zugriff erzeugt — ein
   Build ohne `.env` läuft durch und rendert normal. Die früheren Stub-Werte
