@@ -1,0 +1,67 @@
+name: Server-Skript ausführen
+
+# Führt eines der Skripte aus docs/server/ als root auf dem Hetzner-Server aus — derselbe Weg wie
+# `ssh hetzner 'bash -s' < docs/server/<skript>.sh`, nur ohne Thomas' Mac. Freigabe des
+# Auftraggebers vom 10.10.2026: Agenten starten Server-Skripte selbst über diesen Workflow.
+# Anmeldung mit denselben Secrets wie deploy.yml (SERVER_IP, SERVER_USER, SSH_PRIVATE_KEY).
+#
+# Starten: Actions-Reiter → „Server-Skript ausführen" → Run workflow, oder per API
+# (workflow_dispatch auf main, Eingabe `skript`). Ausgabe des Skripts steht im Protokoll.
+#
+# Bewusst eng: nur Skripte von main, nur aus der Auswahlliste, keine Argumente — Passwörter
+# o. ä. gehören nie in Workflow-Eingaben, sie stünden im Protokoll. Neues Skript: per PR nach
+# docs/server/ bringen UND unten in `options` eintragen.
+
+on:
+  workflow_dispatch:
+    inputs:
+      skript:
+        description: "Skript aus docs/server/"
+        required: true
+        type: choice
+        options:
+          - nginx-login-entfernen.sh
+          - nginx-gzip.sh
+          - nginx-anon-ip.sh
+
+permissions:
+  contents: read
+
+# nie zwei Eingriffe gleichzeitig auf dem Server
+concurrency:
+  group: server-skript
+  cancel-in-progress: false
+
+jobs:
+  ausfuehren:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skript prüfen
+        env:
+          SKRIPT: ${{ inputs.skript }}
+        run: |
+          set -euo pipefail
+          [[ "$SKRIPT" =~ ^[a-z0-9-]+\.sh$ ]] || { echo "Ungültiger Skriptname: $SKRIPT"; exit 1; }
+          test -f "docs/server/$SKRIPT" || { echo "docs/server/$SKRIPT fehlt auf main"; exit 1; }
+          bash -n "docs/server/$SKRIPT"
+          echo "Starte docs/server/$SKRIPT (Commit $(git rev-parse --short HEAD))"
+
+      - name: Auf dem Server ausführen
+        env:
+          SKRIPT: ${{ inputs.skript }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.SERVER_IP }}
+          BENUTZER: ${{ secrets.SERVER_USER }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/server && chmod 600 ~/.ssh/server
+          # Als root direkt, sonst über sudo ohne Passwortabfrage (scheitert dann mit klarer Meldung)
+          ssh -i ~/.ssh/server -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+            "$BENUTZER@$HOST" \
+            'if [ "$(id -u)" -eq 0 ]; then bash -s; else sudo -n bash -s; fi' \
+            < "docs/server/$SKRIPT"
