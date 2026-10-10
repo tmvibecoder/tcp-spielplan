@@ -5,14 +5,21 @@ name: Server-Skript ausführen
 # Auftraggebers vom 10.10.2026: Agenten starten Server-Skripte selbst über diesen Workflow.
 # Anmeldung mit denselben Secrets wie deploy.yml (SERVER_IP, SERVER_USER, SSH_PRIVATE_KEY).
 #
-# Starten: Actions-Reiter → „Server-Skript ausführen" → Run workflow, oder per API
-# (workflow_dispatch auf main, Eingabe `skript`). Ausgabe des Skripts steht im Protokoll.
+# Zwei Auslöser:
+#   1. Auftragsdatei (Weg der Agenten): docs/server/auftrag.txt ändern und per PR nach main
+#      mergen. Die erste Zeile ohne # ist der Skriptname; jede Änderung der Datei auf main
+#      startet das Skript genau einmal (für einen Wiederholungslauf die Kommentarzeile ändern).
+#   2. Von Hand: Actions-Reiter → „Server-Skript ausführen" → Run workflow.
+# Die Ausgabe des Skripts steht im Protokoll des Laufs.
 #
-# Bewusst eng: nur Skripte von main, nur aus der Auswahlliste, keine Argumente — Passwörter
-# o. ä. gehören nie in Workflow-Eingaben, sie stünden im Protokoll. Neues Skript: per PR nach
-# docs/server/ bringen UND unten in `options` eintragen.
+# Bewusst eng: nur Skripte von main, nur aus der Liste ERLAUBT, keine Argumente — Passwörter
+# o. ä. gehören nie in Workflow-Eingaben oder die Auftragsdatei, sie stünden im Protokoll.
+# Neues Skript: per PR nach docs/server/ bringen UND in ERLAUBT sowie in `options` eintragen.
 
 on:
+  push:
+    branches: [ main ]
+    paths: [ "docs/server/auftrag.txt" ]
   workflow_dispatch:
     inputs:
       skript:
@@ -37,22 +44,38 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      ERLAUBT: "nginx-login-entfernen.sh nginx-gzip.sh nginx-anon-ip.sh"
     steps:
       - uses: actions/checkout@v4
 
       - name: Skript prüfen
+        id: pruefen
         env:
-          SKRIPT: ${{ inputs.skript }}
+          EINGABE: ${{ inputs.skript }}
+          AUSLOESER: ${{ github.event_name }}
         run: |
           set -euo pipefail
+          if [ "$AUSLOESER" = "workflow_dispatch" ]; then
+            SKRIPT="$EINGABE"
+          else
+            test -f docs/server/auftrag.txt || { echo "docs/server/auftrag.txt fehlt — nichts zu tun"; exit 1; }
+            SKRIPT=$( (grep -vE '^[[:space:]]*(#|$)' docs/server/auftrag.txt || true) | head -1 | tr -d '[:space:]')
+            [ -n "$SKRIPT" ] || { echo "Kein Skriptname in docs/server/auftrag.txt"; exit 1; }
+          fi
           [[ "$SKRIPT" =~ ^[a-z0-9-]+\.sh$ ]] || { echo "Ungültiger Skriptname: $SKRIPT"; exit 1; }
+          case " $ERLAUBT " in
+            *" $SKRIPT "*) ;;
+            *) echo "$SKRIPT steht nicht in der Liste ERLAUBT: $ERLAUBT"; exit 1 ;;
+          esac
           test -f "docs/server/$SKRIPT" || { echo "docs/server/$SKRIPT fehlt auf main"; exit 1; }
           bash -n "docs/server/$SKRIPT"
-          echo "Starte docs/server/$SKRIPT (Commit $(git rev-parse --short HEAD))"
+          echo "skript=$SKRIPT" >> "$GITHUB_OUTPUT"
+          echo "Starte docs/server/$SKRIPT (Auslöser $AUSLOESER, Commit $(git rev-parse --short HEAD))"
 
       - name: Auf dem Server ausführen
         env:
-          SKRIPT: ${{ inputs.skript }}
+          SKRIPT: ${{ steps.pruefen.outputs.skript }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.SERVER_IP }}
           BENUTZER: ${{ secrets.SERVER_USER }}
