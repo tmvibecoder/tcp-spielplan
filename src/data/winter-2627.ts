@@ -35,7 +35,7 @@ export const WINTER_2627_CATEGORIES = [
 
 // ── Tabellen / Standings ──
 
-export const WINTER_2627_STANDINGS_STAND = "09.09.2026";
+export const WINTER_2627_STANDINGS_STAND = "11.10.2026";
 
 export const WINTER_2627_STANDINGS: LeagueStandings[] = [
   // ── Herren 40 Bayernliga · Gr. 022 SU ──
@@ -45,12 +45,12 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     leagueName: "Bayernliga · Gr. 022 SU",
     ownRank: 1,
     entries: [
-      { rank: 1, club: "TC Pliening",                   isOwnClub: true,   points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 2, club: "TC Gauting",                    isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "MTTC Iphitos München",          isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "HC Wacker München",             isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TC Grün-Weiß Gräfelfing",       isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "TSV Haunstetten",               isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TC Pliening", isOwnClub: true , points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 2, club: "TC Gauting", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 3, club: "MTTC Iphitos München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "HC Wacker München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "TC Grün-Weiß Gräfelfing", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "TSV Haunstetten", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 
@@ -61,12 +61,12 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     leagueName: "Bayernliga · Gr. 029 SU",
     ownRank: 2,
     entries: [
-      { rank: 1, club: "TC Blutenburg München",         isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 2, club: "TC Pliening",                   isOwnClub: true,   points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "TC Grün-Weiß Gräfelfing",       isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "TC Ottobrunn",                  isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TC Puchheim",                   isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "GW Luitpoldpark München",       isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TC Blutenburg München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 3, club: "TC Grün-Weiß Gräfelfing", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "TC Ottobrunn", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "TC Puchheim", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "GW Luitpoldpark München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 
@@ -75,14 +75,14 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     teamLabel: "Herren 30",
     teamColor: "#22d3ee",
     leagueName: "Südliga 1 · Gr. 119",
-    ownRank: 2,
+    ownRank: 1,
     entries: [
-      { rank: 1, club: "TC Ramersdorf",                 isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 2, club: "TC Pliening",                   isOwnClub: true,   points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "TS Jahn München II",            isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "SV Heimstetten",                isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TC Thalkirchen München",        isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "Ausstellungspark München",      isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TC Pliening", isOwnClub: true , points: "2:0", matchPoints: "5:1", sets: "11:4", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "5:1"] },
+      { rank: 2, club: "TC Thalkirchen München", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "10:4", crossResults: ["0:0", "***", "0:0", "0:0", "4:2", "0:0"] },
+      { rank: 3, club: "TC Ramersdorf", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "Ausstellungspark München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "SV Heimstetten", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:10", crossResults: ["0:0", "2:4", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "TS Jahn München II", isOwnClub: false, points: "0:2", matchPoints: "1:5", sets: "4:11", crossResults: ["1:5", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 
@@ -91,13 +91,13 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     teamLabel: "Herren 30 II",
     teamColor: "#67e8f9",
     leagueName: "Südliga 2 · Gr. 129",
-    ownRank: 3,
+    ownRank: 5,
     entries: [
-      { rank: 1, club: "TC St.Emmeram München",         isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 2, club: "Polizei SV Haar",               isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "TC Pliening II",                isOwnClub: true,   points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 4, club: "ATSV Kirchseeon",               isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0"] },
-      { rank: 5, club: "TC Riemerling",                 isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TC Riemerling", isOwnClub: false, points: "2:0", matchPoints: "5:1", sets: "11:2", crossResults: ["***", "0:0", "0:0", "0:0", "5:1"] },
+      { rank: 2, club: "ATSV Kirchseeon", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 3, club: "Polizei SV Haar", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 4, club: "TC St.Emmeram München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0"] },
+      { rank: 5, club: "TC Pliening II", isOwnClub: true , points: "0:2", matchPoints: "1:5", sets: "2:11", crossResults: ["1:5", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 
@@ -108,12 +108,12 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     leagueName: "Südliga 1 · Gr. 082",
     ownRank: 5,
     entries: [
-      { rank: 1, club: "TC Rot-Weiß Eschenried III",    isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 2, club: "WB Fideliopark München",        isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "TC Ismaning III",               isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "SC Freimann II",                isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TC Pliening",                   isOwnClub: true,   points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "STK Garching",                  isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TC Rot-Weiß Eschenried III", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 2, club: "WB Fideliopark München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 3, club: "TC Ismaning III", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "SC Freimann II", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "TC Pliening", isOwnClub: true , points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "STK Garching", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 
@@ -122,14 +122,14 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     teamLabel: "Damen 40",
     teamColor: "#fbbf24",
     leagueName: "Südliga 2 · Gr. 200",
-    ownRank: 4,
+    ownRank: 6,
     entries: [
-      { rank: 1, club: "TeG Kirchheim",                 isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 2, club: "TF Markt Schwaben",             isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "STC München Süd",               isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "TC Pliening",                   isOwnClub: true,   points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TC Aschheim",                   isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "TC Unterföhring II",            isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TC Unterföhring II", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 2, club: "TC Aschheim", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 3, club: "TeG Kirchheim", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "STC München Süd", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "TF Markt Schwaben", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "TC Pliening", isOwnClub: true , points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 
@@ -138,14 +138,14 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     teamLabel: "Damen 50",
     teamColor: "#fcd34d",
     leagueName: "Landesliga 1 · Gr. 054 SU",
-    ownRank: 5,
+    ownRank: 6,
     entries: [
-      { rank: 1, club: "ASV Glonn",                     isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 2, club: "SV Helfendorf",                 isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
-      { rank: 3, club: "MTV 1879 München",              isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "SV Lohhof",                     isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "TC Pliening",                   isOwnClub: true,   points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "TC Raschke Taufkirchen",        isOwnClub: false,  points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "ASV Glonn", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 2, club: "TC Raschke Taufkirchen", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "***", "0:0", "0:0", "0:0", "0:0"] },
+      { rank: 3, club: "SV Helfendorf", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
+      { rank: 4, club: "SV Lohhof", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
+      { rank: 5, club: "MTV 1879 München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "TC Pliening", isOwnClub: true , points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 ];
@@ -167,14 +167,14 @@ export const WINTER_2627_MATCHES: WinterMatch[] = [
   { teamId: "w27-herren50", date: "2027-03-13", time: "16:00", day: "Sa", home: "TC Blutenburg München",       away: "TC Pliening",                 isHome: false,  mp: "", sets: "", games: "", venue: "Tennis am See Karlsfeld", status: "open" },
 
   // ── Herren 30 Südliga 1 · Gr. 119 ──
-  { teamId: "w27-herren30", date: "2026-10-10", time: "17:00", day: "Sa", home: "TC Pliening",                 away: "TS Jahn München II",          isHome: true,   mp: "", sets: "", games: "", venue: "TSV Haar", status: "open" },
+  { teamId: "w27-herren30", date: "2026-10-10", time: "17:00", day: "Sa", home: "TC Pliening",                 away: "TS Jahn München II",          isHome: true,   mp: "5:1", sets: "11:4", games: "59:28", venue: "TSV Haar", status: "played" },
   { teamId: "w27-herren30", date: "2026-11-21", time: "16:00", day: "Sa", home: "SV Heimstetten",              away: "TC Pliening",                 isHome: false,  mp: "", sets: "", games: "", venue: "Sporttraum Kirchheim", status: "open" },
   { teamId: "w27-herren30", date: "2026-12-19", time: "17:00", day: "Sa", home: "Ausstellungspark München",    away: "TC Pliening",                 isHome: false,  mp: "", sets: "", games: "", venue: "Raschke Taufkirchen", status: "open" },
   { teamId: "w27-herren30", date: "2027-01-23", time: "17:00", day: "Sa", home: "TC Pliening",                 away: "TC Thalkirchen München",      isHome: true,   mp: "", sets: "", games: "", venue: "TC Kirchheim bei Mü.", status: "open" },
   { teamId: "w27-herren30", date: "2027-02-20", time: "17:00", day: "Sa", home: "TC Pliening",                 away: "TC Ramersdorf",               isHome: true,   mp: "", sets: "", games: "", venue: "TC Kirchheim bei Mü.", status: "open" },
 
   // ── Herren 30 II Südliga 2 · Gr. 129 ──
-  { teamId: "w27-herren30ii", date: "2026-10-10", time: "16:00", day: "Sa", home: "TC Riemerling",               away: "TC Pliening II",              isHome: false,  mp: "", sets: "", games: "", venue: "Tennishalle Riemerling", status: "open" },
+  { teamId: "w27-herren30ii", date: "2026-10-10", time: "16:00", day: "Sa", home: "TC Riemerling",               away: "TC Pliening II",              isHome: false,  mp: "5:1", sets: "11:2", games: "70:32", venue: "Tennishalle Riemerling", status: "played" },
   { teamId: "w27-herren30ii", date: "2026-11-08", time: "15:00", day: "So", home: "TC Pliening II",              away: "Polizei SV Haar",             isHome: true,   mp: "", sets: "", games: "", venue: "TS Jahn München", status: "open" },
   { teamId: "w27-herren30ii", date: "2027-02-14", time: "16:00", day: "So", home: "TC St.Emmeram München",       away: "TC Pliening II",              isHome: false,  mp: "", sets: "", games: "", venue: "SV Lohhof", status: "open" },
   { teamId: "w27-herren30ii", date: "2027-03-20", time: "17:00", day: "Sa", home: "TC Pliening II",              away: "ATSV Kirchseeon",             isHome: true,   mp: "", sets: "", games: "", venue: "TC Kirchheim bei Mü.", status: "open" },
