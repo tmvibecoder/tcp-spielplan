@@ -35,7 +35,7 @@ export const WINTER_2627_CATEGORIES = [
 
 // ── Tabellen / Standings ──
 
-export const WINTER_2627_STANDINGS_STAND = "11.10.2026";
+export const WINTER_2627_STANDINGS_STAND = "13.10.2026";
 
 export const WINTER_2627_STANDINGS: LeagueStandings[] = [
   // ── Herren 40 Bayernliga · Gr. 022 SU ──
@@ -75,14 +75,14 @@ export const WINTER_2627_STANDINGS: LeagueStandings[] = [
     teamLabel: "Herren 30",
     teamColor: "#22d3ee",
     leagueName: "Südliga 1 · Gr. 119",
-    ownRank: 1,
+    ownRank: 2,
     entries: [
-      { rank: 1, club: "TC Pliening", isOwnClub: true , points: "2:0", matchPoints: "5:1", sets: "11:4", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "5:1"] },
-      { rank: 2, club: "TC Thalkirchen München", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "10:4", crossResults: ["0:0", "***", "0:0", "0:0", "4:2", "0:0"] },
-      { rank: 3, club: "TC Ramersdorf", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "***", "0:0", "0:0", "0:0"] },
-      { rank: 4, club: "Ausstellungspark München", isOwnClub: false, points: "0:0", matchPoints: "0:0", sets: "0:0", crossResults: ["0:0", "0:0", "0:0", "***", "0:0", "0:0"] },
-      { rank: 5, club: "SV Heimstetten", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:10", crossResults: ["0:0", "2:4", "0:0", "0:0", "***", "0:0"] },
-      { rank: 6, club: "TS Jahn München II", isOwnClub: false, points: "0:2", matchPoints: "1:5", sets: "4:11", crossResults: ["1:5", "0:0", "0:0", "0:0", "0:0", "***"] },
+      { rank: 1, club: "TC Ramersdorf", isOwnClub: false, points: "2:0", matchPoints: "6:0", sets: "12:0", crossResults: ["***", "0:0", "0:0", "0:0", "0:0", "6:0"] },
+      { rank: 2, club: "TC Pliening", isOwnClub: true , points: "2:0", matchPoints: "5:1", sets: "11:4", crossResults: ["0:0", "***", "0:0", "0:0", "5:1", "0:0"] },
+      { rank: 3, club: "TC Thalkirchen München", isOwnClub: false, points: "2:0", matchPoints: "4:2", sets: "10:4", crossResults: ["0:0", "0:0", "***", "4:2", "0:0", "0:0"] },
+      { rank: 4, club: "SV Heimstetten", isOwnClub: false, points: "0:2", matchPoints: "2:4", sets: "4:10", crossResults: ["0:0", "0:0", "2:4", "***", "0:0", "0:0"] },
+      { rank: 5, club: "TS Jahn München II", isOwnClub: false, points: "0:2", matchPoints: "1:5", sets: "4:11", crossResults: ["0:0", "1:5", "0:0", "0:0", "***", "0:0"] },
+      { rank: 6, club: "Ausstellungspark München", isOwnClub: false, points: "0:2", matchPoints: "0:6", sets: "0:12", crossResults: ["0:6", "0:0", "0:0", "0:0", "0:0", "***"] },
     ],
   },
 
