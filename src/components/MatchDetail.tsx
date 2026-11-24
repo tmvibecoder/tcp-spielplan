@@ -10,7 +10,6 @@ const SpielberichtLink = lazy(() => import("./SpielberichtLink"));
 // Das Briefing zieht den saisonübergreifenden Spieler-Index mit — erst laden,
 // wenn eine Begegnung aufgeklappt ist.
 const OpponentBriefing = lazy(() => import("./OpponentBriefing"));
-const OwnRoster = lazy(() => import("./OpponentBriefing").then((m) => ({ default: m.OwnRoster })));
 
 interface MatchDetailProps {
   seasonId: SeasonId;
@@ -180,7 +179,8 @@ export default function MatchDetail({
         </a>
       </div>
 
-      {/* Gegnerbriefing: was über den Gegner in dieser Saison belegt ist */}
+      {/* Gegnerbriefing: Kader-Vergleich, Aufstellungen, Ergebnisse. Die eigene
+          Meldeliste steckt seit 24.11.2026 eingeklappt im Reiter „Kader". */}
       {result?.outcome !== "cancelled" && (
         <Suspense fallback={<p className="mt-3 text-[11px] text-slate-500">Gegnerbriefing wird geladen …</p>}>
           <OpponentBriefing
@@ -189,15 +189,6 @@ export default function MatchDetail({
             teamLabel={team.label}
             accentColor={team.color}
             opponentClub={opponent}
-            ownClub={ownClub}
-            onOpenPlayer={onOpenPlayer}
-          />
-          {/* Eigene Meldeliste: wer bei uns in dieser Mannschaft gemeldet ist (Rang, LK, Jahrgang) */}
-          <OwnRoster
-            season={seasonId}
-            league={team.league}
-            teamLabel={team.label}
-            accentColor={team.color}
             ownClub={ownClub}
             onOpenPlayer={onOpenPlayer}
           />

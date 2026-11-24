@@ -9,6 +9,8 @@ interface HeaderProps {
   onCalendar: () => void;
   /** Öffnet die Suche (Spieler und Mannschaften) */
   onSearch: () => void;
+  /** Öffnet den Vereinskader (wer ist in welcher Mannschaft gemeldet) */
+  onVereinskader: () => void;
   /** Den PDF-Export gibt es nur für Saisons mit Druck-Spielplan (Sommerrunde). */
   showPdf: boolean;
   /** Datenstand der BTV-Berichte und nächster Briefing-Lauf (im ⋯-Menü) */
@@ -38,6 +40,7 @@ export default function Header({
   onPdf,
   onCalendar,
   onSearch,
+  onVereinskader,
   showPdf,
   dataStand,
   seasonDropdown,
@@ -125,6 +128,13 @@ export default function Header({
                   <div className="my-1 border-t border-slate-700" />
                 </>
               )}
+              <button
+                onClick={() => { onVereinskader(); setMenuOpen(false); }}
+                className="w-full text-left px-3 py-2 text-[12px] font-semibold text-sky-300 hover:bg-slate-700 transition-colors flex items-center gap-2"
+              >
+                👥 Vereinskader
+              </button>
+              <div className="my-1 border-t border-slate-700" />
               {/* Datenstand: bewusst hier versteckt statt im Briefing (Auftraggeber, 09.09.2026) */}
               <div className="px-3 py-1.5 text-[11px] text-slate-400 leading-relaxed tabular-nums">
                 <p className="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-500">Datenstand BTV-Berichte</p>

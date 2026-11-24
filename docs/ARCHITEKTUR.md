@@ -283,7 +283,10 @@ App.tsx  ── hält: season, subTab, activeTeams (Set je Saison), homeOnly,
    └─ Reiter „Tabelle"   (React.lazy → eigener Chunk!)
          └─ StandingsView ── Tabelle + Kreuztabelle je Liga
                ├─ SpielberichtDrawer → MatchCard   (Einzel/Doppel einer Begegnung)
-               └─ TeamStatsDetail ── Spieler-Statistik einer Mannschaft
+               └─ TeamStatsDetail ── Mannschaftsseite: Kader · Einsätze · Doppel
+                     ├─ LkProfile ───── LK-Verteilung als Punkt-/Säulengrafik
+                     ├─ RosterTable ─── kompakte Kaderliste (auch im Gegnerbriefing)
+                     └─ EinsatzMatrix ─ Spieler × Spieltage
 ```
 
 **Zustand und Persistenz** (alles in `App.tsx`):
@@ -526,8 +529,10 @@ höchstens einmal geholt; bis dahin rendern die Komponenten einen kurzen Ladehin
 `getSpielbericht(group, a, b)`, `getMeldeliste(group, club)`, `getTeamStats(group, club)` und
 `getTeamSeason(group, club)` sind reine Funktionen auf der geladenen Gruppe; `recentBalance(clubData,
 club, name)` und `getPlayer(clubData, key)` auf dem geladenen Verein; `search(index, query)` auf dem
-Index. `TeamStatsDetail` und `RosterList` bekommen die Bilanz als Funktion `balanceOf(name)`
-hereingereicht — sie wissen nichts vom Laden.
+Index. `TeamStatsDetail` und `RosterTable` bekommen die geladenen Vereinsdaten als `clubData`
+hereingereicht (seit 24.11.2026 statt einer Funktion `balanceOf`) und rechnen daraus über
+`playerProfile` Bilanz, Formverlauf und weitere Mannschaften — sie wissen nichts vom Laden.
+`useGroups(season, leagues)` lädt mehrere Gruppen auf einmal (Vereinskader).
 
 **`src/data/history-index.ts`** ist der saisonübergreifende Index — dieselbe Logik wie früher in
 `player-history.ts`, aber ohne Datenimporte, weil ihn jetzt der **Generator** einmal rechnet und
@@ -548,10 +553,10 @@ je Verein in `data/clubs/` ablegt (die App baut nichts mehr beim ersten Zugriff)
   und `getTeamSeason(group, club)` (gespielte Begegnungen mit Aufstellungen, Einsatzzähler je
   Spieler, Doppelpartner) fürs Briefing — beide in `src/data/player-history.ts`.
 - `recentBalance(clubData, club, name, days = 365)` (seit 07.10.2026): Siege/Niederlagen einer
-  Person über die letzten 12 Monate aus allen Einsätzen — gerendert von `Bilanz12` in
-  `LkBadge.tsx` in jeder Meldeliste (`RosterList` im Briefing, `RosterRow` in
-  `TeamStatsDetail`). `LkBadge.tsx` selbst lädt nichts; die Aufrufer rechnen und übergeben nur
-  Zahlen. `playerKey` und `normalizePlayerName` wohnen in **`src/data/player-key.ts`**, einem
+  Person über die letzten 12 Monate aus allen Einsätzen — gerendert von `Bilanz12Cell` in
+  `KaderBits.tsx` in jeder Kaderliste (`RosterTable`, auf der Mannschaftsseite wie im Briefing).
+  `playerProfile(clubData, club, name, season, league)` (seit 24.11.2026) liefert dazu den
+  Formverlauf je Saison und die weiteren Mannschaften der Person. `playerKey` und `normalizePlayerName` wohnen in **`src/data/player-key.ts`**, einem
   Blatt ohne Datenimporte (seit 07.10.2026, damals gegen 3 MB Meldelisten im Startbundle; seit
   dem Umzug der Daten nach `public/data` gibt es keine Datenchunks mehr — das Startbundle bleibt
   bei ~512 KB, die Komponenten-Chunks sind 6–14 KB).
@@ -559,25 +564,33 @@ je Verein in `data/clubs/` ablegt (die App baut nichts mehr beim ersten Zugriff)
 `src/data/data-stand.ts` (generiert vom Wecker) hält Zeitpunkt und Umfang des letzten Einlesens
 und den nächsten geplanten Lauf.
 
-`OpponentBriefing.tsx` exportiert neben dem Gegnerbriefing die gemeinsame `RosterList` (Rang,
-Name, LK, Jahrgang, Einsätze, Bilanz) und `OwnRoster`, die eigene Meldeliste zur Begegnung
-(seit 02.10.2026); `MatchDetail` lädt beide über denselben lazy Chunk. Der Jahrgang-Zusatz
-(`Jahrgang`) wohnt neben `LkBadge`, damit `TeamStatsDetail` ihn ohne den Briefing-Chunk nutzt.
+**Kader-Ansichten (Redesign 24.11.2026).** Alle Stellen, die eine Meldeliste zeigen, benutzen
+dieselben Bausteine: `RosterTable` (kompakte Kaderliste mit Filter und aufklappbarer Person),
+`LkProfile`/`LkDuel` (LK-Verteilung), `EinsatzMatrix`, `KaderVergleich` (Kopf-an-Kopf im
+Briefing) und `KaderBits` (LK-Kästchen, 12-Monats-Balken, Ergebnis-Kachel, Form-Punkte). Reine
+Helfer liegen in `src/data/kader.ts`. Die Mannschaftsfarbe wird als CSS-Variable `--accent` am
+umgebenden Element gesetzt, die Bausteine färben damit. `RosterList` und `OwnRoster` aus
+`OpponentBriefing.tsx` gibt es nicht mehr — die eigene Meldeliste steckt eingeklappt im Reiter
+„Kader" des Briefings. `getTeamStats` liefert zusätzlich `meetings` (gespielte Begegnungen), jeder
+Einsatz trägt deren Index; `assignToRoster` ordnet Bilanzen auch bei doppelten Namen (Initialen)
+genau einem Meldelisten-Eintrag zu.
 
 ### 13.2 Oberfläche: Overlay und Unterseiten-Stapel, kein Router
 
 ```
 Header ── „🔍 Suche" ──► SearchOverlay (lazy) ──► Spieler  ──► PlayerHistory (lazy)
        │                                      └─► Mannschaft ──► TeamPage (lazy) → TeamStatsDetail
-       └─ ⋯-Menü ── Kalender · PDF (nur Spielplan) · Datenstand + nächster Lauf (immer)
+       └─ ⋯-Menü ── Kalender · PDF (nur Spielplan) · Vereinskader (lazy) · Datenstand + nächster Lauf (immer)
 TimelineView ► MatchRow ► MatchDetail ──► OpponentBriefing (lazy, nur laufende Saison)
-                                            ├─ Meldeliste    (RosterRow-Optik + LkBadge + Einsatzhäufigkeit)
+                                            ├─ Kader         (KaderVergleich + LkDuel + beide Meldelisten als RosterTable)
                                             ├─ Aufstellungen (Nachname + LK; Gegner + „Unsere Aufstellungen")
                                             └─ Ergebnisse    (Begegnungen des Gegners, Gegnersicht)
 StandingsView ► TeamStatsDetail ── „Spielerhistorie über alle Saisons ›" ──► PlayerHistory
 ```
 
-- `App.tsx` hält `searchOpen` und einen **Stapel** `views` (`spieler` | `mannschaft`); „Zurück"
+- `App.tsx` hält `searchOpen` und einen **Stapel** `views` (`spieler` | `mannschaft` |
+  `vereinskader`; der Vereinskader bleibt gemountet, solange er im Stapel liegt, damit Filter und
+  Scrollposition beim „Zurück" aus der Spielerhistorie erhalten bleiben); „Zurück"
   nimmt eine Ebene, Reiter- oder Saisonwechsel leert ihn. `TimelineView`, `MatchDetail` und
   `StandingsView` reichen `onOpenPlayer` durch. **Spielplan und Tabellen bleiben unter dem Stapel
   gemountet** (nur per `hidden` ausgeblendet, seit 06.10.2026): jede Ebene merkt sich beim Öffnen
@@ -586,8 +599,9 @@ StandingsView ► TeamStatsDetail ── „Spielerhistorie über alle Saisons �
   unverändert da. Vorher wurde der Spielplan neu aufgebaut und man landete oben auf der Seite.
 - Alle neuen Ansichten sind **lazy** (eigene Chunks), weil sie den Index über alle Saisons ziehen;
   der Spielplan startet unverändert schnell.
-- `LkBadge` ist das einzige LK-Element der App (Ton `own`/`opp`/`muted`); `MatchCard` und
-  `TeamStatsDetail` verwenden es ebenfalls.
+- `LkBadge` ist das LK-Abzeichen im Fließtext (Ton `own`/`opp`/`muted`; Spielberichte, Suche,
+  Historie, Aufstellungen). In den Kaderlisten steht die LK seit 24.11.2026 als bündige Spalte
+  (`LkCell` in `KaderBits.tsx`).
 
 ### 13.3 Farblogik: die betrachtete Seite bestimmt die Farbe
 

@@ -26,9 +26,10 @@ Stelle — der Registry `src/data/season-data.ts`; siehe „Eine Saison anlegen"
 - **Konkurrenz-Filter** – einzelne Mannschaften/Konkurrenzen ein-/ausblenden, `Nur Heim`, `Alle aus`/`Alle an` und **gespeicherte Auswahl** (seit 2026-06-22) – siehe unten.
 - **Kalender-Downloads** – im **⋯-Menü** (Spielplan-Reiter, jede Saison) → Overlay mit einer ICS-Datei je Mannschaft. Bis 07.09.2026 stand der Block dauerhaft aufgeklappt unter dem Spielplan. `PDF exportieren` steht im selben Menü, aber nur in Saisons mit Druck-Spielplan (`supportsPdf` in der Registry — derzeit nur die Sommerrunde).
 - **Tabellen** je Konkurrenz mit **Kreuztabelle**. Auf ein Ergebnis in der Kreuztabelle tippen → **Spielbericht** (Einzel/Doppel) der Begegnung. Solange eine Runde **noch nicht begonnen** hat (alle Punkte 0:0), zeigt der Kopf „*n* Mannschaften" statt „Platz *x*" und die Medaillen bleiben weg — die Reihenfolge ist dort nur die Setzliste des BTV.
-- **Spieler-Statistik je Mannschaft** (seit 2026-06-18) – Mannschaftszeile antippen. Seit 15.08.2026 mit **kompletter Meldeliste** (alle gemeldeten Spieler mit Rang), getrennt nach **Einzel** und **Doppel**; die Reiter nennen die Zahl der Personen **im Einsatz** (nicht die Meldelistengröße), die Spaltenerklärung liegt hinter **„ⓘ Was bedeuten die Werte?"** – siehe unten.
+- **Mannschaftsseite mit Kader, Einsätzen und Doppeln** (seit 2026-06-18, Redesign 24.11.2026) – Mannschaftszeile antippen. Drei Reiter: **Kader** (LK-Profil als Grafik + kompakte Kaderliste mit Filter), **Einsätze** (Matrix Spieler × Spieltage) und **Doppel** (gespielte Paarungen) – siehe unten.
+- **Vereinskader** (seit 24.11.2026) – im **⋯-Menü**: wer ist in welcher eigenen Erwachsenen-Mannschaft auf welchem Rang gemeldet, sortiert nach LK – siehe unten.
 - **Live-Zwischenstände** – im aufgeklappten Spiel lässt sich während einer laufenden Begegnung jedes Einzel/Doppel eintragen; die Stände liegen in Supabase und aktualisieren sich bei allen Betrachtern per Realtime. Der **einzige** Teil der App mit Laufzeit-Daten – siehe unten.
-- **Suche, Spielerhistorie, Gegnerbriefing** (seit 10.09.2026) – „🔍 Suche" in der Kopfzeile findet Spieler (eigene und gegnerische) und Mannschaften aller erfassten Saisons; jeder Spieler hat eine Historie ab Winter 2024/25; jede aufgeklappte TCP-Begegnung zeigt ein Gegnerbriefing (Meldeliste mit Einsätzen, tatsächliche Aufstellungen beider Seiten, Ergebnisse). Ein nächtlicher **Wecker** liest die BTV-Berichte 7/4/0 Tage vor jeder Begegnung neu ein; Datenstand im ⋯-Menü – siehe eigener Abschnitt.
+- **Suche, Spielerhistorie, Gegnerbriefing** (seit 10.09.2026) – „🔍 Suche" in der Kopfzeile findet Spieler (eigene und gegnerische) und Mannschaften aller erfassten Saisons; jeder Spieler hat eine Historie ab Winter 2024/25; jede aufgeklappte TCP-Begegnung zeigt ein Gegnerbriefing (Kader-Vergleich beider Meldelisten, tatsächliche Aufstellungen beider Seiten, Ergebnisse). Ein nächtlicher **Wecker** liest die BTV-Berichte 7/4/0 Tage vor jeder Begegnung neu ein; Datenstand im ⋯-Menü – siehe eigener Abschnitt.
 
 ### Konkurrenz-Filter & gespeicherte Auswahl
 
@@ -47,30 +48,65 @@ Stelle — der Registry `src/data/season-data.ts`; siehe „Eine Saison anlegen"
 
 ### Spieler-Statistik je Mannschaft
 
-In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → Detailseite mit zwei Reitern.
-Welche Ansicht erscheint, hängt davon ab, ob für die Mannschaft eine **Meldeliste** vorliegt
-(`public/data/groups/<saison>/<liga>.json`, Feld `rosters`; seit 15.08.2026 für alle sechs Spielbericht-Konkurrenzen):
+In der **Tabelle** eine **Mannschaftszeile antippen** (›-Pfeil rechts) → Mannschaftsseite. Dieselbe
+Seite öffnet die **Suche** (dort mit Saison-Umschalter). Seit dem **Redesign vom 24.11.2026** hat sie
+drei Reiter; vorher zeigten „Einzel" und „Doppel" zweimal dieselbe lange Kartenliste (9 Namen pro
+Handy-Bildschirm, abgeschnittene Namen, 34-mal „ohne Einzel").
 
-**A) Mit Meldeliste — „Einzel" / „Doppel", jeweils die KOMPLETTE Mannschaft** (Normalfall)
+**Kader** (Vorauswahl)
 
-- Beide Reiter listen **alle gemeldeten Spieler** in **Rang-Reihenfolge** (Rang = Meldeposition laut
-  nuLiga, steht vorne in der Pille), Herren und Damen als eigene Sektionen — leere Sektionen werden
-  ausgeblendet, Herren-Ligen zeigen also keine leere Damen-Liste.
-- **Einzel**: Ø-Einzel-Position + Einzel-Bilanz (grün:rot). Aufklappen → jedes Einzel mit Gegner,
-  dessen LK, Satz-Ergebnis, **SIEG/NIEDERL.**; **▲ LK-Sieg** = gegen besseren (niedrigeren) LK
-  gewonnen, **▼** = gegen schwächeren verloren.
-- **Doppel**: Doppel-Bilanz **pro Person** (nicht pro Paarung). Aufklappen → je Einsatz
-  „mit &lt;Partner&gt;", darunter Gegnerpaar · gegnerische Mannschaft · Ergebnis.
-- Wer noch nicht gespielt hat, steht gedimmt auf **„ohne Einzel"/„ohne Doppel"**.
-- **„Weitere Einsätze"** am Ende = Spieler, die in Berichten auftauchen, aber **nicht auf der
-  Meldeliste dieser Mannschaft** stehen — echte **Ersatzspieler** aus anderen Mannschaften des
-  Vereins (z. B. Schönwetter bei Kümmersbruck). Kein Datenfehler.
+- **LK-Profil** (`LkProfile.tsx`): ein Punkt je gemeldeter Person, gestapelt je voller LK-Stufe
+  (LK 1 bis 25); wer in dieser Saison gespielt hat, trägt die Mannschaftsfarbe. Große Meldelisten
+  (mehr als 7 Personen in einer Stufe) werden als Säulen gezeichnet.
+- **Kaderliste** (`RosterTable.tsx`) in **Rang-Reihenfolge**: flache Zeilen mit festen Spalten
+  **# · Spieler · LK · 12 Mon.** — der Name steht ungekürzt, darunter Jahrgang (nur eigene Listen)
+  und die Saisonbilanz („Einzel 1:0 · Doppel 1:0"). Eingesetzte sind farbig hinterlegt. Die Spalte
+  **12 Mon.** zeigt Siege:Niederlagen und einen Balken (Länge = Zahl der Matches, grün gewonnen,
+  rot verloren); ohne Match steht „keine", bei geschützten Einträgen (Initialen) „–".
+- **Filter** über der Liste: **Alle · Im Einsatz · Aktiv 12 Mon.** — ein Filter, der nichts zeigen
+  würde (noch niemand eingesetzt, keine Vereinsdaten), wird gar nicht angeboten.
+- **Zeile antippen** klappt die Person auf: jedes Einzel und Doppel der Saison als Kachel
+  (**E1, D2** — gefüllt grün = Sieg, rot umrandet = Niederlage) mit Gegner, dessen LK, Sätzen;
+  **▲ LK-Sieg** = gegen bessere (niedrigere) LK gewonnen, **▼** = gegen schwächere verloren.
+  Darunter der **Formverlauf** der letzten 12 Monate als Punktreihe je Saison, „Diese Saison auch
+  in …" (weitere Mannschaften des Vereins) und der Knopf zur Spielerhistorie.
+- Herren und Damen als eigene Abschnitte (Mixed); **„Weitere Einsätze"** am Ende = Spieler, die in
+  Berichten auftauchen, aber **nicht auf der Meldeliste dieser Mannschaft** stehen — echte
+  **Ersatzspieler** aus anderen Mannschaften des Vereins. Kein Datenfehler.
+- **Ohne Meldeliste** zeigt der Kader nur die Eingesetzten (ohne Rang), nach Ø-Einzel-Position.
 
-**B) Ohne Meldeliste — klassische Ansicht** (Ligen, die nur Spielberichte hätten)
+**Einsätze** (`EinsatzMatrix.tsx`)
 
-- **Spieler**: nur Spieler **mit** Einzel-Einsatz, nach Ø-Position sortiert.
-- **Doppel**: **Paarungen** als Einheit (Schlüssel = sortierte Nachnamen), ohne LK.
-- Mannschaften ganz ohne Spielbericht **und** ohne Meldeliste zeigen den Hinweis-Leerzustand.
+- Zeilen = eingesetzte Personen in Meldelisten-Reihenfolge, Spalten = Spieltage (Datum, Gegner,
+  Ergebnis). Je Spieltag zwei Kacheln **E** und **D**; die Zahl ist die Position, gefüllt = Sieg,
+  umrandet = Niederlage. Rechts die Gesamtbilanz. Viele Spieltage scrollen seitlich, die
+  Namensspalte bleibt stehen.
+
+**Doppel**
+
+- Die gespielten **Paarungen** als Einheit (Schlüssel = sortierte Nachnamen), sortiert nach Zahl
+  der gemeinsamen Einsätze; aufklappen zeigt die einzelnen Doppel.
+
+Mannschaften ganz ohne Spielbericht **und** ohne Meldeliste zeigen den Hinweis-Leerzustand.
+
+**Gleiche Namen in einer Meldeliste:** Geschützte Einträge tragen nur Initialen, und „W., L." kann
+auf Rang 2 und auf Rang 9 stehen. `assignToRoster` (`player-stats.ts`) vergibt jede Bilanz deshalb
+nur **einem** Eintrag — bei doppelten Namen entscheidet die Meldeposition aus dem Spielbericht.
+Bis 24.11.2026 bekamen beide Einträge dieselben Einsätze zugeschrieben.
+
+### Vereinskader (seit 24.11.2026)
+
+**⋯-Menü → „Vereinskader"** (`Vereinskader.tsx`): eine Zeile je Person, eine Spalte je eigener
+Mannschaft der gewählten Saison, in der Zelle der **Rang in deren Meldeliste**. Sortiert nach LK,
+umschaltbar **Herren/Damen**, dazu der Filter **„Mehrfach gemeldet"**. Person antippen →
+Spielerhistorie. Viele Mannschaften (Sommer) scrollen seitlich.
+
+- Quelle sind nur die Meldelisten der eigenen Mannschaften — geladen über `useGroups` (`store.ts`),
+  welche Mannschaft welche Liste ist, sagt der eigene Tabelleneintrag („TC Pliening II").
+- **Datenschutz:** nur Erwachsenen-Konkurrenzen (Herren, Damen, Mixed), und Einträge, die nur mit
+  Initialen erscheinen, fehlen hier ganz — gleiche Initialen ließen sich über Mannschaften hinweg
+  nicht sicher derselben Person zuordnen. Die Datenschutzerklärung nennt den Vereinskader
+  (Abschnitte 5 und 6).
 
 **Datenquelle & Funktionsweise:** Bilanzen werden **live aus den echten nuLiga-Spielberichten**
 (`public/data/groups/<saison>/<liga>.json`, nachgeladen) aggregiert – es gibt **keine Beispieldaten**; die Namensliste
@@ -80,17 +116,23 @@ Konkurrenzen** der Sommer-Saison komplett erfasst: 402 Spielberichte (3.168 Einz
 132 Meldelisten (4.238 Spieler) — jede Mannschaft jedes Gegners inklusive.
 
 **Code-Landkarte:**
-- `src/data/player-stats.ts` – Aggregation: `getTeamStats(leagueName, club)`, `emptyTeamStats`,
-  `aggregatePlayers`, `aggregateDoubles`, `parseLk`, `normalizePlayerName`. Doppel-Einsätze werden
-  **zusätzlich jedem der beiden Spieler** zugeordnet (`PlayerStat.doubles`, mit `partner`), damit die
-  Doppel-Ansicht pro Person funktioniert.
-- `src/components/TeamStatsDetail.tsx` – Detailseite; `RosterRow` rendert eine Meldelisten-Zeile im
-  `mode` `einzel`/`doppel`, `AppearanceRow` eine Match-Zeile (bei `partner` „mit …" statt „vs …").
+- `src/data/player-stats.ts` – Aggregation: `getTeamStats(group, club)` (liefert auch `meetings`,
+  die gespielten Begegnungen), `emptyTeamStats`, `aggregatePlayers`, `aggregateByName`,
+  `assignToRoster`, `aggregateDoubles`, `parseLk`. Doppel-Einsätze werden **zusätzlich jedem der
+  beiden Spieler** zugeordnet (`PlayerStat.doubles`, mit `partner`); jeder Einsatz trägt den Index
+  seiner Begegnung (`meeting`) für die Einsatz-Matrix.
+- `src/data/kader.ts` – kleine reine Helfer der Kader-Ansichten (`shortName`, `isProtectedName`,
+  `lkCounts`, `fmtDay`, `clubShort`).
+- `src/components/TeamStatsDetail.tsx` – Rahmen der Mannschaftsseite (Kopf, drei Reiter).
+  `RosterTable.tsx` ist die Kaderliste (auch im Gegnerbriefing), `LkProfile.tsx` die LK-Grafiken,
+  `EinsatzMatrix.tsx` die Matrix, `KaderBits.tsx` die gemeinsamen Bausteine (LK-Kästchen,
+  12-Monats-Balken, Ergebnis-Kachel, Form-Punkte). Die Mannschaftsfarbe kommt als CSS-Variable
+  `--accent` vom umgebenden Element.
 - `src/components/StandingsView.tsx` – Tabellenzeile klickbar (`selectedClub`), lädt Stats **und**
   Meldeliste; bei Meldeliste ohne Bericht wird `emptyTeamStats` verwendet.
 - **Namens-Matching Bericht ↔ Meldeliste:** `normalizePlayerName` entfernt Walkover-Vermerk und
   Länderkürzel (`"Faschang, Michael AUT (w.o.)"` → `"Faschang, Michael"`); Einträge desselben Spielers
-  aus mehreren Schreibweisen werden in `TeamStatsDetail` zusammengeführt. Ohne diese beiden Schritte
+  aus mehreren Schreibweisen werden in `aggregateByName` zusammengeführt. Ohne diese beiden Schritte
   landen ~100 statt 8 Spieler fälschlich unter „Weitere Einsätze".
 - Spieler-Strings in Berichten: `"Nachname, Vorname (Meldeposition, LKxx,x)"`, geparst von
   `src/utils/spielbericht.ts` (`parsePlayer`/`parseSide`). LK-Format `"LK14,3"` (Komma!).
@@ -160,23 +202,27 @@ nicht mehr nötig.
   „nur einem Doppel") — ein echter **Vereinswechsel ergibt zwei Einträge**.
 - **Gegnerbriefing** (`OpponentBriefing`) in jeder aufgeklappten TCP-Begegnung im Spielplan, unter
   Termin/Spielort, drei Reiter, **nur die laufende Saison**:
-  *Meldeliste* (Rang, Name, LK, Einsatzhäufigkeit „3× Einzel · E1–E2 · 2× Doppel mit …", Bilanz),
+  *Kader* (seit 24.11.2026, siehe nächster Punkt),
   *Aufstellungen* (jede gespielte Begegnung des Gegners mit E1…D2 als **Nachname + LK**, darunter
   **„Unsere Aufstellungen"** der eigenen Konkurrenz) und *Ergebnisse* (Begegnungsergebnisse des
   Gegners). **Keine Prognosen** — nur belegte Einsätze. Spieler antippen → Historie, Begegnung
-  antippen → Spielbericht. Vor dem ersten Spieltag zeigt es die Meldeliste und Leerzustände.
-- **Unsere Meldeliste** (`OwnRoster` in `OpponentBriefing.tsx`, seit 02.10.2026) direkt unter dem
-  Gegnerbriefing: dieselbe Liste für die **eigene** TCP-Mannschaft der Begegnung — Rang, Name,
-  LK, Jahrgang, Einsätze, Bilanz; einklappbar, weil Winter-Meldelisten bis zu 35 Namen lang sind.
-  Beide Listen rendern über die gemeinsame `RosterList`. Der **Jahrgang** („Jg. 1989",
-  `Jahrgang` in `LkBadge.tsx`) steht seitdem überall hinter der LK, wo eine Meldeliste gezeigt
-  wird (auch in der Mannschaftsansicht der Tabelle und auf der Mannschaftsseite der Suche);
-  Ersatzspieler ohne Meldelisten-Eintrag haben keinen.
-- **12-Monats-Bilanz** (`Bilanz12` in `LkBadge.tsx`, Zahlen aus `recentBalance` in
-  `player-history.ts`, seit 07.10.2026): in jeder Meldeliste (Gegnerbriefing, „Unsere Meldeliste",
-  Spielerliste der Mannschaftsansicht in der Tabelle) steht hinter jedem Namen ein Schild
-  „12 Mon." mit **grünen Siegen : roten Niederlagen** über alle erfassten Einzel und Doppel der
-  letzten 365 Tage, saisonübergreifend. Ohne Match in dem Zeitraum ein gedimmtes „–". Wunsch des
+  antippen → Spielbericht.
+- **Kader-Vergleich** (`KaderVergleich.tsx`, seit 24.11.2026) im Reiter *Kader*: die ersten acht
+  Ränge beider Meldelisten **Kopf an Kopf** — unsere Mannschaft links, der Gegner rechts, je Zeile
+  LK gegen LK (die bessere ist gefüllt) und die 12-Monats-Bilanz. Umschalter **„Nach Meldeliste" /
+  „Nur Aktive (12 Mon.)"**; letzterer lässt weg, wer in dieser Zeit kein erfasstes Match hat — ein
+  Filter auf belegte Daten, **keine Aufstellungsprognose**. Mixed zeigt je vier Herren und Damen.
+  Darunter die **LK-Verteilung beider Kader** gespiegelt (`LkDuel`), dann eingeklappt die **ganze
+  Meldeliste des Gegners** und **„Unsere Meldeliste"** — beide als `RosterTable`, dieselbe Liste wie
+  auf der Mannschaftsseite. Bis 24.11.2026 standen die zwei Listen komplett untereinander (bei
+  64 + 28 Namen sehr viel Scrollen); `RosterList` und `OwnRoster` gibt es nicht mehr. Der
+  **Jahrgang** („Jg. 1989") steht in den eigenen Listen unter dem Namen; Ersatzspieler ohne
+  Meldelisten-Eintrag haben keinen.
+- **12-Monats-Bilanz** (`Bilanz12Cell` in `KaderBits.tsx`, Zahlen aus `recentBalance` bzw.
+  `playerProfile` in `player-history.ts`, seit 07.10.2026): in jeder Kaderliste (Mannschaftsseite,
+  Gegnerbriefing) steht in der Spalte „12 Mon." die Bilanz mit **grünen Siegen : roten
+  Niederlagen** über alle erfassten Einzel und Doppel der letzten 365 Tage, saisonübergreifend —
+  seit 24.11.2026 mit Balken darunter. Ohne Match in dem Zeitraum steht „keine". Wunsch des
   Auftraggebers: auf den ersten Blick sehen, ob jemand zuletzt wirklich gespielt hat oder nur
   gemeldet ist — nicht als bloße Zahl, sondern als Bilanz. Zählt nur, was im Bestand ist (ab
   Winter 2024/25 für TCP-Gruppen und die Vorsaison-Gruppen der Gegner); ein Spieler, der nur
@@ -184,7 +230,8 @@ nicht mehr nötig.
 - **Datenstand im ⋯-Menü** (bewusst nicht im Briefing): Datum + Uhrzeit des letzten Einlesens der
   BTV-Berichte, was eingelesen wurde, und der **nächste geplante Wecker-Lauf** mit Grund.
 - **LK überall als Abzeichen** (`LkBadge`): kleines Schild mit abgesetztem „LK"-Präfix und fetter
-  Zahl — in Spielberichten, Meldelisten, Suche, Historie und Briefing. Sky = betrachtete Seite,
+  Zahl — in Spielberichten, Suche, Historie und den Aufstellungen des Briefings. Die Kaderlisten
+  setzen die LK seit 24.11.2026 als bündige Spalte (`LkCell` in `KaderBits.tsx`). Sky = betrachtete Seite,
   Slate = Gegenseite, gedimmt = ohne Einsatz. Wunsch des Auftraggebers: LKs sollen beim Überfliegen
   sofort ins Auge fallen. **Zwei LK-Quellen:** Die LK in Meldelisten, Suche, Spieler-Kopf und
   Briefing-Meldeliste ist die **aktuelle LK laut btv.de-Mannschaftsportrait beim letzten Crawl**
@@ -434,6 +481,9 @@ zusammen, Änderungen an einem ziehen das andere nach.
   älteste ausgetragen (AUFGABEN §3, Schritt 6).
 - **Server:** Zugriffslogs 14 Tage (logrotate), IP-Adressen gekürzt (`docs/server/nginx-anon-ip.sh`,
   Log-Format `anon`); gzip für JS/JSON (`docs/server/nginx-gzip.sh`).
+- **Vereinskader (seit 24.11.2026):** nur Erwachsenen-Konkurrenzen, Initialen-Einträge fehlen
+  dort ganz (`isProtectedName` in `src/data/kader.ts`); in der Datenschutzerklärung in den
+  Abschnitten 5 und 6 genannt.
 - **Impressum:** privates Angebot, ausdrücklich kein Angebot des TC Pliening e.V.; Anschrift auf
   Anfrage.
 - **Zugang offen (seit 10.10.2026):** Die Seite ist ohne Passwort erreichbar. Die Anmeldung vom
@@ -783,7 +833,7 @@ Dabei beachten: **Tabellen- und Spielbericht-Texte stehen nicht im Startbundle**
 lazy geladenen Chunks (`StandingsView-*.js`, `SpielberichtDrawer-*.js`); **Spielberichte und
 Meldelisten selbst** liegen seit 08.10.2026 gar nicht mehr im Bundle, sondern unter
 `/data/groups/<saison>/<liga>.json` — dort greppen. Ein `grep` nach
-„BTV-Stand" oder „im Einsatz" im Startbundle schlägt deshalb korrekt fehl.
+„BTV-Stand" oder „LK-Profil" im Startbundle schlägt deshalb korrekt fehl.
 
 ### ⚠️ Stolperfalle „leere Seite im git-worktree" (lokales Testen)
 

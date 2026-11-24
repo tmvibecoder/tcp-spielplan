@@ -26,6 +26,7 @@ const StandingsView = lazy(() => import("./components/StandingsView"));
 const SearchOverlay = lazy(() => import("./components/SearchOverlay"));
 const PlayerHistory = lazy(() => import("./components/PlayerHistory"));
 const TeamPage = lazy(() => import("./components/TeamPage"));
+const Vereinskader = lazy(() => import("./components/Vereinskader"));
 
 type Page = "spielplan" | "impressum" | "datenschutz";
 
@@ -36,7 +37,10 @@ type Page = "spielplan" | "impressum" | "datenschutz";
 // und scrollt an die gemerkte Stelle (returnScroll) zurück. Thomas' Wunsch
 // vom 06.10.2026: aus der Spielerhistorie zurück zur Spielerliste, nicht an
 // den Seitenanfang.
-type View = ({ kind: "spieler"; key: string } | { kind: "mannschaft"; hit: TeamHit }) & { returnScroll: number };
+// Der Vereinskader (⋯-Menü) ist ebenfalls eine solche Ansicht; er bleibt
+// gemountet, solange er im Stapel liegt, damit Filter und Scrollposition beim
+// „Zurück" aus der Spielerhistorie erhalten bleiben.
+type View = ({ kind: "spieler"; key: string } | { kind: "mannschaft"; hit: TeamHit } | { kind: "vereinskader" }) & { returnScroll: number };
 
 // Persistenz der Filter-Auswahl (welche Konkurrenzen aktiv, Nur-Heim-Schalter).
 // Wird nur per "Auswahl speichern" im Menü geschrieben und beim Laden angewandt.
@@ -110,6 +114,11 @@ function App() {
   const openTeam = useCallback((hit: TeamHit) => {
     setSearchOpen(false);
     setViews((v) => [...v, { kind: "mannschaft", hit, returnScroll: window.scrollY }]);
+    window.scrollTo(0, 0);
+  }, []);
+  const openVereinskader = useCallback(() => {
+    setSearchOpen(false);
+    setViews((v) => (v.some((x) => x.kind === "vereinskader") ? v : [...v, { kind: "vereinskader", returnScroll: window.scrollY }]));
     window.scrollTo(0, 0);
   }, []);
   const popView = useCallback(() => {
@@ -241,6 +250,7 @@ function App() {
         onPdf={handlePdf}
         onCalendar={() => setCalendarOpen(true)}
         onSearch={() => setSearchOpen(true)}
+        onVereinskader={openVereinskader}
         dataStand={DATA_STAND}
         showPdf={data.supportsPdf}
         subTab={subTab}
@@ -289,6 +299,20 @@ function App() {
           <Suspense fallback={viewFallback}>
             <TeamPage hit={current.hit} onBack={popView} onOpenPlayer={openPlayerByName} />
           </Suspense>
+        )}
+        {views.some((v) => v.kind === "vereinskader") && (
+          <div hidden={current?.kind !== "vereinskader"}>
+            <Suspense fallback={viewFallback}>
+              <Vereinskader
+                season={season}
+                seasonLabel={seasonInfo.label}
+                teams={data.teams}
+                standings={data.standings}
+                onBack={popView}
+                onOpenPlayer={openPlayerByName}
+              />
+            </Suspense>
+          </div>
         )}
         {/* Spielplan bzw. Tabellen bleiben hinter den Spieler-/Mannschafts-
             ansichten gemountet (nur ausgeblendet), damit „Zurück" die

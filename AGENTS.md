@@ -209,7 +209,9 @@ Spielterminen (`scripts/seasons.mjs`) und nennen beim Start, worauf sie wirken;
 | Cache-Buster der Datenanfragen | `src/data/data-version.ts` (**generiert**) |
 | Datenstand + nächster Wecker-Lauf (⋯-Menü) | `src/data/data-stand.ts` (**generiert** vom Wecker) |
 | Suche (Overlay), Spielerhistorie, Mannschaftsseite | `src/components/SearchOverlay.tsx`, `PlayerHistory.tsx`, `TeamPage.tsx` (alle lazy) |
-| Gegnerbriefing in der aufgeklappten Begegnung | `src/components/OpponentBriefing.tsx` (lazy, aus `MatchDetail`) |
+| Gegnerbriefing in der aufgeklappten Begegnung (Kader-Vergleich, Aufstellungen, Ergebnisse) | `src/components/OpponentBriefing.tsx` (lazy, aus `MatchDetail`), `KaderVergleich.tsx` |
+| **Kaderliste** (überall dieselbe), LK-Grafiken, Einsatz-Matrix, gemeinsame Bausteine | `src/components/RosterTable.tsx`, `LkProfile.tsx`, `EinsatzMatrix.tsx`, `KaderBits.tsx`; Helfer in `src/data/kader.ts` |
+| Vereinskader (⋯-Menü): wer ist in welcher eigenen Mannschaft gemeldet | `src/components/Vereinskader.tsx` (lazy), lädt über `useGroups` in `src/data/store.ts` |
 | LK-Abzeichen (überall gleich) | `src/components/LkBadge.tsx` |
 | **Wecker**: Fälligkeit 7/4/0 Tage vor und 1/3 Tage nach jeder TCP-Begegnung, Crawl, Datenstand | `scripts/briefing-run.mjs` + `.github/workflows/briefing.yml` |
 | **Voll-Crawl zum Saisonwechsel** (alle Gegner, alle Erwachsenenklassen, Vorsaisons) | `scripts/vollcrawl-gegner.mjs` |
@@ -217,7 +219,7 @@ Spielterminen (`scripts/seasons.mjs`) und nennen beim Start, worauf sie wirken;
 | Crawler + Generatoren | `scripts/crawl-meldelisten.mjs`, `crawl-spielberichte.mjs`, `parse-spielbericht.mjs`, **`generate-data.mjs`** (Aufrufer: `generate-spielberichte.mjs`, `generate-meldelisten.mjs`), `generate-standings.mjs` |
 | Prüf-Skripte (lesen JSON über `scripts/data-files.mjs`) | `scripts/check-data.mjs`, `check-names.mjs`, `check-luecken.mjs`, `verify-parser.mjs` |
 | Aggregation Spieler/Doppel | `src/data/player-stats.ts` |
-| Spieler-Detailseite | `src/components/TeamStatsDetail.tsx` |
+| Mannschaftsseite (Kader · Einsätze · Doppel) | `src/components/TeamStatsDetail.tsx` |
 | Tabellen-Ansicht + Drilldown (**lazy geladen**) | `src/components/StandingsView.tsx` |
 | Spielplan (Sommer und Winter, eine Komponente) | `src/components/TimelineView.tsx`, `MatchRow.tsx`, `MatchDetail.tsx` |
 | Live-Zwischenstände (Supabase) | `src/hooks/useLiveScores.ts`, `src/components/LiveScorePanel.tsx`, `ScoreEntry.tsx`, `supabase-setup.sql` |

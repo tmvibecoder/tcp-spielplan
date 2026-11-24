@@ -5,7 +5,6 @@ import { getSpielbericht } from "../data/spielberichte";
 import type { SpielberichtMeeting } from "../utils/spielbericht";
 import { getTeamStats, emptyTeamStats } from "../data/player-stats";
 import { getMeldeliste } from "../data/meldelisten";
-import { recentBalance } from "../data/player-history";
 import { useClub, useGroup } from "../data/store";
 import TeamStatsDetail from "./TeamStatsDetail";
 
@@ -192,15 +191,21 @@ export default function StandingsView({ seasonId, standings, seasonLabel, stand,
                     }
                     if (stats || meldeliste) {
                       return (
-                        <TeamStatsDetail
-                          team={stats ?? emptyTeamStats(league.leagueName, selectedClub, league.teamLabel)}
-                          rank={rank}
-                          accentColor={league.teamColor}
-                          onBack={() => setSelectedClub(null)}
-                          meldeliste={meldeliste}
-                          onOpenPlayer={onOpenPlayer}
-                          balanceOf={(name) => recentBalance(clubData, selectedClub, name)}
-                        />
+                        // -mx-3: die Kaderliste läuft bis an den Kartenrand, damit auf
+                        // dem Handy die Namen nicht abgeschnitten werden
+                        <div className="-mx-3">
+                          <TeamStatsDetail
+                            team={stats ?? emptyTeamStats(league.leagueName, selectedClub, league.teamLabel)}
+                            season={seasonId}
+                            rank={fresh ? undefined : rank}
+                            teamCount={league.entries.length}
+                            accentColor={league.teamColor}
+                            onBack={() => setSelectedClub(null)}
+                            meldeliste={meldeliste}
+                            onOpenPlayer={onOpenPlayer}
+                            clubData={clubData}
+                          />
+                        </div>
                       );
                     }
                     return (

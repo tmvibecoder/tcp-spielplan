@@ -68,6 +68,55 @@ export function recentBalance(club: ClubData | undefined, clubName: string, name
   return out;
 }
 
+/** Ergebnisse einer Saison in zeitlicher Reihenfolge (true = Sieg) — eine
+ *  Gruppe der Form-Punktreihe. */
+export interface FormGroup {
+  season: SeasonId;
+  results: boolean[];
+}
+
+/** Was die Kaderliste über eine Person zusätzlich zur Meldeliste zeigt. */
+export interface PlayerProfile {
+  /** false = keine Vereinsdaten zur Person (geschützte Einträge, noch nicht geladen) */
+  known: boolean;
+  balance: RecentBalance;
+  /** Matches der letzten 12 Monate, älteste zuerst, je Saison gruppiert */
+  form: FormGroup[];
+  /** Weitere Mannschaften desselben Vereins in dieser Saison */
+  otherTeams: string[];
+}
+
+/** Bilanz, Formverlauf und weitere Mannschaften einer Person — alles aus den
+ *  nachgeladenen Vereinsdaten, nichts geschätzt. `league` ist die gerade
+ *  gezeigte Gruppe; sie zählt nicht zu den „weiteren" Mannschaften. */
+export function playerProfile(
+  club: ClubData | undefined,
+  clubName: string,
+  name: string,
+  season: SeasonId,
+  league: string,
+  days = 365,
+  today = new Date(),
+): PlayerProfile {
+  const balance = recentBalance(club, clubName, name, days, today);
+  const p = findPlayer(club, clubName, name);
+  if (!p) return { known: false, balance, form: [], otherTeams: [] };
+  const cutoff = new Date(today.getTime() - days * 86400000).toISOString().slice(0, 10);
+  const recent = p.appearances
+    .filter((a) => a.date && a.date >= cutoff)
+    .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? "") || (a.type === b.type ? a.position - b.position : a.type === "singles" ? -1 : 1));
+  const form: FormGroup[] = [];
+  for (const a of recent) {
+    const last = form[form.length - 1];
+    if (last && last.season === a.season) last.results.push(a.won);
+    else form.push({ season: a.season, results: [a.won] });
+  }
+  const otherTeams = [...new Set(
+    p.teams.filter((t) => t.season === season && t.league !== league).map((t) => t.teamLabel || t.league),
+  )];
+  return { known: true, balance, form, otherTeams };
+}
+
 // ── Suche ───────────────────────────────────────────────────────────────────
 
 const fold = (s: string) =>

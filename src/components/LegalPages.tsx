@@ -4,7 +4,8 @@ interface LegalPageProps {
   onBack: () => void;
 }
 
-// Impressum und Datenschutzerklärung — Stand 09.10.2026 nach der DSGVO-Prüfung.
+// Impressum und Datenschutzerklärung — Stand 09.10.2026 nach der DSGVO-Prüfung,
+// am 24.11.2026 um den Vereinskader ergänzt (Abschnitte 5 und 6).
 // Was hier steht, muss zur Technik passen: keine Google Fonts mehr (selbst
 // gehostet), Live-Zwischenstände (Supabase) standardmäßig aus, Spielerdaten aus
 // dem BTV-Spielbetrieb mit Schutz für Minderjährige (scripts/schutz.mjs) und
@@ -134,7 +135,9 @@ export function Datenschutz({ onBack }: LegalPageProps) {
           die der Bayerische Tennis-Verband (BTV) in nuLiga öffentlich veröffentlicht. Zu Spielerinnen und Spielern
           werden verarbeitet: Name, Verein und Mannschaft, Leistungsklasse (LK), Meldeposition sowie Ergebnisse der
           Einzel und Doppel. Für die eigenen Mannschaften des TC Pliening zusätzlich das Geburtsjahr laut
-          Meldeliste. Nationalitätsangaben werden nicht übernommen.
+          Meldeliste. Nationalitätsangaben werden nicht übernommen. Der „Vereinskader" stellt für die
+          Erwachsenen-Mannschaften des TC Pliening nebeneinander, wer in welcher Mannschaft auf welchem Rang
+          gemeldet ist — er zeigt dieselben Angaben der Meldelisten, keine zusätzlichen Daten.
         </p>
         <p className="mt-2">
           <strong className="text-slate-100">Zweck:</strong> Vorbereitung auf Begegnungen (Aufstellungen,
@@ -156,7 +159,8 @@ export function Datenschutz({ onBack }: LegalPageProps) {
         <p>
           Personen, die laut Meldeliste im laufenden Jahr 18 oder jünger sind, sowie alle Teilnehmer von
           Jugendkonkurrenzen erscheinen in dieser App nur mit Initialen (z. B. „B., S."), ohne Geburtsjahr und ohne
-          Nationalität. Sie sind nicht über die Suche auffindbar und haben keine Spielerhistorie. Ihre Ergebnisse
+          Nationalität. Sie sind nicht über die Suche auffindbar, haben keine Spielerhistorie und erscheinen
+          nicht im Vereinskader. Ihre Ergebnisse
           bleiben in den Spielberichten enthalten, weil sonst das Mannschaftsergebnis nicht nachvollziehbar wäre.
         </p>
       </section>
@@ -218,7 +222,7 @@ export function Datenschutz({ onBack }: LegalPageProps) {
       <section>
         <H2>11. Stand</H2>
         <p>
-          Diese Erklärung hat den Stand 9. Oktober 2026. Sie wird angepasst, wenn sich die Technik der App oder die
+          Diese Erklärung hat den Stand 24. November 2026. Sie wird angepasst, wenn sich die Technik der App oder die
           Rechtslage ändert.
         </p>
       </section>

@@ -1,4 +1,4 @@
-import type { IndividualMatch } from "../types";
+import type { IndividualMatch, MeldelistenEintrag } from "../types";
 import type { GroupData } from "./data-format";
 import { normalizePlayerName } from "./player-key";
 import { parsePlayer, parseSide } from "../utils/spielbericht";
@@ -12,6 +12,8 @@ import { parsePlayer, parseSide } from "../utils/spielbericht";
 export interface PlayerAppearance {
   opponentClub: string;
   date?: string;
+  /** Index der Begegnung in TeamStats.meetings (für die Einsatz-Matrix) */
+  meeting: number;
   position: number;
   opponent: string;   // Einzel: Gegnername · Doppel: "A / B" (Nachnamen)
   opponentLk: string; // LK des Gegners (Einzel); Doppel ohne LK (nuLiga weist sie nicht aus)
@@ -23,6 +25,8 @@ export interface PlayerAppearance {
 export interface PlayerStat {
   name: string;
   lk: string;
+  /** Meldeposition laut Spielbericht (steht nur bei Einzeln dabei) */
+  rang?: number;
   singles: PlayerAppearance[];
   doubles: PlayerAppearance[]; // Doppel-Einsätze desselben Spielers (voller Name)
 }
@@ -32,10 +36,22 @@ export interface DoublesStat {
   appearances: PlayerAppearance[];
 }
 
+/** Eine gespielte Begegnung der Mannschaft — Spalte der Einsatz-Matrix. */
+export interface TeamMeeting {
+  date?: string;
+  opponentClub: string;
+  isHome: boolean;
+  /** Matchpunkte aus Sicht der Mannschaft */
+  own: number;
+  opp: number;
+}
+
 export interface TeamStats {
   club: string;
   teamLabel: string;
   leagueName: string;
+  /** Gespielte Begegnungen, älteste zuerst */
+  meetings: TeamMeeting[];
   players: PlayerStat[];
   doubles: DoublesStat[];
 }
@@ -60,15 +76,26 @@ function scoreFromSide(im: IndividualMatch, side: "home" | "away"): string {
 /** Baut die Spieler-Statistik einer Mannschaft aus allen Spielberichten der Konkurrenz. */
 export function getTeamStats(group: GroupData | undefined, club: string): TeamStats | undefined {
   const leagueName = group?.league ?? "";
-  const reports = (group?.reports ?? []).filter((b) => b.homeClub === club || b.awayClub === club);
+  const reports = (group?.reports ?? [])
+    .filter((b) => b.homeClub === club || b.awayClub === club)
+    .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
   if (reports.length === 0) return undefined;
 
   const playersMap = new Map<string, PlayerStat>();
   const doublesMap = new Map<string, DoublesStat>();
+  const meetings: TeamMeeting[] = [];
 
   for (const b of reports) {
     const side: "home" | "away" = b.homeClub === club ? "home" : "away";
     const opponentClub = side === "home" ? b.awayClub : b.homeClub;
+    const meeting = meetings.length;
+    meetings.push({
+      date: b.date,
+      opponentClub,
+      isHome: side === "home",
+      own: side === "home" ? b.finalHome : b.finalAway,
+      opp: side === "home" ? b.finalAway : b.finalHome,
+    });
 
     for (const im of b.matches) {
       const ourRaw = side === "home" ? im.home_player : im.away_player;
@@ -86,9 +113,11 @@ export function getTeamStats(group: GroupData | undefined, club: string): TeamSt
           playersMap.set(ours.name, ps);
         }
         if (!ps.lk && ours.lk) ps.lk = ours.lk;
+        if (ps.rang === undefined && ours.meldeposition) ps.rang = Number(ours.meldeposition);
         ps.singles.push({
           opponentClub,
           date: b.date,
+          meeting,
           position: im.position,
           opponent: opp.name,
           opponentLk: opp.lk,
@@ -108,6 +137,7 @@ export function getTeamStats(group: GroupData | undefined, club: string): TeamSt
         const appearance: PlayerAppearance = {
           opponentClub,
           date: b.date,
+          meeting,
           position: im.position,
           opponent: oppPair.join(" / "),
           opponentLk: "",
@@ -141,6 +171,7 @@ export function getTeamStats(group: GroupData | undefined, club: string): TeamSt
     club,
     teamLabel,
     leagueName,
+    meetings,
     players: [...playersMap.values()],
     doubles: [...doublesMap.values()],
   };
@@ -148,7 +179,7 @@ export function getTeamStats(group: GroupData | undefined, club: string): TeamSt
 
 /** Leere Team-Statistik — für Mannschaften mit Meldeliste, aber (noch) ohne Spielberichte. */
 export function emptyTeamStats(leagueName: string, club: string, teamLabel = club): TeamStats {
-  return { club, teamLabel, leagueName, players: [], doubles: [] };
+  return { club, teamLabel, leagueName, meetings: [], players: [], doubles: [] };
 }
 
 /** Spielbericht-Namen auf Meldelisten-Form bringen: Walkover-Vermerk und
@@ -162,6 +193,8 @@ export { normalizePlayerName };
 export interface PlayerAgg {
   name: string;
   lk: string;
+  /** Meldeposition laut Spielbericht, sofern ein Einzel gespielt wurde */
+  rang?: number;
   matches: number; // Einzel-Einsätze
   wins: number;
   losses: number;
@@ -187,6 +220,7 @@ export function aggregatePlayers(team: TeamStats): PlayerAgg[] {
       return {
         name: p.name,
         lk: p.lk,
+        rang: p.rang,
         matches,
         wins,
         losses: matches - wins,
@@ -205,6 +239,67 @@ export function aggregatePlayers(team: TeamStats): PlayerAgg[] {
       };
     })
     .sort((a, b) => a.avgPosition - b.avgPosition || a.name.localeCompare(b.name));
+}
+
+/** Bilanzen je Person über den normalisierten Namen (ohne Länderkürzel und
+ *  „(w.o.)") — so passen sie an die Meldeliste. Derselbe Spieler kann in den
+ *  Berichten mehrfach auftauchen (mit und ohne Vermerk): zusammenführen. */
+export function aggregateByName(team: TeamStats): Map<string, PlayerAgg> {
+  const byName = new Map<string, PlayerAgg>();
+  for (const p of aggregatePlayers(team)) {
+    const key = normalizePlayerName(p.name);
+    const prev = byName.get(key);
+    if (!prev) {
+      byName.set(key, { ...p, name: key });
+      continue;
+    }
+    const singles = [...prev.singles, ...p.singles];
+    const doubles = [...prev.doubles, ...p.doubles];
+    byName.set(key, {
+      ...prev,
+      lk: prev.lk || p.lk,
+      rang: prev.rang ?? p.rang,
+      matches: singles.length,
+      wins: singles.filter((s) => s.won).length,
+      losses: singles.filter((s) => !s.won).length,
+      avgPosition: singles.length ? singles.reduce((sum, s) => sum + s.position, 0) / singles.length : 99,
+      singles,
+      doublesMatches: doubles.length,
+      doublesWins: doubles.filter((d) => d.won).length,
+      doublesLosses: doubles.filter((d) => !d.won).length,
+      doubles,
+    });
+  }
+  return byName;
+}
+
+/** Ordnet die Bilanzen den Einträgen einer Meldeliste zu — je Person höchstens
+ *  einem Eintrag. Nötig, weil Namen in einer Liste doppelt vorkommen können:
+ *  geschützte Einträge tragen nur Initialen („W., L." auf Rang 2 und Rang 9),
+ *  und bis 24.11.2026 bekamen dann beide dieselben Einsätze zugeschrieben. Bei
+ *  doppelten Namen entscheidet die Meldeposition aus dem Spielbericht; fehlt
+ *  sie (nur Doppel gespielt), gilt der zuerst gemeldete Eintrag.
+ *  Rückgabe: Bilanz je Eintrag, in der Reihenfolge von `entries`. */
+export function assignToRoster(entries: MeldelistenEintrag[], byName: Map<string, PlayerAgg>): (PlayerAgg | undefined)[] {
+  const out: (PlayerAgg | undefined)[] = entries.map(() => undefined);
+  const taken = new Set<string>();
+  // 1. Durchgang: Name und Meldeposition stimmen überein
+  entries.forEach((e, i) => {
+    const agg = byName.get(e.name);
+    if (agg && !taken.has(e.name) && agg.rang === e.rang) {
+      out[i] = agg;
+      taken.add(e.name);
+    }
+  });
+  // 2. Durchgang: Rest dem zuerst gemeldeten Eintrag mit diesem Namen
+  entries.forEach((e, i) => {
+    const agg = byName.get(e.name);
+    if (agg && !taken.has(e.name)) {
+      out[i] = agg;
+      taken.add(e.name);
+    }
+  });
+  return out;
 }
 
 export interface DoublesAgg {
