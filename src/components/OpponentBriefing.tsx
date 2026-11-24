@@ -1,15 +1,21 @@
-import { useState } from "react";
-import type { MeldelistenEintrag, SeasonId } from "../types";
+import { useState, type CSSProperties, type ReactNode } from "react";
+import type { SeasonId } from "../types";
 import { getMeldeliste } from "../data/meldelisten";
-import { getTeamSeason, playerKey, recentBalance, type LineupSlot, type MeetingSummary, type RecentBalance, type TeamPlayerUsage } from "../data/player-history";
+import { getTeamSeason, playerKey, type LineupSlot, type MeetingSummary } from "../data/player-history";
+import { emptyTeamStats, getTeamStats } from "../data/player-stats";
+import { clubShort, rosterEntries } from "../data/kader";
 import { useClub, useGroup } from "../data/store";
 import { ALL_SEASONS } from "../data/seasons";
-import LkBadge, { Bilanz12, Jahrgang } from "./LkBadge";
+import LkBadge from "./LkBadge";
+import KaderVergleich from "./KaderVergleich";
+import { LkDuel } from "./LkProfile";
+import RosterTable from "./RosterTable";
 import SpielberichtDrawer from "./SpielberichtDrawer";
 import type { Spielbericht } from "../utils/spielbericht";
 
 // Gegnerbriefing zu einer TCP-Begegnung: was über den Gegner in der LAUFENDEN
-// Saison belegt ist — Meldeliste mit Einsatzhäufigkeit, tatsächliche
+// Saison belegt ist — Kader-Vergleich (beide Meldelisten Kopf an Kopf, seit
+// 24.11.2026; die vollständigen Listen sind eingeklappt), tatsächliche
 // Aufstellungen (auch unsere), bisherige Ergebnisse. Keine Prognosen.
 // Farben aus Sicht der jeweils gezeigten Mannschaft (Gegner-Block = Gegnersicht,
 // „Unsere Aufstellungen" = Pliening-Sicht). Wird per React.lazy geladen.
@@ -24,7 +30,7 @@ interface Props {
   onOpenPlayer?: (key: string) => void;
 }
 
-type Tab = "meldeliste" | "aufstellungen" | "ergebnisse";
+type Tab = "kader" | "aufstellungen" | "ergebnisse";
 
 const seasonLabel = (id: SeasonId) => ALL_SEASONS.find((s) => s.id === id)?.label ?? id;
 
@@ -85,179 +91,59 @@ function Lineup({ m, club, onOpenPlayer, onOpen }: { m: MeetingSummary; club: st
   );
 }
 
-function usageText(u: TeamPlayerUsage | undefined): string {
-  if (!u || (!u.singles && !u.doubles)) return "ohne Einsatz";
-  const parts: string[] = [];
-  if (u.singles) {
-    const pos = [...new Set(u.singlesPositions)].sort((a, b) => a - b);
-    const range = pos.length === 1 ? `E${pos[0]}` : `E${pos[0]}–E${pos[pos.length - 1]}`;
-    parts.push(`${u.singles}× Einzel · ${range}`);
-  }
-  if (u.doubles) {
-    const partners = [...u.partners.entries()].sort((a, b) => b[1] - a[1]).map(([n]) => n.split(",")[0]);
-    parts.push(`${u.doubles}× Doppel${partners.length ? " mit " + partners.slice(0, 3).join(", ") : ""}`);
-  }
-  return parts.join(" · ");
-}
-
-/** Namentliche Meldeliste einer Mannschaft in der laufenden Saison: Rang, Name,
- *  aktuelle LK, Jahrgang und (sofern belegt) Einsätze und Bilanz. Gemeinsame
- *  Darstellung für Gegner- und eigene Meldeliste. */
-export function RosterList({
-  club,
-  rows,
-  usage,
-  accentColor,
-  onOpenPlayer,
-  balanceOf,
-}: {
-  club: string;
-  rows: MeldelistenEintrag[];
-  usage: Map<string, TeamPlayerUsage>;
-  accentColor: string;
-  onOpenPlayer?: (key: string) => void;
-  /** 12-Monats-Bilanz je Spieler aus den nachgeladenen Vereinsdaten */
-  balanceOf: (name: string) => RecentBalance;
-}) {
-  // Eingesetzte Spieler ohne Meldelisten-Eintrag (Ersatz aus anderen Mannschaften)
-  const extra = [...usage.values()].filter((u) => !rows.some((r) => r.name === u.name));
-
-  if (rows.length === 0 && extra.length === 0) {
-    return (
-      <p className="rounded-lg border border-slate-700/50 bg-slate-800/30 px-3 py-3 text-center text-[12px] text-slate-400">
-        Für {club} ist in dieser Saison noch keine Meldeliste erfasst.
-      </p>
-    );
-  }
+/** Eingeklappte vollständige Meldeliste (Gegner bzw. eigene Mannschaft). */
+function FullRoster({ title, count, children }: { title: string; count: number; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="space-y-1">
-      {rows.map((e) => {
-        const u = usage.get(e.name);
-        const played = !!u && (u.singles > 0 || u.doubles > 0);
-        return (
-          <button
-            key={`${e.rang}-${e.name}`}
-            type="button"
-            onClick={onOpenPlayer ? () => onOpenPlayer(playerKey(club, e.name)) : undefined}
-            className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left ${played ? "border-slate-700/50 bg-slate-800/30 hover:bg-slate-700/30" : "border-slate-700/30 bg-slate-800/10 opacity-70"}`}
-          >
-            <span className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-md text-[11px] font-extrabold" style={{ backgroundColor: accentColor + "22", color: accentColor }}>
-              {e.rang}
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="flex items-center gap-1.5">
-                <span className={`truncate text-[13px] font-bold ${played ? "text-slate-100" : "text-slate-400"}`}>{e.name}</span>
-                {/* Meldelisten-LK = aktuelle LK beim letzten Wecker-Lauf; die LK aus dem
-                    Spielbericht ist nur der Stand des Spieltags und dient als Rückfall */}
-                <LkBadge lk={e.lk || u?.lk || ""} tone={played ? "own" : "muted"} />
-                <Jahrgang jahrgang={e.jahrgang} />
-                {e.nation && <span className="shrink-0 text-[9px] font-bold text-slate-500">{e.nation}</span>}
-              </span>
-              {/* zweite Zeile: Einsätze dieser Saison, daneben die 12-Monats-Bilanz —
-                  bewusst nicht in der Namenszeile, sonst werden Namen auf dem Handy abgeschnitten */}
-              <span className="mt-0.5 flex items-center gap-1.5">
-                <span className="min-w-0 truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
-                <Bilanz12 {...balanceOf(e.name)} />
-              </span>
-            </span>
-            {played && u && (
-              <span className="shrink-0 text-[11px] font-bold tabular-nums" title="Bilanz in dieser Saison">
-                <span className="text-emerald-400">{u.singlesWins + u.doublesWins}</span>
-                <span className="text-slate-500">:</span>
-                <span className="text-red-400">{u.singles + u.doubles - u.singlesWins - u.doublesWins}</span>
-              </span>
-            )}
-          </button>
-        );
-      })}
-      {extra.length > 0 && (
-        <>
-          <p className="px-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">Weitere Einsätze</p>
-          {extra.map((u) => (
-            <button
-              key={u.name}
-              type="button"
-              onClick={onOpenPlayer ? () => onOpenPlayer(playerKey(club, u.name)) : undefined}
-              className="flex w-full items-center gap-2 rounded-lg border border-slate-700/50 bg-slate-800/30 px-2.5 py-1.5 text-left hover:bg-slate-700/30"
-            >
-              <span className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-md bg-slate-700/40 text-[11px] font-extrabold text-slate-400">–</span>
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-1.5">
-                  <span className="truncate text-[13px] font-bold text-slate-100">{u.name}</span>
-                  <LkBadge lk={u.lk} tone="own" />
-                </span>
-                <span className="mt-0.5 flex items-center gap-1.5">
-                  <span className="min-w-0 truncate text-[10.5px] text-slate-400">{usageText(u)}</span>
-                  <Bilanz12 {...balanceOf(u.name)} />
-                </span>
-              </span>
-            </button>
-          ))}
-        </>
-      )}
-    </div>
-  );
-}
-
-/** Eigene Meldeliste zur Begegnung: dieselbe Liste wie im Gegnerbriefing, aber
- *  für die TCP-Mannschaft — wer ist auf welchem Rang gemeldet, mit welcher LK
- *  und welchem Jahrgang (Auftraggeber-Wunsch 02.10.2026). Einklappbar, weil die
- *  Winter-Meldelisten bis zu 35 Namen lang sind. */
-export function OwnRoster({ season, league, teamLabel, accentColor, ownClub, onOpenPlayer }: Omit<Props, "opponentClub">) {
-  const [open, setOpen] = useState(true);
-  const { data: group } = useGroup(season, league);
-  const { data: ownData } = useClub(ownClub);
-  const own = getTeamSeason(group, ownClub);
-  const roster = getMeldeliste(group, ownClub);
-  const rows = roster ? [...roster.herren, ...roster.damen] : [];
-  const balanceOf = (name: string) => recentBalance(ownData, ownClub, name);
-  return (
-    <div className="mt-3 rounded-lg border border-emerald-500/25 bg-slate-900/70 p-2.5">
-      <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-baseline justify-between gap-2 text-left">
-        <p className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-300">
-          🏠 Unsere Meldeliste · {teamLabel}
-          {rows.length > 0 && <span className="ml-1.5 font-semibold normal-case tracking-normal text-slate-400">{rows.length} gemeldet</span>}
-        </p>
-        <span className="shrink-0 text-[10px] text-slate-500">{seasonLabel(season)} {open ? "▲" : "▼"}</span>
+    <div className="-mx-2.5 border-y border-slate-500/30 bg-slate-800/40">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className="flex h-12 w-full items-center gap-2 px-3 text-left active:bg-slate-700/40"
+      >
+        <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-slate-100">{title}</span>
+        <span className="shrink-0 text-[12px] tabular-nums text-slate-400">{count} gemeldet</span>
+        <span className="w-2.5 shrink-0 text-center text-[10px] text-slate-400" aria-hidden="true">{open ? "▲" : "▼"}</span>
       </button>
-      {open && (
-        <div className="mt-2">
-          <RosterList club={ownClub} rows={rows} usage={own.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} balanceOf={balanceOf} />
-          <p className="mt-1.5 px-1 text-[10px] leading-snug text-slate-500">
-            Rang und LK laut BTV-Meldeliste beim letzten Abruf, Jahrgang laut Mannschaftsportrait. Bilanz nur aus Spielberichten dieser Saison.
-          </p>
-        </div>
-      )}
+      {open && <div className="border-t border-slate-500/30 pb-1 pt-2">{children}</div>}
     </div>
   );
 }
 
 export default function OpponentBriefing({ season, league, teamLabel, accentColor, opponentClub, ownClub, onOpenPlayer }: Props) {
-  const [tab, setTab] = useState<Tab>("meldeliste");
+  const [tab, setTab] = useState<Tab>("kader");
   const [open, setOpen] = useState<Spielbericht | null>(null);
 
-  // Gruppendatei (Berichte + Meldelisten) und Vereinsdaten des Gegners werden
+  // Gruppendatei (Berichte + Meldelisten) und Vereinsdaten beider Seiten werden
   // beim Aufklappen nachgeladen (public/data, seit 08.10.2026)
   const { data: group, loading } = useGroup(season, league);
   const { data: oppData } = useClub(opponentClub);
+  const { data: ownData } = useClub(ownClub);
   const opp = getTeamSeason(group, opponentClub);
   const own = getTeamSeason(group, ownClub);
-  const roster = getMeldeliste(group, opponentClub);
-  const rosterRows = roster ? [...roster.herren, ...roster.damen] : [];
-  const balanceOf = (name: string) => recentBalance(oppData, opponentClub, name);
+  const oppRoster = getMeldeliste(group, opponentClub);
+  const ownRoster = getMeldeliste(group, ownClub);
+  const oppRows = rosterEntries(oppRoster);
+  const ownRows = rosterEntries(ownRoster);
+  const oppStats = getTeamStats(group, opponentClub) ?? emptyTeamStats(league, opponentClub, teamLabel);
+  const ownStats = getTeamStats(group, ownClub) ?? emptyTeamStats(league, ownClub, teamLabel);
+  const openByName = onOpenPlayer ? (club: string, name: string) => onOpenPlayer(playerKey(club, name)) : undefined;
 
   const wins = opp.meetings.filter((m) => m.result.own > m.result.opp).length;
   const draws = opp.meetings.filter((m) => m.result.own === m.result.opp).length;
   const losses = opp.meetings.length - wins - draws;
 
   const tabs: [Tab, string][] = [
-    ["meldeliste", "Meldeliste"],
+    ["kader", "Kader"],
     ["aufstellungen", "Aufstellungen"],
     ["ergebnisse", "Ergebnisse"],
   ];
 
   return (
-    <div className="mt-3 rounded-lg border border-sky-500/25 bg-slate-900/70 p-2.5">
+    // -mx-3: das Briefing nutzt fast die ganze Breite der Begegnungskarte —
+    // sonst werden auf dem Handy die Namen im Kader-Vergleich abgeschnitten
+    <div className="-mx-3 mt-3 rounded-lg border border-sky-500/25 bg-slate-900/70 p-2.5" style={{ "--accent": accentColor } as CSSProperties}>
       <div className="flex items-baseline justify-between gap-2">
         <p className="text-[11px] font-extrabold uppercase tracking-wider text-sky-300">🎯 Gegnerbriefing {opponentClub}</p>
         <span className="text-[10px] text-slate-500">{seasonLabel(season)}</span>
@@ -268,7 +154,7 @@ export default function OpponentBriefing({ season, league, teamLabel, accentColo
             key={key}
             type="button"
             onClick={() => setTab(key)}
-            className={`flex-1 rounded-lg px-2 py-1.5 text-[12px] font-bold transition-colors ${tab === key ? "text-slate-900" : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/50"}`}
+            className={`h-10 flex-1 rounded-lg px-2 text-[13px] font-bold transition-colors ${tab === key ? "text-slate-900" : "bg-slate-800/60 text-slate-300 hover:bg-slate-700/50"}`}
             style={tab === key ? { backgroundColor: accentColor } : undefined}
           >
             {label}
@@ -276,17 +162,37 @@ export default function OpponentBriefing({ season, league, teamLabel, accentColo
         ))}
       </div>
 
-      {tab === "meldeliste" && (
-        <div>
-          {loading && rosterRows.length === 0 ? (
-            <p className="rounded-lg border border-slate-700/50 bg-slate-800/30 px-3 py-3 text-center text-[12px] text-slate-500">Meldeliste wird geladen …</p>
-          ) : (
-            <RosterList club={opponentClub} rows={rosterRows} usage={opp.usage} accentColor={accentColor} onOpenPlayer={onOpenPlayer} balanceOf={balanceOf} />
-          )}
-          <p className="mt-1.5 px-1 text-[10px] leading-snug text-slate-500">
-            Bilanz aus Sicht von {opponentClub}. Nur belegte Einsätze aus Spielberichten dieser Saison — keine Prognose.
-          </p>
-        </div>
+      {tab === "kader" && (
+        loading && oppRows.length === 0 && ownRows.length === 0 ? (
+          <p className="rounded-lg border border-slate-700/50 bg-slate-800/30 px-3 py-3 text-center text-[12px] text-slate-400">Meldelisten werden geladen …</p>
+        ) : (
+          <div className="space-y-3">
+            <KaderVergleich
+              ownClub={ownClub}
+              oppClub={opponentClub}
+              ownRoster={ownRoster}
+              oppRoster={oppRoster}
+              ownData={ownData}
+              oppData={oppData}
+              onOpenPlayer={onOpenPlayer}
+            />
+            {oppRows.length > 0 && ownRows.length > 0 && (
+              <LkDuel own={ownRows} opp={oppRows} ownLabel={clubShort(ownClub)} oppLabel={clubShort(opponentClub)} />
+            )}
+            <div className="space-y-2.5">
+              <FullRoster title={`Ganze Meldeliste ${opponentClub}`} count={oppRows.length}>
+                <RosterTable team={oppStats} meldeliste={oppRoster} clubData={oppData} season={season} onOpenPlayer={openByName} />
+              </FullRoster>
+              <FullRoster title={`Unsere Meldeliste · ${teamLabel}`} count={ownRows.length}>
+                <RosterTable team={ownStats} meldeliste={ownRoster} clubData={ownData} season={season} onOpenPlayer={openByName} />
+              </FullRoster>
+            </div>
+            <p className="px-1 text-[11px] leading-snug text-slate-400">
+              Rang und LK laut BTV-Meldeliste beim letzten Abruf, Bilanz aus erfassten Spielberichten der letzten 12 Monate —
+              keine Aufstellungsprognose.
+            </p>
+          </div>
+        )
       )}
 
       {tab === "aufstellungen" && (

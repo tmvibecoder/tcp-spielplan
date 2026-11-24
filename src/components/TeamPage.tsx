@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import type { TeamHit } from "../data/player-history";
-import { recentBalance } from "../data/player-history";
 import { getMeldeliste } from "../data/meldelisten";
 import { getTeamStats, emptyTeamStats } from "../data/player-stats";
 import { ALL_SEASONS } from "../data/seasons";
@@ -43,14 +42,14 @@ export default function TeamPage({ hit, onBack, onOpenPlayer }: Props) {
   return (
     <div>
       {seasons.length > 1 && (
-        <div className="mb-2 flex flex-wrap gap-1 px-1">
+        <div className="mb-2.5 flex flex-wrap gap-1.5">
           {seasons.map((s) => (
             <button
               key={s.id}
               type="button"
               onClick={() => setSeason(s.id)}
-              className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${
-                s.id === season ? "border-sky-400/60 bg-sky-500/15 text-sky-200" : "border-slate-600/60 bg-slate-800/50 text-slate-400"
+              className={`rounded-full border px-3 py-1.5 text-[12px] font-bold ${
+                s.id === season ? "border-sky-400/60 bg-sky-500/15 text-sky-200" : "border-slate-600/60 bg-slate-800/50 text-slate-300"
               }`}
             >
               {s.icon} {s.shortLabel}
@@ -59,16 +58,19 @@ export default function TeamPage({ hit, onBack, onOpenPlayer }: Props) {
         </div>
       )}
       {stats || meldeliste ? (
-        <TeamStatsDetail
-          key={season}
-          team={stats ?? emptyTeamStats(league, hit.club, hit.teamLabel)}
-          accentColor={/^Damen|^Juniorinnen/.test(hit.teamLabel) ? "#fbbf24" : /^Mixed/.test(hit.teamLabel) ? "#a855f7" : "#38bdf8"}
-          onBack={onBack}
-          backLabel="Suche"
-          meldeliste={meldeliste}
-          onOpenPlayer={onOpenPlayer}
-          balanceOf={(name) => recentBalance(clubData, hit.club, name)}
-        />
+        <div className="-mx-3">
+          <TeamStatsDetail
+            key={season}
+            team={stats ?? emptyTeamStats(league, hit.club, hit.teamLabel)}
+            season={season}
+            accentColor={/^Damen|^Juniorinnen/.test(hit.teamLabel) ? "#fbbf24" : /^Mixed/.test(hit.teamLabel) ? "#a855f7" : "#38bdf8"}
+            onBack={onBack}
+            backLabel="Suche"
+            meldeliste={meldeliste}
+            onOpenPlayer={onOpenPlayer}
+            clubData={clubData}
+          />
+        </div>
       ) : (
         <div className="px-1">
           <button type="button" onClick={onBack} className="mb-3 rounded-lg border border-slate-600/50 bg-slate-800/60 px-2.5 py-1.5 text-xs font-semibold text-sky-300">

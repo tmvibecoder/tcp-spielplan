@@ -84,6 +84,33 @@ export function useGroup(season: SeasonId, league: string | null): Loaded<GroupD
   return useLoaded<GroupData>(path, league ? () => loadGroup(season, league) : null);
 }
 
+/** Mehrere Gruppen einer Saison auf einmal (Vereinskader: die Meldelisten aller
+ *  eigenen Mannschaften). Sind alle schon geladen, stehen sie beim ersten Rendern
+ *  bereit — sonst ginge beim „Zurück" die gemerkte Scrollposition verloren. */
+export function useGroups(season: SeasonId, leagues: string[]): Loaded<GroupData[]> {
+  const key = `${season}|${leagues.join("|")}`;
+  const ready = (): GroupData[] | undefined => {
+    const hits = leagues.map((l) => peek<GroupData>(groupPath(season, l)));
+    return hits.every(Boolean) ? (hits as GroupData[]) : undefined;
+  };
+  const [state, setState] = useState<Loaded<GroupData[]> & { key: string }>(() => {
+    const data = ready();
+    return { data, loading: !data, error: null, key };
+  });
+  useEffect(() => {
+    let alive = true;
+    Promise.all(leagues.map((l) => loadGroup(season, l))).then(
+      (data) => { if (alive) setState({ data, loading: false, error: null, key }); },
+      (e) => { if (alive) setState({ data: undefined, loading: false, error: String(e?.message ?? e), key }); },
+    );
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  if (state.key === key) return state;
+  const data = ready();
+  return { data, loading: !data, error: null };
+}
+
 /** Alle Personen eines Vereins mit ihren Einsätzen (alle Saisons). */
 export function useClub(club: string | null): Loaded<ClubData> {
   const path = club ? clubPath(baseClub(club)) : null;

@@ -269,7 +269,7 @@ Gegnerbriefing", ARCHITEKTUR Abschnitt 13).
 
 **Gegnerbriefing.**
 Der Block in der aufgeklappten TCP-Begegnung im Spielplan, der vor dem Spieltag zeigt, **was über
-den Gegner belegt ist**: Meldeliste mit Einsatzhäufigkeit, tatsächliche Aufstellungen, bisherige
+den Gegner belegt ist**: Kader-Vergleich beider Meldelisten, tatsächliche Aufstellungen, bisherige
 Ergebnisse — plus unsere eigenen bisherigen Aufstellungen, alles aus der **laufenden Saison** und
 mit **LK an jedem Namen**. **Keine Prognose:** Es steht nur darin, was in einem Spielbericht steht.
 
@@ -284,6 +284,29 @@ Mannschaft desselben Vereins gehören zu einer Person (die Mannschaftsziffer zä
 Wie oft ein Spieler in der laufenden Runde eingesetzt wurde, getrennt nach Einzel und Doppel, und
 auf welchen **Positionen** (z. B. „3× Einzel · Pos 1–2 · 2× Doppel"). Reine Zählung aus
 Spielberichten, keine Bewertung.
+
+**Kaderliste.**
+Die kompakte Darstellung einer Meldeliste (seit 24.11.2026 überall dieselbe): Rang, Name, LK und
+die Bilanz der letzten 12 Monate als feste Spalten; wer in der laufenden Saison gespielt hat, ist
+farbig hinterlegt. Antippen zeigt die einzelnen Matches und den Formverlauf.
+
+**LK-Profil.**
+Kleine Grafik über der Kaderliste: wie viele Gemeldete auf welcher LK-Stufe stehen (ein Punkt je
+Person, große Listen als Säulen). Im Gegnerbriefing gespiegelt für beide Mannschaften.
+
+**Einsatz-Matrix.**
+Reiter „Einsätze" der Mannschaftsseite: Zeilen = eingesetzte Personen, Spalten = Spieltage. Die
+Kachel zeigt die **Position** (E = Einzel, D = Doppel), gefüllt grün = Sieg, rot umrandet =
+Niederlage.
+
+**Kader-Vergleich.**
+Im Gegnerbriefing: die oberen Ränge beider Meldelisten Kopf an Kopf, LK gegen LK. „Nur Aktive"
+zeigt nur, wer in den letzten 12 Monaten ein erfasstes Match hat — ein Filter, **keine
+Aufstellungsprognose**.
+
+**Vereinskader.**
+Seite im ⋯-Menü: wer ist in welcher eigenen Erwachsenen-Mannschaft auf welchem Rang gemeldet.
+Geschützte Einträge (Initialen) erscheinen dort nicht.
 
 **Datenstand (Briefing-Lauf).**
 Datum **und Uhrzeit** des letzten Einlesens der BTV-Berichte einer Gruppe, plus der **nächste
