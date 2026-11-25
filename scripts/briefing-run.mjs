@@ -11,9 +11,11 @@
 //   node scripts/briefing-run.mjs --force       # alle Gruppen mit Begegnungen ab heute einlesen
 //   node scripts/briefing-run.mjs --stand-only  # nur src/data/data-stand.ts neu schreiben
 //
-// Zeit: alles in Europe/Berlin. Der Workflow feuert um 23:00 UND 00:00 UTC;
-// bei einem Cron-Lauf arbeitet das Skript nur, wenn es in Berlin 01 Uhr ist
-// (sonst Exit 0 ohne Wirkung) — so stimmt die Uhrzeit in Sommer- und Winterzeit.
+// Zeit: alles in Europe/Berlin. Der Workflow feuert um 23:00 UND 00:00 UTC.
+// Ein Cron-Lauf arbeitet ab 01 Uhr Berlin, aber höchstens einmal je Tag
+// (Datenstand von heute → Exit 0 ohne Wirkung). Seit 25.11.2026: GitHub startet
+// geplante Läufe oft Stunden zu spät; die frühere Regel „nur genau 01 Uhr" hat
+// dadurch vom 14.10. bis 25.11.2026 jeden Lauf leer enden lassen.
 //
 // Ausgabe für den Workflow (GITHUB_OUTPUT): ran=true|false, scope=<Text>.
 
@@ -64,12 +66,23 @@ function output(kv) {
   if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, lines.join("\n") + "\n");
 }
 
-// Cron-Lauf nur zur Berliner Stunde RUN_HOUR (beide UTC-Crons treffen je nach
-// Sommer-/Winterzeit einmal daneben).
-if (process.env.GITHUB_EVENT_NAME === "schedule" && now.hour !== RUN_HOUR && !FORCE) {
-  console.log(`Berlin ${now.iso}: nicht ${RUN_HOUR} Uhr — dieser Cron-Lauf tut nichts.`);
-  output({ ran: false, scope: "" });
-  process.exit(0);
+// Cron-Lauf: frühestens zur Berliner Stunde RUN_HOUR (der Winter-Cron um 23:00
+// UTC landet pünktlich um 00 Uhr — dann wartet er auf den zweiten Cron) und nur
+// einmal je Berliner Tag. Verspätete Läufe (GitHub verschiebt oft um Stunden)
+// arbeiten trotzdem; der jeweils zweite Lauf des Tages erkennt am Datenstand,
+// dass heute schon eingelesen wurde.
+if (process.env.GITHUB_EVENT_NAME === "schedule" && !FORCE) {
+  if (now.hour < RUN_HOUR) {
+    console.log(`Berlin ${now.iso}: vor ${RUN_HOUR} Uhr — dieser Cron-Lauf tut nichts.`);
+    output({ ran: false, scope: "" });
+    process.exit(0);
+  }
+  const lastCrawl = (readFileIfExists("src/data/data-stand.ts") ?? "").match(/crawledAt:\s*"(\d{4}-\d{2}-\d{2})/)?.[1];
+  if (lastCrawl === now.date) {
+    console.log(`Berlin ${now.iso}: heute (${lastCrawl}) schon eingelesen — dieser Cron-Lauf tut nichts.`);
+    output({ ran: false, scope: "" });
+    process.exit(0);
+  }
 }
 
 // ── Saison und TCP-Begegnungen ───────────────────────────────────────────────

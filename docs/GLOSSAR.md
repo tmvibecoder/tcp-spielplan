@@ -330,7 +330,7 @@ Seite ist. Zeilen gegen Pliening tragen in der Historie eine „TCP"-Marke — r
 
 **Briefing-Lauf / Wecker.**
 Der automatische Lauf (`scripts/briefing-run.mjs`, `.github/workflows/briefing.yml`): täglich
-01:00 Uhr Berlin prüfen, ob eine TCP-Begegnung in 7, 4 oder 0 Tagen liegt; wenn ja, Spielberichte
+ab 01:00 Uhr Berlin (einmal je Tag) prüfen, ob eine TCP-Begegnung in 7, 4 oder 0 Tagen liegt; wenn ja, Spielberichte
 und Meldelisten der Gruppe neu einlesen, Tabellen/Begegnungen generieren, prüfen, als Bot-PR
 mergen, Deploy anstoßen; bei Fehlschlag E-Mail. Aktiv seit 10.09.2026.
 
