@@ -13,7 +13,7 @@ export interface DataStand {
 }
 
 export const DATA_STAND: DataStand = {
-  crawledAt: "2026-10-06T23:45:00+02:00",
-  scope: "Vorsaisons aller 34 Gegner der Winterrunde 2026/27 (133 Gegner-Gruppen aus Winter 2024/25, Sommer 2025, Winter 2025/26 und Sommer 2026: Spielberichte und Meldelisten); Meldelisten Winter 2026/27 vom 02.10.2026",
-  nextRun: {"at":"2026-10-10T01:00:00+02:00","reason":"Spieltag Herren 30 – TS Jahn München II"},
+  crawledAt: "2026-11-25T21:39:09+01:00",
+  scope: "Herren 40, Herren 50, Herren 30, Herren 30 II, Damen, Damen 40, Damen 50 (Winter 2026/27)",
+  nextRun: {"at":"2026-11-28T01:00:00+01:00","reason":"Spieltag Herren 40 – TC Grün-Weiß Gräfelfing"},
 };
