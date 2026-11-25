@@ -256,7 +256,7 @@ export function getTeamSeason(group: GroupData | undefined, club: string): TeamS
   const ml = g.rosters.find((m) => m.club === club);
   if (ml) {
     for (const e of [...ml.herren, ...ml.damen]) {
-      const u = usage.get(e.name);
+      const u = usage.get(normalizePlayerName(e.name));
       if (u && !u.lk) u.lk = e.lk;
     }
   }

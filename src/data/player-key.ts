@@ -5,13 +5,23 @@
 // TeamStatsDetail den Spielerindex importierte, landeten 3 MB Meldelisten im
 // Startbundle, weil player-history über App.tsx statisch erreichbar war.
 
-/** Namen aus Spielberichten normalisieren: „(w.o.)"-Zusatz und Länderkürzel
- *  („GER", „CRO*") hinter dem Namen entfernen. */
+/** Akademische Titel vor dem Namen („Dr. ", „Prof. Dr. ", „Dr. med. ", „Dipl. ",
+ *  „Mag. "). Die Meldelisten des BTV führen sie, die Spielberichte fast nie —
+ *  ohne diesen Schritt war „Dr. Schlüter, Thomas" (Meldeliste) eine andere
+ *  Person als „Schlüter, Thomas" (Spielbericht) und stand trotz 14 Siegen mit
+ *  „keine Matches" da (entdeckt 24.11.2026; betraf rund 5.300 Meldelisten-
+ *  Einträge). „v." (von) ist kein Titel und bleibt. */
+const TITLE_RE = /^(?:(?:Prof|Dr|Dipl|Mag|med)\.(?:-?\p{L}+\.)*\s+)+/u;
+
+/** Namen vergleichbar machen: akademischen Titel, „(w.o.)"-Zusatz und
+ *  Länderkürzel („GER", „CRO*") entfernen. Nur zum Zuordnen — angezeigt wird
+ *  in der Meldeliste weiterhin der Name, wie ihn der BTV führt. */
 export function normalizePlayerName(name: string): string {
   return name
     .replace(/\s*\(w\.o\.\)\s*$/i, "")
     .replace(/\s+[A-Z]{3}\*?$/, "")
-    .trim();
+    .trim()
+    .replace(TITLE_RE, "");
 }
 
 /** Verein ohne Mannschaftsziffer und Zusätze: „TC Pliening III" → „TC Pliening",

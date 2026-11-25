@@ -209,7 +209,9 @@ Spielterminen (`scripts/seasons.mjs`) und nennen beim Start, worauf sie wirken;
 | Cache-Buster der Datenanfragen | `src/data/data-version.ts` (**generiert**) |
 | Datenstand + nächster Wecker-Lauf (⋯-Menü) | `src/data/data-stand.ts` (**generiert** vom Wecker) |
 | Suche (Overlay), Spielerhistorie, Mannschaftsseite | `src/components/SearchOverlay.tsx`, `PlayerHistory.tsx`, `TeamPage.tsx` (alle lazy) |
-| Gegnerbriefing in der aufgeklappten Begegnung (Kader-Vergleich, Aufstellungen, Ergebnisse) | `src/components/OpponentBriefing.tsx` (lazy, aus `MatchDetail`), `KaderVergleich.tsx` |
+| Gegnerbriefing in der aufgeklappten Begegnung (Kader, Aufstellungen, Ergebnisse) | `src/components/OpponentBriefing.tsx` (lazy, aus `MatchDetail`) |
+| Kader im Gegnerbriefing: die 10 mit den meisten Spieltagen je Mannschaft (12 Monate) | `src/components/KaderAktiv.tsx`, Rechnung in `src/data/kader-aktiv.ts` |
+| Namen vergleichen (Titel, Länderkürzel, w.o.) und Spieler-Schlüssel | `src/data/player-key.ts` (`normalizePlayerName`, `playerKey`) — Generator **und** App |
 | **Kaderliste** (überall dieselbe), LK-Grafiken, Einsatz-Matrix, gemeinsame Bausteine | `src/components/RosterTable.tsx`, `LkProfile.tsx`, `EinsatzMatrix.tsx`, `KaderBits.tsx`; Helfer in `src/data/kader.ts` |
 | Vereinskader (⋯-Menü): wer ist in welcher eigenen Mannschaft gemeldet | `src/components/Vereinskader.tsx` (lazy), lädt über `useGroups` in `src/data/store.ts` |
 | LK-Abzeichen (überall gleich) | `src/components/LkBadge.tsx` |

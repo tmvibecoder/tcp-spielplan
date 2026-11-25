@@ -566,12 +566,16 @@ und den nächsten geplanten Lauf.
 
 **Kader-Ansichten (Redesign 24.11.2026).** Alle Stellen, die eine Meldeliste zeigen, benutzen
 dieselben Bausteine: `RosterTable` (kompakte Kaderliste mit Filter und aufklappbarer Person),
-`LkProfile`/`LkDuel` (LK-Verteilung), `EinsatzMatrix`, `KaderVergleich` (Kopf-an-Kopf im
-Briefing) und `KaderBits` (LK-Kästchen, 12-Monats-Balken, Ergebnis-Kachel, Form-Punkte). Reine
-Helfer liegen in `src/data/kader.ts`. Die Mannschaftsfarbe wird als CSS-Variable `--accent` am
-umgebenden Element gesetzt, die Bausteine färben damit. `RosterList` und `OwnRoster` aus
-`OpponentBriefing.tsx` gibt es nicht mehr — die eigene Meldeliste steckt eingeklappt im Reiter
-„Kader" des Briefings. `getTeamStats` liefert zusätzlich `meetings` (gespielte Begegnungen), jeder
+`LkProfile` (LK-Verteilung), `EinsatzMatrix` und `KaderBits` (LK-Kästchen, 12-Monats-Balken,
+Ergebnis-Kachel, Form-Punkte). Reine Helfer liegen in `src/data/kader.ts`. Die Mannschaftsfarbe
+wird als CSS-Variable `--accent` am umgebenden Element gesetzt, die Bausteine färben damit.
+Der Reiter „Kader" des Gegnerbriefings ist seit 25.11.2026 `KaderAktiv`: je Mannschaft die zehn
+Gemeldeten mit den meisten Spieltagen der letzten 12 Monate. Die Rechnung (`kaderAktiv` in
+`src/data/kader-aktiv.ts`) ist rein und arbeitet auf Meldeliste + geladenen Vereinsdaten; „diese
+Mannschaft" heißt gleiche Altersklasse (`teamLabel` ohne Ziffer) und gleiche Mannschaftsnummer
+(Ziffer am Vereinsnamen). `RosterList`, `OwnRoster`, `KaderVergleich` und `LkDuel` gibt es nicht
+mehr. Namen werden überall über `normalizePlayerName` verglichen, das seit 25.11.2026 auch
+akademische Titel entfernt (README, „Namens-Matching"). `getTeamStats` liefert zusätzlich `meetings` (gespielte Begegnungen), jeder
 Einsatz trägt deren Index; `assignToRoster` ordnet Bilanzen auch bei doppelten Namen (Initialen)
 genau einem Meldelisten-Eintrag zu.
 
@@ -582,7 +586,7 @@ Header ── „🔍 Suche" ──► SearchOverlay (lazy) ──► Spieler  �
        │                                      └─► Mannschaft ──► TeamPage (lazy) → TeamStatsDetail
        └─ ⋯-Menü ── Kalender · PDF (nur Spielplan) · Vereinskader (lazy) · Datenstand + nächster Lauf (immer)
 TimelineView ► MatchRow ► MatchDetail ──► OpponentBriefing (lazy, nur laufende Saison)
-                                            ├─ Kader         (KaderVergleich + LkDuel + beide Meldelisten als RosterTable)
+                                            ├─ Kader         (KaderAktiv: die 10 mit den meisten Spieltagen je Mannschaft, 12 Monate)
                                             ├─ Aufstellungen (Nachname + LK; Gegner + „Unsere Aufstellungen")
                                             └─ Ergebnisse    (Begegnungen des Gegners, Gegnersicht)
 StandingsView ► TeamStatsDetail ── „Spielerhistorie über alle Saisons ›" ──► PlayerHistory
