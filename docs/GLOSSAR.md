@@ -235,8 +235,8 @@ Die App sammelt sie unter „Weitere Einsätze". Rund 0,5 % der Nennungen sind s
 
 **Nation.**
 Nicht-deutsche Spieler tragen im Bericht ein Länderkürzel (`"Faschang, Michael AUT"`).
-`GER` wird weggelassen. Beim Namensabgleich entfernt `normalizePlayerName` Kürzel und
-Walkover-Vermerk — ohne diesen Schritt landen ~100 statt 8 Spieler fälschlich unter
+`GER` wird weggelassen. Beim Namensabgleich entfernt `normalizePlayerName` Kürzel,
+Walkover-Vermerk und akademische Titel („Dr.", die nur in den Meldelisten stehen) — ohne diesen Schritt landen ~100 statt 8 Spieler fälschlich unter
 „Weitere Einsätze".
 
 ---
@@ -269,7 +269,7 @@ Gegnerbriefing", ARCHITEKTUR Abschnitt 13).
 
 **Gegnerbriefing.**
 Der Block in der aufgeklappten TCP-Begegnung im Spielplan, der vor dem Spieltag zeigt, **was über
-den Gegner belegt ist**: Kader-Vergleich beider Meldelisten, tatsächliche Aufstellungen, bisherige
+den Gegner belegt ist**: wer aus dem Kader zuletzt wirklich gespielt hat, tatsächliche Aufstellungen, bisherige
 Ergebnisse — plus unsere eigenen bisherigen Aufstellungen, alles aus der **laufenden Saison** und
 mit **LK an jedem Namen**. **Keine Prognose:** Es steht nur darin, was in einem Spielbericht steht.
 
@@ -292,17 +292,19 @@ farbig hinterlegt. Antippen zeigt die einzelnen Matches und den Formverlauf.
 
 **LK-Profil.**
 Kleine Grafik über der Kaderliste: wie viele Gemeldete auf welcher LK-Stufe stehen (ein Punkt je
-Person, große Listen als Säulen). Im Gegnerbriefing gespiegelt für beide Mannschaften.
+Person, große Listen als Säulen).
 
 **Einsatz-Matrix.**
 Reiter „Einsätze" der Mannschaftsseite: Zeilen = eingesetzte Personen, Spalten = Spieltage. Die
 Kachel zeigt die **Position** (E = Einzel, D = Doppel), gefüllt grün = Sieg, rot umrandet =
 Niederlage.
 
-**Kader-Vergleich.**
-Im Gegnerbriefing: die oberen Ränge beider Meldelisten Kopf an Kopf, LK gegen LK. „Nur Aktive"
-zeigt nur, wer in den letzten 12 Monaten ein erfasstes Match hat — ein Filter, **keine
-Aufstellungsprognose**.
+**Spieltage (Kader im Gegnerbriefing).**
+Zahl der Begegnungen, in denen eine Person in den letzten 12 Monaten eingesetzt war — ein Einzel
+und ein Doppel am selben Tag zählen als **ein** Spieltag. Der Reiter „Kader" des Gegnerbriefings
+sortiert danach und zeigt je Mannschaft die zehn Meistbeschäftigten. Wahlweise nur für **diese
+Mannschaft** (gleiche Altersklasse und Mannschaftsnummer) oder für alle Mannschaften des Vereins.
+Reine Zählung aus Spielberichten, **keine Aufstellungsprognose**.
 
 **Vereinskader.**
 Seite im ⋯-Menü: wer ist in welcher eigenen Erwachsenen-Mannschaft auf welchem Rang gemeldet.

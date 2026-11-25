@@ -283,20 +283,23 @@ export function aggregateByName(team: TeamStats): Map<string, PlayerAgg> {
 export function assignToRoster(entries: MeldelistenEintrag[], byName: Map<string, PlayerAgg>): (PlayerAgg | undefined)[] {
   const out: (PlayerAgg | undefined)[] = entries.map(() => undefined);
   const taken = new Set<string>();
+  // Die Meldeliste führt akademische Titel, der Spielbericht nicht — verglichen
+  // wird deshalb der normalisierte Name („Dr. Schlüter, Thomas" = „Schlüter, Thomas")
+  const keys = entries.map((e) => normalizePlayerName(e.name));
   // 1. Durchgang: Name und Meldeposition stimmen überein
   entries.forEach((e, i) => {
-    const agg = byName.get(e.name);
-    if (agg && !taken.has(e.name) && agg.rang === e.rang) {
+    const agg = byName.get(keys[i]);
+    if (agg && !taken.has(keys[i]) && agg.rang === e.rang) {
       out[i] = agg;
-      taken.add(e.name);
+      taken.add(keys[i]);
     }
   });
   // 2. Durchgang: Rest dem zuerst gemeldeten Eintrag mit diesem Namen
-  entries.forEach((e, i) => {
-    const agg = byName.get(e.name);
-    if (agg && !taken.has(e.name)) {
+  entries.forEach((_, i) => {
+    const agg = byName.get(keys[i]);
+    if (agg && !taken.has(keys[i])) {
       out[i] = agg;
-      taken.add(e.name);
+      taken.add(keys[i]);
     }
   });
   return out;

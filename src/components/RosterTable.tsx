@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { Meldeliste, SeasonId } from "../types";
 import type { ClubData } from "../data/data-format";
-import { aggregateByName, assignToRoster, parseLk, type PlayerAgg, type PlayerAppearance, type TeamStats } from "../data/player-stats";
+import { aggregateByName, assignToRoster, normalizePlayerName, parseLk, type PlayerAgg, type PlayerAppearance, type TeamStats } from "../data/player-stats";
 import { playerProfile, type PlayerProfile } from "../data/player-history";
 import { posLabel } from "../data/history-index";
 import { fmtDay, isProtectedName } from "../data/kader";
@@ -208,7 +208,8 @@ export default function RosterTable({ team, meldeliste, clubData, season, onOpen
         .map((a) => row(`p-${a.name}`, 0, a.name, a.lk, undefined, a));
       return rows.length ? [{ label: "", rows }] : [];
     }
-    const listed = new Set([...meldeliste.herren, ...meldeliste.damen].map((e) => e.name));
+    // Vergleich über den normalisierten Namen: die Meldeliste führt Titel („Dr."), der Bericht nicht
+    const listed = new Set([...meldeliste.herren, ...meldeliste.damen].map((e) => normalizePlayerName(e.name)));
     const out: Section[] = [];
     const both = meldeliste.herren.length > 0 && meldeliste.damen.length > 0;
     for (const [label, entries] of [["Herren", meldeliste.herren], ["Damen", meldeliste.damen]] as const) {
