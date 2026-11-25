@@ -436,7 +436,11 @@ laufen** (`crawl-meldelisten.mjs --no-gen` unterdrückt dabei den Generatorlauf 
 ### Der Wecker (automatische Aktualisierung)
 
 `.github/workflows/briefing.yml` läuft täglich um **01:00 Uhr Berlin** (zwei UTC-Crons 23:00 und
-00:00; `scripts/briefing-run.mjs` arbeitet nur, wenn es in Berlin wirklich 1 Uhr ist). Er prüft, ob
+00:00; `scripts/briefing-run.mjs` arbeitet ab 1 Uhr Berlin, höchstens einmal je Tag — erkennbar am
+Datenstand in `src/data/data-stand.ts`). **Stolperfalle (bis 25.11.2026):** Die frühere Regel „nur
+genau 1 Uhr" ließ jeden Lauf leer enden, weil GitHub geplante Läufe oft Stunden verspätet startet —
+vom 14.10. bis 25.11.2026 kamen so keine Ergebnisse automatisch. Ein grüner Lauf heißt nichts; im
+Protokoll steht `ran=true` oder `ran=false`. Er prüft, ob
 eine TCP-Begegnung der laufenden Saison in **genau 7, 4 oder 0 Tagen** liegt — oder **vor 1 oder
 3 Tagen** lag (Ergebnis-Nachlauf, seit 08.10.2026: die Resultate des Wochenendes stehen so am
 Montag und Mittwoch von selbst in der App). Wenn ja:

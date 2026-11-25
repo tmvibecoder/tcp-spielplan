@@ -261,6 +261,13 @@ Was nicht geprüft wurde, wird auch nicht behauptet.
 Gebaut am 09./10.09.2026 (Freigabe des Auftraggebers). Aufbau in
 [ARCHITEKTUR.md, Abschnitt 13](ARCHITEKTUR.md), Fachliches im README.
 
+**Wecker läuft grün, aber es kommen keine Ergebnisse:** im Protokoll des Laufs nach `ran=` suchen
+(`gh run view <id> --log | grep ran=`). Steht dort dauerhaft `ran=false`, obwohl Begegnungen fällig
+waren, prüfen, warum das Skript endet (bis 25.11.2026: „nicht 1 Uhr", weil GitHub die Crons
+verspätet startet — behoben). Fehlende Ergebnisse nachholen: Actions → „Gegnerbriefing
+aktualisieren" → „Run workflow" mit Häkchen **force** (liest alle Gruppen mit Begegnungen ab heute
+ein) bzw. `gh workflow run briefing.yml -f force=true`.
+
 **Eine weitere (auch vergangene) Saison erfassen:**
 
 ```bash

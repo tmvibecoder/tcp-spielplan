@@ -627,7 +627,8 @@ Spielberichte (TCP-Sicht bei Pliening-Begegnungen, sky/amber bei Fremdpaarungen)
 ```
 GitHub Actions: cron 23:00 + 00:00 UTC (= 01:00 Berlin je nach Jahreszeit), workflow_dispatch
    └─ scripts/briefing-run.mjs
-        ├─ Cron-Lauf und nicht 01 Uhr Berlin? → Ende
+        ├─ Cron-Lauf vor 01 Uhr Berlin oder heute schon eingelesen (data-stand.ts)? → Ende
+        │    (seit 25.11.2026; vorher „nur genau 01 Uhr" — verspätete GitHub-Crons liefen leer)
         ├─ Saison per seasons.mjs, TCP-Begegnungen aus der Datendatei
         ├─ Begegnung in genau 7 / 4 / 0 Tagen oder vor 1 / 3 Tagen?   nein → Ende (ran=false)
         ├─ je betroffener Gruppe: crawl-spielberichte --force · crawl-meldelisten
