@@ -302,7 +302,8 @@ Niederlage.
 **Spieltage (Kader im Gegnerbriefing).**
 Zahl der Begegnungen, in denen eine Person in den letzten 12 Monaten eingesetzt war — ein Einzel
 und ein Doppel am selben Tag zählen als **ein** Spieltag. Der Reiter „Kader" des Gegnerbriefings
-sortiert danach und zeigt je Mannschaft die zehn Meistbeschäftigten. Wahlweise nur für **diese
+wählt danach je Mannschaft die zehn Meistbeschäftigten aus und zeigt sie nach LK sortiert
+(beste oben). Wahlweise nur für **diese
 Mannschaft** (gleiche Altersklasse und Mannschaftsnummer) oder für alle Mannschaften des Vereins;
 mit dem Häkchen „Nur aktuelle Saison" zählt statt der 12 Monate nur die laufende Runde.
 Reine Zählung aus Spielberichten, **keine Aufstellungsprognose**.
