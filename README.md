@@ -215,6 +215,15 @@ nicht mehr nötig.
   **Nachname + LK**, darunter **„Unsere Aufstellungen"** der eigenen Konkurrenz) und *Ergebnisse*
   (Begegnungsergebnisse des Gegners in der laufenden Saison). **Keine Prognosen** — nur belegte
   Einsätze. Spieler antippen → Historie, Begegnung antippen → Spielbericht.
+- **Reiter „Aufstellungen": zwei klar getrennte Blöcke** (seit 25.11.2026, `LineupSection` in
+  `OpponentBriefing.tsx`): oben der Gegner mit grauem Rahmen und dem Schild **„Gegner"**, darunter
+  wir in der Mannschaftsfarbe mit dem Schild **„Wir"**, jeweils mit dem Vereinsnamen in der
+  Kopfzeile. Die Kopfzeile bleibt beim Scrollen unter der App-Leiste stehen. Jede Karte nennt
+  Heim/Auswärts ausgeschrieben („Heim gegen …", „Auswärts bei …"); die LK-Abzeichen sind beim
+  Gegner grau, bei uns blau, und im Einzel bleibt die LK auch bei langen Namen ganz sichtbar.
+  Vorher trennte nur eine kleine graue Zeile die beiden Mannschaften. Dafür schneidet die
+  Wochenkarte im Spielplan (`TimelineView`) jetzt mit `overflow-clip` statt `overflow-hidden` ab —
+  optisch gleich, aber sonst könnte in ihr nichts „sticky" stehen bleiben.
 - **Kader im Gegnerbriefing: „Wer spielt wirklich?"** (`KaderAktiv.tsx`, Rechnung in
   `src/data/kader-aktiv.ts`, seit 25.11.2026): je Mannschaft — Gegner oben, wir darunter — die
   **zehn Gemeldeten mit den meisten Spieltagen der letzten 12 Monate**, sortiert nach Einsätzen

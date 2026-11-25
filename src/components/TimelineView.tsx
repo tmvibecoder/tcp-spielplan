@@ -279,7 +279,10 @@ export default function TimelineView({
                   )}
                   <div
                     ref={isTarget ? targetWeekRef : undefined}
-                    className="rounded-xl border overflow-hidden scroll-mt-24"
+                    // overflow-clip statt overflow-hidden: schneidet genauso an den runden
+                    // Ecken ab, macht die Karte aber nicht zum Scroll-Container — nur so
+                    // können die Kopfzeilen im Gegnerbriefing beim Scrollen stehen bleiben
+                    className="rounded-xl border overflow-clip scroll-mt-24"
                     style={{
                       backgroundColor: colors?.weekBgs?.[weekIdx % colors.weekBgs.length] || colors?.bg,
                       borderColor: colors?.border,
