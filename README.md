@@ -226,8 +226,10 @@ nicht mehr nötig.
   optisch gleich, aber sonst könnte in ihr nichts „sticky" stehen bleiben.
 - **Kader im Gegnerbriefing: „Wer spielt wirklich?"** (`KaderAktiv.tsx`, Rechnung in
   `src/data/kader-aktiv.ts`, seit 25.11.2026): je Mannschaft — Gegner oben, wir darunter — die
-  **zehn Gemeldeten mit den meisten Spieltagen der letzten 12 Monate**, sortiert nach Einsätzen
-  statt nach Rang. Je Zeile Name, Rang, letzter Einsatz, LK, Spieltage (mit Balken) und Bilanz
+  **zehn Gemeldeten mit den meisten Spieltagen der letzten 12 Monate**. Ausgewählt wird nach
+  Einsätzen, **angezeigt nach LK** (beste LK oben, bei gleicher LK die Meldeliste; seit 25.11.2026 —
+  vorher stand die Liste nach Spieltagen, und ein Spieler mit zwei Einsätzen stand über einem
+  stärkeren mit einem). Das gilt für alle Filter und auch nach „weitere zeigen". Je Zeile Name, Rang, letzter Einsatz, LK, Spieltage (mit Balken) und Bilanz
   (Einzel und Doppel zusammen). Hintergrund (Thomas, 24.11.2026): Die ersten Ränge einer
   Meldeliste sagen wenig, weil viele davon gar nicht spielen — bei den Herren 40 sind 32 gemeldet
   und 11 eingesetzt, der Spieler mit den meisten Spieltagen steht auf Rang 7.

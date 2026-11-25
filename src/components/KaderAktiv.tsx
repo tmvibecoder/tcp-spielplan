@@ -4,13 +4,14 @@ import type { ClubData } from "../data/data-format";
 import type { TeamStats } from "../data/player-stats";
 import { ageClassOf, aktivCutoff, kaderAktiv, type AktivEntry, type AktivStat } from "../data/kader-aktiv";
 import { fmtDay } from "../data/kader";
+import { parseLk } from "../data/player-stats";
 import { playerKey } from "../data/player-history";
 import { ALL_SEASONS, DEFAULT_SEASON } from "../data/seasons";
 import { LkCell, WinLoss } from "./KaderBits";
 import RosterTable from "./RosterTable";
 
 // Reiter „Kader" im Gegnerbriefing (seit 25.11.2026): je Mannschaft die zehn
-// Gemeldeten mit den meisten Spieltagen der letzten 12 Monate — sortiert nach
+// Gemeldeten mit den meisten Spieltagen der letzten 12 Monate — ausgewählt nach
 // Einsätzen statt nach Rang, denn die oberen Ränge einer Meldeliste spielen oft
 // gar nicht. Umschalter „in dieser Mannschaft" / „in allen Mannschaften des
 // Vereins"; antippen klappt die Aufschlüsselung je Saison auf. Darunter lassen
@@ -115,7 +116,16 @@ function TeamBlock({ club, teamLabel, season, roster, clubData, loading, stats, 
       return y.days - x.days || y.wins + y.losses - (x.wins + x.losses) || order.get(a)! - order.get(b)!;
     });
   const rest = entries.filter((e) => statOf(e).days === 0);
-  const shown = showMore ? active : active.slice(0, TOP);
+  // Ausgewählt wird nach Einsätzen (die zehn mit den meisten Spieltagen),
+  // ANGEZEIGT nach Spielstärke: beste LK oben, bei gleicher LK die Meldeliste.
+  // Thomas, 25.11.2026: Eine Rangfolge nach Spieltagen stellte einen Spieler mit
+  // zwei Einsätzen über einen stärkeren mit einem — gelesen wird die Liste aber
+  // wie eine Meldeliste, also von oben nach unten nach Stärke.
+  const lkOf = (e: AktivEntry) => {
+    const v = parseLk(e.entry.lk);
+    return Number.isNaN(v) ? 99 : v;
+  };
+  const shown = [...(showMore ? active : active.slice(0, TOP))].sort((a, b) => lkOf(a) - lkOf(b) || order.get(a)! - order.get(b)!);
   const extra = active.length - TOP;
   const ageClass = ageClassOf(teamLabel);
 
@@ -281,7 +291,7 @@ export default function KaderAktiv({ season, teamLabel, ownClub, oppClub, ownRos
       <div className="px-2.5">
         <p className="text-[15px] font-extrabold leading-5 text-slate-50">Wer spielt wirklich?</p>
         <p className="mt-0.5 text-[12px] leading-4 text-slate-400">
-          Die {TOP} Gemeldeten mit den meisten Spieltagen {onlySeason ? `in der Saison ${seasonName}` : "in den letzten 12 Monaten"}.
+          Die {TOP} Gemeldeten mit den meisten Spieltagen {onlySeason ? `in der Saison ${seasonName}` : "in den letzten 12 Monaten"}, sortiert nach LK.
         </p>
         <div className="mt-2.5 flex flex-wrap gap-2">
           <button type="button" aria-pressed={scope === "team"} onClick={() => setScope("team")} className={chip(scope === "team")}>In {ageClass}</button>
