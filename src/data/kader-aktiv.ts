@@ -83,12 +83,15 @@ export function aktivCutoff(days = 365, today = new Date()): string {
 
 /** Je Meldelisten-Eintrag: Spieltage, Bilanz und Aufschlüsselung der letzten
  *  12 Monate — einmal für die Mannschaft der Begegnung, einmal für alle
- *  Mannschaften des Vereins. Reihenfolge wie die Meldeliste. */
+ *  Mannschaften des Vereins. Reihenfolge wie die Meldeliste.
+ *  Mit `onlySeason` zählen statt der letzten 12 Monate nur die Einsätze dieser
+ *  einen Saison („Nur aktuelle Saison", seit 25.11.2026). */
 export function kaderAktiv(
   roster: Meldeliste | undefined,
   clubData: ClubData | undefined,
   club: string,
   teamLabel: string,
+  onlySeason?: SeasonId,
   days = 365,
   today = new Date(),
 ): AktivEntry[] {
@@ -99,7 +102,7 @@ export function kaderAktiv(
     const key = playerKey(club, entry.name);
     const protectedEntry = isProtectedName(entry.name);
     const p = protectedEntry ? undefined : findPlayer(clubData, club, entry.name);
-    const recent = (p?.appearances ?? []).filter((a) => a.date && a.date >= cutoff);
+    const recent = (p?.appearances ?? []).filter((a) => (onlySeason ? a.season === onlySeason : !!a.date && a.date >= cutoff));
     if (recent.length === 0) return { entry, key, protectedEntry, team: EMPTY, all: EMPTY, lines: [] };
 
     type App = (typeof recent)[number];

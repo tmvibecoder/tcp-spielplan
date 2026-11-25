@@ -571,7 +571,8 @@ Ergebnis-Kachel, Form-Punkte). Reine Helfer liegen in `src/data/kader.ts`. Die M
 wird als CSS-Variable `--accent` am umgebenden Element gesetzt, die Bausteine färben damit.
 Der Reiter „Kader" des Gegnerbriefings ist seit 25.11.2026 `KaderAktiv`: je Mannschaft die zehn
 Gemeldeten mit den meisten Spieltagen der letzten 12 Monate. Die Rechnung (`kaderAktiv` in
-`src/data/kader-aktiv.ts`) ist rein und arbeitet auf Meldeliste + geladenen Vereinsdaten; „diese
+`src/data/kader-aktiv.ts`) ist rein und arbeitet auf Meldeliste + geladenen Vereinsdaten (mit
+`onlySeason` nur die Einsätze einer Saison statt der letzten 12 Monate); „diese
 Mannschaft" heißt gleiche Altersklasse (`teamLabel` ohne Ziffer) und gleiche Mannschaftsnummer
 (Ziffer am Vereinsnamen). `RosterList`, `OwnRoster`, `KaderVergleich` und `LkDuel` gibt es nicht
 mehr. Namen werden überall über `normalizePlayerName` verglichen, das seit 25.11.2026 auch

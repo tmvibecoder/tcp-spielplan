@@ -225,6 +225,11 @@ nicht mehr nötig.
   - **Umschalter „In ‹Altersklasse›" / „In allen Mannschaften"**: Einsätze für *diese* Mannschaft
     (gleiche Altersklasse **und** gleiche Mannschaftsnummer, `ageClassOf`/`teamNoOf`) oder für
     irgendeine Mannschaft des Vereins.
+  - **Häkchen „Nur aktuelle Saison"** (seit 25.11.2026): zählt statt der letzten 12 Monate nur
+    die Einsätze der Saison der Begegnung (`onlySeason` in `kaderAktiv`). In einer Archiv-Saison
+    heißt es „Nur diese Saison". Vor dem ersten Spieltag steht dann je Mannschaft der Hinweis,
+    dass noch niemand gespielt hat — der Umschalter bleibt sichtbar, weil die 12-Monats-Sicht
+    darüber entscheidet, ob es Einsatzdaten gibt.
   - **Zeile antippen** klappt die Aufschlüsselung je Saison und Mannschaft auf (Spieltage, Einzel-
     und Doppelbilanz, gespielte Einzel-Positionen) und bietet die Spielerhistorie an.
   - **„n weitere mit Einsatz zeigen"** hängt die übrigen Eingesetzten an; **„n Gemeldete ohne

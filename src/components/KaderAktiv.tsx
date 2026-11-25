@@ -5,7 +5,7 @@ import type { TeamStats } from "../data/player-stats";
 import { ageClassOf, aktivCutoff, kaderAktiv, type AktivEntry, type AktivStat } from "../data/kader-aktiv";
 import { fmtDay } from "../data/kader";
 import { playerKey } from "../data/player-history";
-import { ALL_SEASONS } from "../data/seasons";
+import { ALL_SEASONS, DEFAULT_SEASON } from "../data/seasons";
 import { LkCell, WinLoss } from "./KaderBits";
 import RosterTable from "./RosterTable";
 
@@ -15,6 +15,8 @@ import RosterTable from "./RosterTable";
 // gar nicht. Umschalter „in dieser Mannschaft" / „in allen Mannschaften des
 // Vereins"; antippen klappt die Aufschlüsselung je Saison auf. Darunter lassen
 // sich die übrigen Eingesetzten und der Rest der Meldeliste einblenden.
+// Das Häkchen „Nur aktuelle Saison" zählt statt der letzten 12 Monate nur die
+// Einsätze der Saison der Begegnung (Thomas, 25.11.2026).
 // Ersetzt den Kopf-an-Kopf-Vergleich der ersten acht Ränge (24.11.2026).
 
 type Scope = "team" | "all";
@@ -35,6 +37,10 @@ interface TeamProps {
   own: boolean;
   scope: Scope;
   entries: AktivEntry[];
+  /** Es gibt überhaupt Einsatzdaten (12 Monate) — sonst die Ersatzansicht */
+  hasData: boolean;
+  /** Nur die Saison der Begegnung zählen statt der letzten 12 Monate */
+  onlySeason: boolean;
   /** Balkenmaßstab: meiste Spieltage beider Mannschaften */
   maxDays: number;
   onOpenPlayer?: (key: string) => void;
@@ -50,7 +56,7 @@ function lineText(l: AktivEntry["lines"][number]): string {
   return parts.join(" · ");
 }
 
-function TeamBlock({ club, teamLabel, season, roster, clubData, loading, stats, own, scope, entries, maxDays, onOpenPlayer }: TeamProps) {
+function TeamBlock({ club, teamLabel, season, roster, clubData, loading, stats, own, scope, entries, hasData, onlySeason, maxDays, onOpenPlayer }: TeamProps) {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [showMore, setShowMore] = useState(false);
   const [showRest, setShowRest] = useState(false);
@@ -82,7 +88,7 @@ function TeamBlock({ club, teamLabel, season, roster, clubData, loading, stats, 
   }
   // Keine Einsatzdaten (Jugend und andere geschützte Listen, neue Gegner ohne
   // Vorsaison): die gewohnte Kaderliste zeigen statt einer leeren Rangliste
-  if (!entries.some((e) => e.all.days > 0)) {
+  if (!hasData) {
     return (
       <div>
         {head(`${entries.length} gemeldet`)}
@@ -126,7 +132,11 @@ function TeamBlock({ club, teamLabel, season, roster, clubData, loading, stats, 
 
       {active.length === 0 && (
         <p className="px-2.5 py-3 text-[12px] text-slate-400">
-          Niemand der Gemeldeten hat in den letzten 12 Monaten für diese Mannschaft gespielt.
+          {onlySeason
+            ? scope === "team"
+              ? "In dieser Saison hat noch niemand der Gemeldeten für diese Mannschaft gespielt."
+              : "In dieser Saison hat noch niemand der Gemeldeten gespielt."
+            : "Niemand der Gemeldeten hat in den letzten 12 Monaten für diese Mannschaft gespielt."}
         </p>
       )}
 
@@ -144,10 +154,10 @@ function TeamBlock({ club, teamLabel, season, roster, clubData, loading, stats, 
             >
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13.5px] font-bold leading-[18px] text-slate-100">{e.entry.name}</span>
-                <span className="block truncate text-[11px] leading-[14px] text-slate-400">Rang {e.entry.rang} · zuletzt {fmtDay(s.last)}</span>
+                <span className="block truncate text-[11px] leading-[14px] text-slate-400">Rang {e.entry.rang}{s.last ? ` · zuletzt ${fmtDay(s.last)}` : ""}</span>
               </span>
               <LkCell lk={e.entry.lk} played={own} />
-              <span className="block w-[50px] shrink-0" title={`${s.days} ${dayWord(s.days)} in den letzten 12 Monaten`}>
+              <span className="block w-[50px] shrink-0" title={`${s.days} ${dayWord(s.days)} ${onlySeason ? "in dieser Saison" : "in den letzten 12 Monaten"}`}>
                 <span className="block text-right text-[13px] font-extrabold leading-[15px] tabular-nums text-slate-100">{s.days}</span>
                 <span className="mt-[3px] flex h-1 justify-end" aria-hidden="true">
                   <span className={`h-1 rounded-sm ${own ? "bg-[var(--accent)]" : "bg-slate-300"}`} style={{ width: `${Math.max(8, (s.days / maxDays) * 100)}%` }} />
@@ -212,7 +222,7 @@ function TeamBlock({ club, teamLabel, season, roster, clubData, loading, stats, 
                 ? "geschützter Eintrag · keine Bilanz"
                 : e.all.days > 0
                   ? `nur in anderen Mannschaften · ${e.all.days} ${dayWord(e.all.days)}`
-                  : "kein Match in 12 Monaten"}
+                  : onlySeason ? "kein Match in dieser Saison" : "kein Match in 12 Monaten"}
             </span>
           </span>
           <LkCell lk={e.entry.lk} />
@@ -240,8 +250,18 @@ interface Props {
 
 export default function KaderAktiv({ season, teamLabel, ownClub, oppClub, ownRoster, oppRoster, ownData, oppData, ownLoading, oppLoading, ownStats, oppStats, onOpenPlayer }: Props) {
   const [scope, setScope] = useState<Scope>("team");
-  const own = kaderAktiv(ownRoster, ownData, ownClub, teamLabel);
-  const opp = kaderAktiv(oppRoster, oppData, oppClub, teamLabel);
+  const [onlySeason, setOnlySeason] = useState(false);
+  // Die 12-Monats-Sicht entscheidet, ob es überhaupt Einsatzdaten gibt — auch
+  // wenn gerade nur die Saison gezählt wird (vor dem ersten Spieltag wäre sonst
+  // der Umschalter selbst verschwunden)
+  const ownYear = kaderAktiv(ownRoster, ownData, ownClub, teamLabel);
+  const oppYear = kaderAktiv(oppRoster, oppData, oppClub, teamLabel);
+  const own = onlySeason ? kaderAktiv(ownRoster, ownData, ownClub, teamLabel, season) : ownYear;
+  const opp = onlySeason ? kaderAktiv(oppRoster, oppData, oppClub, teamLabel, season) : oppYear;
+  const ownHasData = ownYear.some((e) => e.all.days > 0);
+  const oppHasData = oppYear.some((e) => e.all.days > 0);
+  const seasonName = ALL_SEASONS.find((s) => s.id === season)?.label ?? season;
+  const seasonWord = season === DEFAULT_SEASON.id ? "aktuelle Saison" : "diese Saison";
   const statOf = (e: AktivEntry) => (scope === "team" ? e.team : e.all);
   const maxDays = Math.max(1, ...own.map((e) => statOf(e).days), ...opp.map((e) => statOf(e).days));
   const ageClass = ageClassOf(teamLabel);
@@ -249,7 +269,7 @@ export default function KaderAktiv({ season, teamLabel, ownClub, oppClub, ownRos
   // Ohne Einsatzdaten auf beiden Seiten (Jugend: nur Initialen) gibt es nichts
   // umzuschalten — dann stehen nur die beiden Meldelisten da
   const loaded = !(ownLoading && !ownData) && !(oppLoading && !oppData);
-  const anyData = !loaded || own.some((e) => e.all.days > 0) || opp.some((e) => e.all.days > 0);
+  const anyData = !loaded || ownHasData || oppHasData;
   const chip = (on: boolean) =>
     `h-11 whitespace-nowrap rounded-full border px-3.5 text-[13px] font-bold ${
       on ? "border-[var(--accent)] bg-[var(--accent)] text-slate-950" : "border-slate-500/40 bg-slate-800/70 text-slate-200"
@@ -261,30 +281,41 @@ export default function KaderAktiv({ season, teamLabel, ownClub, oppClub, ownRos
       <div className="px-2.5">
         <p className="text-[15px] font-extrabold leading-5 text-slate-50">Wer spielt wirklich?</p>
         <p className="mt-0.5 text-[12px] leading-4 text-slate-400">
-          Die {TOP} Gemeldeten mit den meisten Spieltagen in den letzten 12 Monaten.
+          Die {TOP} Gemeldeten mit den meisten Spieltagen {onlySeason ? `in der Saison ${seasonName}` : "in den letzten 12 Monaten"}.
         </p>
         <div className="mt-2.5 flex flex-wrap gap-2">
           <button type="button" aria-pressed={scope === "team"} onClick={() => setScope("team")} className={chip(scope === "team")}>In {ageClass}</button>
           <button type="button" aria-pressed={scope === "all"} onClick={() => setScope("all")} className={chip(scope === "all")}>In allen Mannschaften</button>
         </div>
+        <label className="mt-1 flex min-h-[44px] cursor-pointer items-center gap-2.5 text-[13px] font-bold text-slate-100">
+          <input
+            type="checkbox"
+            checked={onlySeason}
+            onChange={(ev) => setOnlySeason(ev.target.checked)}
+            className="h-5 w-5 shrink-0 accent-[var(--accent)]"
+          />
+          <span>
+            Nur {seasonWord} <span className="font-semibold text-slate-400">· {seasonName}</span>
+          </span>
+        </label>
       </div>
       )}
 
       <TeamBlock
-        key={`opp-${scope}`}
+        key={`opp-${scope}-${onlySeason}`}
         club={oppClub} teamLabel={teamLabel} season={season} roster={oppRoster} clubData={oppData} loading={oppLoading}
-        stats={oppStats} own={false} scope={scope} entries={opp} maxDays={maxDays} onOpenPlayer={onOpenPlayer}
+        stats={oppStats} own={false} scope={scope} entries={opp} hasData={oppHasData} onlySeason={onlySeason} maxDays={maxDays} onOpenPlayer={onOpenPlayer}
       />
       <div className="mt-1 border-t border-slate-500/40" />
       <TeamBlock
-        key={`own-${scope}`}
+        key={`own-${scope}-${onlySeason}`}
         club={ownClub} teamLabel={teamLabel} season={season} roster={ownRoster} clubData={ownData} loading={ownLoading}
-        stats={ownStats} own scope={scope} entries={own} maxDays={maxDays} onOpenPlayer={onOpenPlayer}
+        stats={ownStats} own scope={scope} entries={own} hasData={ownHasData} onlySeason={onlySeason} maxDays={maxDays} onOpenPlayer={onOpenPlayer}
       />
 
       {anyData && (
       <p className="px-2.5 pt-2.5 text-[11px] leading-snug text-slate-400">
-        Spieltage = Begegnungen mit Einsatz seit {since}{" "}
+        Spieltage = Begegnungen mit Einsatz {onlySeason ? `in der Saison ${seasonName}` : `seit ${since}`}{" "}
         {scope === "team"
           ? `für diese Mannschaft (${ageClass}, gleiche Mannschaftsnummer)`
           : "für irgendeine Mannschaft des Vereins"}
