@@ -13,7 +13,7 @@ export interface DataStand {
 }
 
 export const DATA_STAND: DataStand = {
-  crawledAt: "2026-11-25T21:39:09+01:00",
-  scope: "Herren 40, Herren 50, Herren 30, Herren 30 II, Damen, Damen 40, Damen 50 (Winter 2026/27)",
-  nextRun: {"at":"2026-11-28T01:00:00+01:00","reason":"Spieltag Herren 40 – TC Grün-Weiß Gräfelfing"},
+  crawledAt: "2026-11-28T05:32:20+01:00",
+  scope: "Herren 40, Damen (Winter 2026/27)",
+  nextRun: {"at":"2026-11-29T01:00:00+01:00","reason":"Ergebnis 1 Tag nach Herren 40 – TC Grün-Weiß Gräfelfing (28.11.)"},
 };
